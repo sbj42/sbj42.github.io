@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css">
+  body {
+    background: #444;
+  }
+  #di {
+    background: #005395;
+    margin: 80px auto 0px;
+    border: 5px solid #ddd;
+    width: 600px;
+    height: 400px;
+  }
+</style>
+</head>
+<body>
+<div id="di">
+</div>
+<script>
+function di_anim(elem) {
+  var w = 600;
+  var h = 400;
+
+  var targetx = -Math.floor(w/2/46-1);
+  var targety = -Math.floor(h/2/31-2);
+
+  var svgNS = "http://www.w3.org/2000/svg";
+
+  elem.style.width = w + "px";
+  elem.style.height = h + "px";
+  elem.style.position = "relative";
+  var svg = document.createElementNS(svgNS, "svg");
+  svg.setAttribute("width", w + "px");
+  svg.setAttribute("height", h + "px");
+  svg.setAttribute("version", "1.1");
+  svg.setAttribute("stroke-width", "2px");
+  svg.setAttribute("stroke-linejoin", "bevel");
+
+  var defs = document.createElementNS(svgNS, "defs");
+  svg.appendChild(defs);
+
+  var grad = document.createElementNS(svgNS, "linearGradient");
+  grad.id="g1";
+  grad.setAttribute("x1", "0%");
+  grad.setAttribute("y1", "0%");
+  grad.setAttribute("x2", "100%");
+  grad.setAttribute("y2", "100%");
+  defs.appendChild(grad);
+  var stop1 = document.createElementNS(svgNS, "stop");
+  stop1.setAttribute("stop-color", "rgb(252, 255, 244)");
+  stop1.setAttribute("offset", "0%");
+  grad.appendChild(stop1);
+  var stop2 = document.createElementNS(svgNS, "stop");
+  stop2.setAttribute("stop-color", "rgba(233, 233, 206, 0.9)");
+  stop2.setAttribute("offset", "100%");
+  grad.appendChild(stop2);
+
+  function di(x, y) {
+    var qb = document.createElementNS(svgNS, "g");
+    qb.setAttribute("stroke", "#005395");
+    qb.setAttribute("stroke-linejoin", "bevel");
+    var qb_1 = document.createElementNS(svgNS, "path");
+    qb_1.setAttribute("d", "m 0 -42 23 9 0 22 23 9 0 44 -23 9 -23 -9 -23 9 -23 -9 0 -44 23 -9 0 -22 z");
+    qb_1.setAttribute("fill", "#005395");
+    qb.appendChild(qb_1);
+    var qb_2 = document.createElementNS(svgNS, "path");
+    qb_2.setAttribute("d", "m 0 -42 23 9 0 22 -23 -9 z m 0 22 23 9 -23 9 -23 -9 z m -23 9 23 9 0 22 -23 -9 z m 0 22 23 9 -23 9 -23 -9 z m -23 9 23 9 0 22 -23 -9 z m 69 -31 23 9 0 22 -23 -9 z m 0 22 23 9 -23 9 -23 -9 z m -23 9 23 9 0 22 -23 -9 z");
+    qb_2.setAttribute("fill", "white");
+    qb.appendChild(qb_2);
+    qb.style.transform = "translate(" + x + "px, " + y + "px)";
+    return qb;
+  }
+
+  var bottom = document.createElementNS(svgNS, "g");
+  svg.appendChild(bottom);
+  function f1(x, y, wh, speed) {
+    var color = "white";
+    if (!wh && Math.random() < 0.07)
+      color = ["#f9f58e", "#ef9d9d", "#8bd992"][Math.floor(Math.random()*3)];
+    var unit = document.createElementNS(svgNS, "rect");
+    unit.setAttribute("stroke", "#005395");
+    unit.setAttribute("stroke-linejoin", "round");
+    unit.setAttribute("fill", color);
+    unit.setAttribute("width", "32px");
+    unit.setAttribute("height", "32px");
+    unit.style.transition = "all " + speed + "s";
+    y -= 20.5;
+    unit.style.transform = "translate(" + x + "px, " + y + "px) rotateX(-23deg) rotateY(-45deg) rotateX(0deg) scaleY(0.75) translate(0, -33px)";
+    unit.style.opacity = "0.1";
+    bottom.appendChild(unit);
+    unit.getBoundingClientRect(); // force reflow
+    unit.style.opacity = "1";
+    unit.style.transform = "translate(" + x + "px, " + y + "px) rotateX(-23deg) rotateY(-45deg) rotateX(-90deg) scaleY(1) translate(0, -33px)";
+  }
+  function f2(x, y, wh, speed) {
+    var color = "white";
+    if (!wh && Math.random() < 0.07)
+      color = ["#f9f58e", "#ef9d9d", "#8bd992"][Math.floor(Math.random()*3)];
+    var unit = document.createElementNS(svgNS, "rect");
+    unit.setAttribute("stroke", "#005395");
+    unit.setAttribute("stroke-linejoin", "round");
+    unit.setAttribute("fill", color);
+    unit.setAttribute("width", "32px");
+    unit.setAttribute("height", "32px");
+    unit.style.transition = "all " + speed + "s";
+    x -= 23;
+    y -= 11.5;
+    unit.style.transform = "translate(" + x + "px, " + y + "px) rotateX(-23deg) rotateY(-45deg) rotateX(90deg) scaleY(1) translate(0, -33px)";
+    unit.style.opacity = "0.1";
+    bottom.insertBefore(unit, bottom.firstChild);
+    unit.getBoundingClientRect(); // force reflow
+    unit.style.opacity = "1";
+    unit.style.transform = "translate(" + x + "px, " + y + "px) rotateX(-23deg) rotateY(-45deg) rotateX(180deg) scaleY(0.75) translate(0, -33px)";
+  }
+  var targetwx = (w/2) + targetx * 46 + ((targety % 2) != 0 ? 23 : 0);
+  var targetwy = (h/2) + targety * 31;
+  var mask = document.createElementNS(svgNS, "path");
+  mask.setAttribute("d", "M 0 0 L " + w + " 0 L " + w + " " + h + " L 0 " + h + " z M " + targetwx + " " + targetwy + " m -23 -33 23 -9 23 9 0 22 23 9 0 44 -23 9 -23 -9 -23 9 -23 -9 0 -44 23 -9 z");
+  mask.setAttribute("fill", "url(#g1)");
+  mask.setAttribute("stroke", "none");
+  mask.setAttribute("fill-rule", "evenodd");
+  mask.style.transition = "all 0.8s linear";
+  mask.style.opacity = "0.0001";
+  svg.appendChild(mask);
+  var text = document.createElementNS(svgNS, "g");
+  text.style.transition = "all 0.8s linear";
+  text.style.opacity = "0.0001";
+  svg.appendChild(text);
+  var text1 = document.createElementNS(svgNS, "text");
+  text1.style.transform = "translate(" + (targetwx + 59) + "px, " + (targetwy + 8) + "px)";
+  text1.appendChild(document.createTextNode("Dimensional"));
+  text1.setAttribute("fill", "black");
+  text1.setAttribute("dominant-baseline", "alphabetic");
+  text1.setAttribute("font-family", "Georgia");
+  text1.setAttribute("font-size", "54px");
+  text.appendChild(text1);
+  var text2 = document.createElementNS(svgNS, "text");
+  text2.style.transform = "translate(" + (targetwx + 59 + 4) + "px, " + (targetwy + 8) + "px)";
+  text2.appendChild(document.createTextNode("INSIGHT"));
+  text2.setAttribute("fill", "black");
+  text2.setAttribute("dy", "1em");
+  text2.setAttribute("font-family", "Calibri");
+  text2.setAttribute("font-size", "36px");
+  text2.setAttribute("letter-spacing", "30px");
+  text2.setAttribute("textLength", "300px");
+  text.appendChild(text2);
+  elem.appendChild(svg);
+
+  var active = 0;
+  function chain(x, y, speed) {
+    if (x < 0 || y > h) {
+      active --;
+      if (active == 0)
+        maskUp();
+      return;
+    }
+    var wh = Math.abs(x - targetwx) <= 50 && Math.abs(y - targetwy) <= 40;
+    f1(x, y, wh, speed);
+    setTimeout(function() {
+      f2(x, y, wh, speed);
+      setTimeout(function() {
+        chain(x - 23, y + 31, speed);
+      }, 1000*speed + Math.floor(Math.random()*300 - 150));
+    }, 1000*speed + Math.floor(Math.random()*300 - 150));
+  }
+  function chain1(x, y, speed, delay) {
+    active ++;
+    setTimeout(function() {
+      chain(x, y, speed);
+    }, 1000*delay);
+  }
+  var speed1 = 0.1;
+  var speed2 = 0.2;
+  var ry = Math.floor(h/2/31)
+  var rx = Math.floor(w/2/46)
+  for (var x = -rx-1; x <= rx; x ++) {
+    var y = -ry;
+    var speed = speed1 + (speed2-speed1)*Math.random();
+    var delay = 2 + Math.random()*3 + (speed2-speed)*2/(speed2-speed1);
+    if (x == Math.floor(rx/2)) {
+      speed = speed2;
+      delay = 0;
+    }
+    chain1((w/2) + x * 46 + ((y % 2) != 0 ? 23 : 0), (h/2) + y * 31, speed, delay);
+  }
+  for (var y = -ry; y <= ry; y += 2) {
+    var x = rx+1;
+    var speed = speed1 + (speed2-speed1)*Math.random();
+    var delay = 2 + Math.random()*3 + (speed2-speed)*2/(speed2-speed1);
+    chain1((w/2) + x * 46 + ((y % 2) != 0 ? 23 : 0), (h/2) + y * 31, speed, delay);
+  }
+  function maskUp() {
+    svg.appendChild(di(targetwx, targetwy));
+    mask.style.opacity = "0.93";
+    setTimeout(textUp, 1500);
+  }
+  function textUp() {
+    text.style.opacity = "1";
+  }
+}
+var di = document.getElementById("di");
+if (document.documentMode || /Edge/.test(navigator.userAgent)) {
+  di.style.background="#fff";
+  var sorry = document.createElement("div");
+  sorry.style.fontFamily = "sans-serif";
+  sorry.innerHTML = "<b>SORRYNOTSORRY</b><div style=\"padding: 10px;\">This doesn't work in Microsoft browsers, because (as far as I can tell) they don't support 3d CSS transforms on SVG elements.  Try it out in Chrome or Firefox, instead.</div>";
+  sorry.style.padding="40px";
+  di.appendChild(sorry);
+} else {
+  di_anim(di);
+}
+</script>
+</body>
+</html>
