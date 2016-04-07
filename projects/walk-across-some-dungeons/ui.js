@@ -1,5 +1,5 @@
 // written for the MIT Mystery Hunt 2014
-// author: James Clark (sbj@dimins.com)
+// author: James Clark
 var map;
 var max = +($.cookie('max') || 1);
 var cur = +($.cookie('cur') || 1);
