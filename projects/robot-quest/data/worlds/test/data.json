@@ -1,0 +1,40 @@
+{
+	"name": "Test",
+	"levels": [
+		{
+			"name": "Test A",
+			"map": [
+				"               ",
+				"       _.      ",
+				"       _.      ",
+				"       _.      ",
+				"       _.      ",
+				"      ._.      ",
+				"      ___      ",
+				"     @...>     ",
+				"      ...      ",
+				"      .c.      ",
+				"      a..      ",
+				"      ..b      ",
+				"               ",
+				"               ",
+				"               "
+			],
+			"legend": {
+				"c": {
+					"thing": {
+						"image": "items/crate",
+						"pushable": true
+					}
+				},
+				"a": "item:apple",
+				"b": "item:bananas"
+			},
+			"script": {
+				"start": "player says I see a door! / Awesome!",
+				"player meets apple": "player takes apple",
+				"player meets bananas": "destroy bananas"
+			}
+		}
+	]
+}

@@ -1,0 +1,25 @@
+body {
+  font-family: Verdana, Geneva, sans-serif;
+  margin: 5px;
+  background: #000;
+  background-repeat: no-repeat;
+  background-position: center;
+  color: #fcfdd9;
+}
+#top {
+  text-align: center;
+  font-size: 20px;
+  height: 25px;
+}
+#center {
+  position: relative;
+  width: 600px;
+  height: 600px;
+  overflow: hidden;
+  margin: 0px auto;
+}
+#bottom {
+  text-align: center;
+  font-size: 20px;
+  height: 25px;
+}

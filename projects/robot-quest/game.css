@@ -1,0 +1,99 @@
+#level {
+  position: relative;
+}
+#title {
+  position: relative;
+  text-align: center;
+  font-size: 30px;
+}
+.floor {
+  position: absolute;
+  z-index: 1;
+}
+.thing {
+  position: absolute;
+  z-index: 2;
+}
+#menu_player {
+  padding: 50px;
+}
+.title_guy {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+}
+.player_choice {
+  text-align: center;
+  padding: 2px;
+  border-radius: 20px;
+  margin: 4px;
+}
+.player_choice img {
+  width: 80px;
+  height: 80px;
+}
+#menu_level {
+  padding: 20px 20px;
+}
+.level_choice {
+  padding: 5px 30px;
+  border-radius: 20px;
+  margin: 4px;
+  font-size: 20px;
+  text-shadow: 1px 1px 1px #000;
+}
+#menu_world {
+  padding: 20px;
+}
+.world_choice {
+  padding: 5px 30px;
+  border-radius: 20px;
+  margin: 4px;
+  font-size: 20px;
+  text-shadow: 1px 1px 1px #000;
+}
+#speech-bubble-1 {
+  position: absolute;
+  background: #fff;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  z-index: 200;
+  box-shadow: 2px 2px 2px #222;
+}
+#speech-bubble-2 {
+  position: absolute;
+  background: #fff;
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  z-index: 200;
+  box-shadow: 3px 3px 3px #222;
+}
+#speech {
+  position: absolute;
+  background: #fff;
+  color: #000;
+  font-size: 17px;
+  padding: 10px;
+  border-radius: 15px;
+  z-index: 200;
+  max-width: 280px;
+  box-shadow: 4px 4px 4px #222;
+  margin: 0px 4px;
+}
+#menu_the_end {
+  visibility: hidden;
+  padding: 20px;
+  text-align: center;
+  font-size: 20pt;
+}
+#the_end_guy {
+  position: absolute;
+  top: 250px;
+}
+.pressspace {
+  text-align: right;
+  font-size: 65%;
+  opacity: 0.5;
+}

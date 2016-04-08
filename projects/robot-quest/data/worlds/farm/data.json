@@ -1,0 +1,589 @@
+{
+	"name": "Farm",
+	"song": "robot-party",
+	"levels": [
+		{
+			"name": "Ladder",
+			"map": [
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"   ...         ",
+				"   l +         ",
+				" @.. +         ",
+				"     +         ",
+				" >....         ",
+				"               "
+			],
+			"legend": {
+				"l": {
+					"floor": "ladder",
+					"thing": "trigger:ladder1"
+				}
+			},
+			"script": {
+				"player meets ladder1": [
+					"player says This ladder looks strong.",
+					"player moves toward ladder1",
+					"ladder1 is destroyed"
+				]
+			}
+		},
+		{
+			"name": "Maze",
+			"map": [
+				"               ",
+				" f ..........> ",
+				" .     .       ",
+				" ..... ... ... ",
+				" .   .   + . . ",
+				" ... ... + . . ",
+				"   .     +   . ",
+				" ....... ..... ",
+				" .     . . . . ",
+				" . ....... . . ",
+				" . .       . . ",
+				" . . ..... . . ",
+				" .   .   . . . ",
+				" @...... ... . ",
+				"               "
+			],
+			"legend": {
+				"f": "character:fox"
+			},
+			"script": {
+				"start": "player says A maze!",
+				"player meets fox": [
+					"fox says Wa-pa-pa-pa-pa-pa-pow!",
+					"player says Right."
+				]
+			}
+		},
+		{
+			"name": "Follow me",
+			"map": [
+				"               ",
+				"   ..........@ ",
+				"   .   d       ",
+				"   . >....     ",
+				"   .           ",
+				"   ... ..p     ",
+				"     . .       ",
+				"   ... .       ",
+				"   .   .       ",
+				"   .....       ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               "
+			],
+			"legend": {
+				"d": {
+					"thing": {
+						"id": "dog",
+						"image": "characters/dog-frown"
+					}
+				},
+				"p": {
+					"thing": {
+						"id": "puppy",
+						"image": "characters/puppy-frown",
+						"layer": 3
+					}
+				}
+			},
+			"script": {
+				"player meets dog": {
+					"player is leading puppy": [
+						"dog image becomes characters/dog",
+						"dog says You found my puppy!"
+					],
+					"otherwise": "dog says Have you seen my puppy?"
+				},
+				"player meets puppy": {
+					"player is leading puppy": "puppy says Arf! Arf!",
+					"puppy state is moved": [
+						"puppy says You are a nice robot. / I will lick your face!",
+						"puppy moves toward player",
+						"wait 0.5 seconds",
+						"puppy moves toward dog"
+					],
+					"otherwise": [
+						"puppy says Have you seen my daddy?",
+						"player says Yes.  Follow me.",
+						"puppy says Arf! Arf!",
+						"player leads puppy"
+					]
+				},
+				"puppy is near dog": {
+					"player is leading puppy": [
+						"puppy image becomes characters/puppy",
+						"puppy says Daddy!",
+						"dog image becomes characters/dog",
+						"dog says There you are!",
+						"dog leads puppy",
+						"dog moves down right right",
+						"puppy state becomes moved"
+					]
+				}
+			}
+		},
+		{
+			"name": "Up and down",
+			"map": [
+				"               ",
+				"         e..   ",
+				"           +   ",
+				"     @.... +   ",
+				"         + +   ",
+				"         + +   ",
+				"         + +   ",
+				"         + +   ",
+				"       . + + . ",
+				"     ..p.....g ",
+				"     +       + ",
+				"     +     l.. ",
+				"     +         ",
+				"     ..>       ",
+				"               "
+			],
+			"legend": {
+				"e": "item:pepper",
+				"l": "item:glasses",
+				"p": "character:pig",
+				"g": "character:goose"
+			},
+			"script": {
+				"player meets pig": {
+					"player is carrying glasses": [
+						"pig takes glasses",
+						"pig says Thank you!",
+						"pig image becomes characters/pig-glasses",
+						"glasses is destroyed",
+						"pig says Cool! / Everything is yellow!",
+						"pig moves up",
+						"pig state becomes moved"
+					],
+					"pig state is moved": "pig says You look like a yellow robot!",
+					"otherwise": [
+						"pig says Are you a pickle yet?",
+						"player says No, why do you keep asking?",
+						"pig says I really don't like pickles! / Also, I need glasses."
+					]
+				},
+				"player meets goose": {
+					"player is carrying pepper": [
+						"goose takes pepper",
+						"goose says Knock knock!",
+						"player says Um, who is there?",
+						"goose says Pepper!",
+						"player says Pepper who?",
+						"goose says Pepper on your head! / Haha!",
+						"goose moves up",
+						"goose state becomes moved",
+						"player says That was silly."
+					],
+					"goose state is moved": [
+						"goose says This pepper doesn't fly. / Maybe it can dance.",
+						"goose state becomes dance"
+					],
+					"goose state is dance": [
+						"goose says Dance, pepper, dance!"
+					],
+					"otherwise": [
+						"goose says Do you think peppers can fly?",
+						"player says Not really, no.",
+						"goose says Maybe they are scared.",
+						"player says I do not think that is it.",
+						"goose says Please bring me a pepper. / I will tell it a joke."
+					]
+				}
+			}
+		},
+		{
+			"name": "Train",
+			"map": [
+				"               ",
+				" >... ... .... ",
+				"    . . ...  . ",
+				"    . .      . ",
+				" .... ... .... ",
+				" .      . .    ",
+				" ........ .... ",
+				"             . ",
+				"     c  d    . ",
+				"   .......  g. ",
+				"  b.     .   . ",
+				"   ..... ..... ",
+				"     a .  e f  ",
+				"       @       ",
+				"               "
+			],
+			"legend": {
+				"a": "character:sheep-red",
+				"b": "character:sheep-orange",
+				"c": "character:sheep-yellow",
+				"d": "character:sheep-green",
+				"e": "character:sheep-teal",
+				"f": "character:sheep-blue",
+				"g": "character:sheep-purple"
+			},
+			"script": {
+				"player meets sheep-red": "player says What a colorful sheep!",
+				"player is near sheep-red": {
+					"otherwise": [
+						"sheep-red says Baa!",
+						"player leads sheep-red"
+					]
+				},
+				"player is near sheep-orange": "sheep-orange says Baa!",
+				"sheep-red is near sheep-orange": {
+					"otherwise": "sheep-red leads sheep-orange"
+				},
+				"player is near sheep-yellow": "sheep-yellow says Baa!",
+				"sheep-orange is near sheep-yellow": {
+					"otherwise": "sheep-orange leads sheep-yellow"
+				},
+				"player is near sheep-green": "sheep-green says Baa!",
+				"sheep-yellow is near sheep-green": {
+					"otherwise": "sheep-yellow leads sheep-green"
+				},
+				"player is near sheep-teal": "sheep-teal says Baa!",
+				"sheep-green is near sheep-teal": {
+					"otherwise": "sheep-green leads sheep-teal"
+				},
+				"player meets sheep-blue": "player says Did you say moo?",
+				"player is near sheep-blue": "sheep-blue says Moo!",
+				"sheep-teal is near sheep-blue": {
+					"otherwise": "sheep-teal leads sheep-blue"
+				},
+				"player meets sheep-purple": "player says Banana?",
+				"player is near sheep-purple": "sheep-purple says Banana!",
+				"sheep-blue is near sheep-purple": {
+					"otherwise": "sheep-blue leads sheep-purple"
+				}
+			}
+		},
+		{
+			"name": "Tractor",
+			"map": [
+				"               ",
+				" @..           ",
+				"   .           ",
+				" .....         ",
+				" .....     ... ",
+				" ....t     ... ",
+				" .....     ... ",
+				"   .        +  ",
+				"   f.       +  ",
+				"   .        +  ",
+				"   k        >  ",
+				"               ",
+				"               ",
+				"               ",
+				"               "
+			],
+			"legend": {
+				"k": "item:key",
+				"t": "item:tractor",
+				"f": "character:farmer"
+			},
+			"script": {
+				"player meets tractor": {
+					"player is carrying key": [
+						"player says I will turn it on.",
+						"tractor takes key",
+						"key is destroyed",
+						"tractor image becomes items/tractor-on",
+						"wait 0.6 seconds",
+						"tractor moves right",
+						"tractor sets floor to default",
+						"wait 0.1 seconds",
+						"tractor moves right",
+						"tractor sets floor to default",
+						"wait 0.1 seconds",
+						"tractor moves right",
+						"tractor sets floor to default",
+						"wait 0.1 seconds",
+						"tractor moves right",
+						"tractor sets floor to default",
+						"wait 0.1 seconds",
+						"tractor moves right",
+						"tractor sets floor to default",
+						"wait 0.1 seconds",
+						"tractor moves right",
+						"wait 0.1 seconds",
+						"tractor moves right",
+						"wait 0.1 seconds",
+						"tractor moves right",
+						"wait 0.5 seconds",
+						"tractor image becomes items/tractor",
+						"player says It made a path.",
+						"tractor state becomes moved"
+					],
+					"tractor state is moved": "player says I hope I did not break it.",
+					"otherwise": "player says Hello, tractor. / How do I turn it on?"
+				},
+				"player meets farmer": {
+					"farmer state is moved": "farmer says Have a nice day!",
+					"otherwise": [
+						"farmer says Hello, robot! / I am a farmer.",
+						"player says Hello, farmer. / You have a nice tractor.",
+						"farmer says Thank you. / Would you like to borrow it?",
+						"player says Yes.",
+						"farmer says OK.  The key is down there.",
+						"farmer moves right",
+						"farmer state becomes moved"
+					]
+				}
+			}
+		},
+		{
+			"name": "Race",
+			"map": [
+				"               ",
+				"               ",
+				"    ........   ",
+				"   .........   ",
+				"   ..     +    ",
+				"   ..     >    ",
+				"   ..          ",
+				"   ..          ",
+				"   ..   t.     ",
+				"   ..    +     ",
+				"   ......f..@  ",
+				"    ....g..    ",
+				"               ",
+				"               ",
+				"               "
+			],
+			"legend": {
+				"f": "character:frog",
+				"g": "character:frog2",
+				"t": "item:trumpet"
+			},
+			"script": {
+				"player meets frog": {
+					"frog state is done": [
+						"frog says That was fun. / Now I need a nap."
+					],
+					"frog state is ready": [
+						"frog says We're ready for the trumpet!"
+					],
+					"otherwise": [
+						"frog says Let's have a race!",
+						"frog2 says Ribbit!",
+						"frog says Could you blow that trumpet for us?",
+						"frog moves left",
+						"frog state becomes ready"
+					]
+				},
+				"player meets frog2": "frog2 says Ribbit!",
+				"player meets trumpet": [
+					"player takes trumpet",
+					"player says Toot tooty toooot!",
+					"frog2 moves left left",
+					"frog moves left",
+					"wait 0.2 seconds",
+					"frog moves left left",
+					"frog2 moves left",
+					"wait 0.2 seconds",
+					"frog2 moves left",
+					"frog moves left left",
+					"wait 0.2 seconds",
+					"frog moves up up",
+					"frog2 moves up up",
+					"wait 0.2 seconds",
+					"frog2 moves up",
+					"frog moves up up",
+					"wait 0.2 seconds",
+					"frog2 moves up",
+					"frog moves up",
+					"wait 0.2 seconds",
+					"frog moves up",
+					"frog2 moves up up",
+					"wait 0.2 seconds",
+					"frog2 moves up up",
+					"frog moves up",
+					"wait 0.2 seconds",
+					"frog2 moves up",
+					"frog moves right",
+					"wait 0.2 seconds",
+					"frog moves right right",
+					"frog2 moves right right",
+					"wait 0.2 seconds",
+					"frog2 moves right right",
+					"frog moves right",
+					"wait 0.2 seconds",
+					"frog2 moves right",
+					"frog moves right",
+					"wait 0.2 seconds",
+					"frog moves right",
+					"frog2 moves right right",
+					"frog2 says Ribbit!",
+					"frog moves right right",
+					"frog state becomes done"
+				]
+			}
+		},
+		{
+			"name": "Picky goose",
+			"map": [
+				"      ...      ",
+				"      ...      ",
+				"      l..      ",
+				"       .       ",
+				"       .       ",
+				" ..b  ... @    ",
+				" ...  ..d .    ",
+				" ..........    ",
+				" ...  ... .    ",
+				" ...  ... g..  ",
+				"       .  .    ",
+				"       .  >    ",
+				"      ..a      ",
+				"      ...      ",
+				"      ...      "
+			],
+			"legend": {
+				"g": "character:goose",
+				"b": "item:bananas",
+				"a": "item:ball",
+				"d": "item:drum",
+				"l": "item:leaf"
+			},
+			"script": {
+				"player meets goose": {
+					"otherwise": {
+						"player is carrying bananas": [
+							"goose takes bananas",
+							"goose says I changed my mind. / I want something round.",
+							"player takes bananas",
+							"goose state becomes ball"
+						],
+						"otherwise": [
+							"goose says I'm hungry. / I would like something yellow."
+						]
+					},
+					"goose state is ball": {
+						"player is carrying ball": [
+							"goose takes ball",
+							"goose says That ball looks yummy. / But now I want something noisy.",
+							"player takes ball",
+							"goose state becomes drum"
+						],
+						"otherwise": [
+							"goose says I'm hungry. / I want something round."
+						]
+					},
+					"goose state is drum": {
+						"player is carrying drum": [
+							"goose takes drum",
+							"goose says That's a nice drum. / But now I want... / I don't know... / Something different.",
+							"player takes drum",
+							"goose state becomes leaf"
+						],
+						"otherwise": [
+							"goose says I'm hungry. / I want something noisy?"
+						]
+					},
+					"goose state is leaf": {
+						"player is carrying leaf": [
+							"goose takes leaf",
+							"goose says A leaf! / That's delicious!",
+							"goose moves right right",
+							"leaf is destroyed",
+							"goose state becomes moved"
+						],
+						"otherwise": [
+							"goose says Is there anything else?"
+						]
+					},
+					"goose state is moved": "goose says Thank you / It was so crunchy!"
+				}
+			}
+		},
+		{
+			"name": "Puddles",
+			"map": [
+				"               ",
+				" >  .......    ",
+				" .  ...m...    ",
+				" ...f......    ",
+				"  p .......    ",
+				"    .  ....    ",
+				"    .  ..w.    ",
+				"    .......    ",
+				"       .  .    ",
+				"       ....    ",
+				"       .  .    ",
+				"       ...@    ",
+				"               ",
+				"               ",
+				"               "
+			],
+			"legend": {
+				"f": "character:farmer",
+				"p": {
+					"thing": {
+						"id": "pig",
+						"image": "characters/pig",
+						"layer": 3
+					}
+				},
+				"m": "item:puddle-mud",
+				"w": "item:puddle-water"
+			},
+			"script": {
+				"player meets farmer": {
+					"pig state is muddy": {
+						"player state is muddy": "farmer says Now you're too muddy.",
+						"otherwise": [
+							"farmer says Much better. / Pigs should be muddy. / Robots should be clean.",
+							"farmer moves left down"
+						]
+					},
+					"otherwise": [
+						"farmer says Please help. / My pig is too clean.",
+						"farmer moves left left left",
+						"pig moves up right right",
+						"farmer moves right right"
+					]
+				},
+				"player meets pig": {
+					"pig state is muddy": "pig says Wee!",
+					"player is leading pig": "pig says Let's get muddy!",
+					"otherwise": [
+						"pig says You're still not a pickle, right?",
+						"player says Right.",
+						"pig says OK, I will follow you.",
+						"player leads pig"
+					]
+				},
+				"player meets puddle-water": [
+					"player moves toward puddle-water",
+					"player image becomes players/<player>",
+					"player state becomes clean"
+				],
+				"player meets puddle-mud": [
+					"player moves toward puddle-mud",
+					"player image becomes players/<player>-muddy",
+					"player state becomes muddy"
+				],
+				"pig is at puddle-mud": [
+					"pig state becomes muddy",
+					"pig image becomes characters/pig-muddy",
+					"pig says Yay, mud!",
+					"player stops leading"
+				]
+			}
+		}
+	]
+}

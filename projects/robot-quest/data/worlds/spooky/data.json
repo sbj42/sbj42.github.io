@@ -1,0 +1,139 @@
+{
+	"name": "Spooky",
+	"song": "clockwork",
+	"levels": [
+		{
+			"name": "Costumes",
+			"map": [
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"    ......>    ",
+				"   r.          ",
+				"    .......    ",
+				"          .p   ",
+				"    @......    ",
+				"               "
+			],
+			"legend": {
+				"p": "character:pig-rabbit",
+				"r": "character:rabbit-pig"
+			},
+			"script": {
+				"player meets pig-rabbit": [
+					"pig-rabbit says I'm dressed as a rabbit!",
+					"player says I can see that.",
+					"pig-rabbit says Hop! Hop!",
+					"pig-rabbit bumps up up up"
+				],
+				"player meets rabbit-pig": [
+					"rabbit-pig says Guess what I am!",
+					"player says A pig?",
+					"rabbit-pig says That's right! / Oink!",
+					"player says Is there going to be candy?",
+					"rabbit-pig says I hope so.  Yum."
+				]
+			}
+		},
+		{
+			"name": "Ghosts!",
+			"map": [
+				"               ",
+				"     >         ",
+				"     .         ",
+				"    ..         ",
+				"    .5.b       ",
+				"    ..4        ",
+				"    3..        ",
+				"   a.2.        ",
+				"    1..        ",
+				"    ......@    ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               "
+			],
+			"legend": {
+				"a": {
+					"things": [
+						"character:sheep-blue-ghost",
+						{
+							"id": "box1",
+							"image": "items/box",
+							"layer": 3
+						}
+					]
+				},
+				"b": {
+					"things": [
+						"character:sheep-orange-ghost",
+						{
+							"id": "box2",
+							"image": "items/box",
+							"layer": 3
+						}
+					]
+				},
+				"1": "trigger:1",
+				"2": "trigger:2",
+				"3": "trigger:3",
+				"4": "trigger:4",
+				"5": "trigger:5"
+			},
+			"script": {
+				"player meets 1": [
+					"player moves toward 1",
+					"sheep-blue-ghost moves right",
+					"sheep-blue-ghost says Boo!",
+					"player says Eek!",
+					"player moves down",
+					"sheep-blue-ghost says Hee hee!",
+					"sheep-blue-ghost moves left"
+				],
+				"player meets 2": [
+					"player moves toward 2",
+					"sheep-blue-ghost moves right",
+					"sheep-blue-ghost says Boo!",
+					"player says Eek!",
+					"player moves right",
+					"sheep-blue-ghost says Hee hee!",
+					"sheep-blue-ghost moves left"
+				],
+				"player meets 3": [
+					"player moves toward 3",
+					"sheep-blue-ghost moves right",
+					"sheep-blue-ghost says Boo!",
+					"player says Eek!",
+					"player moves up",
+					"sheep-blue-ghost says Hee hee!",
+					"sheep-blue-ghost moves left"
+				],
+				"player meets 4": [
+					"player moves toward 4",
+					"sheep-orange-ghost moves left",
+					"sheep-orange-ghost says Boo!",
+					"player says Eek!",
+					"player moves down",
+					"sheep-orange-ghost says Hee hee!",
+					"sheep-orange-ghost moves right"
+				],
+				"player meets 5": [
+					"player moves toward 5",
+					"sheep-orange-ghost moves left",
+					"sheep-orange-ghost says Boo!",
+					"player says Eek!",
+					"player moves left",
+					"sheep-orange-ghost says Hee hee!",
+					"sheep-orange-ghost moves right"
+				]
+			}
+		}
+	]
+}

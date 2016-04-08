@@ -1,0 +1,696 @@
+{
+	"name": "Winter",
+	"song": "clockwork",
+	"levels": [
+		{
+			"name": "It's cold",
+			"map": [
+				"               ",
+				"               ",
+				"               ",
+				"   @..i__..>   ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               "
+			],
+			"legend": {
+				"i": {
+					"floor": "ice",
+					"thing": "trigger:cold"
+				}
+			},
+			"script": {
+				"player meets cold": [
+					"player says That looks slippery.",
+					"cold is destroyed",
+					"player walks right"
+				]
+			}
+		},
+		{
+			"name": "Ice skating",
+			"map": [
+				"               ",
+				"               ",
+				"               ",
+				"      >    @.  ",
+				"      .    ..  ",
+				"   ....    __  ",
+				"   ..___   __  ",
+				"   ...____ __  ",
+				"    ..____ __  ",
+				"       ___ __  ",
+				"        _____  ",
+				"        _____  ",
+				"               ",
+				"               ",
+				"               "
+			]
+		},
+		{
+			"name": "Chase",
+			"map": [
+				"               ",
+				"         >...  ",
+				"           ..  ",
+				"      @     .  ",
+				"      .     .  ",
+				"      p     .  ",
+				".4.   .     .  ",
+				". . ..1   ..9  ",
+				". 3 . . ... .  ",
+				". ..2.. _ _ _  ",
+				"5       . ...  ",
+				".6__    ...    ",
+				"  ___   8      ",
+				"   __.7..      ",
+				"               "
+			],
+			"legend": {
+				"p": "character:pig",
+				"1": "trigger:1",
+				"2": "trigger:2",
+				"3": "trigger:3",
+				"4": "trigger:4",
+				"5": "trigger:5",
+				"6": "trigger:6",
+				"7": "trigger:7",
+				"8": "trigger:8",
+				"9": "trigger:9"
+			},
+			"script": {
+				"player meets pig": {
+					"pig state is tired": [
+						"pig says You got me! / Now I need to rest.",
+						"pig moves left",
+						"pig state becomes moved"
+					],
+					"pig state is moved": [
+						"player says I'm not really a pickle.",
+						"pig says I know that, silly."
+					],
+					"otherwise": [
+						"pig says Let's play a game. / Pretend you're a pickle, / and I'll run away from you.",
+						"player says Ok, I'm a pickle.",
+						"pig says Eek!",
+						"pig moves down down down",
+						"pig state becomes 1"
+					]
+				},
+				"player meets 1": [
+					"player moves toward 1",
+					"pig moves down left left left",
+					"1 is destroyed"
+				],
+				"player meets 2": [
+					"player moves toward 2",
+					"pig says Yikes!",
+					"pig moves left up up up",
+					"2 is destroyed"
+				],
+				"player meets 3": [
+					"player moves toward 3",
+					"pig moves left left down down",
+					"3 is destroyed"
+				],
+				"player meets 4": [
+					"player moves toward 4",
+					"pig moves down down down",
+					"4 is destroyed"
+				],
+				"player meets 5": [
+					"player moves toward 5",
+					"pig says Oh no, Pickle!",
+					"pig moves right right right",
+					"pig bumps right",
+					"5 is destroyed"
+				],
+				"player meets 6": [
+					"player moves toward 6",
+					"pig moves down down",
+					"pig bumps down",
+					"pig moves right right right right",
+					"6 is destroyed"
+				],
+				"player meets 7": [
+					"player moves toward 7",
+					"pig says Hee hee!",
+					"pig moves right up up right right",
+					"7 is destroyed"
+				],
+				"player meets 8": [
+					"player moves toward 8",
+					"pig moves up up up up right right up up",
+					"8 is destroyed"
+				],
+				"player meets 9": [
+					"player moves toward 9",
+					"pig says Can you catch me?",
+					"pig moves up up up",
+					"9 is destroyed",
+					"pig state becomes tired"
+				]
+			}
+		},
+		{
+			"name": "Snowman",
+			"map": [
+				"           .   ",
+				"         @.a>  ",
+				"          .p   ",
+				"          .    ",
+				"        b..    ",
+				"      ......   ",
+				"      ______   ",
+				"     _______   ",
+				"     _______   ",
+				"    ._______.  ",
+				"    .... ....  ",
+				"    d..   ..c  ",
+				"    ..e   ...  ",
+				"               ",
+				"               "
+			],
+			"legend": {
+				"p": "character:monkey",
+				"a": {
+					"thing": {
+						"id": "snowman",
+						"image": "items/snowman-bottom"
+					}
+				},
+				"b": "item:snowman-middle",
+				"c": "item:snowman-top",
+				"d": "item:carrot",
+				"e": "item:snowman-coals"
+			},
+			"script": {
+				"player meets monkey": {
+					"otherwise": [
+						"monkey says Do you want to build a snowman?",
+						"player says Yes, please.",
+						"monkey says I already made the bottom. / Find the rest."
+					],
+					"snowman state is complete": "monkey says Good job!"
+				},
+				"player meets snowman": {
+					"player is carrying snowman-middle": [
+						"snowman takes snowman-middle",
+						"snowman-middle is destroyed",
+						"snowman image becomes items/snowman-1",
+						"snowman state becomes 1"
+					],
+					"snowman state is 1": {
+						"player is carrying snowman-top": [
+							"snowman takes snowman-top",
+							"snowman-top is destroyed",
+							"snowman image becomes items/snowman-2",
+							"snowman state becomes 2"
+						]
+					},
+					"snowman state is 2": {
+						"player is carrying carrot": [
+							"snowman takes carrot",
+							"carrot is destroyed",
+							"snowman image becomes items/snowman-3-carrot",
+							"snowman state becomes 3"
+						],
+						"player is carrying snowman-coals": [
+							"snowman takes snowman-coals",
+							"snowman-coals is destroyed",
+							"snowman image becomes items/snowman-3-coals",
+							"snowman state becomes 3"
+						]
+					},
+					"snowman state is 3": {
+						"player is carrying carrot": [
+							"snowman takes carrot",
+							"carrot is destroyed",
+							"snowman image becomes characters/snowman",
+							"snowman state becomes complete",
+							"snowman says Thank you!",
+							"snowman moves up"
+						],
+						"player is carrying snowman-coals": [
+							"snowman takes snowman-coals",
+							"snowman-coals is destroyed",
+							"snowman image becomes characters/snowman",
+							"snowman state becomes complete",
+							"snowman says Thank you!",
+							"snowman moves up"
+						]
+					},
+					"snowman state is complete": "snowman says I like this weather!"
+				}
+			}
+		},
+		{
+			"name": "Hot cocoa",
+			"map": [
+				"               ",
+				"       .    @  ",
+				"   >.r.x.   .  ",
+				"     .  f.  _  ",
+				"       ..   _  ",
+				"       ._____. ",
+				"        _   .. ",
+				"        _      ",
+				"        _      ",
+				"        _      ",
+				"       ...     ",
+				"  321.c...     ",
+				"      ....     ",
+				"               ",
+				"               "
+			],
+			"legend": {
+				"c": "character:chef",
+				"f": "character:frog-frozen",
+				"x": "character:fox-frozen",
+				"r": "character:rabbit-frozen",
+				"1": {
+					"thing": {
+						"id": "cocoa1",
+						"image": "items/cocoa"
+					}
+				},
+				"2": {
+					"thing": {
+						"id": "cocoa2",
+						"image": "items/cocoa"
+					}
+				},
+				"3": {
+					"thing": {
+						"id": "cocoa3",
+						"image": "items/cocoa"
+					}
+				}
+			},
+			"script": {
+				"player meets cocoa1": "player takes cocoa1",
+				"player meets cocoa2": "player takes cocoa2",
+				"player meets cocoa3": "player takes cocoa3",
+				"player meets chef": {
+					"chef state is moved": [
+						"chef says I wonder what else I can make."
+					],
+					"otherwise": [
+						"chef says Hi, I'm a chef.",
+						"player says Hello, chef.",
+						"chef says I made too much hot cocoa. / Maybe someone else will drink it.",
+						"chef moves down",
+						"chef state becomes moved"
+					]
+				},
+				"player meets frog-frozen": {
+					"frog-frozen state is thawed": [
+						"frog-frozen says I feel much better!"
+					],
+					"otherwise": {
+						"player is carrying cocoa1": [
+							"frog-frozen takes cocoa1",
+							"wait 0.5 seconds",
+							"frog-frozen state becomes thawed",
+							"frog-frozen image becomes characters/frog",
+							"cocoa1 is destroyed",
+							"frog-frozen says Yum! / That hit the spot.",
+							"frog-frozen moves right"
+						],
+						"player is carrying cocoa2": [
+							"frog-frozen takes cocoa2",
+							"wait 0.5 seconds",
+							"frog-frozen state becomes thawed",
+							"frog-frozen image becomes characters/frog",
+							"cocoa2 is destroyed",
+							"frog-frozen says Yum! / That hit the spot.",
+							"frog-frozen moves right"
+						],
+						"player is carrying cocoa3": [
+							"frog-frozen takes cocoa3",
+							"wait 0.5 seconds",
+							"frog-frozen state becomes thawed",
+							"frog-frozen image becomes characters/frog",
+							"cocoa3 is destroyed",
+							"frog-frozen says Yum! / That hit the spot.",
+							"frog-frozen moves right"
+						],
+						"otherwise": [
+							"frog-frozen says Brrr",
+							"player says You are too cold."
+						]
+					}
+				},
+				"player meets fox-frozen": {
+					"fox-frozen state is thawed": [
+						"fox-frozen says Fraka-kaka-kaka-kaka-kow!"
+					],
+					"otherwise": {
+						"player is carrying cocoa1": [
+							"fox-frozen takes cocoa1",
+							"wait 0.5 seconds",
+							"fox-frozen state becomes thawed",
+							"fox-frozen image becomes characters/fox",
+							"cocoa1 is destroyed",
+							"fox-frozen says Ahhhh.",
+							"fox-frozen moves up"
+						],
+						"player is carrying cocoa2": [
+							"fox-frozen takes cocoa2",
+							"wait 0.5 seconds",
+							"fox-frozen state becomes thawed",
+							"fox-frozen image becomes characters/fox",
+							"cocoa2 is destroyed",
+							"fox-frozen says Ahhhh.",
+							"fox-frozen moves up"
+						],
+						"player is carrying cocoa3": [
+							"fox-frozen takes cocoa3",
+							"wait 0.5 seconds",
+							"fox-frozen state becomes thawed",
+							"fox-frozen image becomes characters/fox",
+							"cocoa3 is destroyed",
+							"fox-frozen says Ahhhh.",
+							"fox-frozen moves up"
+						],
+						"otherwise": [
+							"fox-frozen says F-f-f-fraka",
+							"player says You need hot cocoa, too."
+						]
+					}
+				},
+				"player meets rabbit-frozen": {
+					"rabbit-frozen state is thawed": [
+						"rabbit-frozen says Time to hop!",
+						"rabbit-frozen bumps up",
+						"rabbit-frozen bumps up",
+						"rabbit-frozen bumps up"
+					],
+					"otherwise": {
+						"player is carrying cocoa1": [
+							"rabbit-frozen takes cocoa1",
+							"wait 0.5 seconds",
+							"rabbit-frozen state becomes thawed",
+							"rabbit-frozen image becomes characters/rabbit",
+							"cocoa1 is destroyed",
+							"rabbit-frozen says That was great!",
+							"rabbit-frozen moves down"
+						],
+						"player is carrying cocoa2": [
+							"rabbit-frozen takes cocoa2",
+							"wait 0.5 seconds",
+							"rabbit-frozen state becomes thawed",
+							"rabbit-frozen image becomes characters/rabbit",
+							"cocoa2 is destroyed",
+							"rabbit-frozen says That was great!",
+							"rabbit-frozen moves down"
+						],
+						"player is carrying cocoa3": [
+							"rabbit-frozen takes cocoa3",
+							"wait 0.5 seconds",
+							"rabbit-frozen state becomes thawed",
+							"rabbit-frozen image becomes characters/rabbit",
+							"cocoa3 is destroyed",
+							"rabbit-frozen says That was great!",
+							"rabbit-frozen moves down"
+						],
+						"otherwise": [
+							"rabbit-frozen says ...",
+							"player says Another hot cocoa coming up."
+						]
+					}
+				}
+			}
+		},
+		{
+			"name": "Trophy",
+			"map": [
+				"               ",
+				"        .      ",
+				"   @...g..>    ",
+				"       .       ",
+				"       .       ",
+				"      ._.      ",
+				"      .__.t    ",
+				"       ..      ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               "
+			],
+			"legend": {
+				"g": "character:goose",
+				"t": "item:trophy"
+			},
+			"script": {
+				"player meets goose": {
+					"player is carrying trophy": [
+						"goose takes trophy",
+						"goose says Thank you! / What an honor.",
+						"goose moves up",
+						"goose state becomes moved"
+					],
+					"goose state is waiting": [
+						"goose says The robot word for trophy is gobble.",
+						"player says No it is not."
+					],
+					"goose state is moved": [
+						"player says Congratulations.",
+						"goose says I'd also like to thank the monkey / and my hat Wilbur, / and potatoes."
+					],
+					"otherwise": [
+						"goose says Did you know I can talk like a robot?",
+						"player says No.",
+						"goose says Blorp quack zip smash!",
+						"player says That is not how robots talk.",
+						"goose says Shh.  I'm not finished. / Freep frap cheese woof!",
+						"player says ...",
+						"goose says Pretty good, right?",
+						"player says Not really.",
+						"goose says I think I should win a trophy.",
+						"player says I will see what I can do.",
+						"goose moves right",
+						"goose state becomes waiting"
+					]
+				}
+			}
+		},
+		{
+			"name": "Ice maze",
+			"map": [
+				"               ",
+				"               ",
+				"        ..@    ",
+				"        a      ",
+				"    .....____  ",
+				"    . _   . _  ",
+				"   p.___...._  ",
+				"    . _ . _ _  ",
+				"    .....___.  ",
+				"    _   . _    ",
+				"  >._______..  ",
+				"    _   . . _  ",
+				"    ..... .__  ",
+				"          d    ",
+				"               "
+			],
+			"legend": {
+				"a": "trigger:a",
+				"p": "character:puppy",
+				"d": "character:dog"
+			},
+			"script": {
+				"player meets a": [
+					"player moves toward a",
+					"player says This looks tricky.",
+					"a is destroyed"
+				],
+				"player meets exit": [
+					"player says I did it!",
+					"player moves toward exit",
+					"next level"
+				],
+				"player meets dog": "dog says You're almost there.",
+				"player meets puppy": [
+					"puppy says You can do it! / Woof woof!",
+					"player says I hope so."
+				]
+			}
+		},
+		{
+			"name": "Rocks",
+			"map": [
+				"               ",
+				"               ",
+				"               ",
+				"      ........ ",
+				"      .   ____ ",
+				"    ____  ____ ",
+				"    ____  ____ ",
+				"    _b__  _d__ ",
+				"    ___c  ___f ",
+				"    a___  ____ ",
+				"  @ ____  e___ ",
+				"  . ____   .   ",
+				"  ......   .   ",
+				"   r       >   ",
+				"               "
+			],
+			"legend": {
+				"a": {
+					"floor": "ice",
+					"thing": {
+						"id": "rock1",
+						"image": "items/rock1"
+					}
+				},
+				"b": {
+					"floor": "ice",
+					"thing": {
+						"id": "rock23",
+						"image": "items/rock2"
+					}
+				},
+				"c": {
+					"floor": "ice",
+					"thing": {
+						"id": "rock3",
+						"image": "items/rock3"
+					}
+				},
+				"d": {
+					"floor": "ice",
+					"thing": {
+						"id": "rock4",
+						"image": "items/rock1"
+					}
+				},
+				"e": {
+					"floor": "ice",
+					"thing": {
+						"id": "rock5",
+						"image": "items/rock2"
+					}
+				},
+				"f": {
+					"floor": "ice",
+					"thing": {
+						"id": "rock6",
+						"image": "items/rock3"
+					}
+				},
+				"r": "character:rabbit"
+			},
+			"script": {
+				"player meets rabbit": [
+					"rabbit says Watch out for the rocks."
+				]
+			}
+		},
+		{
+			"name": "Snowflake",
+			"map": [
+				"               ",
+				"   S       T   ",
+				"   ...Y K...   ",
+				"  J..     ..O  ",
+				"    ..   ..    ",
+				" U   .. ..   . ",
+				" .    ...    . ",
+				"F............s>",
+				" .    ...    . ",
+				" N   .. ..   . ",
+				"    ..   ..    ",
+				"  E..     ..A  ",
+				"   ...W P...   ",
+				"   L       @   ",
+				"               "
+			],
+			"legend": {
+				"s": "character:snowman",
+				"S": "item:letter-s",
+				"N": "item:letter-n",
+				"O": "item:letter-o",
+				"W": "item:letter-w",
+				"J": "item:letter-j",
+				"K": "item:letter-k",
+				"L": "item:letter-l",
+				"U": "item:letter-u",
+				"A": "item:letter-a",
+				"T": "item:letter-t",
+				"F": "item:letter-f",
+				"Y": "item:letter-y",
+				"E": "item:letter-e",
+				"P": "item:letter-p"
+			},
+			"script": {
+				"player meets snowman": {
+					"snowman state is S": {
+						"player is carrying letter-s": [
+							"snowman takes letter-s",
+							"snowman says S! / That's the first letter.",
+							"letter-s is destroyed",
+							"snowman state becomes N"
+						],
+						"player is carrying nothing": "snowman says Please bring me the letters for SNOW / in the right order.",
+						"otherwise": "snowman says No, that's not the first letter in SNOW."
+					},
+					"snowman state is N": {
+						"player is carrying letter-n": [
+							"snowman takes letter-n",
+							"snowman says N! / That's the second letter.",
+							"letter-n is destroyed",
+							"snowman state becomes O"
+						],
+						"player is carrying nothing": "snowman says Next, the second letter in SNOW. / If you can find it.",
+						"otherwise": "snowman says No, that's not the second letter in SNOW."
+					},
+					"snowman state is O": {
+						"player is carrying letter-o": [
+							"snowman takes letter-o",
+							"snowman says O! / That's the third letter.",
+							"letter-o is destroyed",
+							"snowman state becomes W"
+						],
+						"player is carrying nothing": "snowman says Next, the third letter in SNOW. / If you can find it.",
+						"otherwise": "snowman says No, that's not the third letter in SNOW."
+					},
+					"snowman state is W": {
+						"player is carrying letter-w": [
+							"snowman takes letter-w",
+							"snowman says W! / That's the last letter. / Good job, robot.",
+							"letter-w is destroyed",
+							"player says Thank you, snowman.",
+							"snowman moves up up",
+							"snowman state becomes moved"
+						],
+						"player is carrying nothing": "snowman says Next, the last letter in SNOW.",
+						"otherwise": "snowman says No, that's not the last letter in SNOW."
+					},
+					"snowman state is moved": {
+						"player is carrying nothing": "snowman says With enough letters / we could spell ANYTHING!",
+						"otherwise": "snowman says No thanks. / I don't need any more letters."
+					},
+					"otherwise": [
+						"snowman says I have a mission for you.",
+						"player says I love missions!",
+						"snowman says Great. / I want to spell SNOW. / Please bring me the letters for SNOW / in the right order.",
+						"player says I can do it.",
+						"snowman state becomes S"
+					]
+				}
+			}
+		}
+	]
+}

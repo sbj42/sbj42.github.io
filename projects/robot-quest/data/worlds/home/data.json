@@ -1,0 +1,451 @@
+{
+	"name": "Home",
+	"song": "processing",
+	"levels": [
+		{
+			"name": "Go right",
+			"map": [
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"     @...>     ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               "
+			],
+			"script": {
+				"start": "player says I see a door!"
+			}
+		},
+		{
+			"name": "A choice?",
+			"map": [
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"       a       ",
+				"       .       ",
+				"       ..@     ",
+				"       .       ",
+				"       >       ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               "
+			],
+			"legend": {
+				"a": "item:apple"
+			},
+			"script": {
+				"start": "player says A door or an apple. / Or both!",
+				"player meets apple": [
+					"player takes apple",
+					"apple is destroyed",
+					"player says Yum!"
+				]
+			}
+		},
+		{
+			"name": "Rooms",
+			"map": [
+				"               ",
+				"               ",
+				"          ..>  ",
+				"   .....  ...  ",
+				"   .....  ...  ",
+				"   ..........  ",
+				"   .....  ...  ",
+				"    .          ",
+				"    .          ",
+				"   ....@       ",
+				"   .....       ",
+				"   .....       ",
+				"   .....       ",
+				"               ",
+				"               "
+			],
+			"script": {
+				"start": "player says Is this house empty?"
+			}
+		},
+		{
+			"name": "Friends",
+			"map": [
+				"               ",
+				"               ",
+				"            @  ",
+				"            .  ",
+				"          .....",
+				"          f...p",
+				"          .....",
+				"             . ",
+				"             . ",
+				"             . ",
+				"             . ",
+				"            .s ",
+				"             . ",
+				"             > ",
+				"               "
+			],
+			"legend": {
+				"f": "character:fox",
+				"p": "character:pig",
+				"s": "character:snake"
+			},
+			"script": {
+				"start": "player says Look, animals! / I should say hello.",
+				"player meets fox": [
+					"player says Hello, fox!",
+					"fox says Ring-ding-ding-ding-dingeringeding!",
+					"player says Oh."
+				],
+				"player meets pig": [
+					"pig says Hi!  Are you a pickle?",
+					"player says No, I am a robot.",
+					"pig says Good, I do not like pickles."
+				],
+				"player meets snake": {
+					"snake state is default": [
+						"player says Excuse me, snake.",
+						"snake says Yessss?",
+						"player says Would you please move?",
+						"snake says Yessss.",
+						"snake moves left",
+						"snake state becomes moved"
+					],
+					"snake state is moved": [
+						"player says Thank you, snake.",
+						"snake says Yessss."
+					]
+				}
+			}
+		},
+		{
+			"name": "Stairs",
+			"map": [
+				"               ",
+				" >             ",
+				" .             ",
+				" ...           ",
+				"   .           ",
+				"   ...         ",
+				"     .         ",
+				"     ...       ",
+				"       .       ",
+				"       ...     ",
+				"         .     ",
+				"         ...   ",
+				"           .   ",
+				"           ..@ ",
+				"               "
+			],
+			"script": {
+				"start": "player says This looks like stairs."
+			}
+		},
+		{
+			"name": "Fetch",
+			"map": [
+				"               ",
+				" @........     ",
+				"     .....     ",
+				"    .......    ",
+				"    .  .  .    ",
+				"    .  m. .    ",
+				"    .  .  .    ",
+				"    .s > c.    ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               "
+			],
+			"legend": {
+				"m": "character:monkey",
+				"s": "item:stick",
+				"c": "item:cheese"
+			},
+			"script": {
+				"player meets monkey": {
+					"player is carrying stick": [
+						"monkey takes stick",
+						"monkey says Ooh Ooh!",
+						"player says ...",
+						"monkey says That means thank you!",
+						"player says Of course.",
+						"monkey moves right",
+						"monkey state becomes moved"
+					],
+					"monkey state is moved": [
+						"monkey says Ooh AAH!",
+						"player says ...",
+						"monkey says That means yay! / I love this stick!",
+						"player says Oh."
+					],
+					"otherwise": {
+						"player is carrying cheese": [
+							"monkey says AAH AAH Ooh!",
+							"player says ...",
+							"monkey says That means yuck! / I do not want cheese! / I want a stick. / Please."
+						],
+						"otherwise": [
+							"monkey says Ooh AAH Ooh Ooh!",
+							"player says ...",
+							"monkey says That means I want a stick. / Please.",
+							"player says Oh."
+						]
+					}
+				}
+			}
+		},
+		{
+			"name": "Dizzy",
+			"map": [
+				"               ",
+				" ............c ",
+				" .           . ",
+				" . ......... . ",
+				" . .       . . ",
+				" . . ..... . . ",
+				" . . .   . . . ",
+				" . . ..@ . . . ",
+				" . .     . . . ",
+				" . ....... . . ",
+				" .         . . ",
+				" b.........a . ",
+				"             . ",
+				" >...........d ",
+				"               "
+			],
+			"legend": {
+				"a": "trigger:a",
+				"b": "trigger:b",
+				"c": "trigger:c",
+				"d": "trigger:d"
+			},
+			"script": {
+				"start": "player says A spiral? / That's weird.",
+				"player meets a": [
+					"player moves toward a",
+					"player says Round and round.",
+					"a is destroyed"
+				],
+				"player meets b": [
+					"player moves toward b",
+					"player image becomes players/<player>-dizzy",
+					"player says Now I am dizzy!",
+					"b is destroyed"
+				],
+				"player meets c": [
+					"player moves toward c",
+					"player says So dizzy!",
+					"c is destroyed"
+				],
+				"player meets d": [
+					"player moves toward d",
+					"player says I am almost there.",
+					"d is destroyed"
+				],
+				"player meets exit": [
+					"player image becomes players/<player>",
+					"player says Whew!",
+					"player moves toward exit",
+					"next level"
+				]
+			}
+		},
+		{
+			"name": "Helping out",
+			"map": [
+				"               ",
+				"               ",
+				"               ",
+				" .....  ...    ",
+				" .....  .>.    ",
+				" h....  ...    ",
+				" .....   .  .  ",
+				" ...c.   s...  ",
+				"  .      .     ",
+				"  p... f g.... ",
+				"  .  . . .   . ",
+				" ...   ..... . ",
+				" ........... . ",
+				" @..   ..... . ",
+				"               "
+			],
+			"legend": {
+				"f": "item:flower",
+				"c": "item:carrot",
+				"h": "item:cowboy-hat",
+				"p": "character:pig",
+				"s": "character:snake",
+				"g": "character:goose"
+			},
+			"script": {
+				"player meets pig": {
+					"player is carrying flower": [
+						"player says Here you go.",
+						"pig takes flower",
+						"pig says Oh! A flower!",
+						"pig moves right right right down",
+						"flower is destroyed",
+						"pig says Yummy!",
+						"pig state becomes moved"
+					],
+					"pig state is moved": [
+						"pig says Are you a pickle now?",
+						"player says No, I am still a robot.",
+						"pig says OK, thanks for the flower."
+					],
+					"otherwise": [
+						"pig says Hi!  Are you a pickle?",
+						"player says No, I am still a robot.",
+						"pig says Good.  Can you give me a flower? / I would like to eat it."
+					]
+				},
+				"player meets goose": {
+					"player is carrying cowboy-hat": [
+						"goose takes cowboy-hat",
+						"goose says Is this a shoe?",
+						"player says No, it is a hat.",
+						"goose says Good, I will put it on my feet. ",
+						"player says You are silly.",
+						"goose moves right right right",
+						"goose state becomes moved1"
+					],
+					"goose state is moved1": [
+						"goose says Something is following me.",
+						"player says I am.",
+						"goose says No, I think it is the hat.",
+						"goose moves right down down down down",
+						"goose state becomes moved2"
+					],
+					"goose state is moved2": [
+						"goose says This hat is named Wilbur.",
+						"player says How do you know?",
+						"goose says All hats are named Wilbur.",
+						"player says Oh."
+					],
+					"otherwise": [
+						"goose says Can I wear a hat on my feet?",
+						"player says I do not think so.",
+						"goose says I will try."
+					]
+				},
+				"player meets snake": {
+					"player is carrying carrot": [
+						"player says Here is the carrot.",
+						"snake takes carrot",
+						"snake says Yes! / I mean, yessss.",
+						"snake moves right right right up",
+						"carrot is destroyed",
+						"snake state becomes moved"
+					],
+					"snake state is moved": [
+						"player says Did you enjoy your carrot?",
+						"snake says Yessss."
+					],
+					"otherwise": [
+						"player says I think you want the carrot.",
+						"snake says Yessss.",
+						"player says Are you going to eat it?",
+						"snake says Yessss."
+					]
+				}
+			}
+		},
+		{
+			"name": "What a mess!",
+			"map": [
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"    t....@     ",
+				"  . ...m..     ",
+				" >d.......     ",
+				"    ..p...     ",
+				"    .....a     ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               ",
+				"               "
+			],
+			"legend": {
+				"a": "item:apple-core",
+				"p": "item:pencil-broken",
+				"m": "item:milk-empty",
+				"t": "item:trash-can",
+				"d": "character:dog"
+			},
+			"script": {
+				"player meets dog": {
+					"player is carrying apple-core": [
+						"dog takes apple-core",
+						"dog says No, thank you. / The trash can is over there.",
+						"player takes apple-core"
+					],
+					"player is carrying pencil-broken": [
+						"dog takes pencil-broken",
+						"dog says No, thank you. / The trash can is over there.",
+						"player takes pencil-broken"
+					],
+					"player is carrying milk-empty": [
+						"dog takes milk-empty",
+						"dog says No, thank you. / The trash can is over there.",
+						"player takes milk-empty"
+					],
+					"variable trashed equals 3": [
+						"dog says That is much better! / Thank you.",
+						"dog moves up",
+						"increment variable trashed"
+					],
+					"variable trashed equals 4": [
+						"dog says That is much better! / Thank you."
+					],
+					"otherwise": [
+						"dog says This room is a mess! / Would you please clean it up?"
+					]
+				},
+				"player meets trash-can": {
+					"player is carrying apple-core": [
+						"player says Goodbye, apple core!",
+						"trash-can takes apple-core",
+						"apple-core is destroyed",
+						"increment variable trashed"
+					],
+					"player is carrying pencil-broken": [
+						"player says Goodbye, broken pencil!",
+						"trash-can takes pencil-broken",
+						"pencil-broken is destroyed",
+						"increment variable trashed"
+					],
+					"player is carrying milk-empty": [
+						"player says Goodbye, empty milk box!",
+						"trash-can takes milk-empty",
+						"milk-empty is destroyed",
+						"increment variable trashed"
+					],
+					"otherwise": [
+						"player says Hello, trash can."
+					]
+				}
+			}
+		}
+	]
+}
