@@ -1,0 +1,178 @@
+html, body { overflow: hidden; }
+body { background: #297f9b; }
+html, body, input {
+    font-family: 'Comfortaa', sans;
+    font-size: 35px;
+    color: #fff;
+}
+table {
+    border-collapse: collapse;
+}
+
+#title {
+    text-align: center;
+    font-size: 45px;
+    margin-top: 200px;
+    opacity: 1;
+}
+
+#progress {
+    position: absolute;
+    top: 10px;
+    right: -150px;
+    opacity: 0;
+    display: none;
+}
+
+#logo1, #logo2 {
+    position: absolute;
+    display: none;
+}
+
+#timer {
+    position: absolute;
+    top: 60px;
+    opacity: 0;
+    display: none;
+}
+#timerarc {
+    fill: none;
+    stroke-width: 4px;
+    stroke-linecap: round;
+}
+#timerpts {
+    text-anchor: middle;
+    alignment-baseline: central;
+    font-size: 25px;
+}
+
+#inputbox {
+    position: absolute;
+    right: -300px;
+    top: 110px;
+    display: none;
+    opacity: 0;
+}
+#input {
+    padding: 4px 0px;
+    background: transparent;
+    color: inherit;
+    border: none;
+    outline: none;
+    border-bottom: 2px solid #fff;
+}
+#attempts {
+    overflow: hidden;
+    margin: 0px 0px 0px auto;
+    opacity: 0.5;
+}
+
+#begin, #next {
+    position: absolute;
+    top: 110px;
+    right: -150px;
+    display: none;
+    opacity: 0;
+}
+#skip, #again {
+    position: absolute;
+    bottom: 50px;
+    display: none;
+    opacity: 0;
+}
+
+#answerbox {
+    position: absolute;
+    bottom: 50px;
+    right: -300px;
+    display: none;
+}
+#answerbox a {
+    color: inherit;
+}
+
+#starttimer {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    display: none;
+    text-align: center;
+    font-size: 150px;
+}
+
+#scorebox {
+    position: absolute;
+    top: 200px;
+    left: -300px;
+    display: none;
+    opacity: 0;
+}
+#score {
+    color: #FF9421;
+}
+#scoreline {
+    margin-bottom: 15px;
+}
+.bdn {
+    text-align: center;
+    padding-left: 20px;
+}
+.pts {
+    text-align: left;
+    border-right: 1px solid #bbb;
+    padding-right: 10px;
+}
+.bdy {
+    padding-left: 10px;
+}
+.bdx {
+    display: inline-block;
+    width: 10px;
+    height: 25px;
+    border-radius: 5px;
+    margin: 0px 2px;
+    background: #FF9421;
+}
+
+#catbox {
+    position: absolute;
+    top: 200px;
+    right: -300px;
+    display: none;
+    opacity: 0;
+}
+#catline {
+    margin-bottom: 15px;
+}
+.cat {
+    padding-left: 20px;
+    text-align: left;
+    border-right: 1px solid #bbb;
+    padding-right: 10px;
+}
+.cpts {
+    padding-left: 10px;
+    padding-right: 10px;
+    text-align: right;
+}
+
+#credit {
+    position: absolute;
+    bottom: 50px;
+    left: -300px;
+    display: none;
+    opacity: 0;
+}
+#credit a {
+    color: inherit;
+    opacity: 0.5;
+    font-size: 20px;
+}
+#explain {
+    position: absolute;
+    bottom: 50px;
+    left: -300px;
+    display: none;
+    opacity: 0;
+    font-size: 25px;
+}

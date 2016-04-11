@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg viewBox="0 0 316 316" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#">
+<metadata>
+<rdf:RDF>
+<cc:Work rdf:about="">
+<dc:format>image/svg+xml</dc:format>
+<dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+</cc:Work>
+</rdf:RDF>
+</metadata>
+<defs>
+<linearGradient id="c" y1="91.328" y2="303.48" x2="158.94" gradientUnits="userSpaceOnUse" x1="158.94">
+<stop offset="0"/>
+<stop offset="1" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="b" y1="26.32" y2="131.94" x2="166.2" gradientUnits="userSpaceOnUse" x1="70.673">
+<stop stop-color="#999" offset="0"/>
+<stop stop-color="#999" offset="1" stop-opacity="0"/>
+</linearGradient>
+<radialGradient id="a" r="158" cx="259.42" gradientTransform="matrix(.73337 2.0204 -1.7843 .64769 405.72 -394.74)" cy="201.75" gradientUnits="userSpaceOnUse">
+<stop stop-color="#cc9b00" offset="0"/>
+<stop offset="1"/>
+</radialGradient>
+</defs>
+<path fill="url(#a)" d="m316 157.7c0 87.09-70.74 157.69-158 157.69-87.261 0-158-70.6-158-157.69 0.0000010954-87.097 70.739-157.7 158-157.7 87.26 0.000010337 158 70.603 158 157.7z" fill-rule="evenodd"/>
+<g>
+<path fill="url(#c)" fill-rule="evenodd" d="m316 157.7c0 87.09-70.74 157.69-158 157.69-87.261 0-158-70.6-158-157.69 0.0000010954-87.097 70.739-157.7 158-157.7 87.26 0.000010337 158 70.603 158 157.7z"/>
+<path fill="url(#b)" d="m3.1065 125.73c5.4937-20.16 10.328-41.008 38.054-74.559 15.824-14.68 29.554-29.248 63.3-41.937 40.06-13.051 81.6-13.101 123.48 7.766-1.53 55.507-17.34 83.19-38.44 100.57-42.28 32.25-79.09 41.86-114.17 44.27-32.623 1.71-54.709-20.84-72.224-36.11z"/>
+<path d="m158 0c-87.261 0-158 70.595-158 157.69 0 87.093 70.739 157.72 158 157.72s158-70.626 158-157.72c0-87.095-70.74-157.69-158-157.69zm-0.3125 3.0312c85.408 0 154.66 69.132 154.66 154.38 0 85.243-69.248 154.34-154.66 154.34-85.408 0-154.62-69.1-154.62-154.34 0-85.243 69.217-154.38 154.62-154.38z" fill-rule="evenodd"/>
+</g>
+</svg>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:dc="http://purl.org/dc/elements/1.1/" width="1279" viewBox="0 0 1279.0021 1209.4959" height="1209.5" xmlns:cc="http://creativecommons.org/ns#">
+<metadata>
+<rdf:RDF>
+<cc:Work rdf:about="">
+<dc:format>image/svg+xml</dc:format>
+<dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+<dc:title/>
+</cc:Work>
+</rdf:RDF>
+</metadata>
+<rect style="color:#000000" fill="#fff" width="1283.5" transform="translate(0 -.0077759)" height="1214.1" y=".35189" x="0"/>
+<g transform="translate(2035.6 -202.8)">
+<rect fill="#183a52" width="1237" height="991" y="227.93" x="-2015.8" stroke-width="0"/>
+<path d="m-1257.9 591.59-0.2526 141.67c2.3151 17.361 15.337 27.672 27.022 27.779 22.727 0.20848 26.37-14.594 29.294-27.022v-138.14c-2.054-11.047-8.0542-26.152-27.022-27.274-10.557-0.62448-25.864 9.3859-29.042 22.981z" fill-rule="evenodd" fill="#183a52"/>
+<path d="m-2008.1 1218.9c196.54-343.5 437.51-688.4 626.98-990.15h-158.52l-473.78 990.74h5.3234z" fill-rule="evenodd" fill="#fff"/>
+<path d="m-2015.5 1218.3 344.84-990.15h-141.07l-204.06 973.3v16.857z" fill-rule="evenodd" fill="#fff"/>
+<path d="m-2031.2 365.38c414.95-142.61 749.17 4.3193 912.39 126.68" stroke="#fff" fill="none" stroke-width="8.1"/>
+<path d="m-1121.2 495.31h11.99l-7.1397-6.5132" fill-rule="evenodd" fill="#fff" stroke-width="0"/>
+<path d="m-814.69 840 42.338 86.355" fill-opacity="0" stroke="#fff" stroke-width="7.9"/>
+<path d="m-811.15 838.26-8.9731-0.0352 2.091 3.8891" fill-rule="evenodd" fill="#fff"/>
+<rect fill="#b00" width="1237" height="154" y="1243.4" x="-2015.8"/>
+</g>
+</svg>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="shortcut icon" type="image/png" href="favicon.png"/>
+    <link href='https://fonts.googleapis.com/css?family=Comfortaa:700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <script src="jquery-color.js"></script>
+    <script src="logos.js"></script>
+    <script src="logoplex.js"></script>
+    <link rel="stylesheet" href="logoplex.css">
+    <title>logoplex</title>
+  </head>
+  <body>
+    <div id="title">
+      logoplex
+    </div>
+    <noscript>
+      <div style="text-align: center; margin-top: 50px;">Javascript required.</div>
+    </noscript>
+    <div id="progress"></div>
+    <div id="logo2"></div>
+    <div id="logo1"></div>
+    <svg id="timer" width="50" height="50" version="1.0">
+      <path id="timerarc" d="M25,2 A23,23 0 1 0 48,25" />
+      <text id="timerpts" x="25" y="25">3</text>
+    </svg>
+    <div id="inputbox">
+      &gt;
+      <input id="input" type="text">
+      <div id="attempts"></div>
+    </div>
+    <div id="begin">Begin [space] &gt;&gt;</div>
+    <div id="next">Next [space] &gt;&gt;</div>
+    <div id="skip">Skip [escape] &gt;&gt;</div>
+    <div id="again">More [space] &gt;&gt;</div>
+    <div id="starttimer">3</div>
+    <div id="answerbox"></div>
+    <div id="scorebox">
+      <div id="scoreline">Score: <span id="score"></span> / <span id="maxscore"></span></div>
+      <table><tbody id="bd">
+          <tr><td class="bdn">3</td><td class="pts">&nbsp;pts</td><td class="bdy" id="bd3"></td></tr>
+          <tr><td class="bdn">2</td><td class="pts">&nbsp;pts</td><td class="bdy" id="bd2"></td></tr>
+          <tr><td class="bdn">1</td><td class="pts">&nbsp;pt</td><td class="bdy" id="bd1"></td></tr>
+          <tr><td class="bdn">0</td><td class="pts">&nbsp;pts</td><td class="bdy" id="bd0"></td></tr>
+      </tbody></table>
+    </div>
+    <div id="catbox">
+      <div id="catline">Categories:</div>
+      <table><tbody id="cats">
+      </tbody></table>
+    </div>
+    <div id="credit">
+      <a href="http://arbitraryclark.blogspot.com/">James Clark</a>
+    </div>
+    <div id="explain">
+      10 logos will be randomly selected from 100<br/>
+      you have 12 seconds to guess each one<br/>
+      the faster you guess the more points you get
+    </div>
+  </body>
+</html>
