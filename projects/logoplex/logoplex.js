@@ -456,7 +456,7 @@ $(document).ready(function() {
         if (event.keyCode == 13)
             submit($('#input').val());
     });
-    $(window).keyup(function() {
+    $(window).keyup(function(event) {
         if (event.keyCode == 27)
             skip();
         if (event.keyCode == 32) {

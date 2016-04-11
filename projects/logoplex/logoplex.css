@@ -42,7 +42,6 @@ table {
 }
 #timerpts {
     text-anchor: middle;
-    alignment-baseline: central;
     font-size: 25px;
 }
 
