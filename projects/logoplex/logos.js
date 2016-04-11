@@ -486,7 +486,7 @@ var logos = [{
 
     id: 'nbc',
     background: '#000',
-    foreground: '#4d4d4d',
+    foreground: '#ddd',
     width: 596,
     height: 537,
     accept: ['nbc'],
