@@ -136,7 +136,7 @@ def next_piece(grid, cur, pieces, prog):
         paths += 1
         if cur == start or cur == xstart:
             solutions += 1
-            print('makes a circuit: %s %s (%s)' % (start, prog))
+            print('makes a circuit: %s %s' % (start, prog))
     for pi in range(len(pieces)):
         pieces_left = pieces[:]
         piece = pieces_left.pop(pi)
