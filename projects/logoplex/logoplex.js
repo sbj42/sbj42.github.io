@@ -223,7 +223,7 @@ function submit(text_) {
     text = text_.replace(/\s*/, '');
     if (text == '')
         return;
-    text.toLowerCase();
+    text = text.toLowerCase();
     var accepted = false;
     $.each(logo.accept, function(index, accept) {
         if (text.indexOf(accept) >= 0
