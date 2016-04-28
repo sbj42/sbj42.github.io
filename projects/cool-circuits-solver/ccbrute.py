@@ -129,14 +129,53 @@ pieces = [
     ('S', [False,False, True,False]),
 ]
 
+canonpiece = 'S'
+def canonicalize(path):
+    global pieces, canonpiece
+    p = []
+    c = []
+    i = 0
+    j = 0
+    while i < len(path):
+        letter = path[i]
+        i += 1
+        reverse = False
+        connect = path[i]
+        i += 1
+        if connect == '\'':
+            reverse = True
+            connect = path[i]
+            i += 1
+        if letter == canonpiece:
+            j = len(p)
+        p.append((letter, reverse))
+        c.append(connect == '-')
+    p = p[j:] + p[0:j]
+    c = c[j:] + c[0:j]
+    if p[0][1]:
+        p = [(x[0], x[1] if x[0] in 'UEI' else not x[1]) for x in reversed(p[1:] + p[0:1])]
+        c = list(reversed(c))
+    ret = ''
+    for i in range(len(p)):
+        ret = ret + p[i][0] + ('\'' if p[i][1] else '') + ('-' if c[i] else '+')
+    return ret
+
 def next_piece(grid, cur, pieces, prog):
-    global paths, solutions, start
+    global paths, solutions, start, allpaths
     if len(pieces) == 0:
         #print('uses all pieces: %s' % prog)
         paths += 1
         if cur == start or cur == xstart:
             solutions += 1
-            print('makes a circuit: %s %s' % (start, prog))
+            if cur == xstart:
+                nprog = prog + '-'
+            else:
+                nprog = prog + '+'
+            path = canonicalize(nprog)
+            print('makes a circuit: %s %s %s' % (start, ''.join(prog), path))
+            if path not in allpaths:
+                allpaths[path] = 0
+            allpaths[path] += 1
     for pi in range(len(pieces)):
         pieces_left = pieces[:]
         piece = pieces_left.pop(pi)
@@ -172,6 +211,7 @@ def next_piece(grid, cur, pieces, prog):
             #print('  %s' % (next,))
             next_piece(ngrid, next, pieces_left, nprog)
 
+allpaths = dict()
 paths = 0
 solutions = 0
 for start in starts:
@@ -197,8 +237,9 @@ for start in starts:
             #print('  %s' % (cur,))
             next_piece(grid, cur, pieces_left, piece[0] + '\'')
         
-
 print("%d paths" % paths)
-total = 0
-print("%d circuits (/ 16 for unique ones)" % solutions)
+print("%d circuits (/ %d for unique ones?)" % (solutions, 2*len(pieces)))
+print("%d unique" % (len(allpaths)))
+for p, c in allpaths.items():
+    print("  %s %d" % (p, c))
                              
