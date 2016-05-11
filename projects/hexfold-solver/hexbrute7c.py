@@ -272,7 +272,7 @@ for start in starts:
     #if start != (1,3,1,False):
     #    continue
     xstart = cross(start[0], start[1], start[2], start[3])
-    print('%s or %s' % (start,xstart))
+    print('%s' % (start,))
     for pi in range(len(pieces)):
         pieces_left = pieces[:]
         piece = pieces_left.pop(pi)

@@ -49,6 +49,7 @@ def cross(cx, cy, a, cw):
     return (cx, cy, a, cw)
 
 closed = []
+required = []
 
 class Grid:
     def __init__(self):
@@ -187,19 +188,26 @@ def canonicalize(path):
 def next_piece(grid, cur, pieces, prog):
     global paths, solutions, start, allpaths
     if len(pieces) == 0:
-        #print('uses all pieces: %s' % prog)
-        paths += 1
-        if cur == start or cur == xstart:
-            solutions += 1
-            if cur == xstart:
-                nprog = prog + '-'
-            else:
-                nprog = prog + '+'
-            path = canonicalize(nprog)
-            print('makes a circuit: %s %s %s' % (start, ''.join(prog), path))
-            if path not in allpaths:
-                allpaths[path] = 0
-            allpaths[path] += 1
+        ok = True
+        for r in required:
+            i = index_at(r[0], r[1], r[2])
+            assert i is not None
+            if not grid.occupied[i]:
+                ok = False
+        if ok:
+            #print('uses all pieces: %s' % prog)
+            paths += 1
+            if cur == start or cur == xstart:
+                solutions += 1
+                if cur == xstart:
+                    nprog = prog + '-'
+                else:
+                    nprog = prog + '+'
+                path = canonicalize(nprog)
+                print('makes a circuit: %s %s %s' % (start, ''.join(prog), path))
+                if path not in allpaths:
+                    allpaths[path] = 0
+                allpaths[path] += 1
     #if prog not in ['S\'', 'S\'+V\'']:
     #    return
     for pi in range(len(pieces)):
@@ -244,7 +252,7 @@ for start in starts:
     #if start != (1,3,1,False):
     #    continue
     xstart = cross(start[0], start[1], start[2], start[3])
-    print('%s or %s' % (start,xstart))
+    print('%s' % (start,))
     for pi in range(len(pieces)):
         pieces_left = pieces[:]
         piece = pieces_left.pop(pi)
