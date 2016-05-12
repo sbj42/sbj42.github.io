@@ -525,6 +525,8 @@ function updatedrag(duration) {
             while (da < 0) da += 360;
             if (curlevel == 0 && piece === pieces[3] && nhex[0] == 5 && nhex[1] == 0 && da == 120 && piece.dst.sx == 1)
                 hint2set = true;
+            if (curlevel == 0 && piece === pieces[3] && nhex[0] == 5 && nhex[1] == 0 && da == 60 && piece.dst.sx == -1)
+                hint2set = true;
             if (curlevel == 0 && piece === pieces[7] && nhex[0] == 6 && nhex[1] == 2 && da == 0 && piece.dst.sx == -1)
                 hint4set = true;
             movepiece(piece, x, y, null, null, null, 0);
@@ -2121,9 +2123,9 @@ function reset() {
     if (curlevel == 0)
         $('#hint1l, #hint1t, #hint2p, #hint2l, #hint2t').show();
     if (curlevel == 1)
-        $('#hint5t').show();
+        $('#hint5t, #hint5l, #hint7t, #hint7l').show();
     if (curlevel == 2)
-        $('#hint6t').show();
+        $('#hint6t, #hint6l').show();
 }
 
 function next() {
@@ -2236,6 +2238,14 @@ $(document).ready(function() {
     $('#board').append(hint3l);
     $('#hint3t')
         .attr('style', 'right: ' + f(-80 + bw - (-3 + hx(11.25,-0.5) - 15 + dx(-1.25, 0.5))) + 'px; bottom: ' + f(15 + bh - (hy(11.25,-0.5) + dy(-1.25, -0.5))) + 'px;');
+    var d = [];
+    addpathd(d, pieces[7]);
+    var hint3p = $(document.createElementNS(svgNS, 'path'))
+        .attr('id', 'hint3p')
+        .attr('d', d.join(' '))
+        .attr('class', 'hintpiece')
+        .attr('transform', 'translate(' + f(hx(6,2)) + ',' + f(hy(6,2)) + ') scale(-1, 1)');
+    $('#board').append(hint3p);
 
     var d = [];
     addpathd(d, pieces[7]);
@@ -2253,14 +2263,24 @@ $(document).ready(function() {
     $('#hint4t')
         .attr('style', 'left: ' + f(3 + hx(6,1.5) + 15 + dx(0.75, -0.75)) + 'px; top: ' + f(-8 + hy(6,1.5) + dy(0.75, -0.75)) + 'px;');
 
-    var d = [];
-    addpathd(d, pieces[7]);
-    var hint3p = $(document.createElementNS(svgNS, 'path'))
-        .attr('id', 'hint3p')
-        .attr('d', d.join(' '))
-        .attr('class', 'hintpiece')
-        .attr('transform', 'translate(' + f(hx(6,2)) + ',' + f(hy(6,2)) + ') scale(-1, 1)');
-    $('#board').append(hint3p);
+    var hint5l = $(document.createElementNS(svgNS, 'path'))
+        .attr('id', 'hint5l')
+        .attr('class', 'hintline')
+        .attr('d', 'M ' + f(hx(0, 2.5)) + ' ' + f(hy(0, 2.5)) + ' l 0 -90');
+    $('#board').append(hint5l);
+
+    var hint6l = $(document.createElementNS(svgNS, 'path'))
+        .attr('id', 'hint6l')
+        .attr('class', 'hintline')
+        .attr('d', 'M ' + f(hx(0, 2.5) + 18) + ' ' + f(hy(0, 2.5) + 3) + ' l -40 -90');
+    $('#board').append(hint6l);
+
+    var hint7l = $(document.createElementNS(svgNS, 'path'))
+        .attr('id', 'hint7l')
+        .attr('class', 'hintline')
+        .attr('d', 'M ' + (bw - 202) + ' 46 l 50 0 l 0 -10');
+    $('#board').append(hint7l);
+
     for (var y = 0; y < bsize; y ++) {
         for (var x = 0; x < bsize; x ++) {
             if ((x + y) * 2 < (bsize - 1))
