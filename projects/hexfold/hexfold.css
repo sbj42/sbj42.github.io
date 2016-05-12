@@ -78,14 +78,31 @@ body {
     stroke-linejoin: round;
     stroke-linecap: round;
 }
+.hex_l {
+    opacity: 0.5;
+}
+.hex_o {
+    stroke: #555;
+    fill: #bbb;
+}
+.hex_f {
+    stroke: #884;
+    fill: #ff8;
+}
+.hex.hover {
+    stroke: #fff;
+}
 .text {
     fill: #00a;
     font-size: 16px;
     cursor: pointer;
 }
+.text_l {
+    display: none;
+}
 .block {
     fill: none;
-    stroke: #EC1717;
+    stroke: #F562AE;
     stroke-width: 3px;
     stroke-linecap: round;
 }
@@ -111,9 +128,30 @@ body {
 .piece.fixed {
     stroke: #eee;
 }
+.hintpiece {
+    fill: none;
+    stroke: #0ff;
+    stroke-width: 3px;
+    stroke-linejoin: round;
+    stroke-linecap: butt;
+    stroke-dasharray: 7 3;
+}
 #random {
     position: absolute;
     left: 30px;
     bottom: 10px;
     color: #ccc;
+}
+.hinttext {
+    color: #0ff;
+    position: absolute;
+}
+.hintline {
+    fill: none;
+    stroke: #0ff;
+    stroke-width: 2px;
+}
+#hint5t, #hint6t {
+    left: 50px;
+    top: 55px;
 }

@@ -56,6 +56,7 @@ function addtext(x, y, str) {
         .attr('dy', '.35em')
         .text(str);
     $('#board').append(text);
+    return text;
 }
 
 var blocks = [];
@@ -264,8 +265,6 @@ function addpathd(d, piece) {
 }
 
 function makepiece(piece) {
-    var poffx = dx(piece.off.x, piece.off.y);
-    var poffy = dy(piece.off.x, piece.off.y);
     var d = [];
     addpathd(d, piece);
     var path = $(document.createElementNS(svgNS, 'path'));
@@ -507,7 +506,9 @@ function nearesthex(mx, my) {
     return nhex;
 }
 
+var hint2set, hint4set;
 function updatedrag(duration) {
+    hint2set = hint4set = false;
     var piece = pieces[selected];
     var boardOffset = $('#board').offset();
     var nx = dragging.mx - boardOffset.left + dragging.dx;
@@ -519,6 +520,13 @@ function updatedrag(duration) {
         var y = hy(nhex[0], nhex[1]);
         if (piecefits(piece, x, y)) {
             dragging.onboard = true;
+            var da = piece.dst.a;
+            while (da >= 360) da -= 360;
+            while (da < 0) da += 360;
+            if (curlevel == 0 && piece === pieces[3] && nhex[0] == 5 && nhex[1] == 0 && da == 120 && piece.dst.sx == 1)
+                hint2set = true;
+            if (curlevel == 0 && piece === pieces[7] && nhex[0] == 6 && nhex[1] == 2 && da == 0 && piece.dst.sx == -1)
+                hint4set = true;
             movepiece(piece, x, y, null, null, null, 0);
         } else
             movepiece(piece, nx, ny, null, null, null, duration);
@@ -536,6 +544,7 @@ function onMouseMove(event) {
         var mx = event.pageX - boardOffset.left;
         var my = event.pageY - boardOffset.top;
         var r = hexr;
+        $('.hex').removeClass('hover');
         for (var y = 0; y < bsize; y ++) {
             for (var x = 0; x < bsize; x ++) {
                 if ((x + y) * 2 < (bsize - 1))
@@ -545,20 +554,27 @@ function onMouseMove(event) {
                 var xx = hx(x,y);
                 var yy = hy(x,y);
                 if ((xx-mx)*(xx-mx) + (yy-my)*(yy-my) < r*r) {
-                    var l = levelnum(x, y) - 1;
-                    var str = String(l+1);
-                    if (l < 9) str = '0' + str;
-                    $('#choice').html(str+': '+levels[l].name);
+                    var l = levelnum(x, y);
+                    var str = String(l);
+                    if (l < 10) str = '0' + str;
+                    if (levelstate[l-1] == 'l')
+                        $('#choice').html('');
+                    else {
+                        $('#choice').html(str+': '+levels[l-1].name)
+                        $('#hex_'+l).addClass('hover');
+                    }
                     return;
                 }
             }
         }
-        $('#choice').text('');
+        $('#choice').html('');
         return;
     }
     if (dragging) {
         dragging.mx = event.pageX;
         dragging.my = event.pageY;
+        if (Math.abs(dragging.mx - dragging.ox) > 5 && Math.abs(dragging.my - dragging.oy) > 5)
+            dragging.click = false;
         updatedrag(0);
         return;
     }
@@ -619,8 +635,15 @@ function connected(src) {
 }
 
 function onMouseDown(event) {
+    if (event.which != 1)
+        return;
     if (winning)
         return;
+    if (dragging) {
+        dragging.click = false;
+        onMouseUp(event);
+        return;
+    }
     var boardOffset = $('#board').offset();
     if (curlevel === null) {
         var mx = event.pageX - boardOffset.left;
@@ -635,7 +658,10 @@ function onMouseDown(event) {
                 var xx = hx(x,y);
                 var yy = hy(x,y);
                 if ((xx-mx)*(xx-mx) + (yy-my)*(yy-my) < r*r) {
-                    curlevel = levelnum(x, y) - 1;
+                    var l = levelnum(x, y) - 1;
+                    if (levelstate[l] == 'l')
+                        return;
+                    curlevel = l;
                     reset();
                     return;
                 }
@@ -645,12 +671,19 @@ function onMouseDown(event) {
     }
     if (selected == null)
         return;
+    if (curlevel == 0 && selected == 3)
+        $('#hint1l, #hint1t').hide();
+    if (curlevel == 0 && selected == 7)
+        $('#hint3l, #hint3t').hide();
     var piece = pieces[selected];
     dragging = {
         dx: piece.cur.x + boardOffset.left - event.pageX,
         dy: piece.cur.y + boardOffset.top - event.pageY,
         mx: event.pageX,
-        my: event.pageY
+        my: event.pageY,
+        ox: event.pageX,
+        oy: event.pageY,
+        click: true
     };
     updateOccupied();
     $('#board').append(piece.path);
@@ -667,6 +700,8 @@ var piececount = 0;
 function onMouseUp(event) {
     if (!dragging)
         return;
+    if (dragging.click)
+        return;
     var piece = pieces[selected];
     piece.onboard = dragging.onboard;
     dragging = null;
@@ -674,6 +709,15 @@ function onMouseUp(event) {
         var x = hx(piece.home.x, piece.home.y);
         var y = hy(piece.home.x, piece.home.y);
         movepiece(piece, x, y, null, null, null, 0.2);
+    }
+    if (curlevel == 0 && hint2set) {
+        $('#hint2l, #hint2t').hide();
+        if (!pieces[7].onboard) {
+            $('#hint3l, #hint3t, #hint4p, #hint4l, #hint4t').show();
+        }
+    }
+    if (curlevel == 0 && hint4set) {
+        $('#hint4l, #hint4t').hide();
     }
     updateOccupied();
     var queue = [selected];
@@ -714,9 +758,14 @@ function onMouseUp(event) {
     });
     if (connections == piececount * 2 && !unfulfilled) {
         $('body').removeClass('grab');
-        $('#buttons').hide();
+        $('#buttons, .hinttext, .hintpiece, .hintline').hide();
         $('#win, #winbuttons').show();
         $('#win').text(wintext());
+        levelstate[curlevel] = 'f';
+        for (var i = curlevel + 1; i < 37 && i < curlevel + 3; i ++)
+            if (levelstate[i] == 'l')
+                levelstate[i] = 'o';
+        $.cookie('levels', levelstate.join(''));
         if (levels[curlevel].last) {
             $('#next').hide();
             $('#again').show();
@@ -1982,13 +2031,20 @@ var levels = [
 
 function reset() {
     $('#level, #buttons').show();
-    $('#select, .text, #win, #winbuttons, #choice').hide();
+    $('#select, .text, #win, #winbuttons, #choice, .hinttext, .hintline, .hintpiece').hide();
     $('.block').remove();
     blocks = [];
     $('.require').remove();
     requires = [];
     winning = false;
     selected = null;
+    $('.hex').removeClass('hex_l')
+        .removeClass('hex_o')
+        .removeClass('hex_f')
+        .removeClass('hover');
+    $('.text').removeClass('text_l')
+        .removeClass('text_o')
+        .removeClass('text_f')
 
     var str = String(curlevel+1);
     if (curlevel < 9)
@@ -1996,6 +2052,10 @@ function reset() {
     $('#level').html(str + ': ' + levels[curlevel].name);
     var level = levels[curlevel];
     
+    if (!level.last && levelstate[curlevel+1] != 'l')
+        $('#skip').show();
+    else
+        $('#skip').hide();
     if (level.last) {
         $('#random').show();
         for (var e = 0; e < 3;) {
@@ -2057,6 +2117,13 @@ function reset() {
         piece.path.addClass('fixed');
     }
     updateOccupied();
+
+    if (curlevel == 0)
+        $('#hint1l, #hint1t, #hint2p, #hint2l, #hint2t').show();
+    if (curlevel == 1)
+        $('#hint5t').show();
+    if (curlevel == 2)
+        $('#hint6t').show();
 }
 
 function next() {
@@ -2064,12 +2131,17 @@ function next() {
     reset();
 }
 
+function skip() {
+    if (curlevel < 36 && levelstate[curlevel+1] != 'l')
+        next();
+}
+
 function levelselect() {
     curlevel = null;
     winning = false;
     selected = null;
-    $('#level, #buttons, #win, #winbuttons, #random, #again').hide();
-    $('#select, .text, #choice').show();
+    $('#level, #buttons, #win, #winbuttons, #random, #again, .hinttext, .hintline, .hintpiece').hide();
+    $('#select, #choice, .text').show();
     $('.block').remove();
     blocks = [];
     $('.require').remove();
@@ -2081,6 +2153,20 @@ function levelselect() {
         $('#P_'+i).hide();
         $('#H_'+i).hide();
     });
+    $('.hex').removeClass('hex_l')
+        .removeClass('hex_o')
+        .removeClass('hex_f');
+    $('.text').removeClass('text_l')
+        .removeClass('text_o')
+        .removeClass('text_f')
+    for (var i = 1; i <= 37; i ++) {
+        $('#hex_'+i).addClass('hex_' + levelstate[i-1]);
+        $('#text_'+i).addClass('text_' + levelstate[i-1]);
+    }
+    $('#starthere, #startline').hide();
+    if (levelstate.join('') == levelstateinit) {
+        $('#starthere, #startline').show();
+    }
 }
 
 function levelnum(x, y) {
@@ -2092,7 +2178,11 @@ function levelnum(x, y) {
     return 7 + Math.floor((row - 3) / 2) * 7 + ((row % 2) == 0 ? 4 : 0) + Math.floor(x / 2);
 }
 
+var levelstate;
+var levelstateinit = 'ollllllllllllllllllllllllllllllllllll';
+
 $(document).ready(function() {
+    levelstate = ($.cookie('levels') || 'ollllllllllllllllllllllllllllllllllll').split('');
     var bw = (hexr + pad) * 2 + dx(bsize + 11, 0);
     var bh = (hexr * sin(60) + pad*2) * 2 + dy(0, bsize);
     $('#game, #board').css({
@@ -2107,16 +2197,83 @@ $(document).ready(function() {
         .attr('fill', '#000')
         .css('opacity', '1e-6');
     $('#board').append(rect);
+    var startline = $(document.createElementNS(svgNS, 'path'))
+        .attr('id', 'startline')
+        .attr('class', 'hintline')
+        .attr('d', 'M ' + f(hx(3,0)) + ' ' + f(hy(3,0)) + ' l ' + f(dx(1,-1)) + ' ' + f(dy(1,-1)) + ' l ' + f(dx(0.5,-0.25)) + ' ' + f(dy(0.5,-0.25)));
+    $('#board').append(startline);
+    $('#starthere')
+        .attr('style', 'left: ' + f(3 + hx(3,0) + dx(1.5, -1.25)) + 'px; top: ' + f(-8 + hy(3,0) + dy(1.5, -1.25)) + 'px;');
+
+    var hint1l = $(document.createElementNS(svgNS, 'path'))
+        .attr('id', 'hint1l')
+        .attr('class', 'hintline')
+        .attr('d', 'M ' + f(hx(11.25,-3.5) + 15) + ' ' + f(hy(11.25,-3.5)) + ' l ' + f(dx(-0.75,-0.75)) + ' ' + f(dy(-0.75,-0.75)) + ' l ' + f(dx(-0.5,0.25)) + ' ' + f(dy(-0.5,0.25)));
+    $('#board').append(hint1l);
+    $('#hint1t')
+        .attr('style', 'right: ' + f(bw - (-3 + hx(11.25,-3.5) + 15 + dx(-1.25, -0.5))) + 'px; top: ' + f(-8 + hy(11.25,-3.5) + dy(-1.25, -0.5)) + 'px;');
+
+    var d = [];
+    addpathd(d, pieces[3]);
+    var hint2p = $(document.createElementNS(svgNS, 'path'))
+        .attr('id', 'hint2p')
+        .attr('d', d.join(' '))
+        .attr('class', 'hintpiece')
+        .attr('transform', 'translate(' + f(hx(5,0)) + ',' + f(hy(5,0)) + ') rotate(120)');
+    $('#board').append(hint2p);
+    var hint2l = $(document.createElementNS(svgNS, 'path'))
+        .attr('id', 'hint2l')
+        .attr('class', 'hintline')
+        .attr('d', 'M ' + f(hx(4,0.5) + 15) + ' ' + f(hy(4,0.5)) + ' l ' + f(dx(0.5,-1)) + ' ' + f(dy(0.5,-1)) + ' l ' + f(dx(0.5,-0.25)) + ' ' + f(dy(0.5,-0.25)));
+    $('#board').append(hint2l);
+    $('#hint2t')
+        .attr('style', 'left: ' + f(3 + hx(4,0.5) + 15 + dx(1, -1.25)) + 'px; top: ' + f(-8 + hy(4,0.5) + dy(1, -1.25)) + 'px;');
+
+    var hint3l = $(document.createElementNS(svgNS, 'path'))
+        .attr('id', 'hint3l')
+        .attr('class', 'hintline')
+        .attr('d', 'M ' + f(hx(11.25,-0.5) - 15) + ' ' + f(hy(11.25,-0.5)) + ' l ' + f(dx(-0.75,-0.75)) + ' ' + f(dy(-0.75,-0.75)) + ' l 0 -15');
+    $('#board').append(hint3l);
+    $('#hint3t')
+        .attr('style', 'right: ' + f(-80 + bw - (-3 + hx(11.25,-0.5) - 15 + dx(-1.25, 0.5))) + 'px; bottom: ' + f(15 + bh - (hy(11.25,-0.5) + dy(-1.25, -0.5))) + 'px;');
+
+    var d = [];
+    addpathd(d, pieces[7]);
+    var hint4p = $(document.createElementNS(svgNS, 'path'))
+        .attr('id', 'hint4p')
+        .attr('d', d.join(' '))
+        .attr('class', 'hintpiece')
+        .attr('transform', 'translate(' + f(hx(6,2)) + ',' + f(hy(6,2)) + ') scale(-1,1)');
+    $('#board').append(hint4p);
+    var hint4l = $(document.createElementNS(svgNS, 'path'))
+        .attr('id', 'hint4l')
+        .attr('class', 'hintline')
+        .attr('d', 'M ' + f(hx(6,1.5) + 15) + ' ' + f(hy(6,1.5)) + ' l ' + f(dx(0.25,-0.5)) + ' ' + f(dy(0.25,-0.5)) + ' l ' + f(dx(0.5,-0.25)) + ' ' + f(dy(0.5,-0.25)));
+    $('#board').append(hint4l);
+    $('#hint4t')
+        .attr('style', 'left: ' + f(3 + hx(6,1.5) + 15 + dx(0.75, -0.75)) + 'px; top: ' + f(-8 + hy(6,1.5) + dy(0.75, -0.75)) + 'px;');
+
+    var d = [];
+    addpathd(d, pieces[7]);
+    var hint3p = $(document.createElementNS(svgNS, 'path'))
+        .attr('id', 'hint3p')
+        .attr('d', d.join(' '))
+        .attr('class', 'hintpiece')
+        .attr('transform', 'translate(' + f(hx(6,2)) + ',' + f(hy(6,2)) + ') scale(-1, 1)');
+    $('#board').append(hint3p);
     for (var y = 0; y < bsize; y ++) {
         for (var x = 0; x < bsize; x ++) {
             if ((x + y) * 2 < (bsize - 1))
                 continue;
             if ((x + y) * 2 > (bsize - 1) * 3)
                 continue;
-            addhex(x, y);
-            var l = String(levelnum(x, y));
-            if (l < 10) l = '0' + l;
-            addtext(x,y,l);
+            var l = levelnum(x, y);
+            var hex = addhex(x, y);
+            var str = String(l);
+            hex.attr('id', 'hex_' + l);
+            if (str < 10) str = '0' + str;
+            var text = addtext(x,y,str);
+            text.attr('id', 'text_' + l);
         }
     }
     $.each(pieces, function(i, piece) {
