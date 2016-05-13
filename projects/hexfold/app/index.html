@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="shortcut icon" type="image/png" href="favicon.png"/>
+    <script src="jquery.min.js"></script>
+    <script src="hexfold.js"></script>
+    <link rel="stylesheet" href="hexfold.css">
+    <title>HEXFOLD</title>
+  </head>
+  <body>
+    <img id="title" src="title.svg" />
+    <div id="game">
+      <!--[if lt IE 9]>
+        <div style="margin: 20px; color: #fff">
+          This game requires a modern browser
+        </div>
+      <![endif]-->
+      <noscript>
+        <div style="margin: 20px; color: #fff">
+          This game requires JavaScript
+        </div>
+      </noscript>
+      <span id="starthere" class="hinttext" style="display: none;">Start here</span>
+      <span id="hint1t" class="hinttext" style="display: none;">Move and rotate this piece</span>
+      <span id="hint2t" class="hinttext" style="display: none;">To here</span>
+      <span id="hint3t" class="hinttext" style="display: none;">Move and flip this piece</span>
+      <span id="hint4t" class="hinttext" style="display: none;">To here</span>
+      <span id="hint5t" class="hinttext" style="display: none;">The loop must cover all green lines</span>
+      <span id="hint6t" class="hinttext" style="display: none;">The loop can not cross a red X</span>
+      <div id="hint7t" class="hinttext" style="display: none;">You can skip a level if you've<br/> beaten the previous one</div>
+      <div id="status">
+        <span id="level"></span>
+        <span id="select" style="display: none;">Choose a level</span>
+        <span id="choice"></span>
+        <span id="buttons" style="display: none;"><a id="l_restart">[restart]</a> &nbsp; <span id="skip"><a id="l_skip">[skip]</a> &nbsp; </span><a id="l_levels">[levels]</a></span>
+        <span id="winbuttons" style="display: none;"><a id="next">[next]</a><a id="again" style="display: none;" >[again]</a> &nbsp; <a id="l_levels2">[levels]</a></span>
+      </div>
+      <div id="win" style="display: none;"></div>
+      <svg id="board">
+      </svg>
+      <div id="random" style="display: none;">(this level is randomly generated)</div>
+    </div>
+    <div id="instructions">
+      <img src="mouse.svg" /> Move &nbsp;
+      <img src="leftright.svg" /> Rotate &nbsp;
+      <img src="space.svg" /> Flip
+    </div>
+    <div id="credit">
+      by <a target="_blank" href="http://arbitraryclark.blogspot.com/">[James Clark]</a><br/>
+      inspired by <a target="_blank" href="http://www.sciencewiz.com/Games/science_thinking_Games_Cool_Circuits.php">[Cool Circuits]</a> by <a target="_blank" href="http://www.sciencewiz.com/index.php">[ScienceWiz]</a>
+    </div>
+  </body>
+</html>
