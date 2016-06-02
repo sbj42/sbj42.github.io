@@ -101,6 +101,25 @@ var LEVELS = [
             0,1
         ],
         hp: 11
+    },
+    {
+        "map": [
+            "*************",
+            "*************",
+            "*************",
+            "*******  ****",
+            "******    ***",
+            "*****  1  ***",
+            "****     ****",
+            "***     *****",
+            "***    ******",
+            "****  *******",
+            "*************",
+            "*************",
+            "*************"
+        ],
+        "eel": [-1,1,-1,2,0,2],
+        "hp": 20
     }
 ];
 //        map: [
@@ -400,8 +419,10 @@ $(document).ready(function() {
                 board.attr('transform', 'translate(' + x2 + ',' + y2 +') scale(' + (1 + f*f*f*5) + ') translate(' + (-x1) + ',' + (-y1) + ')');
                 if (f > 0)
                     setTimeout(zoomout, 50);
-                else
+                else {
                     levelover = false;
+                    updateconsole(cureel);
+                }
             }
             zoomout();
         }
@@ -761,7 +782,7 @@ $(document).ready(function() {
                 } else if (event.keyCode == 112) {
                     settile('p');
                 } else if (event.keyCode == 114) {
-                    settile(tile == ' ' ? '*' : ' ');
+                    settile('*');
                 } else if (event.keyCode == 101) {
                     LEVELS[curlevel].eel = [x, y];
                 } else if (event.keyCode == 108) {
