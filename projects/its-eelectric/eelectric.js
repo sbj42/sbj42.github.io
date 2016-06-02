@@ -1,3 +1,10 @@
+// ideas:
+//   a food you don't have to kill, that restores 1 hp, so free move but only once
+//   a space you can't shock from
+//   a space that costs extra hp to pass through
+//   a food that moves away from you
+//   
+
 var svgNS = 'http://www.w3.org/2000/svg';
 
 var TR = 42; // tile center-to-corner
@@ -107,19 +114,57 @@ var LEVELS = [
             "*************",
             "*************",
             "*************",
-            "*******  ****",
-            "******    ***",
-            "*****  1  ***",
+            "*******  p***",
+            "*****p    ***",
+            "****p  1  ***",
             "****     ****",
-            "***     *****",
-            "***    ******",
-            "****  *******",
+            "***     p****",
+            "***    p*****",
+            "***p  *******",
             "*************",
             "*************",
             "*************"
         ],
         "eel": [-1,1,-1,2,0,2],
-        "hp": 20
+        "hp": 5
+    },
+    {
+        "map": [
+            "*************",
+            "*************",
+            "*******p ****",
+            "*******  ****",
+            "******  p  **",
+            "******    p**",
+            "****     ****",
+            "**p  2 ******",
+            "**  p  ******",
+            "****  *******",
+            "**** p*******",
+            "*************",
+            "*************"
+        ],
+        "eel": [1,-1,1,-2,0,-2],
+        "hp": 8
+    },
+    {
+        "map": [
+            "*************",
+            "*************",
+            "*************",
+            "*************",
+            "*****   *****",
+            "*****  pp****",
+            "***  p pp****",
+            "***  2   ****",
+            "*** pp  *****",
+            "****pp ******",
+            "*************",
+            "*************",
+            "*************"
+        ],
+        "eel": [0,0,0,-1,-1,-1],
+        "hp": 8
     }
 ];
 //        map: [
@@ -281,8 +326,11 @@ $(document).ready(function() {
     var spkey = addkey('sp1', 0, 70, 90, 35);
 
     function updateconsole(eel) {
+        var nomoves = true;
         function setkey(k, l, b) {
             k.attr('href', 'svg/console-' + l + (b ? '2' : '1') + '.svg');
+            if (b)
+                nomoves = false;
         }
         setkey(qkey, 'q', canmoveeel(eel, -1, 0));
         setkey(wkey, 'w', canmoveeel(eel, 0, -1));
@@ -293,6 +341,8 @@ $(document).ready(function() {
         hungerbar.attr('width', 25 * (20 - hp));
         hungerbar.toggleClass('red', hp <= 5);
         hungerbar.toggleClass('yellow', hp > 5 && hp <= 10);
+        if (!busy && !levelover && nomoves)
+            defeat(eel);
     }
 
     function gridline_create(x, y, nw) {
@@ -732,7 +782,7 @@ $(document).ready(function() {
         updateconsole(cureel);
     }
     function do_sp(event) {
-        if (busy)
+        if (busy || levelover)
             return;
         shock(cureel);
     }
@@ -790,6 +840,8 @@ $(document).ready(function() {
                     var ly = Math.abs(y - cureel[cureel.length-1]);
                     if (lx + ly == 1)
                         LEVELS[curlevel].eel.push(x, y);
+                    else if (lx + ly == 0)
+                        LEVELS[curlevel].eel.splice(cureel.length-2, 2);
                 }
                 reset();
             }
@@ -804,6 +856,11 @@ $(document).ready(function() {
                 do_a();
             else if (event.keyCode == 32)
                 do_sp();
+            else if (event.keyCode == 43) {
+                curlevel ++; reset();
+            } else if (event.keyCode == 45) {
+                curlevel --; reset();
+            }
         }
         updateconsole(cureel);
     });
@@ -827,4 +884,5 @@ $(document).ready(function() {
     akey.click(do_a);
     spkey.click(do_sp);
 
+    window.reset = reset;
 });
