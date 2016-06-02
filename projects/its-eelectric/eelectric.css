@@ -1,0 +1,23 @@
+html, body { overflow: hidden; }
+body {
+    background: #3f98a0;
+}
+#svg {
+    background: #3f98a0;
+}
+.gridline {
+    stroke: white;
+    stroke-width: 2px;
+    fill: none;
+    opacity: 0.4;
+}
+.hungerbar {
+    stroke: white;
+    fill: #0B8E00;
+}
+.hungerbar.yellow {
+    fill: #C58B14;
+}
+.hungerbar.red {
+    fill: #790A0A;
+}
