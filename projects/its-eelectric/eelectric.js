@@ -64,6 +64,21 @@ var perlin1 = (function() { // 1d perlin noise
     return noise1;
 })();
 
+function preloadsvg(images, callback) {
+    var loaded = 0;
+    function onload() {
+        if (++loaded == images.length)
+            callback();
+    }
+    $.each(images, function(i, image) {
+        var img = new Image();
+        img.onload = onload;
+        img.onerror = onload;
+        img.onabort = onload;
+        img.src = 'svg/' + image + '.svg';
+    });
+}
+
 var LEVELS = [
     {
         map: [
@@ -469,7 +484,28 @@ $(document).ready(function() {
         updateconsole(cureel);
     }
 
-    reset();
+    var imgs = [];
+    imgs.push('border1', 'hunger1', 'hunger2', 'plant1', 'shock1');
+    $.each(['guppy1', 'catfish1', 'piranha1', 'stingray1'], function(i, food) {
+        imgs.push(food + 'a', food + 'b');
+    });
+    $.each(['q', 'w', 'a', 's', 'sp'], function(i, key) {
+        imgs.push('console-' + key + '1', 'console-' + key + '2');
+    });
+    $.each(['eel1'], function(i, eel) {
+        $.each(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'], function(i, l) {
+            imgs.push(eel + l);
+        });
+    });
+    $.each(['rock1'], function(i, rock) {
+        $.each(['a', 'b', 'c', 'd', 'e', 'f'], function(i, l) {
+            imgs.push(rock + l);
+        });
+    });
+    $.each(['1', '2', '3', '4'], function(i, n) {
+        imgs.push('number' + n);
+    });
+    preloadsvg(imgs, reset);
 
     function victory(eel) {
         busy = true;
