@@ -864,6 +864,28 @@ $(document).ready(function() {
         }
         updateconsole(cureel);
     });
+    svg.click(function(event) {
+        var boardOffset = svg.offset();
+        var mx = (mouseX - boardOffset.left - bw/2) / TR;
+        var my = (mouseY - boardOffset.top - bh/2) / TR;
+        var x = Math.round(mx/2 + my/2);
+        var y = Math.round(my/2 - mx/2);
+        if (x >= -MR && x <= MR && y >= -MR && y <= MR) {
+            var lx = x - cureel[0];
+            var ly = y - cureel[1];
+            if (Math.abs(lx) + Math.abs(ly) == 1) {
+                if (lx == -1)
+                    do_q();
+                else if (ly == -1)
+                    do_w();
+                else if (lx == 1)
+                    do_s();
+                else if (ly == 1)
+                    do_a();
+            } else if (lx == 0 && ly == 0)
+                do_sp();
+        }
+    });
     $(document).keyup(function(event) {
         if (busy)
             return;
