@@ -3,7 +3,9 @@
 //   a space you can't shock from
 //   a space that costs extra hp to pass through
 //   a food that moves away from you
-//   
+//   shock could cost more
+//   tunnels
+//   starfish, that count as bonus points
 
 var svgNS = 'http://www.w3.org/2000/svg';
 
@@ -14,6 +16,10 @@ var GLWA = 0.4; // gridline wiggle amplitude
 var GLWI = 0.2; // gridline wiggle inset
 
 var MR = 6; // map center-to-corner
+
+var FOODHP = 4;
+var MOVEHP = 1;
+var SHOCKHP = 3;
 
 var STARTTIME = new Date().getTime();
 
@@ -107,7 +113,7 @@ var LEVELS = [
             0,0,
             0,1
         ],
-        hp: 11
+        hp: 18
     },
     {
         "map": [
@@ -126,7 +132,7 @@ var LEVELS = [
             "*************"
         ],
         "eel": [-1,1,-1,2,0,2],
-        "hp": 5
+        "hp": 7
     },
     {
         "map": [
@@ -145,6 +151,44 @@ var LEVELS = [
             "*************"
         ],
         "eel": [1,-1,1,-2,0,-2],
+        "hp": 12
+    },
+    {
+        "map": [
+            "*************",
+            "*************",
+            "*************",
+            "******   ****",
+            "*****  p  ***",
+            "*****     ***",
+            "***  p p  ***",
+            "***  2  *****",
+            "***  p  *****",
+            "****   ******",
+            "*************",
+            "*************",
+            "*************"
+        ],
+        "eel": [0,0,0,-1,-1,-1],
+        "hp": 12
+    },
+    {
+        "map": [
+            "*************",
+            "*************",
+            "*************",
+            "********* ***",
+            "*****p    ***",
+            "*****   1 ***",
+            "***      p***",
+            "*** p11 *****",
+            "***     *****",
+            "*** *********",
+            "*************",
+            "*************",
+            "*************"
+        ],
+        "eel": [-3,0,-3,1,-3,2],
         "hp": 8
     },
     {
@@ -153,18 +197,18 @@ var LEVELS = [
             "*************",
             "*************",
             "*************",
-            "*****   *****",
-            "*****  pp****",
-            "***  p pp****",
-            "***  2   ****",
-            "*** pp  *****",
-            "****pp ******",
+            "****p     ***",
+            "**** 414 p***",
+            "***  1 1  ***",
+            "***  414 ****",
+            "***     p****",
+            "*************",
             "*************",
             "*************",
             "*************"
         ],
-        "eel": [0,0,0,-1,-1,-1],
-        "hp": 8
+        "eel": [-3,0,-3,1,-3,2,-2,2],
+        "hp": 19
     }
 ];
 //        map: [
@@ -193,10 +237,10 @@ var ROCKMAP = {
     '11111011': ['b', 1],
     '11111101': ['b', 2],
     '11111110': ['b', 3],
-    '0111.*': ['c', 0],
-    '1011.*': ['c', 1],
-    '1101.*': ['c', 2],
-    '1110.*': ['c', 3],
+    '0111.11.': ['c', 0],
+    '1011..11': ['c', 1],
+    '11011..1': ['c', 2],
+    '111011..': ['c', 3],
     '11111111': ['d', -1],
     '11110110': ['e', 0],
     '11110011': ['e', 1],
@@ -215,14 +259,90 @@ var FOODMAP = {
     '4': {type: 'stingray1', hp: 4}
 };
 
-var cureel = [];
-var curfood = [];
-var hp = 1;
-var charge = true;
+var game = null;
 var busy = false;
-var levelover = false;
 var hackk = 0;
 var hack = false;
+
+function start() {
+    var level = LEVELS[curlevel];
+    var game = {
+        map: level.map.slice(),
+        eel: level.eel.slice(),
+        hp: level.hp,
+        charge: true,
+        over: false,
+        food: []
+    };
+    for (var x = -MR; x <= MR; x ++) {
+        for (var y = -MR; y <= MR; y ++) {
+            var p = level.map[MR+y][MR+x];
+            var f = FOODMAP[p];
+            if (f) {
+                var flip = Math.random() > 0.5;
+                game.food.push({
+                    x: x,
+                    y: y,
+                    type: f.type,
+                    flip: flip,
+                    hp: f.hp,
+                });
+            }
+        }
+    }
+    return game;
+}
+
+function game_canmove(game, dx, dy) {
+    if (game.over || busy)
+        return false;
+    var eel = game.eel;
+    var nx = eel[0] + dx;
+    var ny = eel[1] + dy;
+    for (var i = 0; i < eel.length; i += 2) {
+        if (eel[i] == nx && eel[i+1] == ny)
+            return false;
+    }
+    var what = game.map[MR+ny][MR+nx];
+    if (what == '*' || what == 'p')
+        return false;
+    for (var i = 0; i < game.food.length; i ++) {
+        var food = game.food[i];
+        if (food.x == nx && food.y == ny) {
+            if (food.hp > 0)
+                return false;
+        }
+    }
+    return true;
+}
+
+function game_move(game, dx, dy) {
+    var eel = game.eel;
+    var nx = eel[0] + dx;
+    var ny = eel[1] + dy;
+    for (var i = 0; i < game.food.length; i ++) {
+        var food = game.food[i];
+        if (food.x == nx && food.y == ny) {
+            food.creature.remove();
+            game.food.splice(i, 1);
+            game.hp = Math.min(20, game.hp + FOODHP);
+        }
+    }
+    eel.splice(eel.length - 2, 2);
+    eel.splice(0, 0, nx, ny);
+    game.charge = true;
+    game.hp = Math.max(0, game.hp - MOVEHP);
+}
+
+function solver() {
+    var solutions = [];
+    function proceed(sofar, map, eel, food, hp, charge) {
+        map = map.slice();
+        eel = eel.slice();
+        food = $.map(food, function (f) { return $.extend({}, f); });
+    }
+    proceed(LEVELS[curlevel].map, cureel, curfood, hp, charge);
+}
 
 $(document).ready(function() {
     var bw = TR * 18 + 12;
@@ -270,22 +390,20 @@ $(document).ready(function() {
     var hunger1 = $(document.createElementNS(svgNS, 'image'))
         .attr('x', bw - TR - 520)
         .attr('y', bh + 30)
-        .attr('width', 520)
+        .attr('width', 530)
         .attr('height', 45)
         .attr('href', 'svg/hunger1.svg');
     svg.append(hunger1);
     var hungerbar = $(document.createElementNS(svgNS, 'rect'))
         .attr('x', bw - TR - 520 + 5)
-        .attr('y', bh + 30 + 17)
-        .attr('width', 25 * 15)
-        .attr('height', 11)
-        .attr('class', 'hungerbar red')
-        .attr('href', 'svg/hunger1.svg');
+        .attr('y', bh + 30 + 14)
+        .attr('height', 17)
+        .attr('class', 'hungerbar');
     svg.append(hungerbar);
     var hunger2 = $(document.createElementNS(svgNS, 'image'))
         .attr('x', bw - TR - 520)
         .attr('y', bh + 30)
-        .attr('width', 520)
+        .attr('width', 530)
         .attr('height', 45)
         .attr('href', 'svg/hunger2.svg');
     svg.append(hunger2);
@@ -325,24 +443,26 @@ $(document).ready(function() {
     var akey = addkey('a1', 10, 35, 35, 35);
     var spkey = addkey('sp1', 0, 70, 90, 35);
 
-    function updateconsole(eel) {
+    function updateconsole() {
+        var eel = game.eel;
         var nomoves = true;
         function setkey(k, l, b) {
             k.attr('href', 'svg/console-' + l + (b ? '2' : '1') + '.svg');
             if (b)
                 nomoves = false;
         }
-        setkey(qkey, 'q', canmoveeel(eel, -1, 0));
-        setkey(wkey, 'w', canmoveeel(eel, 0, -1));
-        setkey(skey, 's', canmoveeel(eel, 1, 0));
-        setkey(akey, 'a', canmoveeel(eel, 0, 1));
-        setkey(spkey, 'sp', !levelover && charge);
-        charge1.text(charge ? 'Ready' : 'Not ready');
-        hungerbar.attr('width', 25 * (20 - hp));
-        hungerbar.toggleClass('red', hp <= 5);
-        hungerbar.toggleClass('yellow', hp > 5 && hp <= 10);
-        if (!busy && !levelover && nomoves)
-            defeat(eel);
+        setkey(qkey, 'q', canmoveeel(-1, 0));
+        setkey(wkey, 'w', canmoveeel(0, -1));
+        setkey(skey, 's', canmoveeel(1, 0));
+        setkey(akey, 'a', canmoveeel(0, 1));
+        setkey(spkey, 'sp', !game.over && game.charge && game.hp > SHOCKHP);
+        charge1.text(game.charge ? (game.hp <= SHOCKHP ? 'Too hungry' : 'Ready') : 'Not ready');
+        hungerbar.attr('width', 25 * (20 - game.hp) - 1)
+            .toggleClass('red', game.hp <= SHOCKHP)
+            .toggleClass('yellow', game.hp > SHOCKHP && game.hp <= SHOCKHP + MOVEHP);
+        
+        if (!busy && !game.over && nomoves)
+            defeat();
     }
 
     function gridline_create(x, y, nw) {
@@ -399,7 +519,9 @@ $(document).ready(function() {
         return thing;
     }
 
-    function puteel(eel, state) {
+    function puteel() {
+        var eel = game.eel;
+        var state = game.eelstate;
         $('.eel').remove();
         var eeltype = 'eel1';
         for (var i = 0; i < eel.length; i += 2) {
@@ -456,9 +578,9 @@ $(document).ready(function() {
     }        
 
     function reset() {
-        if (levelover) {
-            var x = cureel[0];
-            var y = cureel[1];
+        if (game && game.over) {
+            var x = game.eel[0];
+            var y = game.eel[1];
             var x1 = bw / 2 + TR * (x - y);
             var y1 = bh / 2 + TR * (x + y);
             var t = time();
@@ -470,44 +592,29 @@ $(document).ready(function() {
                 if (f > 0)
                     setTimeout(zoomout, 50);
                 else {
-                    levelover = false;
-                    updateconsole(cureel);
+                    game.over = false;
+                    updateconsole();
                 }
             }
             zoomout();
         }
-
-        var level = LEVELS[curlevel];
-        hp = level.hp;
-        charge = true;
+        game = start();
         board.empty();
         gridlines = [];
-        curfood = [];
+        $.each(game.food, function(i, f) {
+            f.creature = putthing(f.x, f.y, f.type + 'a', 0, f.flip);
+            f.number = putthing(f.x, f.y, 'number' + f.hp);
+        });
         for (var x = -MR; x <= MR; x ++) {
             for (var y = -MR; y <= MR; y ++) {
-                var p = level.map[MR+y][MR+x];
+                var p = game.map[MR+y][MR+x];
                 var p0 = p != '*';
-                var pnw = x > -MR && level.map[MR+y][MR+x-1] != '*';
-                var psw = y < MR && level.map[MR+y+1][MR+x] != '*';
+                var pnw = x > -MR && game.map[MR+y][MR+x-1] != '*';
+                var psw = y < MR && game.map[MR+y+1][MR+x] != '*';
                 if (p0 || pnw)
                     gridlines.push(gridline_create(x, y, true));
                 if (p0 || psw)
                     gridlines.push(gridline_create(x, y, false));
-                var food = FOODMAP[p];
-                if (food) {
-                    var flip = Math.random() > 0.5;
-                    var creature = putthing(x, y, food.type + 'a', 0, flip);
-                    var number = putthing(x, y, 'number' + food.hp);
-                    curfood.push({
-                        x: x,
-                        y: y,
-                        creature: creature,
-                        number: number,
-                        type: food.type,
-                        flip: flip,
-                        hp: food.hp,
-                    });
-                }
                 if (p == 'p') {
                     putthing(x, y, 'plant' + (1 + Math.floor(Math.random()*1)), Math.floor(Math.random()*4), Math.random() < 0.5);
                 }
@@ -521,18 +628,18 @@ $(document).ready(function() {
                     putthing(x, y, rocktype + 'd', Math.floor(Math.random()*4));
                     continue;
                 }
-                var p = level.map[MR+y][MR+x];
+                var p = game.map[MR+y][MR+x];
                 if (p == '*') {
                     var neighbors = [];
                     neighbors.push(
-                        (x <= -MR || level.map[MR+y][MR+x-1] == '*') ? '1' : '0',
-                        (y <= -MR || level.map[MR+y-1][MR+x] == '*') ? '1' : '0',
-                        (x >= MR || level.map[MR+y][MR+x+1] == '*') ? '1' : '0',
-                        (y >= MR || level.map[MR+y+1][MR+x] == '*') ? '1' : '0',
-                        (x <= -MR || y <= -MR || level.map[MR+y-1][MR+x-1] == '*') ? '1' : '0',
-                        (x >= MR || y <= -MR || level.map[MR+y-1][MR+x+1] == '*') ? '1' : '0',
-                        (x >= MR || y >= MR || level.map[MR+y+1][MR+x+1] == '*') ? '1' : '0',
-                        (x <= -MR || y >= MR || level.map[MR+y+1][MR+x-1] == '*') ? '1' : '0');
+                        (x <= -MR || game.map[MR+y][MR+x-1] == '*') ? '1' : '0',
+                        (y <= -MR || game.map[MR+y-1][MR+x] == '*') ? '1' : '0',
+                        (x >= MR || game.map[MR+y][MR+x+1] == '*') ? '1' : '0',
+                        (y >= MR || game.map[MR+y+1][MR+x] == '*') ? '1' : '0',
+                        (x <= -MR || y <= -MR || game.map[MR+y-1][MR+x-1] == '*') ? '1' : '0',
+                        (x >= MR || y <= -MR || game.map[MR+y-1][MR+x+1] == '*') ? '1' : '0',
+                        (x >= MR || y >= MR || game.map[MR+y+1][MR+x+1] == '*') ? '1' : '0',
+                        (x <= -MR || y >= MR || game.map[MR+y+1][MR+x-1] == '*') ? '1' : '0');
                     neighbors = neighbors.join('');
                     var nomatch = true;
                     $.each(ROCKMAP, function(pattern, rock) {
@@ -550,9 +657,8 @@ $(document).ready(function() {
             }
         }
 
-        cureel = level.eel.slice();
-        puteel(cureel);
-        updateconsole(cureel);
+        puteel();
+        updateconsole();
     }
 
     var imgs = [];
@@ -578,16 +684,18 @@ $(document).ready(function() {
     });
     preloadsvg(imgs, reset);
 
-    function victory(eel) {
+    function victory() {
+        var eel = game.eel;
         busy = true;
-        levelover = true;
+        game.over = true;
         var x = eel[0];
         var y = eel[1];
         var x1 = bw / 2 + TR * (x - y);
         var y1 = bh / 2 + TR * (x + y);
         var t = time();
         function happy() {
-            puteel(eel, 'happy');
+            game.eelstate = 'happy';
+            puteel();
             busy = false;
         }
         function zoomin() {
@@ -603,16 +711,18 @@ $(document).ready(function() {
         zoomin();
     }
 
-    function defeat(eel) {
+    function defeat() {
+        var eel = game.eel;
         busy = true;
-        levelover = true;
+        game.over = true;
         var x = eel[0];
         var y = eel[1];
         var x1 = bw / 2 + TR * (x - y);
         var y1 = bh / 2 + TR * (x + y);
         var t = time();
         function sad() {
-            puteel(eel, 'sad');
+            game.eelstate = 'sad';
+            puteel();
             busy = false;
         }
         function zoomin() {
@@ -627,61 +737,31 @@ $(document).ready(function() {
         }
         zoomin();
     }
-    
-    function canmoveeel(eel, dx, dy) {
-        if (levelover || busy)
+
+    function canmoveeel(dx, dy) {
+        return game_canmove(game, dx, dy);
+    }
+
+    function moveeel(dx, dy) {
+        if (!canmoveeel(dx, dy))
             return false;
-        var nx = eel[0] + dx;
-        var ny = eel[1] + dy;
-        for (var i = 0; i < eel.length; i += 2) {
-            if (eel[i] == nx && eel[i+1] == ny)
-                return false;
-        }
-        var what = LEVELS[curlevel].map[MR+ny][MR+nx];
-        if (what == '*' || what == 'p')
-            return false;
-        for (var i = 0; i < curfood.length; i ++) {
-            var food = curfood[i];
-            if (food.x == nx && food.y == ny) {
-                if (food.hp > 0)
-                    return false;
-            }
-        }
+        game_move(game, dx, dy);
+        if (game.food.length == 0)
+            victory();
+        if (game.food.length && game.hp == 0)
+            defeat();
         return true;
     }
 
-    function moveeel(eel, dx, dy) {
-        if (!canmoveeel(eel, dx, dy))
-            return false;
-        var nx = eel[0] + dx;
-        var ny = eel[1] + dy;
-        for (var i = 0; i < curfood.length; i ++) {
-            var food = curfood[i];
-            if (food.x == nx && food.y == ny) {
-                food.creature.remove();
-                curfood.splice(i, 1);
-                hp += 4;
-            }
-        }
-        eel.splice(eel.length - 2, 2);
-        eel.splice(0, 0, nx, ny);
-        if (curfood.length == 0)
-            victory(eel);
-        charge = true;
-        hp --;
-        if (curfood.length && hp == 0)
-            defeat(eel);
-        return true;
-    }
-
-    function shock(eel) {
-        if (!charge)
+    function shock() {
+        if (!game.charge || game.hp <= SHOCKHP)
             return;
+        var eel = game.eel;
         busy = true;
-        charge = false;
-        hp --;
-        if (hp == 0)
-            defeat(eel);
+        game.charge = false;
+        game.hp = Math.max(0, game.hp - SHOCKHP);
+        if (game.hp == 0)
+            defeat();
         var i = 0;
         function next() {
             var shocks = [];
@@ -698,7 +778,7 @@ $(document).ready(function() {
                     .attr('href', 'svg/shock1.svg');
                 board.append(thing);
                 shocks.push(thing);
-                $.each(curfood, function(i, food) {
+                $.each(game.food, function(i, food) {
                     if (food.x == sx && food.y == sy && food.hp > 0) {
                         food.hp --;
                         food.number.remove();
@@ -738,7 +818,7 @@ $(document).ready(function() {
                 if (!sw)
                     addshock(2, x, y + 1);
             }
-            updateconsole(eel);
+            updateconsole();
             setTimeout(function() {
                 $.each(shocks, function(i, thing) {
                     thing.remove();
@@ -748,7 +828,7 @@ $(document).ready(function() {
                 i += 2;
                 if (i >= eel.length) {
                     busy = false;
-                    updateconsole(eel);
+                    updateconsole();
                     return;
                 }
                 next();
@@ -758,33 +838,33 @@ $(document).ready(function() {
     }
 
     function do_q(event) {
-        if (!moveeel(cureel, -1, 0))
+        if (!moveeel(-1, 0))
             return;
-        puteel(cureel);
-        updateconsole(cureel);
+        puteel();
+        updateconsole();
     }
     function do_w(event) {
-        if (!moveeel(cureel, 0, -1))
+        if (!moveeel(0, -1))
             return;
-        puteel(cureel);
-        updateconsole(cureel);
+        puteel();
+        updateconsole();
     }
     function do_s(event) {
-        if (!moveeel(cureel, 1, 0))
+        if (!moveeel(1, 0))
             return;
-        puteel(cureel);
-        updateconsole(cureel);
+        puteel();
+        updateconsole();
     }
     function do_a(event) {
-        if (!moveeel(cureel, 0, 1))
+        if (!moveeel(0, 1))
             return
-        puteel(cureel);
-        updateconsole(cureel);
+        puteel();
+        updateconsole();
     }
     function do_sp(event) {
-        if (busy || levelover)
+        if (busy || game.over)
             return;
-        shock(cureel);
+        shock();
     }
 
     var mouseX, mouseY;
@@ -795,6 +875,7 @@ $(document).ready(function() {
     $(document).keypress(function(event) {
         if (busy)
             return;
+        var eel = game.eel;
         if ('[][]'[hackk].charCodeAt(0) == event.keyCode) {
             hackk ++
             if (hackk == 4) {
@@ -836,12 +917,12 @@ $(document).ready(function() {
                 } else if (event.keyCode == 101) {
                     LEVELS[curlevel].eel = [x, y];
                 } else if (event.keyCode == 108) {
-                    var lx = Math.abs(x - cureel[cureel.length-2]);
-                    var ly = Math.abs(y - cureel[cureel.length-1]);
+                    var lx = Math.abs(x - eel[eel.length-2]);
+                    var ly = Math.abs(y - eel[eel.length-1]);
                     if (lx + ly == 1)
                         LEVELS[curlevel].eel.push(x, y);
                     else if (lx + ly == 0)
-                        LEVELS[curlevel].eel.splice(cureel.length-2, 2);
+                        LEVELS[curlevel].eel.splice(eel.length-2, 2);
                 }
                 reset();
             }
@@ -862,17 +943,18 @@ $(document).ready(function() {
                 curlevel --; reset();
             }
         }
-        updateconsole(cureel);
+        updateconsole();
     });
     svg.click(function(event) {
+        var eel = game.eel;
         var boardOffset = svg.offset();
         var mx = (mouseX - boardOffset.left - bw/2) / TR;
         var my = (mouseY - boardOffset.top - bh/2) / TR;
         var x = Math.round(mx/2 + my/2);
         var y = Math.round(my/2 - mx/2);
         if (x >= -MR && x <= MR && y >= -MR && y <= MR) {
-            var lx = x - cureel[0];
-            var ly = y - cureel[1];
+            var lx = x - eel[0];
+            var ly = y - eel[1];
             if (Math.abs(lx) + Math.abs(ly) == 1) {
                 if (lx == -1)
                     do_q();

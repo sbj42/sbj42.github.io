@@ -12,11 +12,11 @@ body {
     opacity: 0.4;
 }
 .hungerbar {
-    stroke: white;
+    stroke: none;
     fill: #0B8E00;
 }
 .hungerbar.yellow {
-    fill: #C58B14;
+    fill: #DEE629;
 }
 .hungerbar.red {
     fill: #790A0A;
