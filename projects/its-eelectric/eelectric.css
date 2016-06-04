@@ -21,3 +21,9 @@ body {
 .hungerbar.red {
     fill: #790A0A;
 }
+.sol {
+    fill: none;
+    stroke: #fff;
+    stroke-linecap: round;
+    stroke-width: 5px;
+}

@@ -133,6 +133,7 @@ var LEVELS = [
         ],
         "eel": [-1,1,-1,2,0,2],
         "hp": 7
+        // wsw*s (7)
     },
     {
         "map": [
@@ -152,6 +153,7 @@ var LEVELS = [
         ],
         "eel": [1,-1,1,-2,0,-2],
         "hp": 12
+        // qaqqa*s (9)
     },
     {
         "map": [
@@ -171,6 +173,7 @@ var LEVELS = [
         ],
         "eel": [0,0,0,-1,-1,-1],
         "hp": 12
+        // as*aqw*q (12)
     },
     {
         "map": [
@@ -190,6 +193,7 @@ var LEVELS = [
         ],
         "eel": [-3,0,-3,1,-3,2],
         "hp": 8
+        // sss*aqwssw*s (8)
     },
     {
         "map": [
@@ -208,7 +212,48 @@ var LEVELS = [
             "*************"
         ],
         "eel": [-3,0,-3,1,-3,2,-2,2],
-        "hp": 19
+        "hp": 15
+        // saass*ww*ss*a*qqqqwssww*q*aasws (15)
+    },
+    {
+	"map": [
+	    "*************",
+	    "*******p*****",
+	    "*************",
+	    "*************",
+	    "****p   p****",
+	    "****  3  **p*",
+	    "**** 2p4 ****",
+	    "*p**  1  ****",
+	    "****p   p****",
+	    "*****p ******",
+	    "****   ******",
+	    "****  *******",
+	    "*************"
+	],
+	"eel": [0,3,0,4,-1,4,-1,5,-2,5,-2,4],
+	"hp": 20
+	//wqw*ssswwqw*q*aqqa*sassw (20)
+	//wswswwqw*q*aqqa*sa*ssw (20)
+    },
+    {
+	"map": [
+	    "*************",
+	    "*******  ****",
+	    "******    ***",
+	    "*****  2 3 **",
+	    "****        *",
+	    "***  *** 2  *",
+	    "**   ***   **",
+	    "*  2 ***  ***",
+	    "*        ****",
+	    "** 3 2  *****",
+	    "***    ******",
+	    "****  *******",
+	    "*************"
+	],
+	"eel": [-5,2,-5,1,-4,1,-4,0,-3,0,-3,-1,-2,-1,-2,-2,-1,-2,-1,-3,0,-3,0,-4,1,-4,1,-5,2,-5],
+	"hp": 18
     }
 ];
 //        map: [
@@ -294,7 +339,7 @@ function start() {
 }
 
 function game_canmove(game, dx, dy) {
-    if (game.over || busy)
+    if (game.over)
         return false;
     var eel = game.eel;
     var nx = eel[0] + dx;
@@ -316,14 +361,18 @@ function game_canmove(game, dx, dy) {
     return true;
 }
 
-function game_move(game, dx, dy) {
+function game_canshock(game) {
+    return !game.over && game.charge && game.hp > SHOCKHP;
+}
+
+function game_move(game, dx, dy, oneat) {
     var eel = game.eel;
     var nx = eel[0] + dx;
     var ny = eel[1] + dy;
     for (var i = 0; i < game.food.length; i ++) {
         var food = game.food[i];
         if (food.x == nx && food.y == ny) {
-            food.creature.remove();
+            if (oneat) oneat(food);
             game.food.splice(i, 1);
             game.hp = Math.min(20, game.hp + FOODHP);
         }
@@ -334,14 +383,133 @@ function game_move(game, dx, dy) {
     game.hp = Math.max(0, game.hp - MOVEHP);
 }
 
-function solver() {
-    var solutions = [];
-    function proceed(sofar, map, eel, food, hp, charge) {
-        map = map.slice();
-        eel = eel.slice();
-        food = $.map(food, function (f) { return $.extend({}, f); });
+function game_shock1(game, i, onshock, onharm) {
+    var eel = game.eel;
+    var x = eel[i];
+    var y = eel[i+1];
+    
+    function addshock(rot, sx, sy) {
+        if (onshock) onshock(rot, x, y);
+        $.each(game.food, function(i, food) {
+            if (food.x == sx && food.y == sy && food.hp > 0) {
+                food.hp --;
+                if (onharm) onharm(food);
+            }
+        });
     }
-    proceed(LEVELS[curlevel].map, cureel, curfood, hp, charge);
+
+    var px = i > 0 && (eel[i-2] - x);
+    var py = i > 0 && (eel[i-1] - y);
+    var nx = i < eel.length - 2 && (eel[i+2] - x);
+    var ny = i < eel.length - 2 && (eel[i+3] - y);
+    var nw = px == -1 || nx == -1;
+    var ne = py == -1 || ny == -1;
+    var se = px == 1 || nx == 1;
+    var sw = py == 1 || ny == 1;
+    if (i == 0 || i == eel.length - 2) {
+        if (!nw && !se) {
+            addshock(-1, x - 1, y);
+            addshock(1, x + 1, y);
+        } else {
+            addshock(0, x, y - 1);
+            addshock(2, x, y + 1);
+        }
+    } else {
+        if (!nw)
+            addshock(-1, x - 1, y);
+        if (!ne)
+            addshock(0, x, y - 1);
+        if (!se)
+            addshock(1, x + 1, y);
+        if (!sw)
+            addshock(2, x, y + 1);
+    }
+}
+
+function game_shock(game) {
+    if (!game.charge || game.hp <= SHOCKHP)
+        return false;
+    var harm = false;
+    var eel = game.eel;
+    game.charge = false;
+    game.hp = Math.max(0, game.hp - SHOCKHP);
+    for (var i = 0; i < eel.length; i += 2) {
+        game_shock1(game, i, null, function() { harm = true; });
+    }
+    return harm;
+}
+
+function solver(game) {
+    var progress = time() + 5;
+    var solutions = [];
+    function step(sofar, game) {
+        if (time() > progress) {
+            console.info('thinking: ' + sofar);
+            progress = time() + 5;
+        }
+        if (game_canmove(game, -1, 0)) {
+            var game2 = $.extend(true, {}, game);
+            game_move(game2, -1, 0);
+            if (game2.food.length == 0)
+                solutions.push(sofar + 'q');
+            else if (game2.hp > 0)
+                step(sofar + 'q', game2);
+        }
+        if (game_canmove(game, 0, -1)) {
+            var game2 = $.extend(true, {}, game);
+            game_move(game2, 0, -1);
+            if (game2.food.length == 0)
+                solutions.push(sofar + 'w');
+            else if (game2.hp > 0)
+            step(sofar + 'w', game2);
+        }
+        if (game_canmove(game, 1, 0)) {
+            var game2 = $.extend(true, {}, game);
+            game_move(game2, 1, 0);
+            if (game2.food.length == 0)
+                solutions.push(sofar + 's');
+            else if (game2.hp > 0)
+            step(sofar + 's', game2);
+        }
+        if (game_canmove(game, 0, 1)) {
+            var game2 = $.extend(true, {}, game);
+            game_move(game2, 0, 1);
+            if (game2.food.length == 0)
+                solutions.push(sofar + 'a');
+            else if (game2.hp > 0)
+            step(sofar + 'a', game2);
+        }
+        if (game_canshock(game)) {
+            var game2 = $.extend(true, {}, game);
+            if (game_shock(game2)) {
+		if (game2.food.length == 0)
+                    solutions.push(sofar + '*');
+		else if (game2.hp > 0)
+		    step(sofar + '*', game2);
+	    }
+        }
+    }
+    game = $.extend(true, {}, game);
+    for (var hp = 1; hp <= 20; hp ++) {
+        console.info('trying hp ' + hp);
+        game.hp = hp;
+        step('', game);
+        if (solutions.length > 0) {
+            console.info('done (min hp needed is ' + hp + ':');
+	    var shortest = null;
+	    var length = 0;
+            $.each(solutions, function(i, sol) {
+                console.info('  '+ sol);
+		if (shortest == null || sol.length < length) {
+		    length = sol.length;
+		    shortest = sol;
+		}
+            });
+            return {sol: shortest, hp: hp};
+        }
+    }
+    console.info('no solution');
+    return null;
 }
 
 $(document).ready(function() {
@@ -455,9 +623,9 @@ $(document).ready(function() {
         setkey(wkey, 'w', canmoveeel(0, -1));
         setkey(skey, 's', canmoveeel(1, 0));
         setkey(akey, 'a', canmoveeel(0, 1));
-        setkey(spkey, 'sp', !game.over && game.charge && game.hp > SHOCKHP);
+        setkey(spkey, 'sp', canshock());
         charge1.text(game.charge ? (game.hp <= SHOCKHP ? 'Too hungry' : 'Ready') : 'Not ready');
-        hungerbar.attr('width', 25 * (20 - game.hp) - 1)
+        hungerbar.attr('width', Math.max(0, 25 * (20 - game.hp) - 1))
             .toggleClass('red', game.hp <= SHOCKHP)
             .toggleClass('yellow', game.hp > SHOCKHP && game.hp <= SHOCKHP + MOVEHP);
         
@@ -601,10 +769,6 @@ $(document).ready(function() {
         game = start();
         board.empty();
         gridlines = [];
-        $.each(game.food, function(i, f) {
-            f.creature = putthing(f.x, f.y, f.type + 'a', 0, f.flip);
-            f.number = putthing(f.x, f.y, 'number' + f.hp);
-        });
         for (var x = -MR; x <= MR; x ++) {
             for (var y = -MR; y <= MR; y ++) {
                 var p = game.map[MR+y][MR+x];
@@ -620,7 +784,11 @@ $(document).ready(function() {
                 }
             }
         }
-
+        $.each(game.food, function(i, f) {
+            f.creature = putthing(f.x, f.y, f.type + 'a', 0, f.flip);
+            f.number = putthing(f.x, f.y, 'number' + f.hp);
+        });
+ 
         var rocktype = 'rock1';
         for (var x = -MR-1; x <= MR+1; x ++) {
             for (var y = -MR-1; y <= MR+1; y ++) {
@@ -739,13 +907,19 @@ $(document).ready(function() {
     }
 
     function canmoveeel(dx, dy) {
-        return game_canmove(game, dx, dy);
+        return !busy && game_canmove(game, dx, dy);
+    }
+
+    function canshock() {
+        return !busy && game_canshock(game);
     }
 
     function moveeel(dx, dy) {
         if (!canmoveeel(dx, dy))
             return false;
-        game_move(game, dx, dy);
+        game_move(game, dx, dy, function(food) {
+            food.creature.remove();
+        });
         if (game.food.length == 0)
             victory();
         if (game.food.length && game.hp == 0)
@@ -754,7 +928,7 @@ $(document).ready(function() {
     }
 
     function shock() {
-        if (!game.charge || game.hp <= SHOCKHP)
+        if (!canshock())
             return;
         var eel = game.eel;
         busy = true;
@@ -765,10 +939,7 @@ $(document).ready(function() {
         var i = 0;
         function next() {
             var shocks = [];
-            var x = eel[i];
-            var y = eel[i+1];
-
-            function addshock(rot, sx, sy) {
+            game_shock1(game, i, function(rot, x, y) {
                 var thing = $(document.createElementNS(svgNS, 'image'))
                     .attr('x', -TR*2)
                     .attr('y', -TR*2)
@@ -778,46 +949,15 @@ $(document).ready(function() {
                     .attr('href', 'svg/shock1.svg');
                 board.append(thing);
                 shocks.push(thing);
-                $.each(game.food, function(i, food) {
-                    if (food.x == sx && food.y == sy && food.hp > 0) {
-                        food.hp --;
-                        food.number.remove();
-                        if (food.hp == 0) {
-                            food.creature.remove();
-                            food.creature = putthing(sx, sy, food.type + 'b', 0, food.flip);
-                        } else {
-                            food.number = putthing(sx, sy, 'number' + food.hp);
-                        }
-                    }
-                });
-            }
-
-            var px = i > 0 && (eel[i-2] - x);
-            var py = i > 0 && (eel[i-1] - y);
-            var nx = i < eel.length - 2 && (eel[i+2] - x);
-            var ny = i < eel.length - 2 && (eel[i+3] - y);
-            var nw = px == -1 || nx == -1;
-            var ne = py == -1 || ny == -1;
-            var se = px == 1 || nx == 1;
-            var sw = py == 1 || ny == 1;
-            if (i == 0 || i == eel.length - 2) {
-                if (!nw && !se) {
-                    addshock(-1, x - 1, y);
-                    addshock(1, x + 1, y);
+            }, function(food) {
+                food.number.remove();
+                if (food.hp == 0) {
+                    food.creature.remove();
+                    food.creature = putthing(food.x, food.y, food.type + 'b', 0, food.flip);
                 } else {
-                    addshock(0, x, y - 1);
-                    addshock(2, x, y + 1);
+                    food.number = putthing(food.x, food.y, 'number' + food.hp);
                 }
-            } else {
-                if (!nw)
-                    addshock(-1, x - 1, y);
-                if (!ne)
-                    addshock(0, x, y - 1);
-                if (!se)
-                    addshock(1, x + 1, y);
-                if (!sw)
-                    addshock(2, x, y + 1);
-            }
+            });
             updateconsole();
             setTimeout(function() {
                 $.each(shocks, function(i, thing) {
@@ -862,9 +1002,48 @@ $(document).ready(function() {
         updateconsole();
     }
     function do_sp(event) {
-        if (busy || game.over)
-            return;
         shock();
+    }
+
+    function drawsol(sol) {
+        var ex = game.eel[0];
+        var ey = game.eel[1];
+        var x = (bw/2 + TR * (ex - ey));
+        var y = (bh/2 + TR * (ex + ey)) - sol.length;
+        for (var i = 0; i < sol.length; i ++) {
+            var col = Math.floor(i * 255 / sol.length);
+            col = 'rgb('+col+','+col+','+col+')';
+            var nx = x, ny = y;
+            if (sol[i] == 'q') {
+                nx -= TR; ny -= TR;
+            } else if (sol[i] == 'w') {
+                nx += TR; ny -= TR;
+            } else if (sol[i] == 's') {
+                nx += TR; ny += TR;
+            } else if (sol[i] == 'a') {
+                nx -= TR; ny += TR;
+            } else if (sol[i] == '*') {
+                var c = $(document.createElementNS(svgNS, 'circle'))
+                    .attr('cx', x)
+                    .attr('cy', y)
+                    .attr('r', 15)
+                    .attr('class', 'sol')
+                    .css('stroke', col);
+                board.append(c);
+                continue;
+            }
+	    ny += 2;
+            var l = $(document.createElementNS(svgNS, 'line'))
+                .attr('x1', x)
+                .attr('y1', y)
+                .attr('x2', nx)
+                .attr('y2', ny)
+                .attr('class', 'sol')
+                .css('stroke', col);
+            board.append(l);
+            x = nx;
+            y = ny;
+        }
     }
 
     var mouseX, mouseY;
@@ -923,6 +1102,14 @@ $(document).ready(function() {
                         LEVELS[curlevel].eel.push(x, y);
                     else if (lx + ly == 0)
                         LEVELS[curlevel].eel.splice(eel.length-2, 2);
+                } else if (event.keyCode == 42) {
+		    var sol = solver(start());
+		    if (sol == null)
+			return;
+		    LEVELS[curlevel].hp = sol.hp;
+		    reset();
+                    drawsol(sol.sol);
+                    return;
                 }
                 reset();
             }
@@ -941,6 +1128,10 @@ $(document).ready(function() {
                 curlevel ++; reset();
             } else if (event.keyCode == 45) {
                 curlevel --; reset();
+            } else if (event.keyCode == 42) {
+		var sol = solver(game);
+		if (sol != null)
+                    drawsol(sol.sol);
             }
         }
         updateconsole();
