@@ -2,8 +2,8 @@ html, body { overflow: hidden; }
 body {
     background: #3f98a0;
 }
-#svg {
-    background: #3f98a0;
+#bg {
+    fill: #3f98a0;
 }
 .gridline {
     stroke: white;

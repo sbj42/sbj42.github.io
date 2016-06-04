@@ -181,9 +181,9 @@ var LEVELS = [
             "*************",
             "*************",
             "********* ***",
-            "*****p    ***",
+            "*****p  0 ***",
             "*****   1 ***",
-            "***      p***",
+            "***     0p***",
             "*** p11 *****",
             "***     *****",
             "*** *********",
@@ -192,8 +192,33 @@ var LEVELS = [
             "*************"
         ],
         "eel": [-3,0,-3,1,-3,2],
-        "hp": 8
+        "hp": 11
         // sss*aqwssw*s (8)
+        // sss*aqwwswss*a (10*)
+        // ssssw*wsaaqqa*q (11**)
+    },
+    {
+        "map": [
+            "*************",
+            "*************",
+            "****** 0 ****",
+            "****** p2 ***",
+            "**** 2 1 2 **",
+            "****2p p p **",
+            "**   2 2 2 **",
+            "**1p2p p2****",
+            "**   2 2 ****",
+            "***0 p ******",
+            "****   ******",
+            "*************",
+            "*************"
+        ],
+        "eel": [0,2,0,3,0,4,-1,4,-2,4,-2,3,-2,2],
+        "hp": 18
+        // wwww*ss*aaqqq*qqq*aassssssww*ssww*qwqaqqqq*aaa (15)
+        // wwww*ss*aaqqq*qqq*aassssssww*ssww*qqwwqqaaqq*aaa (16*)
+        // wwww*ss*aaqqq*qqq*aasaswssssww*ssww*qwqaqqqq*aaa (17*)
+        // wwww*ss*aaqqq*qqq*aasaswssssww*ssww*qqwwqqaaqq*aaa (18**)
     },
     {
         "map": [
@@ -202,58 +227,62 @@ var LEVELS = [
             "*************",
             "*************",
             "****p     ***",
-            "**** 414 p***",
+            "****0414 p***",
             "***  1 1  ***",
             "***  414 ****",
-            "***     p****",
+            "***    0p****",
             "*************",
             "*************",
             "*************",
             "*************"
         ],
         "eel": [-3,0,-3,1,-3,2,-2,2],
-        "hp": 15
+        "hp": 17
         // saass*ww*ss*a*qqqqwssww*q*aasws (15)
+        // saass*ww*ss*a*qaqqwwsww*q*aqassws (17**)
     },
     {
-	"map": [
-	    "*************",
-	    "*******p*****",
-	    "*************",
-	    "*************",
-	    "****p   p****",
-	    "****  3  **p*",
-	    "**** 2p4 ****",
-	    "*p**  1  ****",
-	    "****p   p****",
-	    "*****p ******",
-	    "****   ******",
-	    "****  *******",
-	    "*************"
-	],
-	"eel": [0,3,0,4,-1,4,-1,5,-2,5,-2,4],
-	"hp": 20
-	//wqw*ssswwqw*q*aqqa*sassw (20)
-	//wswswwqw*q*aqqa*sa*ssw (20)
+        "map": [
+            "*************",
+            "*******p*****",
+            "*************",
+            "*************",
+            "****p   p****",
+            "****  3  **p*",
+            "**** 2p4 ****",
+            "*p**0 1  ****",
+            "****p0  p****",
+            "*****p ******",
+            "*****  ******",
+            "****  *******",
+            "*************"
+        ],
+        "eel": [0,2,0,3,0,4,-1,4,-1,5,-2,5],
+        "hp": 20
+        // swswwqw*q*aqqa*sa*ssw (19)
+        // qwqw*swwssasaa*q*qqwwssa (20**)
     },
     {
-	"map": [
-	    "*************",
-	    "*******  ****",
-	    "******    ***",
-	    "*****  2 3 **",
-	    "****        *",
-	    "***  *** 2  *",
-	    "**   ***   **",
-	    "*  2 ***  ***",
-	    "*        ****",
-	    "** 3 2  *****",
-	    "***    ******",
-	    "****  *******",
-	    "*************"
-	],
-	"eel": [-5,2,-5,1,-4,1,-4,0,-3,0,-3,-1,-2,-1,-2,-2,-1,-2,-1,-3,0,-3,0,-4,1,-4,1,-5,2,-5],
-	"hp": 18
+        "map": [
+            "*************",
+            "*************",
+            "*******220***",
+            "*****1    ***",
+            "****    1 2**",
+            "***1 p p  2**",
+            "***1  0pp ***",
+            "**2  ppp  ***",
+            "**21 1   ****",
+            "***1    *****",
+            "****22*******",
+            "*************",
+            "*************"
+        ],
+        "eel": [2,2,1,2,1,3,0,3,-1,3,-2,3,-2,2,-2,1,-2,0],
+        "hp": 17
+        //*wswww*qqqqqaaqaaas*a*swswqqqqwswwswswssssa*s*aqqwqwws (15)
+        //*wswww*qqqaaqqqaasssaq*a*qwqwqwswwsws*wssssa*s*aqqwqwws (16*)
+        //*wswww*qqqqqa*qaaasssaq*a*qwqwqwswssswwqwsssaasswq*w*wqq (17**)
     }
 ];
 //        map: [
@@ -298,6 +327,7 @@ var ROCKMAP = {
 };
 
 var FOODMAP = {
+    '0': {type: 'starfish1', hp: 0, star: true},
     '1': {type: 'guppy1', hp: 1},
     '2': {type: 'catfish1', hp: 2},
     '3': {type: 'piranha1', hp: 3},
@@ -317,6 +347,8 @@ function start() {
         hp: level.hp,
         charge: true,
         over: false,
+        hasstars: 0,
+        stars: 0,
         food: []
     };
     for (var x = -MR; x <= MR; x ++) {
@@ -331,11 +363,22 @@ function start() {
                     type: f.type,
                     flip: flip,
                     hp: f.hp,
+                    star: f.star
                 });
+                if (f.star)
+                    game.hasstars ++;
             }
         }
     }
     return game;
+}
+
+function game_over(game) {
+    if (game.hp <= 0)
+        return true;
+    var nonstars = 0;
+    $.each(game.food, function(i, f) { if (!f.star) nonstars ++; });
+    return nonstars == 0;
 }
 
 function game_canmove(game, dx, dy) {
@@ -372,9 +415,13 @@ function game_move(game, dx, dy, oneat) {
     for (var i = 0; i < game.food.length; i ++) {
         var food = game.food[i];
         if (food.x == nx && food.y == ny) {
+            if (food.star) {
+                game.stars ++;
+            } else {
+                game.hp = Math.min(20, game.hp + FOODHP);
+            }
             if (oneat) oneat(food);
             game.food.splice(i, 1);
-            game.hp = Math.min(20, game.hp + FOODHP);
         }
     }
     eel.splice(eel.length - 2, 2);
@@ -439,9 +486,11 @@ function game_shock(game) {
     return harm;
 }
 
-function solver(game) {
-    var progress = time() + 5;
+function solver(game, sethp) {
+    var progress;
     var solutions = [];
+    function over() {
+    }
     function step(sofar, game) {
         if (time() > progress) {
             console.info('thinking: ' + sofar);
@@ -452,7 +501,7 @@ function solver(game) {
             game_move(game2, -1, 0);
             if (game2.food.length == 0)
                 solutions.push(sofar + 'q');
-            else if (game2.hp > 0)
+            else if (!game_over(game2))
                 step(sofar + 'q', game2);
         }
         if (game_canmove(game, 0, -1)) {
@@ -460,38 +509,37 @@ function solver(game) {
             game_move(game2, 0, -1);
             if (game2.food.length == 0)
                 solutions.push(sofar + 'w');
-            else if (game2.hp > 0)
-            step(sofar + 'w', game2);
+            else if (!game_over(game2))
+                step(sofar + 'w', game2);
         }
         if (game_canmove(game, 1, 0)) {
             var game2 = $.extend(true, {}, game);
             game_move(game2, 1, 0);
             if (game2.food.length == 0)
                 solutions.push(sofar + 's');
-            else if (game2.hp > 0)
-            step(sofar + 's', game2);
+            else if (!game_over(game2))
+                step(sofar + 's', game2);
         }
         if (game_canmove(game, 0, 1)) {
             var game2 = $.extend(true, {}, game);
             game_move(game2, 0, 1);
             if (game2.food.length == 0)
                 solutions.push(sofar + 'a');
-            else if (game2.hp > 0)
-            step(sofar + 'a', game2);
+            else if (!game_over(game2))
+                step(sofar + 'a', game2);
         }
         if (game_canshock(game)) {
             var game2 = $.extend(true, {}, game);
             if (game_shock(game2)) {
-		if (game2.food.length == 0)
-                    solutions.push(sofar + '*');
-		else if (game2.hp > 0)
+		if (!game_over(game2))
 		    step(sofar + '*', game2);
 	    }
         }
     }
     game = $.extend(true, {}, game);
-    for (var hp = 1; hp <= 20; hp ++) {
+    for (var hp = sethp || 1; hp <= 20; hp ++) {
         console.info('trying hp ' + hp);
+        progress = time() + 5;
         game.hp = hp;
         step('', game);
         if (solutions.length > 0) {
@@ -535,6 +583,13 @@ $(document).ready(function() {
     var borderclipg = $(document.createElementNS(svgNS, 'g'))
         .attr('clip-path', 'url(#borderclip)');
     svg.append(borderclipg);
+    var bg = $(document.createElementNS(svgNS, 'rect'))
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('width', bw)
+        .attr('height', bh)
+        .attr('id', 'bg');
+    borderclipg.append(bg);
 
     var board = $(document.createElementNS(svgNS, 'g'));
     borderclipg.append(board);
@@ -593,6 +648,28 @@ $(document).ready(function() {
         .text('Ready');
     svg.append(charge1);
 
+    var star1 = $(document.createElementNS(svgNS, 'image'))
+        .attr('x', bw - TR - 45)
+        .attr('y', bh + 65)
+        .attr('width', 50)
+        .attr('height', 50)
+        .attr('href', 'svg/starfish1b.svg');
+    svg.append(star1);
+    var star2 = $(document.createElementNS(svgNS, 'image'))
+        .attr('x', bw - TR - 90)
+        .attr('y', bh + 65)
+        .attr('width', 50)
+        .attr('height', 50)
+        .attr('href', 'svg/starfish1b.svg');
+    svg.append(star2);
+    var star3 = $(document.createElementNS(svgNS, 'image'))
+        .attr('x', bw - TR - 135)
+        .attr('y', bh + 65)
+        .attr('width', 50)
+        .attr('height', 50)
+        .attr('href', 'svg/starfish1b.svg');
+    svg.append(star3);
+
     function addkey(k, x, y, w, h) {
         var key = $(document.createElementNS(svgNS, 'image'))
             .attr('class', 'key')
@@ -628,6 +705,12 @@ $(document).ready(function() {
         hungerbar.attr('width', Math.max(0, 25 * (20 - game.hp) - 1))
             .toggleClass('red', game.hp <= SHOCKHP)
             .toggleClass('yellow', game.hp > SHOCKHP && game.hp <= SHOCKHP + MOVEHP);
+        star1.attr('href', 'svg/starfish1' + (game.stars > 0 ? 'a' : 'b') + '.svg')
+            .toggle(game.hasstars > 0);
+        star2.attr('href', 'svg/starfish1' + (game.stars > 1 ? 'a' : 'b') + '.svg')
+            .toggle(game.hasstars > 1);
+        star3.attr('href', 'svg/starfish1' + (game.stars > 2 ? 'a' : 'b') + '.svg')
+            .toggle(game.hasstars > 2);
         
         if (!busy && !game.over && nomoves)
             defeat();
@@ -771,10 +854,11 @@ $(document).ready(function() {
         gridlines = [];
         for (var x = -MR; x <= MR; x ++) {
             for (var y = -MR; y <= MR; y ++) {
+                function passable(p) { return p != '*' && p != 'p'; }
                 var p = game.map[MR+y][MR+x];
-                var p0 = p != '*';
-                var pnw = x > -MR && game.map[MR+y][MR+x-1] != '*';
-                var psw = y < MR && game.map[MR+y+1][MR+x] != '*';
+                var p0 = passable(p);
+                var pnw = x > -MR && passable(game.map[MR+y][MR+x-1]);
+                var psw = y < MR && passable(game.map[MR+y+1][MR+x]);
                 if (p0 || pnw)
                     gridlines.push(gridline_create(x, y, true));
                 if (p0 || psw)
@@ -786,7 +870,8 @@ $(document).ready(function() {
         }
         $.each(game.food, function(i, f) {
             f.creature = putthing(f.x, f.y, f.type + 'a', 0, f.flip);
-            f.number = putthing(f.x, f.y, 'number' + f.hp);
+            if (f.hp)
+                f.number = putthing(f.x, f.y, 'number' + f.hp);
         });
  
         var rocktype = 'rock1';
@@ -831,7 +916,7 @@ $(document).ready(function() {
 
     var imgs = [];
     imgs.push('border1', 'hunger1', 'hunger2', 'plant1', 'shock1');
-    $.each(['guppy1', 'catfish1', 'piranha1', 'stingray1'], function(i, food) {
+    $.each(['starfish1', 'guppy1', 'catfish1', 'piranha1', 'stingray1'], function(i, food) {
         imgs.push(food + 'a', food + 'b');
     });
     $.each(['q', 'w', 'a', 's', 'sp'], function(i, key) {
@@ -920,10 +1005,14 @@ $(document).ready(function() {
         game_move(game, dx, dy, function(food) {
             food.creature.remove();
         });
-        if (game.food.length == 0)
+        var nonstars = 0;
+        $.each(game.food, function(i, f) { if (!f.star) nonstars ++; });
+        if (nonstars == 0)
             victory();
         if (game.food.length && game.hp == 0)
             defeat();
+        puteel();
+        updateconsole();
         return true;
     }
 
@@ -978,28 +1067,16 @@ $(document).ready(function() {
     }
 
     function do_q(event) {
-        if (!moveeel(-1, 0))
-            return;
-        puteel();
-        updateconsole();
+        moveeel(-1, 0);
     }
     function do_w(event) {
-        if (!moveeel(0, -1))
-            return;
-        puteel();
-        updateconsole();
+        moveeel(0, -1);
     }
     function do_s(event) {
-        if (!moveeel(1, 0))
-            return;
-        puteel();
-        updateconsole();
+        moveeel(1, 0);
     }
     function do_a(event) {
-        if (!moveeel(0, 1))
-            return
-        puteel();
-        updateconsole();
+        moveeel(0, 1);
     }
     function do_sp(event) {
         shock();
@@ -1009,7 +1086,7 @@ $(document).ready(function() {
         var ex = game.eel[0];
         var ey = game.eel[1];
         var x = (bw/2 + TR * (ex - ey));
-        var y = (bh/2 + TR * (ex + ey)) - sol.length;
+        var y = (bh/2 + TR * (ex + ey)) - 20;
         for (var i = 0; i < sol.length; i ++) {
             var col = Math.floor(i * 255 / sol.length);
             col = 'rgb('+col+','+col+','+col+')';
@@ -1032,7 +1109,7 @@ $(document).ready(function() {
                 board.append(c);
                 continue;
             }
-	    ny += 2;
+	    ny += 40/sol.length;
             var l = $(document.createElementNS(svgNS, 'line'))
                 .attr('x1', x)
                 .attr('y1', y)
@@ -1091,6 +1168,8 @@ $(document).ready(function() {
                     settile('4');
                 } else if (event.keyCode == 112) {
                     settile('p');
+                } else if (event.keyCode == 48) {
+                    settile('0');
                 } else if (event.keyCode == 114) {
                     settile('*');
                 } else if (event.keyCode == 101) {
@@ -1137,6 +1216,8 @@ $(document).ready(function() {
         updateconsole();
     });
     svg.click(function(event) {
+        if (hack)
+            return;
         var eel = game.eel;
         var boardOffset = svg.offset();
         var mx = (mouseX - boardOffset.left - bw/2) / TR;
