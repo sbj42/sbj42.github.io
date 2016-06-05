@@ -7,6 +7,11 @@
 //   tunnels
 //   starfish, that count as bonus points
 
+// todo:
+//   cookies, remember stars and victories
+//   url fragments so back button works
+//   tutorial help bubbles
+
 var svgNS = 'http://www.w3.org/2000/svg';
 
 var TR = 42; // tile center-to-corner
@@ -366,11 +371,18 @@ var FOODMAP = {
     '4': {type: 'stingray1', hp: 4}
 };
 
-var page = 'intro';
-var game = null;
-var busy = false;
-var hackk = 0;
-var hack = false;
+function countstars(level) {
+    var stars = 0;
+    for (var x = -MR; x <= MR; x ++) {
+        for (var y = -MR; y <= MR; y ++) {
+            var p = level.map[MR+y][MR+x];
+            var f = FOODMAP[p];
+            if (f && f.star)
+                stars ++;
+        }
+    }
+    return stars;
+}
 
 function start() {
     var level = LEVELS[curlevel];
@@ -594,7 +606,22 @@ function solver(game, sethp) {
     return null;
 }
 
+var game, save;
 $(document).ready(function() {
+    var page = 'intro';
+    var busy = false;
+    var hackk = 0;
+    var hack = false;
+    game = null;
+    save = $.cookie('levels') || null;
+    if (save) {
+        save = save.split('');
+    } else {
+        save = [];
+        $.each(LEVELS, function() { save.push('l'); });
+        save[0] = 'o';
+    }
+
     var bw = TR * 18 + 12;
     var bh = TR * 12 + 12;
     var svg = $('#svg');
@@ -714,17 +741,28 @@ $(document).ready(function() {
     svg.append(star3);
 
     $.each(LEVELS, function(i, level) {
+        var stars = countstars(level);
         var container = $('#menu' + 'TGCPS'.indexOf(level.id[0]) + 'levels');
         var button = $(document.createElement('span'))
             .attr('class', 'levelbutton')
-            .text(level.id.substr(1))
-            .click(function() {
+            .text(level.id.substr(1));
+        var levelsave = save.length > i ? save[i] : 'l';
+        button.addClass(levelsave);
+        if (levelsave != 'l') {
+            button.click(function() {
                 curlevel = i;
                 $('#menu').addClass('left');
                 $('#game').removeClass('left right');
                 page = 'game';
                 reset();
             });
+        }
+        for (var j = 0; j < stars; j ++) {
+            var star = $(document.createElement('div'))
+                .attr('class', 'levelbuttonstar')
+                .html('&nbsp;');
+            button.append(star);
+        }
         container.append(button);
     });
 
@@ -840,6 +878,12 @@ $(document).ready(function() {
                     break;
                 var type = ['guppy1', 'catfish1', 'piranha1', 'stingray1'][Math.floor(Math.random()*4)];
                 var x = 100 + Math.random() * (300 - TR);
+                $.each(introfish, function(i, fish) {
+                    if (Math.abs(fish.x-x) < TR)
+                        type = null;
+                });
+                if (type == null)
+                    continue;
                 var dy = 25 + Math.random() * 65;
                 if (Math.random() > 0.5)
                     dy = -dy;
@@ -1064,6 +1108,11 @@ $(document).ready(function() {
         function happy() {
             game.eelstate = 'happy';
             puteel();
+            save[curlevel] = 'f';
+            if (curlevel + 1 < save.length) {
+                save[curlevel+1] = 'o';
+            }
+            $.cookie('levels', save.join(''));
             busy = false;
         }
         function zoomin() {
@@ -1397,7 +1446,7 @@ $(document).ready(function() {
         }
     };
     window.menuback = function() {
-        if (page == 'intro') {
+        if (page == 'menu') {
             $('#menu').addClass('right');
             $('#intro').removeClass('left right');
             page = 'intro';

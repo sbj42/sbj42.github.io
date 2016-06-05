@@ -22,7 +22,7 @@ body {
     height: 626px;
     margin: 0px auto;
     position: relative;
-    transition: all 1s ease;
+    transition: all 0.8s ease;
     left: 0px;
     opacity: 1;
 }
@@ -55,6 +55,7 @@ body {
     position: absolute;
     left: 262px;
     top: 150px;
+    text-shadow: 1px 1px 1px black;
 }
 #title2 {
     font-size: 60px;
@@ -62,6 +63,7 @@ body {
     position: absolute;
     left: 242px;
     top: 176px;
+    text-shadow: 1px 1px 1px black;
 }
 #credit {
     font-family: 'Itim', cursive;
@@ -133,6 +135,20 @@ a {
     margin: 5px 3px;
     cursor: pointer;
     box-shadow: 1px 1px 2px black;
+}
+.levelbutton.l {
+    color: #555;
+    background: #ccc;
+    opacity: 0.6;
+    cursor: default;
+}
+.levelbuttonstar {
+    display: inline-block;
+    background-image: url("svg/starfish1b.svg");
+    background-size: 32px;
+    width: 24px;
+    height: 24px;
+    background-position: -3px -3px;
 }
 
 #bg {
