@@ -80,7 +80,7 @@ var perlin1 = (function() { // 1d perlin noise
 function preloadsvg(images, callback) {
     var loaded = 0;
     function onload() {
-        if (++loaded == images.length)
+        if (++loaded == images.length && callback)
             callback();
     }
     $.each(images, function(i, image) {
@@ -94,28 +94,8 @@ function preloadsvg(images, callback) {
 
 var LEVELS = [
     {
-        map: [
-            '*************',
-            '*******  ****',
-            '******    ***',
-            '*****      **',
-            '****        *',
-            '***         *',
-            '**         **',
-            '*         ***',
-            '*        ****',
-            '**      *****',
-            '***    ******',
-            '****  *******',
-            '*************'
-        ],
-        eel: [
-            0,0,
-            0,1
-        ],
-        hp: 18
-    },
-    {
+        "id": "T1",
+        "name": "One Fish",
         "map": [
             "*************",
             "*************",
@@ -136,6 +116,8 @@ var LEVELS = [
         // wsw*s (7)
     },
     {
+        "id": "T2",
+        "name": "Two Fish",
         "map": [
             "*************",
             "*************",
@@ -156,16 +138,60 @@ var LEVELS = [
         // qaqqa*s (9)
     },
     {
+        "id": "T3",
+        "name": "Conservation",
+        "map": [
+            "*************",
+            "*************",
+            "*************",
+            "*************",
+            "*****  p*****",
+            "****    p****",
+            "****  3  ****",
+            "****p    ****",
+            "*****p  *****",
+            "*************",
+            "*************",
+            "*************",
+            "*************"
+        ],
+        "eel": [-2,0,-2,-1,-1,-1,-1,-2,0,-2],
+        "hp": 9
+        // sassw*q (9)
+    },
+    {
+        "id": "T4",
+        "name": "Aim for the Stars",
+        "map": [
+            "*************",
+            "*************",
+            "*************",
+            "***** 0******",
+            "*****  ******",
+            "***     1****",
+            "***     1****",
+            "*****  ******",
+            "***** 0******",
+            "*************",
+            "*************",
+            "*************",
+            "*************"
+        ],
+        "eel": [-2,0,-3,0,-3,-1,-2,-1],
+        "hp": 19
+    },
+    {
+        "id": "G?",
         "map": [
             "*************",
             "*************",
             "*************",
             "******   ****",
-            "*****  p  ***",
+            "*****0 p  ***",
             "*****     ***",
             "***  p p  ***",
             "***  2  *****",
-            "***  p  *****",
+            "***  p 0*****",
             "****   ******",
             "*************",
             "*************",
@@ -173,9 +199,11 @@ var LEVELS = [
         ],
         "eel": [0,0,0,-1,-1,-1],
         "hp": 12
-        // as*aqw*q (12)
+        // as*aqw*q (12*)
+        // a*a*swqwwwqasaaq (20**)
     },
     {
+        "id": "G?",
         "map": [
             "*************",
             "*************",
@@ -198,6 +226,7 @@ var LEVELS = [
         // ssssw*wsaaqqa*q (11**)
     },
     {
+        "id": "G?",
         "map": [
             "*************",
             "*************",
@@ -221,6 +250,7 @@ var LEVELS = [
         // wwww*ss*aaqqq*qqq*aasaswssssww*ssww*qqwwqqaaqq*aaa (18**)
     },
     {
+        "id": "G?",
         "map": [
             "*************",
             "*************",
@@ -242,6 +272,7 @@ var LEVELS = [
         // saass*ww*ss*a*qaqqwwsww*q*aqassws (17**)
     },
     {
+        "id": "G?",
         "map": [
             "*************",
             "*******p*****",
@@ -263,6 +294,7 @@ var LEVELS = [
         // qwqw*swwssasaa*q*qqwwssa (20**)
     },
     {
+        "id": "G?",
         "map": [
             "*************",
             "*************",
@@ -334,6 +366,7 @@ var FOODMAP = {
     '4': {type: 'stingray1', hp: 4}
 };
 
+var page = 'intro';
 var game = null;
 var busy = false;
 var hackk = 0;
@@ -344,6 +377,7 @@ function start() {
     var game = {
         map: level.map.slice(),
         eel: level.eel.slice(),
+        leveldesc: level.id ? (level.id + (level.name ? (': "' + level.name + '"') : '')) : '',
         hp: level.hp,
         charge: true,
         over: false,
@@ -496,6 +530,13 @@ function solver(game, sethp) {
             console.info('thinking: ' + sofar);
             progress = time() + 5;
         }
+        if (game_canshock(game)) {
+            var game2 = $.extend(true, {}, game);
+            if (game_shock(game2)) {
+                if (!game_over(game2))
+                    step(sofar + '*', game2);
+            }
+        }
         if (game_canmove(game, -1, 0)) {
             var game2 = $.extend(true, {}, game);
             game_move(game2, -1, 0);
@@ -528,13 +569,6 @@ function solver(game, sethp) {
             else if (!game_over(game2))
                 step(sofar + 'a', game2);
         }
-        if (game_canshock(game)) {
-            var game2 = $.extend(true, {}, game);
-            if (game_shock(game2)) {
-		if (!game_over(game2))
-		    step(sofar + '*', game2);
-	    }
-        }
     }
     game = $.extend(true, {}, game);
     for (var hp = sethp || 1; hp <= 20; hp ++) {
@@ -544,14 +578,14 @@ function solver(game, sethp) {
         step('', game);
         if (solutions.length > 0) {
             console.info('done (min hp needed is ' + hp + ':');
-	    var shortest = null;
-	    var length = 0;
+            var shortest = null;
+            var length = 0;
             $.each(solutions, function(i, sol) {
                 console.info('  '+ sol);
-		if (shortest == null || sol.length < length) {
-		    length = sol.length;
-		    shortest = sol;
-		}
+                if (shortest == null || sol.length < length) {
+                    length = sol.length;
+                    shortest = sol;
+                }
             });
             return {sol: shortest, hp: hp};
         }
@@ -602,11 +636,20 @@ $(document).ready(function() {
         .attr('href', 'svg/border1.svg');
     svg.append(border);
 
+    var leveldesc = $(document.createElementNS(svgNS, 'text'))
+        .attr('class', 'gametext')
+        .attr('x', bw - TR - 520 + 6)
+        .attr('y', bh + 23)
+        .attr('text-anchor', 'start')
+        .attr('font-size', 20)
+        .text('...');
+    svg.append(leveldesc);
+
     var hungert = $(document.createElementNS(svgNS, 'text'))
+        .attr('class', 'gametext')
         .attr('x', bw - TR - 520)
-        .attr('y', bh + 60)
+        .attr('y', bh + 58)
         .attr('text-anchor', 'end')
-        .attr('font-family', 'Arial')
         .attr('font-size', 20)
         .text('Hunger:');
     svg.append(hungert);
@@ -632,18 +675,18 @@ $(document).ready(function() {
     svg.append(hunger2);
 
     var charget = $(document.createElementNS(svgNS, 'text'))
+        .attr('class', 'gametext')
         .attr('x', bw - TR - 520)
-        .attr('y', bh + 95)
+        .attr('y', bh + 93)
         .attr('text-anchor', 'end')
-        .attr('font-family', 'Arial')
         .attr('font-size', 20)
         .text('Charge:');
     svg.append(charget);
     var charge1 = $(document.createElementNS(svgNS, 'text'))
+        .attr('class', 'gametext')
         .attr('x', bw - TR - 520 + 6)
-        .attr('y', bh + 95)
+        .attr('y', bh + 93)
         .attr('text-anchor', 'start')
-        .attr('font-family', 'Arial')
         .attr('font-size', 20)
         .text('Ready');
     svg.append(charge1);
@@ -669,6 +712,21 @@ $(document).ready(function() {
         .attr('height', 50)
         .attr('href', 'svg/starfish1b.svg');
     svg.append(star3);
+
+    $.each(LEVELS, function(i, level) {
+        var container = $('#menu' + 'TGCPS'.indexOf(level.id[0]) + 'levels');
+        var button = $(document.createElement('span'))
+            .attr('class', 'levelbutton')
+            .text(level.id.substr(1))
+            .click(function() {
+                curlevel = i;
+                $('#menu').addClass('left');
+                $('#game').removeClass('left right');
+                page = 'game';
+                reset();
+            });
+        container.append(button);
+    });
 
     function addkey(k, x, y, w, h) {
         var key = $(document.createElementNS(svgNS, 'image'))
@@ -750,10 +808,62 @@ $(document).ready(function() {
 
     var gridlines = [];
 
+    var introfish = [];
+
     setInterval(function() {
-        $.each(gridlines, function(i, gl) {
-            gridline_update(gl);
-        });
+        if (page == 'game') {
+            $.each(gridlines, function(i, gl) {
+                gridline_update(gl);
+            });
+        } else if (page == 'intro') {
+            for (var i = 0; i < introfish.length; i ++) {
+                var fish = introfish[i];
+                fish.y += fish.dy * 100 / 1000.0;
+                var o = 1;
+                if (fish.y + TR > 668)
+                    o = Math.max(0, (768 - (fish.y + TR)) / 100);
+                if (fish.y < 100)
+                    o = Math.max(0, fish.y / 100);
+                fish.img.css({
+                    top: fish.x,
+                    left: fish.y,
+                    opacity: o
+                });
+                if (fish.y + TR > 778 || fish.y < -10) {
+                    fish.img.remove();
+                    introfish.splice(i, 1);
+                    i --;
+                }
+            }
+            while (introfish.length < 3) {
+                if (introfish.length > 0 && Math.random() < 0.95)
+                    break;
+                var type = ['guppy1', 'catfish1', 'piranha1', 'stingray1'][Math.floor(Math.random()*4)];
+                var x = 100 + Math.random() * (300 - TR);
+                var dy = 25 + Math.random() * 65;
+                if (Math.random() > 0.5)
+                    dy = -dy;
+                var y = dy > 0 ? 0 : (768 - TR);
+                var img = $(document.createElement('img'))
+                    .attr('class', 'introfish')
+                    .attr('src', 'svg/' + type + 'a.svg')
+                    .css({
+                        transform: dy > 0 ? '' : 'scaleX(-1)',
+                        opacity: 0
+                    });
+                introfish.push({
+                    x: x,
+                    y: y,
+                    dy: dy,
+                    img: img
+                });
+                img.css({
+                    top: x,
+                    left: y
+                });
+                $('#intro .page').append(img);
+            }
+        }
     }, 100);
 
     function putthing(x, y, thing, rot, flip) {
@@ -829,6 +939,10 @@ $(document).ready(function() {
     }        
 
     function reset() {
+        svg.css({
+            left: 0,
+            opacity: 1
+        });
         if (game && game.over) {
             var x = game.eel[0];
             var y = game.eel[1];
@@ -850,6 +964,7 @@ $(document).ready(function() {
             zoomout();
         }
         game = start();
+        leveldesc.text(game.leveldesc);
         board.empty();
         gridlines = [];
         for (var x = -MR; x <= MR; x ++) {
@@ -935,7 +1050,7 @@ $(document).ready(function() {
     $.each(['1', '2', '3', '4'], function(i, n) {
         imgs.push('number' + n);
     });
-    preloadsvg(imgs, reset);
+    preloadsvg(imgs, null);
 
     function victory() {
         var eel = game.eel;
@@ -1109,7 +1224,7 @@ $(document).ready(function() {
                 board.append(c);
                 continue;
             }
-	    ny += 40/sol.length;
+            ny += 40/sol.length;
             var l = $(document.createElementNS(svgNS, 'line'))
                 .attr('x1', x)
                 .attr('y1', y)
@@ -1129,122 +1244,136 @@ $(document).ready(function() {
         mouseY = event.pageY;
     });
     $(document).keypress(function(event) {
-        if (busy)
-            return;
-        var eel = game.eel;
-        if ('[][]'[hackk].charCodeAt(0) == event.keyCode) {
-            hackk ++
-            if (hackk == 4) {
-                hack = !hack;
-                $('body').css('background', hack ? 'brown' : '');
+        if (page == 'game') {
+            if (busy)
+                return;
+            var eel = game.eel;
+            if ('[][]'[hackk].charCodeAt(0) == event.keyCode) {
+                hackk ++
+                if (hackk == 4) {
+                    hack = !hack;
+                    $('body').css('background', hack ? 'brown' : '');
+                    hackk = 0;
+                    if (!hack) {
+                        console.info(JSON.stringify(LEVELS[curlevel], 0, 2));
+                    }
+                }
+            } else 
                 hackk = 0;
-                if (!hack) {
-                    console.info(JSON.stringify(LEVELS[curlevel], 0, 2));
+            if (hack) {
+                var boardOffset = svg.offset();
+                var mx = (mouseX - boardOffset.left - bw/2) / TR;
+                var my = (mouseY - boardOffset.top - bh/2) / TR;
+                var x = Math.round(mx/2 + my/2);
+                var y = Math.round(my/2 - mx/2);
+                if (x >= -MR && x <= MR && y >= -MR && y <= MR) {
+                    var tile = LEVELS[curlevel].map[MR+y][MR+x];
+                    function settile(c) {
+                        var s = LEVELS[curlevel].map[MR+y];
+                        LEVELS[curlevel].map[MR+y] = s.substr(0, MR+x) + c + s.substr(MR+x+1);
+                    }
+                    if (event.keyCode == 32) {
+                        settile(' ');
+                    } else if (event.keyCode == 49) {
+                        settile('1');
+                    } else if (event.keyCode == 50) {
+                        settile('2');
+                    } else if (event.keyCode == 51) {
+                        settile('3');
+                    } else if (event.keyCode == 52) {
+                        settile('4');
+                    } else if (event.keyCode == 112) {
+                        settile('p');
+                    } else if (event.keyCode == 48) {
+                        settile('0');
+                    } else if (event.keyCode == 114) {
+                        settile('*');
+                    } else if (event.keyCode == 101) {
+                        LEVELS[curlevel].eel = [x, y];
+                    } else if (event.keyCode == 108) {
+                        var lx = Math.abs(x - eel[eel.length-2]);
+                        var ly = Math.abs(y - eel[eel.length-1]);
+                        if (lx + ly == 1)
+                            LEVELS[curlevel].eel.push(x, y);
+                        else if (lx + ly == 0)
+                            LEVELS[curlevel].eel.splice(eel.length-2, 2);
+                    } else if (event.keyCode == 42) {
+                        var sol = solver(start());
+                        if (sol == null)
+                            return;
+                        LEVELS[curlevel].hp = sol.hp;
+                        reset();
+                        drawsol(sol.sol);
+                        return;
+                    }
+                    reset();
+                }
+            } else {
+                if (event.keyCode == 113 || event.keyCode == 81)
+                    do_q();
+                else if (event.keyCode == 119 || event.keyCode == 87)
+                    do_w();
+                else if (event.keyCode == 115 || event.keyCode == 83)
+                    do_s();
+                else if (event.keyCode == 97 || event.keyCode == 65)
+                    do_a();
+                else if (event.keyCode == 32)
+                    do_sp();
+                else if (event.keyCode == 43) {
+                    curlevel ++; reset();
+                } else if (event.keyCode == 45) {
+                    curlevel --; reset();
+                } else if (event.keyCode == 42) {
+                    var sol = solver(game);
+                    if (sol != null)
+                        drawsol(sol.sol);
                 }
             }
-        } else 
-            hackk = 0;
-        if (hack) {
+            updateconsole();
+        } else if (page == 'intro') {
+            if (event.keyCode == 32 || event.keyCode == 13) {
+                introplay();
+            }
+        } else if (page == 'menu') {
+        }
+    });
+    svg.click(function(event) {
+        if (page == 'game') {
+            if (hack)
+                return;
+            var eel = game.eel;
             var boardOffset = svg.offset();
             var mx = (mouseX - boardOffset.left - bw/2) / TR;
             var my = (mouseY - boardOffset.top - bh/2) / TR;
             var x = Math.round(mx/2 + my/2);
             var y = Math.round(my/2 - mx/2);
             if (x >= -MR && x <= MR && y >= -MR && y <= MR) {
-                var tile = LEVELS[curlevel].map[MR+y][MR+x];
-                function settile(c) {
-                    var s = LEVELS[curlevel].map[MR+y];
-                    LEVELS[curlevel].map[MR+y] = s.substr(0, MR+x) + c + s.substr(MR+x+1);
-                }
-                if (event.keyCode == 32) {
-                    settile(' ');
-                } else if (event.keyCode == 49) {
-                    settile('1');
-                } else if (event.keyCode == 50) {
-                    settile('2');
-                } else if (event.keyCode == 51) {
-                    settile('3');
-                } else if (event.keyCode == 52) {
-                    settile('4');
-                } else if (event.keyCode == 112) {
-                    settile('p');
-                } else if (event.keyCode == 48) {
-                    settile('0');
-                } else if (event.keyCode == 114) {
-                    settile('*');
-                } else if (event.keyCode == 101) {
-                    LEVELS[curlevel].eel = [x, y];
-                } else if (event.keyCode == 108) {
-                    var lx = Math.abs(x - eel[eel.length-2]);
-                    var ly = Math.abs(y - eel[eel.length-1]);
-                    if (lx + ly == 1)
-                        LEVELS[curlevel].eel.push(x, y);
-                    else if (lx + ly == 0)
-                        LEVELS[curlevel].eel.splice(eel.length-2, 2);
-                } else if (event.keyCode == 42) {
-		    var sol = solver(start());
-		    if (sol == null)
-			return;
-		    LEVELS[curlevel].hp = sol.hp;
-		    reset();
-                    drawsol(sol.sol);
-                    return;
-                }
-                reset();
+                var lx = x - eel[0];
+                var ly = y - eel[1];
+                if (Math.abs(lx) + Math.abs(ly) == 1) {
+                    if (lx == -1)
+                        do_q();
+                    else if (ly == -1)
+                        do_w();
+                    else if (lx == 1)
+                        do_s();
+                    else if (ly == 1)
+                        do_a();
+                } else if (lx == 0 && ly == 0)
+                    do_sp();
             }
-        } else {
-            if (event.keyCode == 113 || event.keyCode == 81)
-                do_q();
-            else if (event.keyCode == 119 || event.keyCode == 87)
-                do_w();
-            else if (event.keyCode == 115 || event.keyCode == 83)
-                do_s();
-            else if (event.keyCode == 97 || event.keyCode == 65)
-                do_a();
-            else if (event.keyCode == 32)
-                do_sp();
-            else if (event.keyCode == 43) {
-                curlevel ++; reset();
-            } else if (event.keyCode == 45) {
-                curlevel --; reset();
-            } else if (event.keyCode == 42) {
-		var sol = solver(game);
-		if (sol != null)
-                    drawsol(sol.sol);
-            }
-        }
-        updateconsole();
-    });
-    svg.click(function(event) {
-        if (hack)
-            return;
-        var eel = game.eel;
-        var boardOffset = svg.offset();
-        var mx = (mouseX - boardOffset.left - bw/2) / TR;
-        var my = (mouseY - boardOffset.top - bh/2) / TR;
-        var x = Math.round(mx/2 + my/2);
-        var y = Math.round(my/2 - mx/2);
-        if (x >= -MR && x <= MR && y >= -MR && y <= MR) {
-            var lx = x - eel[0];
-            var ly = y - eel[1];
-            if (Math.abs(lx) + Math.abs(ly) == 1) {
-                if (lx == -1)
-                    do_q();
-                else if (ly == -1)
-                    do_w();
-                else if (lx == 1)
-                    do_s();
-                else if (ly == 1)
-                    do_a();
-            } else if (lx == 0 && ly == 0)
-                do_sp();
         }
     });
     $(document).keyup(function(event) {
-        if (busy)
-            return;
-        if (event.keyCode == 27)
-            reset();
+        if (page == 'game') {
+            if (busy)
+                return;
+            if (event.keyCode == 27)
+                reset();
+        } else if (page == 'menu') {
+            if (event.keyCode == 27)
+                menuback();
+        }
     });
     hunger2.click(function(event) {
         if (hack) {
@@ -1260,5 +1389,18 @@ $(document).ready(function() {
     akey.click(do_a);
     spkey.click(do_sp);
 
-    window.reset = reset;
+    window.introplay = function() {
+        if (page == 'intro') {
+            $('#intro').addClass('left');
+            $('#menu').removeClass('left right');
+            page = 'menu';
+        }
+    };
+    window.menuback = function() {
+        if (page == 'intro') {
+            $('#menu').addClass('right');
+            $('#intro').removeClass('left right');
+            page = 'intro';
+        }
+    };
 });

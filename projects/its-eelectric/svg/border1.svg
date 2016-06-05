@@ -45,7 +45,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="5.6"
-     inkscape:cx="8.1769141"
+     inkscape:cx="-19.680229"
      inkscape:cy="468.1809"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -53,8 +53,8 @@
      inkscape:snap-grids="false"
      inkscape:window-width="1363"
      inkscape:window-height="792"
-     inkscape:window-x="104"
-     inkscape:window-y="104"
+     inkscape:window-x="94"
+     inkscape:window-y="188"
      inkscape:window-maximized="0"
      inkscape:snap-to-guides="true"
      inkscape:snap-global="true">
@@ -115,7 +115,7 @@
        ry="84"
        clip-path="url(#clipPath3855)" />
     <path
-       style="color:#000000;fill:#3f99a1;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2.5;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       style="color:#000000;fill:#6c9971;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2.50000000000000000;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        d="m 0,538.3622 0,514 766,0 0,-514 z m 89,4.99997 588,0 c 46.65783,0 84,37.28222 84,84 l 0,336 c 0,46.71783 -37.34217,84.00003 -84,84.00003 l -588,0 c -46.657821,0 -84,-37.2822 -84,-84.00003 l 0,-336 c 0,-46.71778 37.342179,-84 84,-84 z"
        id="rect3812"
        inkscape:connector-curvature="0"

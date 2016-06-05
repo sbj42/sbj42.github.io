@@ -1,7 +1,140 @@
 html, body { overflow: hidden; }
 body {
-    background: #3f98a0;
+    font-family: 'Itim', cursive;
+    background: #6C9971;
+    color: #FFFC79;
+    margin: 0px;
 }
+.pagecontainer {
+    position: absolute;
+    top: 0px;
+    height: 626px;
+    left: 0px;
+    right: 0px;
+    z-index: 1;
+}
+.pagecontainer.left, .pagecontainer.right {
+    z-index: 0;
+}
+.page {
+    display: block;
+    width: 768px;
+    height: 626px;
+    margin: 0px auto;
+    position: relative;
+    transition: all 1s ease;
+    left: 0px;
+    opacity: 1;
+}
+.pagecontainer.left .page {
+    left: -800px;
+    opacity: 0;
+}
+.pagecontainer.right .page {
+    left: 800px;
+    opacity: 0;
+}
+
+#intro {
+    font-family: 'Lakki Reddy', cursive;
+}
+.introfish {
+    position: absolute;
+    transition: all 0.1s linear;
+    opacity: 0;
+    pointer-events: none;
+}
+#introstar {
+    position: absolute;
+    left: 318px;
+    top: 128px;
+}
+#title1 {
+    font-size: 40px;
+    width: 244px;
+    position: absolute;
+    left: 262px;
+    top: 150px;
+}
+#title2 {
+    font-size: 60px;
+    width: 284px;
+    position: absolute;
+    left: 242px;
+    top: 176px;
+}
+#credit {
+    font-family: 'Itim', cursive;
+    font-size: 20px;
+    position: absolute;
+    left: 361px;
+    top: 232px;
+    opacity: 0.5;
+}
+#introplay {
+    font-family: 'Itim', cursive;
+    font-size: 30px;
+    position: absolute;
+    left: 261px;
+    top: 332px;
+}
+a {
+    color: #B4FEFF;
+    text-decoration: none;
+}
+
+#menu {
+    font-size: 20px;
+}
+#menu img {
+    float: left;
+}
+#menuback {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+}
+#menu0 {
+    position: absolute;
+    left: 50px;
+    top: 60px;
+    right: 50px;
+}
+#menu1 {
+    position: absolute;
+    left: 50px;
+    top: 160px;
+    right: 50px;
+}
+#menu2 {
+    position: absolute;
+    left: 50px;
+    top: 260px;
+    right: 50px;
+}
+#menu3 {
+    position: absolute;
+    left: 50px;
+    top: 360px;
+    right: 50px;
+}
+#menu4 {
+    position: absolute;
+    left: 50px;
+    top: 460px;
+    right: 50px;
+}
+.levelbutton {
+    display: inline-block;
+    border-radius: 6px;
+    padding: 2px 8px;
+    background: #E5FEFF;
+    color: black;
+    margin: 5px 3px;
+    cursor: pointer;
+    box-shadow: 1px 1px 2px black;
+}
+
 #bg {
     fill: #3f98a0;
 }
@@ -26,4 +159,7 @@ body {
     stroke: #fff;
     stroke-linecap: round;
     stroke-width: 5px;
+}
+.gametext {
+    fill: #FFFC79;
 }

@@ -1,13 +1,64 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link href='https://fonts.googleapis.com/css?family=Lakki+Reddy' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Itim' rel='stylesheet' type='text/css'>
+    <link rel="shortcut icon" type="image/png" href="favicon.png"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script src="eelectric.js"></script>
     <link rel="stylesheet" href="eelectric.css">
-    <title>It&apos;s Eelectric!</title>
+    <title>It&apos;s EELectric!</title>
   </head>
   <body>
-    <svg id="svg">
-    </svg>
+    <div id="intro" class="pagecontainer">
+      <div class="page">
+        <img id="introstar" src="svg/starfish1a.svg"/>
+        <div id="title1">it's</div>
+        <div id="title2">EELectric!</div>
+        <div id="credit">by <a href="http://arbitraryclark.blogspot.com/">James Clark</a></div>
+        <div id="introplay"><a href="javascript:introplay();">Play</a></div>
+        <div id="apology">
+          <!--[if lt IE 9]>
+            <div style="margin: 20px; color: #fff">
+              This game requires a modern browser
+            </div>
+          <![endif]-->
+          <noscript>
+            <div style="margin: 20px; color: #fff">
+              This game requires JavaScript
+            </div>
+          </noscript>
+        </div>
+      </div>
+    </div>
+    <div id="menu" class="pagecontainer right">
+      <div class="page">
+        <div id="menuback"><a href="javascript:menuback();">Back</a></div>
+        <div id="menu0">
+          <img src="svg/starfish1a.svg"/> Tutorial
+          <div id="menu0levels"></div>
+        </div>
+        <div id="menu1">
+          <img src="svg/guppy1a.svg"/> Guppy
+          <div id="menu1levels"></div>
+        </div>
+        <div id="menu2">
+          <img src="svg/catfish1a.svg"/> Catfish
+          <div id="menu2levels"></div>
+        </div>
+        <div id="menu3">
+          <img src="svg/piranha1a.svg"/> Piranha
+          <div id="menu3levels"></div>
+        </div>
+        <div id="menu4">
+          <img src="svg/stingray1a.svg"/> Stingray
+          <div id="menu4levels"></div>
+        </div>
+      </div>
+    </div>
+    <div id="game" class="pagecontainer right">
+      <svg id="svg" class="page">
+      </svg>
+    </div>
   </body>
 </html>
