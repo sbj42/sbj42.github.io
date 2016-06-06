@@ -96,6 +96,12 @@ a {
     left: 20px;
     top: 20px;
 }
+#menuexplain {
+    position: absolute;
+    left: 200px;
+    top: 20px;
+    font-size: 28px;
+}
 #menu0 {
     position: absolute;
     left: 50px;
@@ -129,18 +135,29 @@ a {
 .levelbutton {
     display: inline-block;
     border-radius: 6px;
-    padding: 2px 8px;
-    background: #E5FEFF;
+    padding: 2px 4px;
+    background: #9CFF9E;
     color: black;
     margin: 5px 3px;
     cursor: pointer;
     box-shadow: 1px 1px 2px black;
+    text-align: center;
+}
+.levelbutton.f:hover {
+    background: #fff;
+}
+.levelbutton.o:hover {
+    background: #6CFF6F;
 }
 .levelbutton.l {
     color: #555;
     background: #ccc;
     opacity: 0.6;
     cursor: default;
+}
+.levelbutton.f {
+    color: #000;
+    background: #e3e3e3;
 }
 .levelbuttonstar {
     display: inline-block;
@@ -149,6 +166,9 @@ a {
     width: 24px;
     height: 24px;
     background-position: -3px -3px;
+}
+.levelbuttonstar.got {
+    background-image: url("svg/starfish1a.svg");
 }
 
 #bg {

@@ -8,7 +8,6 @@
 //   starfish, that count as bonus points
 
 // todo:
-//   cookies, remember stars and victories
 //   url fragments so back button works
 //   tutorial help bubbles
 
@@ -27,6 +26,8 @@ var MOVEHP = 1;
 var SHOCKHP = 3;
 
 var STARTTIME = new Date().getTime();
+
+$.cookie.json = true;
 
 function time() {
     return ((new Date()).getTime() - STARTTIME)/1000;
@@ -117,7 +118,7 @@ var LEVELS = [
             "*************"
         ],
         "eel": [-1,1,-1,2,0,2],
-        "hp": 7
+        "hp": 10
         // wsw*s (7)
     },
     {
@@ -161,12 +162,34 @@ var LEVELS = [
             "*************"
         ],
         "eel": [-2,0,-2,-1,-1,-1,-1,-2,0,-2],
-        "hp": 9
+        "hp": 10
         // sassw*q (9)
     },
     {
         "id": "T4",
-        "name": "Aim for the Stars",
+        "name": "Productivity'",
+        "map": [
+            "*************",
+            "*************",
+            "*************",
+            "*************",
+            "*****1  p****",
+            "****   2 ****",
+            "***  2   ****",
+            "**     1 ****",
+            "*****p  *****",
+            "*****  ******",
+            "***** *******",
+            "*************",
+            "*************"
+        ],
+        "eel": [-2,0,-3,0,-3,1,-4,1],
+        "hp": 9
+        // wssas*wwqqaassa (9)
+    },
+    {
+        "id": "T5",
+        "name": "Reach for the Stars",
         "map": [
             "*************",
             "*************",
@@ -184,6 +207,7 @@ var LEVELS = [
         ],
         "eel": [-2,0,-3,0,-3,-1,-2,-1],
         "hp": 19
+        // ssaaqwwwwwsaasa*sw (19)
     },
     {
         "id": "G?",
@@ -203,7 +227,7 @@ var LEVELS = [
             "*************"
         ],
         "eel": [0,0,0,-1,-1,-1],
-        "hp": 12
+        "hp": 20
         // as*aqw*q (12*)
         // a*a*swqwwwqasaaq (20**)
     },
@@ -614,12 +638,16 @@ $(document).ready(function() {
     var hack = false;
     game = null;
     save = $.cookie('levels') || null;
-    if (save) {
-        save = save.split('');
-    } else {
+    if (!save) {
         save = [];
-        $.each(LEVELS, function() { save.push('l'); });
-        save[0] = 'o';
+        $.each(LEVELS, function() {
+            save.push({
+                locked: true,
+                finished: false,
+                stars: 0
+            });
+        });
+        save[0].locked = false;
     }
 
     var bw = TR * 18 + 12;
@@ -745,10 +773,10 @@ $(document).ready(function() {
         var container = $('#menu' + 'TGCPS'.indexOf(level.id[0]) + 'levels');
         var button = $(document.createElement('span'))
             .attr('class', 'levelbutton')
-            .text(level.id.substr(1));
-        var levelsave = save.length > i ? save[i] : 'l';
-        button.addClass(levelsave);
-        if (levelsave != 'l') {
+            .html(level.id.substr(1) + '<br/>');
+        var levelsave = save.length > i ? save[i] : {locked: true};
+        button.addClass(levelsave.locked ? 'l' : levelsave.finished ? 'f' : 'o');
+        if (!levelsave.locked) {
             button.click(function() {
                 curlevel = i;
                 $('#menu').addClass('left');
@@ -757,10 +785,14 @@ $(document).ready(function() {
                 reset();
             });
         }
+        if (stars == 0)
+            button.html(button.html()+'&nbsp;');
         for (var j = 0; j < stars; j ++) {
             var star = $(document.createElement('div'))
                 .attr('class', 'levelbuttonstar')
                 .html('&nbsp;');
+            if (j < levelsave.stars)
+                star.addClass('got');
             button.append(star);
         }
         container.append(button);
@@ -1108,11 +1140,22 @@ $(document).ready(function() {
         function happy() {
             game.eelstate = 'happy';
             puteel();
-            save[curlevel] = 'f';
+            save[curlevel] = save[curlevel] || {
+                locked: false,
+                finished: true,
+                stars: 0
+            };
+            save[curlevel].finished = true;
+            save[curlevel].stars = Math.max(save[curlevel].stars, game.stars);
             if (curlevel + 1 < save.length) {
-                save[curlevel+1] = 'o';
+                save[curlevel+1] = save[curlevel+1] || {
+                    locked: false,
+                    finished: false,
+                    stars: 0
+                };
+                save[curlevel+1].locked = false;
             }
-            $.cookie('levels', save.join(''));
+            $.cookie('levels', save);
             busy = false;
         }
         function zoomin() {
