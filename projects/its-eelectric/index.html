@@ -62,5 +62,22 @@
       <svg id="svg" class="page">
       </svg>
     </div>
+    <svg id="fadeouter" class="passevents" width="100%" height="100%">
+      <defs>
+        <mask id="fademask">
+          <rect id="fadebg" x="0" y="0" width="100%" height="100%" fill="white" />
+          <circle id="fadecircle" cx="0" cy="0" r="1200" fill="black" />
+        </mask>
+      </defs>
+      <rect id="faderect" x="0" y="0" width="100%" height="100%" mask="url(#fademask)" />
+    </svg>
+    <div id="fademsgbox">
+      <div id="fademsg">
+        Here is a message
+      </div>
+      <div id="fadecontinue">
+        <a href="javascript:void 0;">Continue</a>
+      </div>
+    </div>
   </body>
 </html>

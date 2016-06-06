@@ -636,6 +636,7 @@ $(document).ready(function() {
     var busy = false;
     var hackk = 0;
     var hack = false;
+    var fadecallback = null;
     game = null;
     save = $.cookie('levels') || null;
     if (!save) {
@@ -649,6 +650,9 @@ $(document).ready(function() {
         });
         save[0].locked = false;
     }
+    $('#fadecircle')
+        .attr('cx', $(window).width()/2)
+        .attr('cy', $(window).height()/2);
 
     var bw = TR * 18 + 12;
     var bh = TR * 12 + 12;
@@ -768,6 +772,46 @@ $(document).ready(function() {
         .attr('href', 'svg/starfish1b.svg');
     svg.append(star3);
 
+    function fadeto(x, y, r, msg, callback) {
+        busy = true;
+        fadecallback = null;
+        var pageOffset = $('#'+page+' .page').offset();
+        $('#fadeouter').removeClass('passevents');
+        $('#fadebg')
+            .css('opacity', 1);
+        $('#fadecircle')
+            .attr('cx', pageOffset.left + x)
+            .attr('cy', pageOffset.top + y)
+            .attr('r', r);
+        $('#fademsgbox').hide();
+        setTimeout(function() {
+            $('#fademsg').html(msg);
+            $('#fademsgbox')
+                .css('left', x < bw/2 ? (pageOffset.left + x + r + 10) : (pageOffset.left + x - r - 10 - $('#fademsgbox').outerWidth()))
+                .css('top', pageOffset.top + y - $('#fademsgbox').outerHeight()/2)
+                .show();
+            fadecallback = callback;
+        }, 1000);
+    }
+
+    function unfade(callback) {
+        busy = true;
+        fadecallback = null;
+        $('#fadebg')
+            .css('opacity', 0);
+        $('#fadecircle')
+            .attr('cx', $(window).width()/2)
+            .attr('cy', $(window).height()/2)
+            .attr('r', 1200);
+        $('#fademsgbox').hide();
+        setTimeout(function() {
+            $('#fadeouter').addClass('passevents');
+            busy = false;
+            if (callback)
+                callback();
+        }, 1000);
+    }
+
     $.each(LEVELS, function(i, level) {
         var stars = countstars(level);
         var container = $('#menu' + 'TGCPS'.indexOf(level.id[0]) + 'levels');
@@ -782,7 +826,7 @@ $(document).ready(function() {
                 $('#menu').addClass('left');
                 $('#game').removeClass('left right');
                 page = 'game';
-                reset();
+                reset(true);
             });
         }
         if (stars == 0)
@@ -844,9 +888,17 @@ $(document).ready(function() {
             defeat();
     }
 
+    function tx(x, y) {
+        return bw/2 + TR * (x - y);
+    }
+
+    function ty(x, y) {
+        return bh/2 + TR * (x + y);
+    }
+
     function gridline_create(x, y, nw) {
         var path = $(document.createElementNS(svgNS, 'path'))
-            .attr('transform', 'translate(' + (bw/2 + TR*(x - y)) + ',' + (bh/2 + TR*(x + y)) + ')')
+            .attr('transform', 'translate(' + tx(x, y) + ',' + ty(x, y) + ')')
             .attr('class', 'gridline');
         path.gridline_nw = nw;
         path.gridline_seed = (x * 2 * MR + y) * 2 + (nw ? 1 : 0);
@@ -878,70 +930,6 @@ $(document).ready(function() {
 
     var gridlines = [];
 
-    var introfish = [];
-
-    setInterval(function() {
-        if (page == 'game') {
-            $.each(gridlines, function(i, gl) {
-                gridline_update(gl);
-            });
-        } else if (page == 'intro') {
-            for (var i = 0; i < introfish.length; i ++) {
-                var fish = introfish[i];
-                fish.y += fish.dy * 100 / 1000.0;
-                var o = 1;
-                if (fish.y + TR > 668)
-                    o = Math.max(0, (768 - (fish.y + TR)) / 100);
-                if (fish.y < 100)
-                    o = Math.max(0, fish.y / 100);
-                fish.img.css({
-                    top: fish.x,
-                    left: fish.y,
-                    opacity: o
-                });
-                if (fish.y + TR > 778 || fish.y < -10) {
-                    fish.img.remove();
-                    introfish.splice(i, 1);
-                    i --;
-                }
-            }
-            while (introfish.length < 3) {
-                if (introfish.length > 0 && Math.random() < 0.95)
-                    break;
-                var type = ['guppy1', 'catfish1', 'piranha1', 'stingray1'][Math.floor(Math.random()*4)];
-                var x = 100 + Math.random() * (300 - TR);
-                $.each(introfish, function(i, fish) {
-                    if (Math.abs(fish.x-x) < TR)
-                        type = null;
-                });
-                if (type == null)
-                    continue;
-                var dy = 25 + Math.random() * 65;
-                if (Math.random() > 0.5)
-                    dy = -dy;
-                var y = dy > 0 ? 0 : (768 - TR);
-                var img = $(document.createElement('img'))
-                    .attr('class', 'introfish')
-                    .attr('src', 'svg/' + type + 'a.svg')
-                    .css({
-                        transform: dy > 0 ? '' : 'scaleX(-1)',
-                        opacity: 0
-                    });
-                introfish.push({
-                    x: x,
-                    y: y,
-                    dy: dy,
-                    img: img
-                });
-                img.css({
-                    top: x,
-                    left: y
-                });
-                $('#intro .page').append(img);
-            }
-        }
-    }, 100);
-
     function putthing(x, y, thing, rot, flip) {
         rot = rot || 0;
         var flipscale = flip ? ' scale(-1,1)' : '';
@@ -950,7 +938,7 @@ $(document).ready(function() {
             .attr('y', -TR)
             .attr('width', TR*2)
             .attr('height', TR*2)
-            .attr('transform', 'translate(' + (bw/2 + TR * (x - y)) + ',' + (bh/2 + TR * (x + y)) + ')' + flipscale + ' rotate(' + (rot * 90) + ')')
+            .attr('transform', 'translate(' + tx(x, y) + ',' + ty(x, y) + ')' + flipscale + ' rotate(' + (rot * 90) + ')')
             .attr('href', 'svg/' + thing + '.svg');
         board.append(thing);
         return thing;
@@ -1012,9 +1000,43 @@ $(document).ready(function() {
             var thing = putthing(x, y, eeltype + spec[0], spec[1], spec[2]);
             thing.addClass('eel');
         }
-    }        
+    }
 
-    function reset() {
+    function tutorial1() {
+        function s1() {
+            var ex = game.eel[0];
+            var ey = game.eel[1];
+            fadeto(tx(ex, ey), ty(ex, ey), TR, 'You\'re an eel, and you\'re hungry.<br />Your job is to eat all the fish on the level.', s2);
+        }
+        function s2() {
+            fadeto(TR + 45, bh + 35, TR, 'Use the Q, W, A and S keys to move,<br />or click on the next place you want to go.', s3);
+        }
+        function s3() {
+            fadeto(tx(1,-1), ty(1,-1), TR, 'You have to kill the fish before you eat it.', s4);
+        }
+        function s4() {
+            fadeto(TR + 45, bh + 87, TR, 'Your electric shock attack can kill fish.<br />Press space to use it,<br />or click on your head.', s5);
+        }
+        function s5() {
+            fadeto(bw - TR - 520 + 5 + 25 * (20 - game.hp) + 3, bh + 30 + 14 + 10, 25, 'This is how hungry you are.<br />Each move adds ' + MOVEHP + ' hunger,<br />and each shock adds ' + SHOCKHP + '.', s6);
+        }
+        function s6() {
+            fadeto(bw - TR - 520 + 5 + 25 * 20, bh + 30 + 14 + 10, 25, 'If you get too hungry, you\'ll die.', unfade);
+        }
+        s1();
+    }
+
+    function tutorial2() {
+        function s1() {
+            fadeto(tx(-1, 1), ty(-1, 1), TR, 'It takes 2 shocks to kill this fish.', s2);
+        }
+        function s2() {
+            fadeto(bw - TR - 520 + 6 + 25, bh + 93 - 5, 36, 'But you can only use your shock attack<br />once per move.', unfade);
+        }
+        s1();
+    }
+
+    function reset(first) {
         svg.css({
             left: 0,
             opacity: 1
@@ -1103,6 +1125,17 @@ $(document).ready(function() {
 
         puteel();
         updateconsole();
+
+        if (first) {
+            busy = true;
+            setTimeout(function() {
+                busy = false;
+                if (curlevel == 0)
+                    tutorial1();
+                if (curlevel == 1)
+                    tutorial2();
+            }, 800);
+        }
     }
 
     var imgs = [];
@@ -1126,7 +1159,76 @@ $(document).ready(function() {
     $.each(['1', '2', '3', '4'], function(i, n) {
         imgs.push('number' + n);
     });
-    preloadsvg(imgs, null);
+    preloadsvg(imgs, function() {
+
+    var introfish = [];
+        $('#introplay').show();
+        setTimeout(function() {
+            $('#introplay').css('opacity', 1);
+        }, 100);
+        setInterval(function() {
+            if (page == 'game') {
+                $.each(gridlines, function(i, gl) {
+                    gridline_update(gl);
+                });
+            }
+        }, 100);
+        setInterval(function() {
+            if (page == 'intro') {
+                for (var i = 0; i < introfish.length; i ++) {
+                    var fish = introfish[i];
+                    fish.y += fish.dy;
+                    var o = 1;
+                    if (fish.y + TR > 668)
+                        o = Math.max(0, (768 - (fish.y + TR)) / 100);
+                    if (fish.y < 100)
+                        o = Math.max(0, fish.y / 100);
+                    fish.img.css({
+                        top: fish.x,
+                        left: fish.y,
+                        opacity: o
+                    });
+                    if (fish.y + TR > 778 || fish.y < -10) {
+                        fish.img.remove();
+                        introfish.splice(i, 1);
+                        i --;
+                    }
+                }
+                while (introfish.length < 3) {
+                    var type = ['guppy1', 'catfish1', 'piranha1', 'stingray1'][Math.floor(Math.random()*4)];
+                    var x = 100 + Math.random() * (300 - TR);
+                    $.each(introfish, function(i, fish) {
+                        if (Math.abs(fish.x-x) < TR)
+                            type = null;
+                    });
+                    if (type == null)
+                        continue;
+                    var dy = 25 + Math.random() * 65;
+                    if (Math.random() > 0.5)
+                        dy = -dy;
+                    var y = dy > 0 ? 0 : (768 - TR);
+                    var img = $(document.createElement('img'))
+                        .attr('class', 'introfish')
+                        .attr('src', 'svg/' + type + 'a.svg')
+                        .css({
+                            transform: dy > 0 ? '' : 'scaleX(-1)',
+                            opacity: 0
+                        });
+                    introfish.push({
+                        x: x,
+                        y: y,
+                        dy: dy,
+                        img: img
+                    });
+                    img.css({
+                        top: x,
+                        left: y
+                    });
+                    $('#intro .page').append(img);
+                }
+            }
+        }, 1000);
+    });
 
     function victory() {
         var eel = game.eel;
@@ -1241,7 +1343,7 @@ $(document).ready(function() {
                     .attr('y', -TR*2)
                     .attr('width', TR*4)
                     .attr('height', TR*4)
-                    .attr('transform', 'translate(' + (bw/2 + TR * (x - y)) + ',' + (bh/2 + TR * (x + y)) + ') rotate(' + (rot * 90) + ')')
+                    .attr('transform', 'translate(' + tx(x, y) + ',' + ty(x, y) + ') rotate(' + (rot * 90) + ')')
                     .attr('href', 'svg/shock1.svg');
                 board.append(thing);
                 shocks.push(thing);
@@ -1292,8 +1394,8 @@ $(document).ready(function() {
     function drawsol(sol) {
         var ex = game.eel[0];
         var ey = game.eel[1];
-        var x = (bw/2 + TR * (ex - ey));
-        var y = (bh/2 + TR * (ex + ey)) - 20;
+        var x = tx(ex, ey);
+        var y = ty(ex, ey) - 20;
         for (var i = 0; i < sol.length; i ++) {
             var col = Math.floor(i * 255 / sol.length);
             col = 'rgb('+col+','+col+','+col+')';
@@ -1336,9 +1438,9 @@ $(document).ready(function() {
         mouseY = event.pageY;
     });
     $(document).keypress(function(event) {
+        if (busy)
+            return;
         if (page == 'game') {
-            if (busy)
-                return;
             var eel = game.eel;
             if ('[][]'[hackk].charCodeAt(0) == event.keyCode) {
                 hackk ++
@@ -1430,6 +1532,8 @@ $(document).ready(function() {
         }
     });
     svg.click(function(event) {
+        if (busy)
+            return;
         if (page == 'game') {
             if (hack)
                 return;
@@ -1457,15 +1561,21 @@ $(document).ready(function() {
         }
     });
     $(document).keyup(function(event) {
+        if (fadecallback)
+            fadecallback();
+        if (busy)
+            return;
         if (page == 'game') {
-            if (busy)
-                return;
             if (event.keyCode == 27)
                 reset();
         } else if (page == 'menu') {
             if (event.keyCode == 27)
                 menuback();
         }
+    });
+    $(document).click(function(event) {
+        if (fadecallback)
+            fadecallback();
     });
     hunger2.click(function(event) {
         if (hack) {
@@ -1486,6 +1596,8 @@ $(document).ready(function() {
             $('#intro').addClass('left');
             $('#menu').removeClass('left right');
             page = 'menu';
+            busy = true;
+            setTimeout(function() { busy = false; }, 800);
         }
     };
     window.menuback = function() {
@@ -1493,6 +1605,10 @@ $(document).ready(function() {
             $('#menu').addClass('right');
             $('#intro').removeClass('left right');
             page = 'intro';
+            busy = true;
+            setTimeout(function() { busy = false; }, 800);
         }
     };
+    window.fadeto = fadeto;
+    window.unfade = unfade;
 });
