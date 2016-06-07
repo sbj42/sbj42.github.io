@@ -25,6 +25,8 @@ var FOODHP = 4;
 var MOVEHP = 1;
 var SHOCKHP = 3;
 
+var DEBUG = true;
+
 var STARTTIME = new Date().getTime();
 
 $.cookie.json = true;
@@ -118,7 +120,7 @@ var LEVELS = [
             "*************"
         ],
         "eel": [-1,1,-1,2,0,2],
-        "hp": 10
+        "hp": 1000
         // wsw*s (7)
     },
     {
@@ -162,12 +164,12 @@ var LEVELS = [
             "*************"
         ],
         "eel": [-2,0,-2,-1,-1,-1,-1,-2,0,-2],
-        "hp": 10
+        "hp": 9
         // sassw*q (9)
     },
     {
         "id": "T4",
-        "name": "Productivity'",
+        "name": "Productivity",
         "map": [
             "*************",
             "*************",
@@ -176,8 +178,8 @@ var LEVELS = [
             "*****1  p****",
             "****   2 ****",
             "***  2   ****",
-            "**     1 ****",
-            "*****p  *****",
+            "**   pp1 ****",
+            "*****  p*****",
             "*****  ******",
             "***** *******",
             "*************",
@@ -419,7 +421,8 @@ function start() {
         over: false,
         hasstars: 0,
         stars: 0,
-        food: []
+        food: [],
+        atstart: true
     };
     for (var x = -MR; x <= MR; x ++) {
         for (var y = -MR; y <= MR; y ++) {
@@ -639,16 +642,20 @@ $(document).ready(function() {
     var fadecallback = null;
     game = null;
     save = $.cookie('levels') || null;
-    if (!save) {
+    if (!save)
         save = [];
-        $.each(LEVELS, function() {
-            save.push({
-                locked: true,
-                finished: false,
-                stars: 0
-            });
+    while (save.length < LEVELS.length) {
+        save.push({
+            locked: true,
+            finished: false,
+            stars: 0
         });
+    }
         save[0].locked = false;
+    if (DEBUG) {
+        $.each(save, function(i, s) {
+            s.locked = false;
+        });
     }
     $('#fadecircle')
         .attr('cx', $(window).width()/2)
@@ -705,7 +712,7 @@ $(document).ready(function() {
     svg.append(leveldesc);
 
     var hungert = $(document.createElementNS(svgNS, 'text'))
-        .attr('class', 'gametext')
+        .attr('class', 'hunger gametext')
         .attr('x', bw - TR - 520)
         .attr('y', bh + 58)
         .attr('text-anchor', 'end')
@@ -713,6 +720,7 @@ $(document).ready(function() {
         .text('Hunger:');
     svg.append(hungert);
     var hunger1 = $(document.createElementNS(svgNS, 'image'))
+        .attr('class', 'hunger')
         .attr('x', bw - TR - 520)
         .attr('y', bh + 30)
         .attr('width', 530)
@@ -720,12 +728,13 @@ $(document).ready(function() {
         .attr('href', 'svg/hunger1.svg');
     svg.append(hunger1);
     var hungerbar = $(document.createElementNS(svgNS, 'rect'))
+        .attr('class', 'hunger hungerbar')
         .attr('x', bw - TR - 520 + 5)
         .attr('y', bh + 30 + 14)
-        .attr('height', 17)
-        .attr('class', 'hungerbar');
+        .attr('height', 17);
     svg.append(hungerbar);
     var hunger2 = $(document.createElementNS(svgNS, 'image'))
+        .attr('class', 'hunger')
         .attr('x', bw - TR - 520)
         .attr('y', bh + 30)
         .attr('width', 530)
@@ -734,7 +743,7 @@ $(document).ready(function() {
     svg.append(hunger2);
 
     var charget = $(document.createElementNS(svgNS, 'text'))
-        .attr('class', 'gametext')
+        .attr('class', 'charge gametext')
         .attr('x', bw - TR - 520)
         .attr('y', bh + 93)
         .attr('text-anchor', 'end')
@@ -742,13 +751,51 @@ $(document).ready(function() {
         .text('Charge:');
     svg.append(charget);
     var charge1 = $(document.createElementNS(svgNS, 'text'))
-        .attr('class', 'gametext')
+        .attr('class', 'charge gametext')
         .attr('x', bw - TR - 520 + 6)
         .attr('y', bh + 93)
         .attr('text-anchor', 'start')
         .attr('font-size', 20)
         .text('Ready');
     svg.append(charge1);
+
+    var quitb = $(document.createElementNS(svgNS, 'image'))
+        .attr('class', 'gameoption key')
+        .attr('x', bw - 180 - 43)
+        .attr('y', bh + 2)
+        .attr('width', 40)
+        .attr('height', 30)
+        .attr('href', 'svg/console-esc.svg')
+        .click(gameback);
+    svg.append(quitb);
+    var quitt = $(document.createElementNS(svgNS, 'text'))
+        .attr('class', 'gameoption key gametext')
+        .attr('x', bw - 180)
+        .attr('y', bh + 23)
+        .attr('text-anchor', 'start')
+        .attr('font-size', 20)
+        .text('Quit')
+        .click(gameback);
+    svg.append(quitt);
+
+    var restartb = $(document.createElementNS(svgNS, 'image'))
+        .attr('class', 'gameoption nokey')
+        .attr('x', bw - 100 - 33)
+        .attr('y', bh + 2)
+        .attr('width', 30)
+        .attr('height', 30)
+        .attr('href', 'svg/console-r1.svg')
+        .click(do_restart);
+    svg.append(restartb);
+    var restartt = $(document.createElementNS(svgNS, 'text'))
+        .attr('class', 'gameoption nokey gametext')
+        .attr('x', bw - 100)
+        .attr('y', bh + 23)
+        .attr('text-anchor', 'start')
+        .attr('font-size', 20)
+        .text('Restart')
+        .click(do_restart);
+    svg.append(restartt);
 
     var star1 = $(document.createElementNS(svgNS, 'image'))
         .attr('x', bw - TR - 45)
@@ -865,9 +912,16 @@ $(document).ready(function() {
         var nomoves = true;
         function setkey(k, l, b) {
             k.attr('href', 'svg/console-' + l + (b ? '2' : '1') + '.svg');
+            k.toggleClass('key', b);
+            k.toggleClass('nokey', !b);
             if (b)
                 nomoves = false;
         }
+        restartb.attr('href', 'svg/console-r' + (canrestart() ? '2' : '1') + '.svg');
+        restartb.toggleClass('key', canrestart());
+        restartb.toggleClass('nokey', !canrestart());
+        restartt.toggleClass('key', canrestart());
+        restartt.toggleClass('nokey', !canrestart());
         setkey(qkey, 'q', canmoveeel(-1, 0));
         setkey(wkey, 'w', canmoveeel(0, -1));
         setkey(skey, 's', canmoveeel(1, 0));
@@ -1015,13 +1069,7 @@ $(document).ready(function() {
             fadeto(tx(1,-1), ty(1,-1), TR, 'You have to kill the fish before you eat it.', s4);
         }
         function s4() {
-            fadeto(TR + 45, bh + 87, TR, 'Your electric shock attack can kill fish.<br />Press space to use it,<br />or click on your head.', s5);
-        }
-        function s5() {
-            fadeto(bw - TR - 520 + 5 + 25 * (20 - game.hp) + 3, bh + 30 + 14 + 10, 25, 'This is how hungry you are.<br />Each move adds ' + MOVEHP + ' hunger,<br />and each shock adds ' + SHOCKHP + '.', s6);
-        }
-        function s6() {
-            fadeto(bw - TR - 520 + 5 + 25 * 20, bh + 30 + 14 + 10, 25, 'If you get too hungry, you\'ll die.', unfade);
+            fadeto(TR + 45, bh + 87, TR, 'Your electric shock attack can kill fish.<br />Press space to use it, or click on your head.', unfade);
         }
         s1();
     }
@@ -1031,16 +1079,21 @@ $(document).ready(function() {
             fadeto(tx(-1, 1), ty(-1, 1), TR, 'It takes 2 shocks to kill this fish.', s2);
         }
         function s2() {
-            fadeto(bw - TR - 520 + 6 + 25, bh + 93 - 5, 36, 'But you can only use your shock attack<br />once per move.', unfade);
+            fadeto(bw - TR - 520 + 6 + 25, bh + 93 - 5, 36, 'You can shock multiple times on a level,<br />but only once per move.', s3);
+        }
+        function s3() {
+            fadeto(bw - TR - 520 + 5 + 25 * (20 - game.hp) + 3, bh + 30 + 14 + 10, 25, 'This is how hungry you are.<br />Each move adds ' + MOVEHP + ' hunger,<br />the electric shock adds ' + SHOCKHP + '.', s4);
+        }
+        function s4() {
+            fadeto(bw - TR - 520 + 5 + 25 * 20 + 3, bh + 30 + 14 + 10, 25, 'If you get too hungry, you\'ll die.', unfade);
         }
         s1();
     }
 
     function reset(first) {
-        svg.css({
-            left: 0,
-            opacity: 1
-        });
+        $('#overmessage').hide();
+        $('.overoption').remove();
+        $('.gameoption').show();
         if (game && game.over) {
             var x = game.eel[0];
             var y = game.eel[1];
@@ -1061,6 +1114,7 @@ $(document).ready(function() {
             }
             zoomout();
         }
+        $('.hunger, .charge').toggle(curlevel > 0);
         game = start();
         leveldesc.text(game.leveldesc);
         board.empty();
@@ -1139,11 +1193,11 @@ $(document).ready(function() {
     }
 
     var imgs = [];
-    imgs.push('border1', 'hunger1', 'hunger2', 'plant1', 'shock1');
+    imgs.push('border1', 'hunger1', 'hunger2', 'plant1', 'shock1', 'console-esc', 'console-n');
     $.each(['starfish1', 'guppy1', 'catfish1', 'piranha1', 'stingray1'], function(i, food) {
         imgs.push(food + 'a', food + 'b');
     });
-    $.each(['q', 'w', 'a', 's', 'sp'], function(i, key) {
+    $.each(['q', 'w', 'a', 's', 'sp', 'r'], function(i, key) {
         imgs.push('console-' + key + '1', 'console-' + key + '2');
     });
     $.each(['eel1'], function(i, eel) {
@@ -1259,6 +1313,47 @@ $(document).ready(function() {
             }
             $.cookie('levels', save);
             busy = false;
+            $('#overmessage').show()
+                .text('EEL WINS!');
+            $('.gameoption').hide();
+            if (cannext()) {
+                var nextb = $(document.createElementNS(svgNS, 'image'))
+                    .attr('class', 'overoption key')
+                    .attr('x', bw/2 - 80 - 33)
+                    .attr('y', 110)
+                    .attr('width', 30)
+                    .attr('height', 30)
+                    .attr('href', 'svg/console-n.svg')
+                    .click(function() { do_next(); });
+                svg.append(nextb);
+                var nextt = $(document.createElementNS(svgNS, 'text'))
+                    .attr('class', 'overoption key gametext')
+                    .attr('x', bw/2 - 80)
+                    .attr('y', 110 + 22)
+                    .attr('text-anchor', 'start')
+                    .attr('font-size', 20)
+                    .text('Next')
+                    .click(function() { do_next(); });
+                svg.append(nextt);
+            }
+            var quitb = $(document.createElementNS(svgNS, 'image'))
+                .attr('class', 'overoption key')
+                .attr('x', bw/2 + 80 - 43)
+                .attr('y', 110)
+                .attr('width', 40)
+                .attr('height', 30)
+                .attr('href', 'svg/console-esc.svg')
+                .click(gameback);
+            svg.append(quitb);
+            var quitt = $(document.createElementNS(svgNS, 'text'))
+                .attr('class', 'overoption key gametext')
+                .attr('x', bw/2 + 80)
+                .attr('y', 110 + 22)
+                .attr('text-anchor', 'start')
+                .attr('font-size', 20)
+                .text('Quit')
+                .click(gameback);
+            svg.append(quitt);
         }
         function zoomin() {
             var f = Math.min(1, (time() - t));
@@ -1286,6 +1381,46 @@ $(document).ready(function() {
             game.eelstate = 'sad';
             puteel();
             busy = false;
+            updateconsole();
+            $('#overmessage').show()
+                .text('EEL LOSES!');
+            $('.gameoption').hide();
+            var restartb = $(document.createElementNS(svgNS, 'image'))
+                .attr('class', 'overoption key')
+                .attr('x', bw/2 - 80 - 33)
+                .attr('y', 110)
+                .attr('width', 30)
+                .attr('height', 30)
+                .attr('href', 'svg/console-r2.svg')
+                .click(function() { reset(true); });
+            svg.append(restartb);
+            var restartt = $(document.createElementNS(svgNS, 'text'))
+                .attr('class', 'overoption key gametext')
+                .attr('x', bw/2 - 80)
+                .attr('y', 110 + 22)
+                .attr('text-anchor', 'start')
+                .attr('font-size', 20)
+                .text('Restart')
+                .click(function() { reset(true); });
+            svg.append(restartt);
+            var quitb = $(document.createElementNS(svgNS, 'image'))
+                .attr('class', 'overoption key')
+                .attr('x', bw/2 + 80 - 43)
+                .attr('y', 110)
+                .attr('width', 40)
+                .attr('height', 30)
+                .attr('href', 'svg/console-esc.svg')
+                .click(gameback);
+            svg.append(quitb);
+            var quitt = $(document.createElementNS(svgNS, 'text'))
+                .attr('class', 'overoption key gametext')
+                .attr('x', bw/2 + 80)
+                .attr('y', 110 + 22)
+                .attr('text-anchor', 'start')
+                .attr('font-size', 20)
+                .text('Quit')
+                .click(gameback);
+            svg.append(quitt);
         }
         function zoomin() {
             var f = Math.min(1, (time() - t));
@@ -1300,6 +1435,16 @@ $(document).ready(function() {
         zoomin();
     }
 
+    function gameback() {
+        if (page == 'game') {
+            $('#game').addClass('right');
+            $('#menu').removeClass('left right');
+            page = 'menu';
+            busy = true;
+            setTimeout(function() { busy = false; }, 800);
+        }
+    }
+
     function canmoveeel(dx, dy) {
         return !busy && game_canmove(game, dx, dy);
     }
@@ -1308,9 +1453,18 @@ $(document).ready(function() {
         return !busy && game_canshock(game);
     }
 
+    function canrestart() {
+        return !(game.eelstate == 'happy' || busy || game.atstart);
+    }
+
+    function cannext() {
+        return game.eelstate == 'happy' && !busy && curlevel < LEVELS.length - 1;
+    }
+
     function moveeel(dx, dy) {
         if (!canmoveeel(dx, dy))
             return false;
+        game.atstart = false;
         game_move(game, dx, dy, function(food) {
             food.creature.remove();
         });
@@ -1328,9 +1482,11 @@ $(document).ready(function() {
     function shock() {
         if (!canshock())
             return;
+        game.atstart = false;
         var eel = game.eel;
         busy = true;
-        game.charge = false;
+        if (curlevel > 0)
+            game.charge = false;
         game.hp = Math.max(0, game.hp - SHOCKHP);
         if (game.hp == 0)
             defeat();
@@ -1390,6 +1546,16 @@ $(document).ready(function() {
     function do_sp(event) {
         shock();
     }
+    function do_restart(event) {
+        if (canrestart())
+            reset();
+    }
+    function do_next(event) {
+        if (cannext()) {
+            curlevel ++;
+            reset(true);
+        }
+    }
 
     function drawsol(sol) {
         var ex = game.eel[0];
@@ -1442,7 +1608,7 @@ $(document).ready(function() {
             return;
         if (page == 'game') {
             var eel = game.eel;
-            if ('[][]'[hackk].charCodeAt(0) == event.keyCode) {
+            if (DEBUG && '[][]'[hackk].charCodeAt(0) == event.keyCode) {
                 hackk ++
                 if (hackk == 4) {
                     hack = !hack;
@@ -1513,11 +1679,11 @@ $(document).ready(function() {
                     do_a();
                 else if (event.keyCode == 32)
                     do_sp();
-                else if (event.keyCode == 43) {
+                else if (DEBUG && event.keyCode == 43) {
                     curlevel ++; reset();
-                } else if (event.keyCode == 45) {
+                } else if (DEBUG && event.keyCode == 45) {
                     curlevel --; reset();
-                } else if (event.keyCode == 42) {
+                } else if (DEBUG && event.keyCode == 42) {
                     var sol = solver(game);
                     if (sol != null)
                         drawsol(sol.sol);
@@ -1566,8 +1732,12 @@ $(document).ready(function() {
         if (busy)
             return;
         if (page == 'game') {
-            if (event.keyCode == 27)
-                reset();
+            if (event.keyCode == 114 || event.keyCode == 82)
+                do_restart();
+            else if (event.keyCode == 110 || event.keyCode == 78)
+                do_next();
+            else if (event.keyCode == 27)
+                gameback();
         } else if (page == 'menu') {
             if (event.keyCode == 27)
                 menuback();

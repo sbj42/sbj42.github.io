@@ -205,6 +205,25 @@ a {
 .gametext {
     fill: #FFFC79;
 }
+.key {
+    cursor: pointer;
+}
+.nokey {
+    cursor: default;
+}
+#overmessage {
+    position: absolute;
+    top: 20px;
+    left: 0px;
+    right: 0px;
+    height: 75px;
+    text-align: center;
+    font-family: 'Lakki Reddy', cursive;
+    font-size: 65px;
+    text-shadow: 2px 2px 2px black;
+    display: none;
+    pointer-events: none;
+}
 
 #fadeouter {
     position: absolute;
