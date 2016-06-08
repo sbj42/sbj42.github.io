@@ -214,7 +214,7 @@ var LEVELS = [
         // ssaaqwwwwwsaasa*sw (19)
     },
     {
-        "id": "G?",
+        "id": "Ga",
         "map": [
             "*************",
             "*************",
@@ -236,7 +236,7 @@ var LEVELS = [
         // a*a*swqwwwqasaaq (20**)
     },
     {
-        "id": "G?",
+        "id": "Gb",
         "map": [
             "*************",
             "*************",
@@ -259,7 +259,7 @@ var LEVELS = [
         // ssssw*wsaaqqa*q (11**)
     },
     {
-        "id": "G?",
+        "id": "Pa",
         "map": [
             "*************",
             "*************",
@@ -283,7 +283,7 @@ var LEVELS = [
         // wwww*ss*aaqqq*qqq*aasaswssssww*ssww*qqwwqqaaqq*aaa (18**)
     },
     {
-        "id": "G?",
+        "id": "Sa",
         "map": [
             "*************",
             "*************",
@@ -305,7 +305,7 @@ var LEVELS = [
         // saass*ww*ss*a*qaqqwwsww*q*aqassws (17**)
     },
     {
-        "id": "G?",
+        "id": "Ca",
         "map": [
             "*************",
             "*******p*****",
@@ -327,7 +327,7 @@ var LEVELS = [
         // qwqw*swwssasaa*q*qqwwssa (20**)
     },
     {
-        "id": "G?",
+        "id": "Pb",
         "map": [
             "*************",
             "*************",
@@ -417,7 +417,7 @@ function start() {
     var game = {
         map: level.map.slice(),
         eel: level.eel.slice(),
-        leveldesc: level.id ? (level.id + (level.name ? (': "' + level.name + '"') : '')) : '',
+        leveldesc: (level.id ? level.id[0] : '') + (curlevel+1) + (level.name ? (': "' + level.name + '"') : ''),
         hp: level.hp,
         charge: true,
         over: false,
@@ -645,21 +645,18 @@ $(document).ready(function() {
     var audio_on = true;
     game = null;
     save = $.cookie('levels') || null;
-    if (!save)
-        save = [];
-    while (save.length < LEVELS.length) {
-        save.push({
-            locked: true,
-            finished: false,
-            stars: 0
-        });
-    }
-        save[0].locked = false;
-    if (DEBUG) {
-        $.each(save, function(i, s) {
-            s.locked = false;
-        });
-    }
+    if (!save || save._v != '1')
+        save = {_v: '1'};
+    $.each(LEVELS, function(i, level) {
+        if (!(level.id in save))
+            save[level.id] = {
+                locked: i != 0,
+                finished: false,
+                stars: 0
+            };
+        if (DEBUG)
+            save[level.id].locked = false;
+    });
     $('#fadecircle')
         .attr('cx', $(window).width()/2)
         .attr('cy', $(window).height()/2);
@@ -889,35 +886,41 @@ $(document).ready(function() {
         }, 1000);
     }
 
-    $.each(LEVELS, function(i, level) {
-        var stars = countstars(level);
-        var container = $('#menu' + 'TGCPS'.indexOf(level.id[0]) + 'levels');
-        var button = $(document.createElement('span'))
-            .attr('class', 'levelbutton')
-            .html(level.id.substr(1) + '<br/>');
-        var levelsave = save.length > i ? save[i] : {locked: true};
-        button.addClass(levelsave.locked ? 'l' : levelsave.finished ? 'f' : 'o');
-        if (!levelsave.locked) {
-            button.click(function() {
-                curlevel = i;
-                $('#menu').addClass('left');
-                $('#game').removeClass('left right');
-                page = 'game';
-                reset(true);
-            });
-        }
-        if (stars == 0)
-            button.html(button.html()+'&nbsp;');
-        for (var j = 0; j < stars; j ++) {
-            var star = $(document.createElement('div'))
-                .attr('class', 'levelbuttonstar')
-                .html('&nbsp;');
-            if (j < levelsave.stars)
-                star.addClass('got');
-            button.append(star);
-        }
-        container.append(button);
-    });
+    function updatelevelbuttons() {
+        $.each(LEVELS, function(i, level) {
+            var container = $('#menu' + 'TGCPS'.indexOf(level.id[0]) + 'levels');
+            container.empty();
+        });
+        $.each(LEVELS, function(i, level) {
+            var stars = countstars(level);
+            var container = $('#menu' + 'TGCPS'.indexOf(level.id[0]) + 'levels');
+            var button = $(document.createElement('span'))
+                .attr('class', 'levelbutton')
+                .html((i + 1) + '<br />');
+            var levelsave = level.id in save ? save[level.id] : {locked: true};
+            button.addClass(levelsave.locked ? 'l' : levelsave.finished ? 'f' : 'o');
+            if (!levelsave.locked) {
+                button.click(function() {
+                    curlevel = i;
+                    $('#menu').addClass('left');
+                    $('#game').removeClass('left right');
+                    page = 'game';
+                    reset(true);
+                });
+            }
+            if (stars == 0)
+                button.html(button.html()+'&nbsp;');
+            for (var j = 0; j < stars; j ++) {
+                var star = $(document.createElement('div'))
+                    .attr('class', 'levelbuttonstar')
+                    .html('&nbsp;');
+                if (j < levelsave.stars)
+                    star.addClass('got');
+                button.append(star);
+            }
+            container.append(button);
+        });
+    }
 
     function addkey(k, x, y, w, h) {
         var key = $(document.createElementNS(svgNS, 'image'))
@@ -1120,6 +1123,33 @@ $(document).ready(function() {
         s1();
     }
 
+    function tutorial3() {
+        function s1() {
+            fadeto(tx(0, 0), ty(0, 0), TR, 'This fish will take 3 shocks to kill,<br />but you\'re too hungry for that.', s2);
+        }
+        function s2() {
+            fadeto(tx(0, 0), ty(0, 0), TR*3, 'Kill it with just one shock<br />by surrounding it on three sides.', unfade);
+        }
+        s1();
+    }
+
+    function tutorial4() {
+        function s1() {
+            fadeto(tx(0, -0.5), ty(0, -0.5), TR*3.5, 'Don\'t waste time picking off individual fish.<br />Use your length to kill all four of these at once.', unfade);
+        }
+        s1();
+    }
+
+    function tutorial5() {
+        function s1() {
+            fadeto(tx(2, -0.5), ty(2, -0.5), TR*2, 'To beat the level, you just need to eat the fish.<br />If you feel that the bare minimum is enough, then okay.', s2);
+        }
+        function s2() {
+            fadeto(tx(0, 2), ty(0, 2), TR, 'But some eels want an extra challenge, and they<br />try to collect the starfish along the way.', unfade);
+        }
+        s1();
+    }
+
     function reset(first) {
         play('drop');
         $('#overmessage').hide();
@@ -1219,6 +1249,12 @@ $(document).ready(function() {
                     tutorial1();
                 if (curlevel == 1)
                     tutorial2();
+                if (curlevel == 2)
+                    tutorial3();
+                if (curlevel == 3)
+                    tutorial4();
+                if (curlevel == 4)
+                    tutorial5();
             }, 800);
         }
     }
@@ -1327,20 +1363,12 @@ $(document).ready(function() {
         function happy() {
             game.eelstate = 'happy';
             puteel();
-            save[curlevel] = save[curlevel] || {
-                locked: false,
-                finished: true,
-                stars: 0
-            };
-            save[curlevel].finished = true;
-            save[curlevel].stars = Math.max(save[curlevel].stars, game.stars);
-            if (curlevel + 1 < save.length) {
-                save[curlevel+1] = save[curlevel+1] || {
-                    locked: false,
-                    finished: false,
-                    stars: 0
-                };
-                save[curlevel+1].locked = false;
+            var savel = save[LEVELS[curlevel].id];
+            savel.finished = true;
+            savel.stars = Math.max(savel.stars, game.stars);
+            if (curlevel + 1 < LEVELS.length) {
+                savel = save[LEVELS[curlevel + 1].id];
+                savel.locked = false;
             }
             $.cookie('levels', save);
             busy = false;
@@ -1473,6 +1501,7 @@ $(document).ready(function() {
             $('#game').addClass('right');
             $('#menu').removeClass('left right');
             page = 'menu';
+            updatelevelbuttons();
             busy = true;
             setTimeout(function() { busy = false; }, 800);
         }
@@ -1562,7 +1591,7 @@ $(document).ready(function() {
                 $.each(shocks, function(i, thing) {
                     thing.remove();
                 });
-            }, 500);
+            }, 250);
             setTimeout(function() {
                 i += 2;
                 if (i >= eel.length) {
@@ -1571,7 +1600,7 @@ $(document).ready(function() {
                     return;
                 }
                 next();
-            }, 400);
+            }, 200);
         }
         next();
     }
@@ -1817,6 +1846,7 @@ $(document).ready(function() {
             $('#intro').addClass('left');
             $('#menu').removeClass('left right');
             page = 'menu';
+            updatelevelbuttons();
             busy = true;
             setTimeout(function() { busy = false; }, 800);
         }
