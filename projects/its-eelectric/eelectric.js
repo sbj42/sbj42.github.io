@@ -3,13 +3,15 @@
 //   a space you can't shock from
 //   a space that costs extra hp to pass through
 //   a food that moves away from you
-//   shock could cost more
 //   tunnels
-//   starfish, that count as bonus points
+//   a food that you don't need to kill - restores 1 hp (so like a free move)
+//   pushable boulders/whatever
 
 // todo:
 //   url fragments so back button works
-//   tutorial help bubbles
+//   finish tutorials
+//   more levels
+//   music
 
 var svgNS = 'http://www.w3.org/2000/svg';
 
@@ -640,6 +642,7 @@ $(document).ready(function() {
     var hackk = 0;
     var hack = false;
     var fadecallback = null;
+    var audio_on = true;
     game = null;
     save = $.cookie('levels') || null;
     if (!save)
@@ -668,6 +671,14 @@ $(document).ready(function() {
         width: bw,
         height: bh + 110
     });
+
+    function play(audio) {
+        if (!audio_on)
+            return;
+        var a = $('#audio_'+audio)[0];
+        a.currentTime = 0;
+        a.play();
+    }
 
     var defs = $(document.createElementNS(svgNS, 'defs'));
     svg.append(defs);
@@ -797,22 +808,41 @@ $(document).ready(function() {
         .click(do_restart);
     svg.append(restartt);
 
+    var audiob = $(document.createElementNS(svgNS, 'image'))
+        .attr('class', 'gameoption key')
+        .attr('x', bw - TR - 30 - 33)
+        .attr('y', bh + 75)
+        .attr('width', 30)
+        .attr('height', 30)
+        .attr('href', 'svg/console-m.svg')
+        .click(do_audio);
+    svg.append(audiob);
+    var audioi = $(document.createElementNS(svgNS, 'image'))
+        .attr('class', 'gameoption')
+        .attr('x', bw - TR - 30)
+        .attr('y', bh + 75)
+        .attr('width', 30)
+        .attr('height', 30)
+        .attr('href', 'svg/audio-on.svg')
+        .click(do_audio);
+    svg.append(audioi);
+
     var star1 = $(document.createElementNS(svgNS, 'image'))
-        .attr('x', bw - TR - 45)
+        .attr('x', bw - TR - 145)
         .attr('y', bh + 65)
         .attr('width', 50)
         .attr('height', 50)
         .attr('href', 'svg/starfish1b.svg');
     svg.append(star1);
     var star2 = $(document.createElementNS(svgNS, 'image'))
-        .attr('x', bw - TR - 90)
+        .attr('x', bw - TR - 190)
         .attr('y', bh + 65)
         .attr('width', 50)
         .attr('height', 50)
         .attr('href', 'svg/starfish1b.svg');
     svg.append(star2);
     var star3 = $(document.createElementNS(svgNS, 'image'))
-        .attr('x', bw - TR - 135)
+        .attr('x', bw - TR - 235)
         .attr('y', bh + 65)
         .attr('width', 50)
         .attr('height', 50)
@@ -1060,7 +1090,7 @@ $(document).ready(function() {
         function s1() {
             var ex = game.eel[0];
             var ey = game.eel[1];
-            fadeto(tx(ex, ey), ty(ex, ey), TR, 'You\'re an eel, and you\'re hungry.<br />Your job is to eat all the fish on the level.', s2);
+            fadeto(tx(ex, ey), ty(ex, ey), TR, 'You\'re an eel, and you\'re hungry.<br />You\'re going to have to eat all the fish.', s2);
         }
         function s2() {
             fadeto(TR + 45, bh + 35, TR, 'Use the Q, W, A and S keys to move,<br />or click on the next place you want to go.', s3);
@@ -1079,18 +1109,19 @@ $(document).ready(function() {
             fadeto(tx(-1, 1), ty(-1, 1), TR, 'It takes 2 shocks to kill this fish.', s2);
         }
         function s2() {
-            fadeto(bw - TR - 520 + 6 + 25, bh + 93 - 5, 36, 'You can shock multiple times on a level,<br />but only once per move.', s3);
+            fadeto(bw - TR - 520 + 6 + 25, bh + 93 - 5, 36, 'You can shock multiple times on a level,<br />but not twice in the same place;<br />you have to move to recharge.', s3);
         }
         function s3() {
-            fadeto(bw - TR - 520 + 5 + 25 * (20 - game.hp) + 3, bh + 30 + 14 + 10, 25, 'This is how hungry you are.<br />Each move adds ' + MOVEHP + ' hunger,<br />the electric shock adds ' + SHOCKHP + '.', s4);
+            fadeto(bw - TR - 520 + 5 + 25 * (20 - game.hp) + 3, bh + 30 + 14 + 10, 25, 'This is how hungry you are.<br />Each move adds ' + MOVEHP + ' hunger,<br />and the electric shock adds ' + SHOCKHP + '.', s4);
         }
         function s4() {
-            fadeto(bw - TR - 520 + 5 + 25 * 20 + 3, bh + 30 + 14 + 10, 25, 'If you get too hungry, you\'ll die.', unfade);
+            fadeto(bw - TR - 520 + 5 + 25 * 20 + 3, bh + 30 + 14 + 10, 25, 'If you get too hungry, you\'ll starve.', unfade);
         }
         s1();
     }
 
     function reset(first) {
+        play('drop');
         $('#overmessage').hide();
         $('.overoption').remove();
         $('.gameoption').show();
@@ -1193,7 +1224,7 @@ $(document).ready(function() {
     }
 
     var imgs = [];
-    imgs.push('border1', 'hunger1', 'hunger2', 'plant1', 'shock1', 'console-esc', 'console-n');
+    imgs.push('border1', 'hunger1', 'hunger2', 'plant1', 'shock1', 'console-esc', 'console-n', 'console-m', 'audio-on', 'audio-off');
     $.each(['starfish1', 'guppy1', 'catfish1', 'piranha1', 'stingray1'], function(i, food) {
         imgs.push(food + 'a', food + 'b');
     });
@@ -1365,6 +1396,7 @@ $(document).ready(function() {
             else
                 happy();
         }
+        play('victory');
         zoomin();
     }
 
@@ -1423,7 +1455,7 @@ $(document).ready(function() {
             svg.append(quitt);
         }
         function zoomin() {
-            var f = Math.min(1, (time() - t));
+            var f = Math.min(1, (time() - t)/1.5);
             var x2 = x1*(1-f) + (bw/2) * f;
             var y2 = y1*(1-f) + (bh/2) * f;
             board.attr('transform', 'translate(' + x2 + ',' + y2 +') scale(' + (1 + f*f*f*5) + ') translate(' + (-x1) + ',' + (-y1) + ')');
@@ -1432,6 +1464,7 @@ $(document).ready(function() {
             else
                 sad();
         }
+        play('defeat');
         zoomin();
     }
 
@@ -1465,9 +1498,20 @@ $(document).ready(function() {
         if (!canmoveeel(dx, dy))
             return false;
         game.atstart = false;
+        var ate = false;
+        var star = false;
         game_move(game, dx, dy, function(food) {
+            if (food.star)
+                star = true;
             food.creature.remove();
+            ate = true;
         });
+        if (star)
+            play('star');
+        else if (ate)
+            play('eat');
+        else
+            play('move');
         var nonstars = 0;
         $.each(game.food, function(i, f) { if (!f.star) nonstars ++; });
         if (nonstars == 0)
@@ -1494,6 +1538,7 @@ $(document).ready(function() {
         function next() {
             var shocks = [];
             game_shock1(game, i, function(rot, x, y) {
+                play('shock');
                 var thing = $(document.createElementNS(svgNS, 'image'))
                     .attr('x', -TR*2)
                     .attr('y', -TR*2)
@@ -1555,6 +1600,10 @@ $(document).ready(function() {
             curlevel ++;
             reset(true);
         }
+    }
+    function do_audio() {
+        audio_on = !audio_on;
+        audioi.attr('href', 'svg/audio-' + (audio_on ? 'on' : 'off') + '.svg');
     }
 
     function drawsol(sol) {
@@ -1734,6 +1783,8 @@ $(document).ready(function() {
         if (page == 'game') {
             if (event.keyCode == 114 || event.keyCode == 82)
                 do_restart();
+            else if (event.keyCode == 109 || event.keyCode == 77)
+                do_audio();
             else if (event.keyCode == 110 || event.keyCode == 78)
                 do_next();
             else if (event.keyCode == 27)
