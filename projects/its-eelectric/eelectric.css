@@ -204,6 +204,7 @@ a {
 }
 .gametext {
     fill: #FFFC79;
+    text-shadow: 1px 1px 1px #000;
 }
 .key {
     cursor: pointer;

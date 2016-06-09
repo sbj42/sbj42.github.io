@@ -105,7 +105,7 @@ function preloadsvg(images, callback) {
 var LEVELS = [
     {
         "id": "T1",
-        "name": "One Fish",
+        "name": "Eel-22",
         "map": [
             "*************",
             "*************",
@@ -127,7 +127,7 @@ var LEVELS = [
     },
     {
         "id": "T2",
-        "name": "Two Fish",
+        "name": "The Eel in the Rye",
         "map": [
             "*************",
             "*************",
@@ -149,7 +149,7 @@ var LEVELS = [
     },
     {
         "id": "T3",
-        "name": "Conservation",
+        "name": "Gone With the Eel",
         "map": [
             "*************",
             "*************",
@@ -171,7 +171,7 @@ var LEVELS = [
     },
     {
         "id": "T4",
-        "name": "Productivity",
+        "name": "Of Eels and Men",
         "map": [
             "*************",
             "*************",
@@ -193,7 +193,7 @@ var LEVELS = [
     },
     {
         "id": "T5",
-        "name": "Reach for the Stars",
+        "name": "The Eels of Wrath",
         "map": [
             "*************",
             "*************",
@@ -214,7 +214,8 @@ var LEVELS = [
         // ssaaqwwwwwsaasa*sw (19)
     },
     {
-        "id": "Ga",
+        "id": "G brave",
+        "name": "Brave New Eel",
         "map": [
             "*************",
             "*************",
@@ -236,7 +237,8 @@ var LEVELS = [
         // a*a*swqwwwqasaaq (20**)
     },
     {
-        "id": "Gb",
+        "id": "G rises",
+        "name": "The Eel Also Rises",
         "map": [
             "*************",
             "*************",
@@ -259,7 +261,78 @@ var LEVELS = [
         // ssssw*wsaaqqa*q (11**)
     },
     {
-        "id": "Pa",
+        "id": "G farm",
+        "name": "Eel Farm",
+        "map": [
+            "*************",
+            "*************",
+            "*************",
+            "*****   p****",
+            "**** 1   p***",
+            "*** 11 p  ***",
+            "***       ***",
+            "***0 p 11 ***",
+            "***p   1 ****",
+            "****p0  *****",
+            "*************",
+            "*************",
+            "*************"
+        ],
+        "eel": [2,-2,2,-1,3,-1,3,0,3,1],
+        "hp": 11
+        // qqaaqq*wswsaaaa*ss*wwqa (10)
+        // qqaass*aqqwqq*wwsasaaaqassw (11*)
+        // qqaass*aqqwqw*wqaqaasasasws (11**)
+    },
+    {
+        "id": "G wonderland",
+        "name": "Eel in Wonderland",
+        "map": [
+            "*************",
+            "*************",
+            "*************",
+            "*****   *****",
+            "***** 1 0****",
+            "*****   2*p**",
+            "***p*3   ****",
+            "*****0 1 ****",
+            "******   ****",
+            "****p********",
+            "*************",
+            "*************",
+            "*************"
+        ],
+        "eel": [-1,-3,0,-3,1,-3],
+        "hp": 14
+        // aas*a*qwwssaas*wqaa (14)
+        // aasa*s*aqqwwwsasws*a (14**)
+    },
+    {
+        "id": "C clockwork",
+        "name": "A Clockwork Eel",
+        "map": [
+            "*************",
+            "*******p*****",
+            "*************",
+            "*************",
+            "****p   p****",
+            "****  3  **p*",
+            "**** 2p4 ****",
+            "*p**0 1  ****",
+            "****p0  p****",
+            "*****p ******",
+            "*****  ******",
+            "****  *******",
+            "*************"
+        ],
+        "eel": [0,2,0,3,0,4,-1,4,-1,5,-2,5],
+        "hp": 20
+        // swswwqw*q*aqqa*sa*ssw (19)
+        // qwqw*swwssasaa*q*qqwwssa (20**)
+    },
+    {
+        "id": "P kings",
+        "name": "All the King's Eels",
         "map": [
             "*************",
             "*************",
@@ -283,51 +356,8 @@ var LEVELS = [
         // wwww*ss*aaqqq*qqq*aasaswssssww*ssww*qqwwqqaaqq*aaa (18**)
     },
     {
-        "id": "Sa",
-        "map": [
-            "*************",
-            "*************",
-            "*************",
-            "*************",
-            "****p     ***",
-            "****0414 p***",
-            "***  1 1  ***",
-            "***  414 ****",
-            "***    0p****",
-            "*************",
-            "*************",
-            "*************",
-            "*************"
-        ],
-        "eel": [-3,0,-3,1,-3,2,-2,2],
-        "hp": 17
-        // saass*ww*ss*a*qqqqwssww*q*aasws (15)
-        // saass*ww*ss*a*qaqqwwsww*q*aqassws (17**)
-    },
-    {
-        "id": "Ca",
-        "map": [
-            "*************",
-            "*******p*****",
-            "*************",
-            "*************",
-            "****p   p****",
-            "****  3  **p*",
-            "**** 2p4 ****",
-            "*p**0 1  ****",
-            "****p0  p****",
-            "*****p ******",
-            "*****  ******",
-            "****  *******",
-            "*************"
-        ],
-        "eel": [0,2,0,3,0,4,-1,4,-1,5,-2,5],
-        "hp": 20
-        // swswwqw*q*aqqa*sa*ssw (19)
-        // qwqw*swwssasaa*q*qqwwssa (20**)
-    },
-    {
-        "id": "Pb",
+        "id": "P darkness",
+        "name": "Eel of Darkness",
         "map": [
             "*************",
             "*************",
@@ -348,23 +378,52 @@ var LEVELS = [
         //*wswww*qqqqqaaqaaas*a*swswqqqqwswwswswssssa*s*aqqwqwws (15)
         //*wswww*qqqaaqqqaasssaq*a*qwqwqwswwsws*wssssa*s*aqqwqwws (16*)
         //*wswww*qqqqqa*qaaasssaq*a*qwqwqwswssswwqwsssaasswq*w*wqq (17**)
+    },
+    {
+        "id": "S lord",
+        "name": "Lord of the Eels",
+        "map": [
+            "*************",
+            "*************",
+            "*************",
+            "*************",
+            "****p     ***",
+            "****0414 p***",
+            "***  1 1  ***",
+            "***  414 ****",
+            "***    0p****",
+            "*************",
+            "*************",
+            "*************",
+            "*************"
+        ],
+        "eel": [-3,0,-3,1,-3,2,-2,2],
+        "hp": 17
+        // saass*ww*ss*a*qqqqwssww*q*aasws (15)
+        // saass*ww*ss*a*qaqqwwsww*q*aqassws (17**)
     }
 ];
-//        map: [
-//            '*************',
-//            '*******  ****',
-//            '******    ***',
-//            '*****      **',
-//            '****        *',
-//            '***         *',
-//            '**         **',
-//            '*         ***',
-//            '*        ****',
-//            '**      *****',
-//            '***    ******',
-//            '****  *******',
-//            '*************'
-//        ],
+// The Call of the Eel
+// Midnight's Eels
+// One Flew over the Eel's Nest
+// The Eel Masters
+// The Hunt for Red Eel
+// The Eel's Guide to the Galaxy
+// Eel in a Strange Land
+// Bonfire of the Eels
+// The War of the Eels
+// The Eel and the Fury
+// Eel 451
+// To Kill an Eel
+// Eel in Wonderland
+// The Scarlet Eel
+// Eel and Punishment
+// The Eel of Monte Cristo
+// The Eels of Narnia
+// Interview With the Eel
+// The Eel Machine
+// Twenty Thousand Eels Under the Sea
+// A Midsummer Night's Eel
 var curlevel = 0;
 
 var ROCKMAP = {
@@ -561,64 +620,21 @@ function game_shock(game) {
     return harm;
 }
 
-function solver(game, sethp) {
-    var progress;
+var solvertimer;
+function cancel_solver() {
+    clearTimeout(solvertimer);
+}
+function solver(game, callback, sethp) {
+    var PROGDUR = 1;
+    var YIELDDUR = 0.02;
+    var progt, yieldt;
     var solutions = [];
-    function over() {
-    }
-    function step(sofar, game) {
-        if (time() > progress) {
-            console.info('thinking: ' + sofar);
-            progress = time() + 5;
-        }
-        if (game_canshock(game)) {
-            var game2 = $.extend(true, {}, game);
-            if (game_shock(game2)) {
-                if (!game_over(game2))
-                    step(sofar + '*', game2);
-            }
-        }
-        if (game_canmove(game, -1, 0)) {
-            var game2 = $.extend(true, {}, game);
-            game_move(game2, -1, 0);
-            if (game2.food.length == 0)
-                solutions.push(sofar + 'q');
-            else if (!game_over(game2))
-                step(sofar + 'q', game2);
-        }
-        if (game_canmove(game, 0, -1)) {
-            var game2 = $.extend(true, {}, game);
-            game_move(game2, 0, -1);
-            if (game2.food.length == 0)
-                solutions.push(sofar + 'w');
-            else if (!game_over(game2))
-                step(sofar + 'w', game2);
-        }
-        if (game_canmove(game, 1, 0)) {
-            var game2 = $.extend(true, {}, game);
-            game_move(game2, 1, 0);
-            if (game2.food.length == 0)
-                solutions.push(sofar + 's');
-            else if (!game_over(game2))
-                step(sofar + 's', game2);
-        }
-        if (game_canmove(game, 0, 1)) {
-            var game2 = $.extend(true, {}, game);
-            game_move(game2, 0, 1);
-            if (game2.food.length == 0)
-                solutions.push(sofar + 'a');
-            else if (!game_over(game2))
-                step(sofar + 'a', game2);
-        }
-    }
+    var todo = [];
+    var hp = (sethp || 1) - 1;
     game = $.extend(true, {}, game);
-    for (var hp = sethp || 1; hp <= 20; hp ++) {
-        console.info('trying hp ' + hp);
-        progress = time() + 5;
-        game.hp = hp;
-        step('', game);
-        if (solutions.length > 0) {
-            console.info('done (min hp needed is ' + hp + ':');
+    function nexthp() {
+        if (solutions.length) {
+            console.info('done (hp ' + hp + '):');
             var shortest = null;
             var length = 0;
             $.each(solutions, function(i, sol) {
@@ -628,11 +644,78 @@ function solver(game, sethp) {
                     shortest = sol;
                 }
             });
-            return {sol: shortest, hp: hp};
+            callback(shortest, hp);
+        } else if (hp > 20) {
+            console.info('no solution');
+            callback();
+        } else {
+            hp ++;
+            console.info('trying hp ' + hp);
+            progt = time() + PROGDUR;
+            game.hp = hp;
+            todo.push(['', game]);
+            step();
         }
     }
-    console.info('no solution');
-    return null;
+    function step() {
+        var sofar = todo[0][0];
+        var game = todo[0][1];
+        todo.shift();
+        var t = time();
+        if (t > progt) {
+            console.info('thinking: ' + sofar + ' (' + todo.length + ')');
+            progt = time() + PROGDUR;
+        }
+        if (game_canshock(game)) {
+            var game2 = $.extend(true, {}, game);
+            if (game_shock(game2)) {
+                if (!game_over(game2))
+                    todo.push([sofar + '*', game2]);
+            }
+        }
+        if (game_canmove(game, -1, 0)) {
+            var game2 = $.extend(true, {}, game);
+            game_move(game2, -1, 0);
+            if (game2.food.length == 0)
+                solutions.push(sofar + 'q');
+            else if (!game_over(game2))
+                todo.push([sofar + 'q', game2]);
+        }
+        if (game_canmove(game, 0, -1)) {
+            var game2 = $.extend(true, {}, game);
+            game_move(game2, 0, -1);
+            if (game2.food.length == 0)
+                solutions.push(sofar + 'w');
+            else if (!game_over(game2))
+                todo.push([sofar + 'w', game2]);
+        }
+        if (game_canmove(game, 1, 0)) {
+            var game2 = $.extend(true, {}, game);
+            game_move(game2, 1, 0);
+            if (game2.food.length == 0)
+                solutions.push(sofar + 's');
+            else if (!game_over(game2))
+                todo.push([sofar + 's', game2]);
+        }
+        if (game_canmove(game, 0, 1)) {
+            var game2 = $.extend(true, {}, game);
+            game_move(game2, 0, 1);
+            if (game2.food.length == 0)
+                solutions.push(sofar + 'a');
+            else if (!game_over(game2))
+                todo.push([sofar + 'a', game2]);
+        }
+        if (todo.length) {
+            if (t > yieldt) {
+                solvertimer = setTimeout(step, 0);
+                yieldt = t + YIELDDUR;
+            } else
+                step();
+        } else
+            nexthp();
+    }
+    yieldt = time() + YIELDDUR;
+    nexthp();
 }
 
 var game, save;
@@ -1151,6 +1234,7 @@ $(document).ready(function() {
     }
 
     function reset(first) {
+        cancel_solver();
         play('drop');
         $('#overmessage').hide();
         $('.overoption').remove();
@@ -1351,6 +1435,25 @@ $(document).ready(function() {
         }, 1000);
     });
 
+    function gokey(k, txt, y, w, fn) {
+        svg.append($(document.createElementNS(svgNS, 'image'))
+                   .attr('class', 'overoption key')
+                   .attr('x', y - w - 3)
+                   .attr('y', 110)
+                   .attr('width', w)
+                   .attr('height', 30)
+                   .attr('href', 'svg/console-' + k + '.svg')
+                   .click(fn));
+        svg.append($(document.createElementNS(svgNS, 'text'))
+                   .attr('class', 'overoption key gametext')
+                   .attr('x', y)
+                   .attr('y', 110 + 22)
+                   .attr('text-anchor', 'start')
+                   .attr('font-size', 20)
+                   .text(txt)
+                   .click(fn));
+    }
+
     function victory() {
         var eel = game.eel;
         busy = true;
@@ -1376,43 +1479,13 @@ $(document).ready(function() {
                 .text('EEL WINS!');
             $('.gameoption').hide();
             if (cannext()) {
-                var nextb = $(document.createElementNS(svgNS, 'image'))
-                    .attr('class', 'overoption key')
-                    .attr('x', bw/2 - 80 - 33)
-                    .attr('y', 110)
-                    .attr('width', 30)
-                    .attr('height', 30)
-                    .attr('href', 'svg/console-n.svg')
-                    .click(function() { do_next(); });
-                svg.append(nextb);
-                var nextt = $(document.createElementNS(svgNS, 'text'))
-                    .attr('class', 'overoption key gametext')
-                    .attr('x', bw/2 - 80)
-                    .attr('y', 110 + 22)
-                    .attr('text-anchor', 'start')
-                    .attr('font-size', 20)
-                    .text('Next')
-                    .click(function() { do_next(); });
-                svg.append(nextt);
+                gokey('n', 'Next', bw/2 - 100, 30, do_next);
+                gokey('r2', 'Restart', bw/2 - 15, 30, function() { reset(true); });
+                gokey('esc', 'Quit', bw/2 + 100, 40, gameback);
+            } else {
+                gokey('r2', 'Restart', bw/2 - 80, 30, function() { reset(true); });
+                gokey('esc', 'Quit', bw/2 + 80, 40, gameback);
             }
-            var quitb = $(document.createElementNS(svgNS, 'image'))
-                .attr('class', 'overoption key')
-                .attr('x', bw/2 + 80 - 43)
-                .attr('y', 110)
-                .attr('width', 40)
-                .attr('height', 30)
-                .attr('href', 'svg/console-esc.svg')
-                .click(gameback);
-            svg.append(quitb);
-            var quitt = $(document.createElementNS(svgNS, 'text'))
-                .attr('class', 'overoption key gametext')
-                .attr('x', bw/2 + 80)
-                .attr('y', 110 + 22)
-                .attr('text-anchor', 'start')
-                .attr('font-size', 20)
-                .text('Quit')
-                .click(gameback);
-            svg.append(quitt);
         }
         function zoomin() {
             var f = Math.min(1, (time() - t));
@@ -1445,42 +1518,8 @@ $(document).ready(function() {
             $('#overmessage').show()
                 .text('EEL LOSES!');
             $('.gameoption').hide();
-            var restartb = $(document.createElementNS(svgNS, 'image'))
-                .attr('class', 'overoption key')
-                .attr('x', bw/2 - 80 - 33)
-                .attr('y', 110)
-                .attr('width', 30)
-                .attr('height', 30)
-                .attr('href', 'svg/console-r2.svg')
-                .click(function() { reset(true); });
-            svg.append(restartb);
-            var restartt = $(document.createElementNS(svgNS, 'text'))
-                .attr('class', 'overoption key gametext')
-                .attr('x', bw/2 - 80)
-                .attr('y', 110 + 22)
-                .attr('text-anchor', 'start')
-                .attr('font-size', 20)
-                .text('Restart')
-                .click(function() { reset(true); });
-            svg.append(restartt);
-            var quitb = $(document.createElementNS(svgNS, 'image'))
-                .attr('class', 'overoption key')
-                .attr('x', bw/2 + 80 - 43)
-                .attr('y', 110)
-                .attr('width', 40)
-                .attr('height', 30)
-                .attr('href', 'svg/console-esc.svg')
-                .click(gameback);
-            svg.append(quitb);
-            var quitt = $(document.createElementNS(svgNS, 'text'))
-                .attr('class', 'overoption key gametext')
-                .attr('x', bw/2 + 80)
-                .attr('y', 110 + 22)
-                .attr('text-anchor', 'start')
-                .attr('font-size', 20)
-                .text('Quit')
-                .click(gameback);
-            svg.append(quitt);
+            gokey('r2', 'Restart', bw/2 - 80, 30, function() { reset(true); });
+            gokey('esc', 'Quit', bw/2 + 80, 40, gameback);
         }
         function zoomin() {
             var f = Math.min(1, (time() - t)/1.5);
@@ -1498,6 +1537,7 @@ $(document).ready(function() {
 
     function gameback() {
         if (page == 'game') {
+            cancel_solver();
             $('#game').addClass('right');
             $('#menu').removeClass('left right');
             page = 'menu';
@@ -1516,7 +1556,7 @@ $(document).ready(function() {
     }
 
     function canrestart() {
-        return !(game.eelstate == 'happy' || busy || game.atstart);
+        return !(busy || game.atstart);
     }
 
     function cannext() {
@@ -1526,6 +1566,7 @@ $(document).ready(function() {
     function moveeel(dx, dy) {
         if (!canmoveeel(dx, dy))
             return false;
+        cancel_solver();
         game.atstart = false;
         var ate = false;
         var star = false;
@@ -1555,6 +1596,7 @@ $(document).ready(function() {
     function shock() {
         if (!canshock())
             return;
+        cancel_solver();
         game.atstart = false;
         var eel = game.eel;
         busy = true;
@@ -1736,12 +1778,13 @@ $(document).ready(function() {
                         else if (lx + ly == 0)
                             LEVELS[curlevel].eel.splice(eel.length-2, 2);
                     } else if (event.keyCode == 42) {
-                        var sol = solver(start());
-                        if (sol == null)
-                            return;
-                        LEVELS[curlevel].hp = sol.hp;
-                        reset();
-                        drawsol(sol.sol);
+                        solver(start(), function(sol, hp) {
+                            if (sol == null)
+                                return;
+                            LEVELS[curlevel].hp = hp;
+                            reset();
+                            drawsol(sol);
+                        });
                         return;
                     }
                     reset();
@@ -1762,9 +1805,9 @@ $(document).ready(function() {
                 } else if (DEBUG && event.keyCode == 45) {
                     curlevel --; reset();
                 } else if (DEBUG && event.keyCode == 42) {
-                    var sol = solver(game);
-                    if (sol != null)
-                        drawsol(sol.sol);
+                    solver(game, function(sol, hp) {
+                        drawsol(sol);
+                    });
                 }
             }
             updateconsole();
