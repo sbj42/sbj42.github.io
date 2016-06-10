@@ -13,6 +13,12 @@
 //   more levels
 //   music
 
+// issues:
+//   show tutorials only once
+//   quit and back into level could remember your position
+//   no tutorial for plants yet
+
+
 var svgNS = 'http://www.w3.org/2000/svg';
 
 var TR = 42; // tile center-to-corner
@@ -293,12 +299,12 @@ var LEVELS = [
             "*************",
             "*****   *****",
             "***** 1 0****",
-            "*****   2*p**",
-            "***p*3   ****",
+            "*****   2**p*",
+            "**p**3   ****",
             "*****0 1 ****",
             "******   ****",
-            "****p********",
             "*************",
+            "***p*********",
             "*************",
             "*************"
         ],
@@ -317,7 +323,7 @@ var LEVELS = [
             "*************",
             "****p   p****",
             "****  3  **p*",
-            "**** 2p4 ****",
+            "**** 4p2 ****",
             "*p**0 1  ****",
             "****p0  p****",
             "*****p ******",
@@ -329,6 +335,75 @@ var LEVELS = [
         "hp": 20
         // swswwqw*q*aqqa*sa*ssw (19)
         // qwqw*swwssasaa*q*qqwwssa (20**)
+    },
+    {
+        "id": "C cristo",
+        "name": "The Eel of Monte Cristo",
+        "map": [
+            "*************",
+            "*************",
+            "******pp**p**",
+            "******pp*****",
+            "****    *****",
+            "**** 3 2  ***",
+            "**       0***",
+            "**   2 4 ****",
+            "*****    ****",
+            "***** 0******",
+            "**p**********",
+            "*************",
+            "*************"
+        ],
+        "eel": [-2,0,-3,0,-4,0,-4,1,-3,1,-2,1],
+        "hp": 18
+        // sss*s*wq*qq*aass (14)
+        // sss*s*s*wqq*qqaaaaswws (18**)
+    },
+    {
+        "id": "C red",
+        "name": "The Hunt for Red Eel",
+        "map": [
+            "*************",
+            "*************",
+            "*************",
+            "*****   *****",
+            "***** p *****",
+            "*** 1 4 1 ***",
+            "***03 4 30***",
+            "*** 1 4 1 ***",
+            "*************",
+            "*************",
+            "******p******",
+            "*************",
+            "*************"
+        ],
+        "eel": [1,-2,1,-3,0,-3],
+        "hp": 11
+        // aa*a*s*wwqa*qqa*q*wsws*aaqqww (11)
+        // aa*a*s*wswqqa*qqa*swwqaaq*qws*w (13**)
+    },
+    {
+        "id": "C midsummer",
+        "name": "A Midsummer Night's Eel",
+        "map": [
+            "*************",
+            "*************",
+            "******ppp****",
+            "*************",
+            "*************",
+            "*****2130****",
+            "**p**131 ****",
+            "**p**312 ****",
+            "**p**0   ****",
+            "*************",
+            "*************",
+            "*************",
+            "*************"
+        ],
+        "eel": [2,1,2,2,1,2],
+        "hp": 8
+        // w*q*a*q*w*q*asww*qasws (5)
+        // w*q*a*q*w*q*aaswww*qassswq (8**)
     },
     {
         "id": "P kings",
@@ -407,7 +482,6 @@ var LEVELS = [
 // Midnight's Eels
 // One Flew over the Eel's Nest
 // The Eel Masters
-// The Hunt for Red Eel
 // The Eel's Guide to the Galaxy
 // Eel in a Strange Land
 // Bonfire of the Eels
@@ -415,15 +489,12 @@ var LEVELS = [
 // The Eel and the Fury
 // Eel 451
 // To Kill an Eel
-// Eel in Wonderland
 // The Scarlet Eel
 // Eel and Punishment
-// The Eel of Monte Cristo
 // The Eels of Narnia
 // Interview With the Eel
 // The Eel Machine
 // Twenty Thousand Eels Under the Sea
-// A Midsummer Night's Eel
 var curlevel = 0;
 
 var ROCKMAP = {
@@ -471,12 +542,16 @@ function countstars(level) {
     return stars;
 }
 
+function describe_level(level, num) {
+    return (level.id ? level.id[0] : '') + (num+1) + (level.name ? (': "' + level.name + '"') : '');
+}
+
 function start() {
     var level = LEVELS[curlevel];
     var game = {
         map: level.map.slice(),
         eel: level.eel.slice(),
-        leveldesc: (level.id ? level.id[0] : '') + (curlevel+1) + (level.name ? (': "' + level.name + '"') : ''),
+        leveldesc: describe_level(level, curlevel),
         hp: level.hp,
         charge: true,
         over: false,
@@ -645,7 +720,7 @@ function solver(game, callback, sethp) {
                 }
             });
             callback(shortest, hp);
-        } else if (hp > 20) {
+        } else if (hp >=   20) {
             console.info('no solution');
             callback();
         } else {
@@ -990,7 +1065,17 @@ $(document).ready(function() {
                     page = 'game';
                     reset(true);
                 });
+                button.mouseenter(function() {
+                    $('#menuselect').text(describe_level(level, i));
+                });
+            } else {
+                button.mouseenter(function() {
+                    $('#menuselect').text('(locked)');
+                });
             }
+            button.mouseleave(function() {
+                $('#menuselect').text('');
+            });
             if (stars == 0)
                 button.html(button.html()+'&nbsp;');
             for (var j = 0; j < stars; j ++) {
@@ -1478,13 +1563,22 @@ $(document).ready(function() {
             $('#overmessage').show()
                 .text('EEL WINS!');
             $('.gameoption').hide();
-            if (cannext()) {
-                gokey('n', 'Next', bw/2 - 100, 30, do_next);
-                gokey('r2', 'Restart', bw/2 - 15, 30, function() { reset(true); });
-                gokey('esc', 'Quit', bw/2 + 100, 40, gameback);
+            if (game.hasstars) {
+                if (cannext()) {
+                    gokey('n', 'Next', bw/2 - 100, 30, do_next);
+                    gokey('r2', 'Restart', bw/2 - 15, 30, function() { reset(true); });
+                    gokey('esc', 'Quit', bw/2 + 100, 40, gameback);
+                } else {
+                    gokey('r2', 'Restart', bw/2 - 80, 30, function() { reset(true); });
+                    gokey('esc', 'Quit', bw/2 + 80, 40, gameback);
+                }
             } else {
-                gokey('r2', 'Restart', bw/2 - 80, 30, function() { reset(true); });
-                gokey('esc', 'Quit', bw/2 + 80, 40, gameback);
+                if (cannext()) {
+                    gokey('n', 'Next', bw/2 - 80, 30, do_next);
+                    gokey('esc', 'Quit', bw/2 + 80, 40, gameback);
+                } else {
+                    gokey('esc', 'Quit', bw/2, 40, gameback);
+                }
             }
         }
         function zoomin() {

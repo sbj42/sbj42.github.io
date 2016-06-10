@@ -101,9 +101,18 @@ a {
 }
 #menuexplain {
     position: absolute;
-    left: 200px;
     top: 20px;
+    left: 0px;
+    right: 0px;
+    text-align: center;
     font-size: 28px;
+}
+#menuselect {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    text-align: center;
 }
 #menu0 {
     position: absolute;
