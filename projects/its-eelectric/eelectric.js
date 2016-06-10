@@ -14,9 +14,7 @@
 //   music
 
 // issues:
-//   quit and back into level could remember your position
 //   no tutorial for plants yet
-
 
 var svgNS = 'http://www.w3.org/2000/svg';
 
@@ -494,7 +492,7 @@ var LEVELS = [
 // Interview With the Eel
 // The Eel Machine
 // Twenty Thousand Eels Under the Sea
-var curlevel = 0;
+var curlevel = null;
 
 var ROCKMAP = {
     '0011.*': ['a', 0],
@@ -1058,10 +1056,12 @@ $(document).ready(function() {
             button.addClass(levelsave.locked ? 'l' : levelsave.finished ? 'f' : 'o');
             if (!levelsave.locked) {
                 button.click(function() {
+                    //var needs_reset = curlevel != i;
                     curlevel = i;
                     $('#menu').addClass('left');
                     $('#game').removeClass('left right');
                     page = 'game';
+                    //if (needs_reset)
                     reset(true);
                 });
                 button.mouseenter(function() {
