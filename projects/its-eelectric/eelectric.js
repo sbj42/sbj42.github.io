@@ -14,7 +14,6 @@
 //   music
 
 // issues:
-//   show tutorials only once
 //   quit and back into level could remember your position
 //   no tutorial for plants yet
 
@@ -802,18 +801,18 @@ $(document).ready(function() {
     var fadecallback = null;
     var audio_on = true;
     game = null;
-    save = $.cookie('levels') || null;
+    save = $.cookie('save') || null;
     if (!save || save._v != '1')
-        save = {_v: '1'};
+        save = {_v: '1', l: {}};
     $.each(LEVELS, function(i, level) {
         if (!(level.id in save))
-            save[level.id] = {
+            save.l[level.id] = {
                 locked: i != 0,
                 finished: false,
                 stars: 0
             };
         if (DEBUG)
-            save[level.id].locked = false;
+            save.l[level.id].locked = false;
     });
     $('#fadecircle')
         .attr('cx', $(window).width()/2)
@@ -1055,7 +1054,7 @@ $(document).ready(function() {
             var button = $(document.createElement('span'))
                 .attr('class', 'levelbutton')
                 .html((i + 1) + '<br />');
-            var levelsave = level.id in save ? save[level.id] : {locked: true};
+            var levelsave = level.id in save.l ? save.l[level.id] : {locked: true};
             button.addClass(levelsave.locked ? 'l' : levelsave.finished ? 'f' : 'o');
             if (!levelsave.locked) {
                 button.click(function() {
@@ -1258,6 +1257,8 @@ $(document).ready(function() {
     }
 
     function tutorial1() {
+        if (save.t1)
+            return;
         function s1() {
             var ex = game.eel[0];
             var ey = game.eel[1];
@@ -1270,12 +1271,19 @@ $(document).ready(function() {
             fadeto(tx(1,-1), ty(1,-1), TR, 'You have to kill the fish before you eat it.', s4);
         }
         function s4() {
-            fadeto(TR + 45, bh + 87, TR, 'Your electric shock attack can kill fish.<br />Press space to use it, or click on your head.', unfade);
+            fadeto(TR + 45, bh + 87, TR, 'Your electric shock attack can kill fish.<br />Press space to use it, or click on your head.', d);
+        }
+        function d() {
+            save.t1 = true;
+            $.cookie('save', save);
+            unfade();
         }
         s1();
     }
 
     function tutorial2() {
+        if (save.t2)
+            return;
         function s1() {
             fadeto(tx(-1, 1), ty(-1, 1), TR, 'It takes 2 shocks to kill this fish.', s2);
         }
@@ -1286,34 +1294,60 @@ $(document).ready(function() {
             fadeto(bw - TR - 520 + 5 + 25 * (20 - game.hp) + 3, bh + 30 + 14 + 10, 25, 'This is how hungry you are.<br />Each move adds ' + MOVEHP + ' hunger,<br />and the electric shock adds ' + SHOCKHP + '.', s4);
         }
         function s4() {
-            fadeto(bw - TR - 520 + 5 + 25 * 20 + 3, bh + 30 + 14 + 10, 25, 'If you get too hungry, you\'ll starve.', unfade);
+            fadeto(bw - TR - 520 + 5 + 25 * 20 + 3, bh + 30 + 14 + 10, 25, 'If you get too hungry, you\'ll starve.', d);
+        }
+        function d() {
+            save.t2 = true;
+            $.cookie('save', save);
+            unfade();
         }
         s1();
     }
 
     function tutorial3() {
+        if (save.t3)
+            return;
         function s1() {
             fadeto(tx(0, 0), ty(0, 0), TR, 'This fish will take 3 shocks to kill,<br />but you\'re too hungry for that.', s2);
         }
         function s2() {
-            fadeto(tx(0, 0), ty(0, 0), TR*3, 'Kill it with just one shock<br />by surrounding it on three sides.', unfade);
+            fadeto(tx(0, 0), ty(0, 0), TR*3, 'Kill it with just one shock<br />by surrounding it on three sides.', d);
+        }
+        function d() {
+            save.t3 = true;
+            $.cookie('save', save);
+            unfade();
         }
         s1();
     }
 
     function tutorial4() {
+        if (save.t4)
+            return;
         function s1() {
-            fadeto(tx(0, -0.5), ty(0, -0.5), TR*3.5, 'Don\'t waste time picking off individual fish.<br />Use your length to kill all four of these at once.', unfade);
+            fadeto(tx(0, -0.5), ty(0, -0.5), TR*3.5, 'Don\'t waste time picking off individual fish.<br />Use your length to kill all four of these at once.', d);
+        }
+        function d() {
+            save.t4 = true;
+            $.cookie('save', save);
+            unfade();
         }
         s1();
     }
 
     function tutorial5() {
+        if (save.t5)
+            return;
         function s1() {
             fadeto(tx(2, -0.5), ty(2, -0.5), TR*2, 'To beat the level, you just need to eat the fish.<br />If you feel that the bare minimum is enough, then okay.', s2);
         }
         function s2() {
-            fadeto(tx(0, 2), ty(0, 2), TR, 'But some eels want an extra challenge, and they<br />try to collect the starfish along the way.', unfade);
+            fadeto(tx(0, 2), ty(0, 2), TR, 'But some eels want an extra challenge, and they<br />try to collect the starfish along the way.', d);
+        }
+        function d() {
+            save.t5 = true;
+            $.cookie('save', save);
+            unfade();
         }
         s1();
     }
@@ -1551,14 +1585,14 @@ $(document).ready(function() {
         function happy() {
             game.eelstate = 'happy';
             puteel();
-            var savel = save[LEVELS[curlevel].id];
+            var savel = save.l[LEVELS[curlevel].id];
             savel.finished = true;
             savel.stars = Math.max(savel.stars, game.stars);
             if (curlevel + 1 < LEVELS.length) {
-                savel = save[LEVELS[curlevel + 1].id];
+                savel = save.l[LEVELS[curlevel + 1].id];
                 savel.locked = false;
             }
-            $.cookie('levels', save);
+            $.cookie('save', save);
             busy = false;
             $('#overmessage').show()
                 .text('EEL WINS!');
