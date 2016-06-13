@@ -283,6 +283,8 @@ var LEVELS = [
         ],
         "eel": [-1,-2,-2,-2,-2,-1],
         "hp": 14
+        // aq*asws*sa*q (10
+        // ssaaaqq*qwsw*s*a (14**)
     },
     {
         "id": "G farm",
@@ -330,6 +332,52 @@ var LEVELS = [
         "hp": 14
         // aas*a*qwwssaas*wqaa (14)
         // aasa*s*aqqwwwsasws*a (14**)
+    },
+    {
+        "id": "G fury",
+        "name": "The Eel and the Fury",
+        "map": [
+            "*************",
+            "*************",
+            "******pp*****",
+            "******  p****",
+            "****** 1 p***",
+            "****** 21 p**",
+            "**       0p**",
+            "**  12 ******",
+            "***  1 ******",
+            "****  0******",
+            "*****  ******",
+            "*************",
+            "*************"
+        ],
+        "eel": [-4,0,-4,1,-3,1,-3,2,-2,2,-2,3,-1,3,-1,4,0,4],
+        "hp": 13
+        // ssssaa*qqqwsswsww*s*a*s (11)
+        // ssssaa*aqwqwswsss*swq*q*w (13**)
+    },
+    {
+        "id": "G galaxy",
+        "name": "The Eel's Guide to the Galaxy",
+        "map": [
+            "*************",
+            "*************",
+            "*************",
+            "*************",
+            "****0 1*  0**",
+            "**** p   p **",
+            "***  1 p1  **",
+            "*** pp p ****",
+            "***  1 1 ****",
+            "*****p ******",
+            "*****  ******",
+            "*************",
+            "*************"
+        ],
+        "eel": [0,3,0,4,-1,4],
+        "hp": 20
+        // www*wss*aaaqqqqqwwsssww (13)
+        // www*wss*wssaaqqaaqqwwqqwwssaaaaq (20**)
     },
     {
         "id": "C clockwork",
@@ -424,6 +472,29 @@ var LEVELS = [
         // w*q*a*q*w*q*aaswww*qassswq (8**)
     },
     {
+        "id": "C interview",
+        "name": "Interview With the Eel",
+        "map": [
+            "*************",
+            "*************",
+            "*************",
+            "******pp*****",
+            "*****1  0****",
+            "****12   ****",
+            "****31  *****",
+            "****12   ****",
+            "*****1  0****",
+            "******pp*****",
+            "*************",
+            "*************",
+            "*************"
+        ],
+        "eel": [0,0,0,1,1,1,1,0,1,-1,0,-1,0,-2],
+        "hp": 11
+        // *q*w*wssaqaqa*q*wwssaqaa (7)
+        // *q*w*wsssaqaaqqwswqq*aassssaqqq (11**)
+    },
+    {
         "id": "P kings",
         "name": "All the King's Eels",
         "map": [
@@ -494,23 +565,42 @@ var LEVELS = [
         "hp": 17
         // saass*ww*ss*a*qqqqwssww*q*aasws (15)
         // saass*ww*ss*a*qaqqwwsww*q*aqassws (17**)
+    },
+    {
+        "id": "S punishment",
+        "name": "Eel and Punishment",
+        "map": [
+            "*************",
+            "*************",
+            "*************",
+            "*************",
+            "******0   ***",
+            "***    33 ***",
+            "*** 33 33 ***",
+            "*** 33  0 ***",
+            "***    ******",
+            "*************",
+            "*************",
+            "*************",
+            "*************"
+        ],
+        "eel": [-3,0,-3,1,-3,2,-2,2],
+        "hp": 20
+        // wss*sa*q*q*qa*sswssw*ws*saq*a (17)
+        // wss*sa*q*q*qa*sswwswsaa*as*ws*wq (20**)
     }
 ];
 // The Call of the Eel
 // Midnight's Eels
 // One Flew over the Eel's Nest
 // The Eel Masters
-// The Eel's Guide to the Galaxy
 // Eel in a Strange Land
 // Bonfire of the Eels
 // The War of the Eels
-// The Eel and the Fury
 // Eel 451
 // To Kill an Eel
 // The Scarlet Eel
-// Eel and Punishment
 // The Eels of Narnia
-// Interview With the Eel
 // The Eel Machine
 // Twenty Thousand Eels Under the Sea
 var curlevel = null;
@@ -639,6 +729,7 @@ function game_move(game, dx, dy, oneat) {
     var eel = game.eel;
     var nx = eel[0] + dx;
     var ny = eel[1] + dy;
+    game.hp = Math.max(0, game.hp - MOVEHP);
     for (var i = 0; i < game.food.length; i ++) {
         var food = game.food[i];
         if (food.x == nx && food.y == ny) {
@@ -654,7 +745,6 @@ function game_move(game, dx, dy, oneat) {
     eel.splice(eel.length - 2, 2);
     eel.splice(0, 0, nx, ny);
     game.charge = true;
-    game.hp = Math.max(0, game.hp - MOVEHP);
 }
 
 function game_shock1(game, i, onshock, onharm) {
