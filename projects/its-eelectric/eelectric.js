@@ -495,6 +495,29 @@ var LEVELS = [
         // *q*w*wsssaqaaqqwswqq*aassssaqqq (11**)
     },
     {
+        "id": "C strange",
+        "name": "Eel in a Strange Land",
+        "map": [
+            "*************",
+            "*************",
+            "*************",
+            "*****11******",
+            "***** 2 4 0**",
+            "***0 1 313 **",
+            "*** 13  11***",
+            "****   1 ****",
+            "*****p ******",
+            "*****  ******",
+            "*************",
+            "*************",
+            "*************"
+        ],
+        "eel": [0,2,0,3,-1,3],
+        "hp": 9
+        // www*q*a*qwsws*wqass*a*s*a*s*wqwqaaa (7)
+        // www*q*a*qqwssws*wqass*a*s*a*s*wswqqqaaa (9**)
+    },
+    {
         "id": "P kings",
         "name": "All the King's Eels",
         "map": [
@@ -542,6 +565,29 @@ var LEVELS = [
         //*wswww*qqqqqaaqaaas*a*swswqqqqwswwswswssssa*s*aqqwqwws (15)
         //*wswww*qqqaaqqqaasssaq*a*qwqwqwswwsws*wssssa*s*aqqwqwws (16*)
         //*wswww*qqqqqa*qaaasssaq*a*qwqwqwswssswwqwsssaasswq*w*wqq (17**)
+    },
+    {
+        "id": "P war",
+        "name": "The War of the Eels",
+        "map": [
+            "*************",
+            "*************",
+            "*************",
+            "*****0 31****",
+            "***** 24  ***",
+            "*****1122 ***",
+            "*****     ***",
+            "*****1 1*****",
+            "*****2 ******",
+            "*****0 ******",
+            "*************",
+            "*************",
+            "*************"
+        ],
+        "eel": [2,0,3,0,3,-1,3,-2,2,-2],
+        "hp": 11
+        // qqq*assws*wqq*aaa*qwwwwsas*ws*w*q (7)
+        // ...
     },
     {
         "id": "S lord",
@@ -594,9 +640,8 @@ var LEVELS = [
 // Midnight's Eels
 // One Flew over the Eel's Nest
 // The Eel Masters
-// Eel in a Strange Land
 // Bonfire of the Eels
-// The War of the Eels
+// 
 // Eel 451
 // To Kill an Eel
 // The Scarlet Eel
@@ -807,7 +852,7 @@ var solvertimer;
 function cancel_solver() {
     clearTimeout(solvertimer);
 }
-function solver(game, callback, sethp) {
+function solver(game, callback1, callback2, sethp) {
     var PROGDUR = 1;
     var YIELDDUR = 0.02;
     var progt, yieldt;
@@ -827,10 +872,10 @@ function solver(game, callback, sethp) {
                     shortest = sol;
                 }
             });
-            callback(shortest, hp);
+            callback2(shortest, hp);
         } else if (hp >=   20) {
             console.info('no solution');
-            callback();
+            callback2();
         } else {
             hp ++;
             console.info('trying hp ' + hp);
@@ -846,7 +891,8 @@ function solver(game, callback, sethp) {
         todo.shift();
         var t = time();
         if (t > progt) {
-            console.info('thinking: ' + sofar + ' (' + todo.length + ')');
+            console.info('thinking: ' + sofar + ' (' + todo.length + ') (' + solutions.length + ')');
+            callback1(sofar);
             progt = time() + PROGDUR;
         }
         if (game_canshock(game)) {
@@ -1917,6 +1963,7 @@ $(document).ready(function() {
     }
 
     function drawsol(sol) {
+        $(".sol").remove();
         var ex = game.eel[0];
         var ey = game.eel[1];
         var x = tx(ex, ey);
@@ -2017,7 +2064,7 @@ $(document).ready(function() {
                         else if (lx + ly == 0)
                             LEVELS[curlevel].eel.splice(eel.length-2, 2);
                     } else if (event.keyCode == 42) {
-                        solver(start(), function(sol, hp) {
+                        solver(start(), drawsol, function(sol, hp) {
                             if (sol == null)
                                 return;
                             LEVELS[curlevel].hp = hp;
@@ -2044,9 +2091,7 @@ $(document).ready(function() {
                 } else if (DEBUG && event.keyCode == 45) {
                     curlevel --; reset();
                 } else if (DEBUG && event.keyCode == 42) {
-                    solver(game, function(sol, hp) {
-                        drawsol(sol);
-                    });
+                    solver(game, drawsol, drawsol);
                 }
             }
             updateconsole();
@@ -2144,4 +2189,7 @@ $(document).ready(function() {
     };
     window.fadeto = fadeto;
     window.unfade = unfade;
+    window.solverhp = function(starthp) {
+        solver(game, drawsol, drawsol, starthp);
+    };
 });
