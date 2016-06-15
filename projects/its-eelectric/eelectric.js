@@ -4,12 +4,11 @@
 //   a space that costs extra hp to pass through
 //   a food that moves away from you
 //   tunnels
-//   a food that you don't need to kill - restores 1 hp (so like a free move)
 //   pushable boulders/whatever
+//   a food that when you eat it you get longer
 
 // todo:
 //   url fragments so back button works
-//   finish tutorials
 //   more levels
 //   music
 
@@ -216,6 +215,7 @@ var LEVELS = [
         "hp": 19
         // ssaaqwwwwwsaasa*sw (19)
     },
+
     {
         "id": "G brave",
         "name": "Brave New Eel",
@@ -380,6 +380,30 @@ var LEVELS = [
         // www*wss*wssaaqqaaqqwwqqwwssaaaaq (20**)
     },
     {
+        "id": "G nest",
+        "name": "One Flew over the Eel's Nest",
+        "map": [
+            "*************",
+            "*************",
+            "*************",
+            "*****   p ***",
+            "*****  10p***",
+            "***   1   ***",
+            "*** 312   ***",
+            "***   11  ***",
+            "***p0   *****",
+            "*** p   *****",
+            "*************",
+            "*************",
+            "*************"
+        ],
+        "eel": [-1,2,-1,3,0,3,1,3,1,2],
+        "hp": 9
+        // ss*wqq*w*s*ww*saaqqq (6)
+        // qws*ww*qaass*www*ssaqaa (9**)
+    },
+
+    {
         "id": "C clockwork",
         "name": "A Clockwork Eel",
         "map": [
@@ -518,6 +542,30 @@ var LEVELS = [
         // www*q*a*qqwssws*wqass*a*s*a*s*wswqqqaaa (9**)
     },
     {
+        "id": "C 451",
+        "name": "Eel 451",
+        "map": [
+            "*************",
+            "*************",
+            "*************",
+            "*************",
+            "****     ****",
+            "****  0 0****",
+            "****  2  ****",
+            "****3 1 2****",
+            "****2   1****",
+            "******4******",
+            "*************",
+            "*************",
+            "*************"
+        ],
+        "eel": [-2,-2,-1,-2,0,-2,1,-2,2,-2],
+        "hp": 15
+        // aasaas*w*wqqaassswws*aaqq*a (12)
+        // aasaas*s*wq*wqqaassss*wwwqqaaaa (15**)
+    },
+
+    {
         "id": "P kings",
         "name": "All the King's Eels",
         "map": [
@@ -587,8 +635,32 @@ var LEVELS = [
         "eel": [2,0,3,0,3,-1,3,-2,2,-2],
         "hp": 11
         // qqq*assws*wqq*aaa*qwwwwsas*ws*w*q (7)
-        // ...
+        // qqq*assws*wqq*aaa*aqwwwwwwsaas*ws*w*q (11**)
     },
+    {
+        "id": "P call",
+        "name": "The Call of the Eel",
+        "map": [
+            "*************",
+            "*******p*****",
+            "******* *****",
+            "******* *****",
+            "****p    ****",
+            "***p133    p*",
+            "*** 3 13 ****",
+            "***03  3 ****",
+            "*** 1331p****",
+            "***p 0 p*****",
+            "*************",
+            "*************",
+            "*************"
+        ],
+        "eel": [0,1,-1,1,-1,0],
+        "hp": 12
+        // *w*qas*aqww*qaaswwsa*a*swwqq*q*wss (12)
+        // *w*qas*aaqwww*qqasaswwsa*a*swwqq*q*wss (16**)
+    },
+
     {
         "id": "S lord",
         "name": "Lord of the Eels",
@@ -636,13 +708,11 @@ var LEVELS = [
         // wss*sa*q*q*qa*sswwswsaa*as*ws*wq (20**)
     }
 ];
-// The Call of the Eel
+
+// 
 // Midnight's Eels
-// One Flew over the Eel's Nest
 // The Eel Masters
 // Bonfire of the Eels
-// 
-// Eel 451
 // To Kill an Eel
 // The Scarlet Eel
 // The Eels of Narnia
@@ -749,7 +819,7 @@ function game_canmove(game, dx, dy) {
     var eel = game.eel;
     var nx = eel[0] + dx;
     var ny = eel[1] + dy;
-    for (var i = 0; i < eel.length; i += 2) {
+    for (var i = 2; i < eel.length; i += 4) {
         if (eel[i] == nx && eel[i+1] == ny)
             return false;
     }
@@ -853,8 +923,8 @@ function cancel_solver() {
     clearTimeout(solvertimer);
 }
 function solver(game, callback1, callback2, sethp) {
-    var PROGDUR = 1;
-    var YIELDDUR = 0.02;
+    var PROGDUR = 2;
+    var YIELDDUR = 0.04;
     var progt, yieldt;
     var solutions = [];
     var todo = [];
