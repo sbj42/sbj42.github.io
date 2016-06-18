@@ -703,8 +703,9 @@ var LEVELS = [
             "*************"
         ],
         "eel": [0,0,0,1,-1,1],
-        "hp": 11
-        // *ws*aaqqaa*swqwqq*w*sswssww*qasass*a*q
+        "hp": 15
+        // *ws*aaqqaa*swqwqq*w*sswssww*qasass*a*q (11)
+        // *ws*aaqqaa*aswwqwqq*w*sswsss*s*aswqqaqwwq*w (15**)
     },
 
     {
