@@ -707,6 +707,52 @@ var LEVELS = [
         // *ws*aaqqaa*swqwqq*w*sswssww*qasass*a*q (11)
         // *ws*aaqqaa*aswwqwqq*w*sswsss*s*aswqqaqwwq*w (15**)
     },
+    {
+        "id": "S thousand",
+        "name": "Twenty Thousand Eels Under the Sea",
+        "map": [
+            "*************",
+            "*************",
+            "*************",
+            "******ppp****",
+            "****0 1  p***",
+            "**** 23  p***",
+            "***p13 31p***",
+            "***p  42 ****",
+            "***p  1 0****",
+            "****ppp******",
+            "*************",
+            "*************",
+            "*************"
+        ],
+        "eel": [-1,1,-1,2,-2,2],
+        "hp": 14
+        // q*w*sa*as*wwq*w*sss*a*q*aqwww (11)
+        // q*w*sa*as*wwq*w*sss*aa*aqwwqqqwwss (14**)
+    },
+    {
+        "id": "P scarlet",
+        "name": "The Scarlet Eel",
+        "map": [
+            "*************",
+            "*************",
+            "*************",
+            "******12*****",
+            "*****0 1 ****",
+            "****21  0p***",
+            "*** 1  1 p***",
+            "***   12 ****",
+            "****    *****",
+            "*****pp******",
+            "*************",
+            "*************",
+            "*************"
+        ],
+        "eel": [-2,1,-3,1,-3,0],
+        "hp": 11
+        // sws*wqaq*wsss*aqa*swwwq*w*s (9)
+        // *wss*ws*aqa*swswqwq*w*saqqa*q (11**)
+    },
 
     {
         "id": "S lord",
@@ -781,9 +827,7 @@ var LEVELS = [
 
 // Bonfire of the Eels
 // To Kill an Eel
-// The Scarlet Eel
 // The Eel Machine
-// Twenty Thousand Eels Under the Sea
 var curlevel = null;
 
 var ROCKMAP = {
