@@ -753,6 +753,29 @@ var LEVELS = [
         // sws*wqaq*wsss*aqa*swwwq*w*s (9)
         // *wss*ws*aqa*swswqwq*w*saqqa*q (11**)
     },
+    {
+        "id": "P machine",
+        "name": "The Eel Machine",
+        "map": [
+            "*************",
+            "*************",
+            "*************",
+            "*****     ***",
+            "*****  21 ***",
+            "****p 312 ***",
+            "****p213  ***",
+            "****pp2   ***",
+            "*****ppp*****",
+            "*************",
+            "*************",
+            "*************",
+            "*************"
+        ],
+        "eel": [3,-3,3,-2,3,-1,3,0],
+        "hp": 13
+        // qqqa*s*a*q*a*s*swwqqqaas*a (9)
+        // qqqa*s*a*q*a*sa*sswqwwqqwqaaasa (13**)
+    },
 
     {
         "id": "S lord",
@@ -822,12 +845,55 @@ var LEVELS = [
         "hp": 16
         // swq*w*w*saaas*wwqw*w*sass*a*q (14)
         // swq*wwsw*s*s*aq*aq*a*sasww*wssaq (16**)
+    },
+    {
+        "id": "S bonfire",
+        "name": "Bonfire of the Eels",
+        "map": [
+            "*************",
+            "*************",
+            "*************",
+            "*************",
+            "***** 3 p****",
+            "****0313 ****",
+            "**** 1 1 ****",
+            "**** 313 ****",
+            "****     ****",
+            "*****0 ******",
+            "*************",
+            "*************",
+            "*************"
+        ],
+        "eel": [-2,2,-1,2,0,2,1,2,2,2,2,1],
+        "hp": 10
+        // ww*s*asw*s*aaqqwwwsas*ww*q (6)
+        // ww*s*asw*s*aaqaqwqwwwssas*ww*q (10**)
+    },
+    {
+        "id": "S kill",
+        "name": "To Kill an Eel",
+        "map": [
+            "*************",
+            "*************",
+            "*************",
+            "*****0 p p***",
+            "****2  13 ***",
+            "***0 3 1  ***",
+            "***      ****",
+            "***p11 pp****",
+            "*** 3  p ****",
+            "***p  *******",
+            "*************",
+            "*************",
+            "*************"
+        ],
+        "eel": [0,1,0,2,-1,2,-1,3,-2,3],
+        "hp": 12
+        // *wqaa*qwwssww*sassw*qqqqaq*w (10)
+        // *qwswwq*aaaa*qwwqws*wswsasassw*q (14**)
     }
 ];
 
-// Bonfire of the Eels
-// To Kill an Eel
-// The Eel Machine
 var curlevel = null;
 
 var ROCKMAP = {
@@ -1057,8 +1123,8 @@ function cancel_solver() {
     clearTimeout(solvertimer);
 }
 function solver(game, callback1, callback2) {
-    var PROGDUR = 0.5;
-    var YIELDDUR = 0.2;
+    var PROGDUR = 2;
+    var YIELDDUR = 0.5;
     var progt, yieldt;
     var solutions = [];
     var failures = [];
@@ -1104,7 +1170,7 @@ function solver(game, callback1, callback2) {
                 }
             });
             callback2(shortest, hp);
-        } else if (hp >=  MAXHP) {
+        } else if (hp >= MAXHP || failures.length == 0) {
             console.info('no solution');
             callback2();
         } else {
