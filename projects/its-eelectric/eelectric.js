@@ -776,6 +776,27 @@ var LEVELS = [
         // qqqa*s*a*q*a*s*swwqqqaas*a (9)
         // qqqa*s*a*q*a*sa*sswqwwqqwqaaasa (13**)
     },
+    {
+        "id": "P traveler",
+        "name": "The Time Traveler's Eel",
+        "map": [
+            "*************",
+            "*************",
+            "*************",
+            "*****p 1 p***",
+            "****   3 p***",
+            "***0  42 ****",
+            "***  41  ****",
+            "***12p0p ****",
+            "***      ****",
+            "***pp********",
+            "*************",
+            "*************",
+            "*************"
+        ],
+        "eel": [0,2,1,2,2,2,2,1,2,0],
+        "hp": 14
+    },
 
     {
         "id": "S lord",
@@ -933,7 +954,7 @@ var LEVELS = [
             "*************",
             "*************"
         ],
-        "eel": [-1,3,-1,4,-2,5,-2,3,-2,2],
+        "eel": [-1,3,-1,4,-2,4,-2,3,-2,2],
         "hp": 16
         // swssw*qqqwwssss*w*qqq*aa*swwwwss*aassw*qqqqq (12)
         // swssw*qqqwqwsssss*w*qqq*aa*swwwwss*aassw*qqqqwqa (16**)
