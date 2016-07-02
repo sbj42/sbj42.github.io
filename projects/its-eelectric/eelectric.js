@@ -90,21 +90,6 @@ var perlin1 = (function() { // 1d perlin noise
     return noise1;
 })();
 
-function preloadsvg(images, callback) {
-    var loaded = 0;
-    function onload() {
-        if (++loaded == images.length && callback)
-            callback();
-    }
-    $.each(images, function(i, image) {
-        var img = new Image();
-        img.onload = onload;
-        img.onerror = onload;
-        img.onabort = onload;
-        img.src = 'svg/' + image + '.svg';
-    });
-}
-
 var LEVELS = [
     {
         "id": "T1",
@@ -1319,6 +1304,63 @@ function solver(game, callback1, callback2) {
     starthp();
 }
 
+var cache = {};
+var preloadsvg, mkimg, setimg;
+
+if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
+
+preloadsvg = function(images, callback) {
+    var loaded = 0;
+    $.each(images, function(i, name) {
+        $.get('svg/' + name + '.svg', function(data) {
+            cache[name] = data;
+            if (++loaded == images.length && callback)
+                callback();
+        }, 'text');
+    });
+};
+
+setimg = function(img, name) {
+    if (name in cache) {
+        img.html(cache[name]);
+    } else {
+        $.get('svg/' + name + '.svg', function(data) {
+            cache[name] = data;
+            img.html(data);
+        }, 'text');
+    }
+    return img;
+};
+
+} else {
+
+preloadsvg = function(images, callback) {
+    var loaded = 0;
+    function onload() {
+        if (++loaded == images.length && callback)
+            callback();
+    }
+    $.each(images, function(i, image) {
+        var img = new Image();
+        img.onload = onload;
+        img.onerror = onload;
+        img.onabort = onload;
+        img.src = 'svg/' + image + '.svg';
+    });
+};
+
+setimg = function(img, name) {
+    return img.attr('href', 'svg/' + name + '.svg');
+};
+
+}
+
+function mkimg(name) {
+    var ret = $(document.createElementNS(svgNS, 'svg'))
+    setimg(ret, name);
+    return ret;
+};
+
 var game, save;
 $(document).ready(function() {
     var page = 'intro';
@@ -1357,6 +1399,7 @@ $(document).ready(function() {
         if (!audio_on)
             return;
         var a = $('#audio_'+audio)[0];
+        a.pause();
         a.currentTime = 0;
         a.play();
     }
@@ -1386,12 +1429,11 @@ $(document).ready(function() {
     var board = $(document.createElementNS(svgNS, 'g'));
     borderclipg.append(board);
 
-    var border = $(document.createElementNS(svgNS, 'image'))
+    var border = mkimg('border1')
         .attr('x', 0)
         .attr('y', 0)
         .attr('width', bw)
-        .attr('height', bh)
-        .attr('href', 'svg/border1.svg');
+        .attr('height', bh);
     svg.append(border);
 
     var leveldesc = $(document.createElementNS(svgNS, 'text'))
@@ -1411,13 +1453,12 @@ $(document).ready(function() {
         .attr('font-size', 20)
         .text('Hunger:');
     svg.append(hungert);
-    var hunger1 = $(document.createElementNS(svgNS, 'image'))
+    var hunger1 = mkimg('hunger1')
         .attr('class', 'hunger')
         .attr('x', bw - TR - 520)
         .attr('y', bh + 30)
         .attr('width', 530)
-        .attr('height', 45)
-        .attr('href', 'svg/hunger1.svg');
+        .attr('height', 45);
     svg.append(hunger1);
     var hungerbar = $(document.createElementNS(svgNS, 'rect'))
         .attr('class', 'hunger hungerbar')
@@ -1425,13 +1466,12 @@ $(document).ready(function() {
         .attr('y', bh + 30 + 14)
         .attr('height', 17);
     svg.append(hungerbar);
-    var hunger2 = $(document.createElementNS(svgNS, 'image'))
+    var hunger2 = mkimg('hunger2')
         .attr('class', 'hunger')
         .attr('x', bw - TR - 520)
         .attr('y', bh + 30)
         .attr('width', 530)
-        .attr('height', 45)
-        .attr('href', 'svg/hunger2.svg');
+        .attr('height', 45);
     svg.append(hunger2);
 
     var charget = $(document.createElementNS(svgNS, 'text'))
@@ -1451,13 +1491,12 @@ $(document).ready(function() {
         .text('Ready');
     svg.append(charge1);
 
-    var quitb = $(document.createElementNS(svgNS, 'image'))
+    var quitb = mkimg('console-esc')
         .attr('class', 'gameoption key')
         .attr('x', bw - 180 - 43)
         .attr('y', bh + 2)
         .attr('width', 40)
         .attr('height', 30)
-        .attr('href', 'svg/console-esc.svg')
         .click(gameback);
     svg.append(quitb);
     var quitt = $(document.createElementNS(svgNS, 'text'))
@@ -1470,13 +1509,12 @@ $(document).ready(function() {
         .click(gameback);
     svg.append(quitt);
 
-    var restartb = $(document.createElementNS(svgNS, 'image'))
+    var restartb = mkimg('console-r1')
         .attr('class', 'gameoption nokey')
         .attr('x', bw - 100 - 33)
         .attr('y', bh + 2)
         .attr('width', 30)
         .attr('height', 30)
-        .attr('href', 'svg/console-r1.svg')
         .click(do_restart);
     svg.append(restartb);
     var restartt = $(document.createElementNS(svgNS, 'text'))
@@ -1489,45 +1527,37 @@ $(document).ready(function() {
         .click(do_restart);
     svg.append(restartt);
 
-    var audiob = $(document.createElementNS(svgNS, 'image'))
+    var audiob = mkimg('console-m')
         .attr('class', 'gameoption key')
         .attr('x', bw - TR - 30 - 33)
         .attr('y', bh + 75)
         .attr('width', 30)
         .attr('height', 30)
-        .attr('href', 'svg/console-m.svg')
         .click(do_audio);
     svg.append(audiob);
-    var audioi = $(document.createElementNS(svgNS, 'image'))
+    var audioi = mkimg('audio-on')
         .attr('class', 'gameoption')
         .attr('x', bw - TR - 30)
         .attr('y', bh + 75)
         .attr('width', 30)
         .attr('height', 30)
-        .attr('href', 'svg/audio-on.svg')
         .click(do_audio);
     svg.append(audioi);
 
-    var star1 = $(document.createElementNS(svgNS, 'image'))
-        .attr('x', bw - TR - 145)
-        .attr('y', bh + 65)
-        .attr('width', 50)
-        .attr('height', 50)
-        .attr('href', 'svg/starfish1b.svg');
+    var star1 = mkimg('starfish1b')
+        .attr('width', TR * 2)
+        .attr('height', TR * 2)
+        .attr('transform', 'translate(' + (bw - TR - 145) + ',' + (bh + 65) + ') scale(' + (50 / (TR * 2)) + ')');
     svg.append(star1);
-    var star2 = $(document.createElementNS(svgNS, 'image'))
-        .attr('x', bw - TR - 190)
-        .attr('y', bh + 65)
-        .attr('width', 50)
-        .attr('height', 50)
-        .attr('href', 'svg/starfish1b.svg');
+    var star2 = mkimg('starfish1b')
+        .attr('width', TR * 2)
+        .attr('height', TR * 2)
+        .attr('transform', 'translate(' + (bw - TR - 190) + ',' + (bh + 65) + ') scale(' + (50 / (TR * 2)) + ')');
     svg.append(star2);
-    var star3 = $(document.createElementNS(svgNS, 'image'))
-        .attr('x', bw - TR - 235)
-        .attr('y', bh + 65)
-        .attr('width', 50)
-        .attr('height', 50)
-        .attr('href', 'svg/starfish1b.svg');
+    var star3 = mkimg('starfish1b')
+        .attr('width', TR * 2)
+        .attr('height', TR * 2)
+        .attr('transform', 'translate(' + (bw - TR - 235) + ',' + (bh + 65) + ') scale(' + (50 / (TR * 2)) + ')');
     svg.append(star3);
 
     function fadeto(x, y, r, msg, callback) {
@@ -1619,13 +1649,12 @@ $(document).ready(function() {
     }
 
     function addkey(k, x, y, w, h) {
-        var key = $(document.createElementNS(svgNS, 'image'))
+        var key = mkimg('console-' + k)
             .attr('class', 'key')
             .attr('x', TR + x)
             .attr('y', bh + y)
             .attr('width', w)
-            .attr('height', h)
-            .attr('href', 'svg/console-' + k + '.svg');
+            .attr('height', h);
         svg.append(key);
         return key;
     }
@@ -1640,13 +1669,13 @@ $(document).ready(function() {
         var eel = game.eel;
         var nomoves = true;
         function setkey(k, l, b) {
-            k.attr('href', 'svg/console-' + l + (b ? '2' : '1') + '.svg');
+            setimg(k, 'console-' + l + (b ? '2' : '1'));
             k.toggleClass('key', b);
             k.toggleClass('nokey', !b);
             if (b)
                 nomoves = false;
         }
-        restartb.attr('href', 'svg/console-r' + (canrestart() ? '2' : '1') + '.svg');
+        setimg(restartb, 'console-r' + (canrestart() ? '2' : '1'));
         restartb.toggleClass('key', canrestart());
         restartb.toggleClass('nokey', !canrestart());
         restartt.toggleClass('key', canrestart());
@@ -1660,11 +1689,11 @@ $(document).ready(function() {
         hungerbar.attr('width', Math.max(0, 25 * (MAXHP - game.hp) - 1))
             .toggleClass('red', game.hp <= SHOCKHP)
             .toggleClass('yellow', game.hp > SHOCKHP && game.hp <= SHOCKHP + MOVEHP);
-        star1.attr('href', 'svg/starfish1' + (game.stars > 0 ? 'a' : 'b') + '.svg')
+        setimg(star1, 'starfish1' + (game.stars > 0 ? 'a' : 'b'))
             .toggle(game.hasstars > 0);
-        star2.attr('href', 'svg/starfish1' + (game.stars > 1 ? 'a' : 'b') + '.svg')
+        setimg(star2, 'starfish1' + (game.stars > 1 ? 'a' : 'b'))
             .toggle(game.hasstars > 1);
-        star3.attr('href', 'svg/starfish1' + (game.stars > 2 ? 'a' : 'b') + '.svg')
+        setimg(star3, 'starfish1' + (game.stars > 2 ? 'a' : 'b'))
             .toggle(game.hasstars > 2);
         
         if (!busy && !game.over && nomoves)
@@ -1716,13 +1745,12 @@ $(document).ready(function() {
     function putthing(x, y, thing, rot, flip) {
         rot = rot || 0;
         var flipscale = flip ? ' scale(-1,1)' : '';
-        var thing = $(document.createElementNS(svgNS, 'image'))
+        var thing = mkimg(thing)
             .attr('x', -TR)
             .attr('y', -TR)
             .attr('width', TR*2)
             .attr('height', TR*2)
-            .attr('transform', 'translate(' + tx(x, y) + ',' + ty(x, y) + ')' + flipscale + ' rotate(' + (rot * 90) + ')')
-            .attr('href', 'svg/' + thing + '.svg');
+            .attr('transform', 'translate(' + tx(x, y) + ',' + ty(x, y) + ')' + flipscale + ' rotate(' + (rot * 90) + ')');
         board.append(thing);
         return thing;
     }
@@ -2086,13 +2114,12 @@ $(document).ready(function() {
     });
 
     function gokey(k, txt, y, w, fn) {
-        svg.append($(document.createElementNS(svgNS, 'image'))
+        svg.append(mkimg('console-' + k)
                    .attr('class', 'overoption key')
                    .attr('x', y - w - 3)
                    .attr('y', 110)
                    .attr('width', w)
                    .attr('height', 30)
-                   .attr('href', 'svg/console-' + k + '.svg')
                    .click(fn));
         svg.append($(document.createElementNS(svgNS, 'text'))
                    .attr('class', 'overoption key gametext')
@@ -2267,13 +2294,12 @@ $(document).ready(function() {
             var shocks = [];
             game_shock1(game, i, function(rot, x, y) {
                 play('shock');
-                var thing = $(document.createElementNS(svgNS, 'image'))
+                var thing = mkimg('shock1')
                     .attr('x', -TR*2)
                     .attr('y', -TR*2)
                     .attr('width', TR*4)
                     .attr('height', TR*4)
-                    .attr('transform', 'translate(' + tx(x, y) + ',' + ty(x, y) + ') rotate(' + (rot * 90) + ')')
-                    .attr('href', 'svg/shock1.svg');
+                    .attr('transform', 'translate(' + tx(x, y) + ',' + ty(x, y) + ') rotate(' + (rot * 90) + ')');
                 board.append(thing);
                 shocks.push(thing);
             }, function(food, i) {
@@ -2332,7 +2358,7 @@ $(document).ready(function() {
     }
     function do_audio() {
         audio_on = !audio_on;
-        audioi.attr('href', 'svg/audio-' + (audio_on ? 'on' : 'off') + '.svg');
+        setimg(audioi, 'audio-' + (audio_on ? 'on' : 'off'));
     }
 
     function drawsol(sol) {
