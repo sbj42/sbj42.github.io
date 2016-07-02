@@ -2412,9 +2412,10 @@ $(document).ready(function() {
     $(document).keypress(function(event) {
         if (busy)
             return;
+        var keyCode = event.keyCode || event.charCode;
         if (page == 'game') {
             var eel = game.eel;
-            if (DEBUG && '[][]'[hackk].charCodeAt(0) == event.keyCode) {
+            if (DEBUG && '[][]'[hackk].charCodeAt(0) == keyCode) {
                 hackk ++
                 if (hackk == 4) {
                     hack = !hack;
@@ -2438,32 +2439,32 @@ $(document).ready(function() {
                         var s = LEVELS[curlevel].map[MR+y];
                         LEVELS[curlevel].map[MR+y] = s.substr(0, MR+x) + c + s.substr(MR+x+1);
                     }
-                    if (event.keyCode == 32) {
+                    if (keyCode == 32) {
                         settile(' ');
-                    } else if (event.keyCode == 49) {
+                    } else if (keyCode == 49) {
                         settile('1');
-                    } else if (event.keyCode == 50) {
+                    } else if (keyCode == 50) {
                         settile('2');
-                    } else if (event.keyCode == 51) {
+                    } else if (keyCode == 51) {
                         settile('3');
-                    } else if (event.keyCode == 52) {
+                    } else if (keyCode == 52) {
                         settile('4');
-                    } else if (event.keyCode == 112) {
+                    } else if (keyCode == 112) {
                         settile('p');
-                    } else if (event.keyCode == 48) {
+                    } else if (keyCode == 48) {
                         settile('0');
-                    } else if (event.keyCode == 114) {
+                    } else if (keyCode == 114) {
                         settile('*');
-                    } else if (event.keyCode == 101) {
+                    } else if (keyCode == 101) {
                         LEVELS[curlevel].eel = [x, y];
-                    } else if (event.keyCode == 108) {
+                    } else if (keyCode == 108) {
                         var lx = Math.abs(x - eel[eel.length-2]);
                         var ly = Math.abs(y - eel[eel.length-1]);
                         if (lx + ly == 1)
                             LEVELS[curlevel].eel.push(x, y);
                         else if (lx + ly == 0)
                             LEVELS[curlevel].eel.splice(eel.length-2, 2);
-                    } else if (event.keyCode == 42) {
+                    } else if (keyCode == 42) {
                         solver(start(), drawsol, function(sol, hp) {
                             if (sol == null)
                                 return;
@@ -2476,27 +2477,27 @@ $(document).ready(function() {
                     reset();
                 }
             } else {
-                if (event.keyCode == 113 || event.keyCode == 81)
+                if (keyCode == 113 || keyCode == 81)
                     do_q();
-                else if (event.keyCode == 119 || event.keyCode == 87)
+                else if (keyCode == 119 || keyCode == 87)
                     do_w();
-                else if (event.keyCode == 115 || event.keyCode == 83)
+                else if (keyCode == 115 || keyCode == 83)
                     do_s();
-                else if (event.keyCode == 97 || event.keyCode == 65)
+                else if (keyCode == 97 || keyCode == 65)
                     do_a();
-                else if (event.keyCode == 32)
+                else if (keyCode == 32)
                     do_sp();
-                else if (DEBUG && event.keyCode == 43) {
+                else if (DEBUG && keyCode == 43) {
                     curlevel ++; reset();
-                } else if (DEBUG && event.keyCode == 45) {
+                } else if (DEBUG && keyCode == 45) {
                     curlevel --; reset();
-                } else if (DEBUG && event.keyCode == 42) {
+                } else if (DEBUG && keyCode == 42) {
                     solver(game, drawsol, drawsol);
                 }
             }
             updateconsole();
         } else if (page == 'intro') {
-            if (event.keyCode == 32 || event.keyCode == 13) {
+            if (keyCode == 32 || keyCode == 13) {
                 introplay();
             }
         } else if (page == 'menu') {
@@ -2536,17 +2537,18 @@ $(document).ready(function() {
             fadecallback();
         if (busy)
             return;
+        var keyCode = event.keyCode || event.charCode;
         if (page == 'game') {
-            if (event.keyCode == 114 || event.keyCode == 82)
+            if (keyCode == 114 || keyCode == 82)
                 do_restart();
-            else if (event.keyCode == 109 || event.keyCode == 77)
+            else if (keyCode == 109 || keyCode == 77)
                 do_audio();
-            else if (event.keyCode == 110 || event.keyCode == 78)
+            else if (keyCode == 110 || keyCode == 78)
                 do_next();
-            else if (event.keyCode == 27)
+            else if (keyCode == 27)
                 gameback();
         } else if (page == 'menu') {
-            if (event.keyCode == 27)
+            if (keyCode == 27)
                 menuback();
         }
     });
