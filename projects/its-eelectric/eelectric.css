@@ -5,6 +5,13 @@ body {
     color: #FFFC79;
     margin: 0px;
 }
+img {
+    -moz-user-select: none;
+    -o-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
 .pagecontainer {
     position: absolute;
     top: 0px;
@@ -13,26 +20,25 @@ body {
     right: 0px;
     z-index: 1;
 }
-.pagecontainer.left, .pagecontainer.right {
+.pagecontainer.hide {
+    display: none;
+}
+.pagecontainer.hide .page {
     z-index: 0;
 }
 .page {
     display: block;
-    width: 768px;
+    width: 766px;
     height: 626px;
     margin: 0px auto;
     position: relative;
-    transition: all 0.8s ease;
     left: 0px;
     opacity: 1;
 }
-.pagecontainer.left .page {
-    left: -800px;
-    opacity: 0;
-}
-.pagecontainer.right .page {
-    left: 800px;
-    opacity: 0;
+
+#apology {
+    text-align: center;
+    font-size: 200%;
 }
 
 #intro {
@@ -40,14 +46,15 @@ body {
 }
 .introfish {
     position: absolute;
-    transition: all 1s linear;
-    opacity: 0;
     pointer-events: none;
 }
 #introstar {
     position: absolute;
     left: 318px;
     top: 128px;
+    width: 84px;
+    height: 84px;
+    opacity: 0;
 }
 #title1 {
     font-size: 40px;
@@ -81,7 +88,6 @@ body {
     top: 332px;
     opacity: 0;
     display: none;
-    transition: all 0.5s linear;
 }
 a {
     color: #B4FEFF;
@@ -91,8 +97,10 @@ a {
 #menu {
     font-size: 20px;
 }
-#menu img {
+.menuimg {
     float: left;
+    width: 84px;
+    height: 114px;
 }
 #menuback {
     position: absolute;
@@ -147,7 +155,7 @@ a {
 .levelbutton {
     display: inline-block;
     border-radius: 6px;
-    padding: 2px 4px;
+    padding: 2px 4px 0px;
     background: #9CFF9E;
     color: black;
     margin: 5px 3px;
@@ -157,6 +165,7 @@ a {
     width: 48px;
     white-space: nowrap;
     overflow: hidden;
+    min-height: 53px;
 }
 .levelbutton.f:hover {
     background: #fff;
@@ -174,20 +183,36 @@ a {
     color: #000;
     background: #e3e3e3;
 }
-.levelbuttonstar {
+.levelbuttonstardiv {
     display: inline-block;
-    background-image: url("svg/starfish1b.svg");
-    background-size: 32px;
     width: 24px;
     height: 24px;
-    background-position: -3px -3px;
+    overflow: hidden;
 }
-.levelbuttonstar.got {
-    background-image: url("svg/starfish1a.svg");
+.levelbuttonstar {
+    position: relative;
+    width: 34px;
+    height: 34px;
+    left: -5px;
+    top: -5px;
 }
 
-#bg {
-    fill: #3f98a0;
+#window {
+    position: relative;
+    background: #3f98a0;
+}
+#board_outer {
+    position: absolute;
+    overflow: hidden;
+}
+#board {
+    transform-origin: 0px 0px;
+}
+#gridlines {
+    position: absolute;
+}
+#border {
+    position: absolute;
 }
 .gridline {
     stroke: white;
@@ -195,33 +220,183 @@ a {
     fill: none;
     opacity: 0.4;
 }
-.hungerbar {
-    stroke: none;
-    fill: #0B8E00;
-}
-.hungerbar.yellow {
-    fill: #DEE629;
-}
-.hungerbar.red {
-    fill: #790A0A;
-}
-.sol {
-    fill: none;
-    stroke: #fff;
-    stroke-linecap: round;
-    stroke-width: 5px;
+#console {
+    position: absolute;
+    left: 0px;
 }
 .gametext {
-    fill: #FFFC79;
+    position: absolute;
+    color: #FFFC79;
     text-shadow: 1px 1px 1px #000;
+    font-size: 20px;
 }
-.key {
+#leveldesc {
+    left: 212px;
+    top: 4px;
+}
+#hungertext {
+    left: 136px;
+    top: 39px;
+}
+#chargetext {
+    left: 136px;
+    top: 74px;
+}
+.gamekey {
+    position: absolute;
+}
+.active {
     cursor: pointer;
 }
-.nokey {
+.inactive {
     cursor: default;
 }
-#overmessage {
+#qkey {
+    top: 2px;
+    left: 52px;
+    width: 35px;
+    height: 35px;
+}
+#wkey {
+    top: 2px;
+    left: 87px;
+    width: 35px;
+    height: 35px;
+}
+#akey {
+    top: 37px;
+    left: 52px;
+    width: 35px;
+    height: 35px;
+}
+#skey {
+    top: 37px;
+    left: 87px;
+    width: 35px;
+    height: 35px;
+}
+#_key {
+    top: 72px;
+    left: 42px;
+    width: 90px;
+    height: 35px;
+}
+#quitgroup {
+    position: absolute;
+    top: 2px;
+    left: 545px;
+    width: 84px;
+    height: 30px;
+}
+#esckey, #desckey, #vesckey {
+    width: 40px;
+    height: 30px;
+}
+#quittext {
+    left: 43px;
+    top: 2px;
+}
+#restartgroup {
+    position: absolute;
+    top: 2px;
+    left: 635px;
+    width: 99px;
+    height: 30px;
+}
+#rkey, #drkey, #vrkey {
+    width: 30px;
+    height: 30px;
+}
+#restarttext {
+    left: 33px;
+    top: 2px;
+}
+#vnkey {
+    width: 30px;
+    height: 30px;
+}
+.gamestar {
+    position: absolute;
+    top: 66px;
+    width: 50px;
+    height: 50px;
+}
+#star1 {
+    left: 581px;
+}
+#star2 {
+    left: 536px;
+}
+#star3 {
+    left: 491px;
+}
+#hunger1 {
+    position: absolute;
+    left: 206px;
+    top: 29px;
+    width: 530px;
+    height: 45px;
+}
+#hungerbar {
+    position: absolute;
+    left: 211px;
+    top: 43px;
+    height: 17px;
+    background: #0B8E00;
+}
+#hungerbar.yellow {
+    background: #DEE629;
+}
+#hungerbar.red {
+    background: #790A0A;
+}
+#hunger2 {
+    position: absolute;
+    left: 206px;
+    top: 29px;
+    width: 530px;
+    height: 45px;
+}
+
+#audiooverlay {
+    display: none;
+    position: absolute;
+    width: 766px;
+    left: 0px;
+    right: 0px;
+    height: 0px;
+    margin: 0px auto;
+    z-index: 1;
+}
+#audiogroup {
+    position: absolute;
+    top: 590px;
+    left: 673px;
+    width: 99px;
+    height: 30px;
+}
+#mkey {
+    width: 30px;
+    height: 30px;
+}
+#audioicon {
+    left: 33px;
+    width: 30px;
+    height: 30px;
+}
+
+#victory {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    display: none;
+}
+#defeat {
+    position: absolute;
+    left: 0px;
+    right: 0px;
+}
+#victorytext, #defeattext {
     position: absolute;
     top: 20px;
     left: 0px;
@@ -231,27 +406,56 @@ a {
     font-family: 'Lakki Reddy', cursive;
     font-size: 65px;
     text-shadow: 2px 2px 2px black;
-    display: none;
-    pointer-events: none;
+}
+#vnextgroup, #vrestartgroup, #vquitgroup, #drestartgroup, #dquitgroup {
+    position: absolute;
+    top: 110px;
+}
+#vnextgroup {
+    left: 251px;
+}
+#vrestartgroup {
+    left: 336px;
+}
+#vquitgroup {
+    left: 441px;
+}
+#drestartgroup {
+    left: 271px;
+}
+#dquitgroup {
+    left: 421px;
+}
+#vnexttext, #vrestarttext, #drestarttext {
+    left: 33px;
+    top: 2px;
+}
+#vquittext, #dquittext {
+    left: 43px;
+    top: 2px;
+}
+
+.sol {
+    fill: none;
+    stroke: #fff;
+    stroke-linecap: round;
+    stroke-width: 5px;
 }
 
 #fadeouter {
     position: absolute;
+    display: none;
     top: 0px;
     bottom: 0px;
     left: 0px;
     right: 0px;
-    z-index: 2;
+    z-index: 3;
 }
 #fadeouter.passevents {
     pointer-events: none;
 }
 #fadebg {
-    transition: all 1s ease;
     opacity: 0;
-}
-#fadecircle {
-    transition: all 1s ease;
 }
 #faderect {
     fill: #000;

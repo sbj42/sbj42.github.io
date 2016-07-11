@@ -15,8 +15,6 @@
 // issues:
 //   no tutorial for plants yet
 
-var svgNS = 'http://www.w3.org/2000/svg';
-
 var TR = 42; // tile center-to-corner
 
 var GLG = 4; // gridline gap
@@ -24,6 +22,9 @@ var GLWA = 0.4; // gridline wiggle amplitude
 var GLWI = 0.2; // gridline wiggle inset
 
 var MR = 6; // map center-to-corner
+
+var BW = 766; // board/window width
+var BH = 514; // board/window height
 
 var FOODHP = 4;
 var MOVEHP = 1;
@@ -34,10 +35,22 @@ var DEBUG = true;
 
 var STARTTIME = new Date().getTime();
 
+function svg(tag) {
+    return document.createElementNS('http://www.w3.org/2000/svg', tag);
+}
+
+function tx(x, y) {
+    return BW/2 + TR * (x - y);
+}
+
+function ty(x, y) {
+    return BH/2 + TR * (x + y);
+}
+
 $.cookie.json = true;
 
 function time() {
-    return ((new Date()).getTime() - STARTTIME)/1000;
+    return (new Date().getTime() - STARTTIME)/1000;
 }
 
 var perlin1 = (function() { // 1d perlin noise
@@ -1121,7 +1134,7 @@ function game_shock1(game, i, onshock, onharm) {
     
     function addshock(rot, sx, sy) {
         if (onshock) onshock(rot, x, y);
-        $.each(game.food, function(i, food) {
+        game.food.forEach(function(food, i) {
             if (food.x == sx && food.y == sy && game.foodhp[i] > 0) {
                 game.foodhp[i] --;
                 if (onharm) onharm(food, i);
@@ -1174,6 +1187,7 @@ var solvertimer;
 function cancel_solver() {
     clearTimeout(solvertimer);
 }
+
 function solver(game, callback1, callback2) {
     var PROGDUR = 2;
     var YIELDDUR = 0.5;
@@ -1214,7 +1228,7 @@ function solver(game, callback1, callback2) {
             console.info('done (hp ' + hp + ') in ' + (time() - startt).toFixed(3) + 's :');
             var shortest = null;
             var length = 0;
-            $.each(solutions, function(i, sol) {
+            solutions.forEach(function(sol) {
                 console.info('  '+ sol);
                 if (shortest == null || sol.length < length) {
                     length = sol.length;
@@ -1229,7 +1243,7 @@ function solver(game, callback1, callback2) {
             hp ++;
             todo = failures;
             failures = []
-            $.each(todo, function(i, t) {
+            todo.forEach(function(t) {
                 t[1].hp ++;
             });
             starthp();
@@ -1305,42 +1319,38 @@ function solver(game, callback1, callback2) {
 }
 
 var cache = {};
-var preloadsvg, mkimg, setimg;
 
-if (navigator.userAgent.toLowerCase().indexOf('firefox') > -1) {
-
-preloadsvg = function(images, callback) {
+function preloadaudio(sounds, callback) {
     var loaded = 0;
-    $.each(images, function(i, name) {
-        $.get('svg/' + name + '.svg', function(data) {
-            cache[name] = data;
-            if (++loaded == images.length && callback)
-                callback();
-        }, 'text');
-    });
-};
-
-setimg = function(img, name) {
-    if (name in cache) {
-        img.html(cache[name]);
-    } else {
-        $.get('svg/' + name + '.svg', function(data) {
-            cache[name] = data;
-            img.html(data);
-        }, 'text');
+    function onload() {
+        if (++loaded == sounds.length && callback)
+            callback();
     }
-    return img;
-};
+    sounds.forEach(function(s) {
+        var audio = $('<audio>')
+            .on('canplaythrough', onload)
+            .on('error', onload)
+            .attr('id', 'audio_' + s)
+            .attr('preload', 'auto');
+        $('<source>')
+            .attr('src', 'audio/' + s + '.ogg')
+            .attr('type', 'audio/ogg')
+            .appendTo(audio);
+        $('<source>')
+            .attr('src', 'audio/' + s + '.m4a')
+            .attr('type', 'audio/mp4')
+            .appendTo(audio);
+        $(document.body).append(audio);
+    });
+}
 
-} else {
-
-preloadsvg = function(images, callback) {
+function preloadsvg(images, callback) {
     var loaded = 0;
     function onload() {
         if (++loaded == images.length && callback)
             callback();
     }
-    $.each(images, function(i, image) {
+    images.forEach(function(image) {
         var img = new Image();
         img.onload = onload;
         img.onerror = onload;
@@ -1349,376 +1359,201 @@ preloadsvg = function(images, callback) {
     });
 };
 
-setimg = function(img, name) {
-    return img.attr('href', 'svg/' + name + '.svg');
+function setimg(img, name) {
+    return img.attr('src', 'svg/' + name + '.svg');
 };
-
-}
 
 function mkimg(name) {
-    var ret = $(document.createElementNS(svgNS, 'svg'))
-    setimg(ret, name);
-    return ret;
+    var ret = $('<img>')
+        .css('position', 'absolute');
+    return setimg(ret, name);
 };
 
-var game, save;
-$(document).ready(function() {
-    var page = 'intro';
-    var busy = false;
-    var hackk = 0;
-    var hack = false;
-    var fadecallback = null;
-    var audio_on = true;
-    game = null;
-    save = $.cookie('save') || null;
-    if (!save || save._v != '1')
-        save = {_v: '1', l: {}};
-    $.each(LEVELS, function(i, level) {
-        if (!(level.id in save))
-            save.l[level.id] = {
-                locked: i != 0,
-                finished: false,
-                stars: 0
-            };
-        if (DEBUG)
-            save.l[level.id].locked = false;
-    });
-    $('#fadecircle')
-        .attr('cx', $(window).width()/2)
-        .attr('cy', $(window).height()/2);
-
-    var bw = TR * 18 + 12;
-    var bh = TR * 12 + 12;
-    var svg = $('#svg');
-    svg.css({
-        width: bw,
-        height: bh + 110
-    });
-
-    function play(audio) {
-        if (!audio_on)
-            return;
-        var a = $('#audio_'+audio)[0];
-        a.pause();
+var audio_on;
+function play(audio) {
+    if (!audio_on)
+        return;
+    var a = $('#audio_'+audio)[0];
+    a.pause();
+    setTimeout(function() {
         a.currentTime = 0;
         a.play();
-    }
+    }, 0);
+}
 
-    var defs = $(document.createElementNS(svgNS, 'defs'));
-    svg.append(defs);
-    var borderclip = $(document.createElementNS(svgNS, 'clipPath'))
-        .attr('id', 'borderclip');
-    defs.append(borderclip);
-    var bordercliprect = $(document.createElementNS(svgNS, 'rect'))
-        .attr('x', (bw/2 - TR*9 - 1))
-        .attr('y', (bh/2 - TR*6 - 1))
-        .attr('width', TR * 18 + 2)
-        .attr('height', TR * 12 + 2);
-    borderclip.append(bordercliprect);
-    var borderclipg = $(document.createElementNS(svgNS, 'g'))
-        .attr('clip-path', 'url(#borderclip)');
-    svg.append(borderclipg);
-    var bg = $(document.createElementNS(svgNS, 'rect'))
-        .attr('x', 0)
-        .attr('y', 0)
-        .attr('width', bw)
-        .attr('height', bh)
-        .attr('id', 'bg');
-    borderclipg.append(bg);
+var savestate;
+function load_cookie() {
+    savestate = $.cookie('eelsave') || null;
+    if (!savestate || savestate._v != '1')
+        savestate = {_v: '1', l: {}, a: true};
+    LEVELS.forEach(function(level, i) {
+        if (!(level.id in savestate.l))
+            savestate.l[level.id] = {
+                l: i != 0,
+                f: false,
+                s: 0
+            };
+        if (DEBUG)
+            savestate.l[level.id].l = false;
+    });
+    audio_on = savestate.a;
+}
 
-    var board = $(document.createElementNS(svgNS, 'g'));
-    borderclipg.append(board);
+function save_cookie() {
+    $.cookie('eelsavestate', savestate);
+}
 
-    var border = mkimg('border1')
-        .attr('x', 0)
-        .attr('y', 0)
-        .attr('width', bw)
-        .attr('height', bh);
-    svg.append(border);
+var page = 'intro';
+var busy = true;
 
-    var leveldesc = $(document.createElementNS(svgNS, 'text'))
-        .attr('class', 'gametext')
-        .attr('x', bw - TR - 520 + 6)
-        .attr('y', bh + 23)
-        .attr('text-anchor', 'start')
-        .attr('font-size', 20)
-        .text('...');
-    svg.append(leveldesc);
-
-    var hungert = $(document.createElementNS(svgNS, 'text'))
-        .attr('class', 'hunger gametext')
-        .attr('x', bw - TR - 520)
-        .attr('y', bh + 58)
-        .attr('text-anchor', 'end')
-        .attr('font-size', 20)
-        .text('Hunger:');
-    svg.append(hungert);
-    var hunger1 = mkimg('hunger1')
-        .attr('class', 'hunger')
-        .attr('x', bw - TR - 520)
-        .attr('y', bh + 30)
-        .attr('width', 530)
-        .attr('height', 45);
-    svg.append(hunger1);
-    var hungerbar = $(document.createElementNS(svgNS, 'rect'))
-        .attr('class', 'hunger hungerbar')
-        .attr('x', bw - TR - 520 + 5)
-        .attr('y', bh + 30 + 14)
-        .attr('height', 17);
-    svg.append(hungerbar);
-    var hunger2 = mkimg('hunger2')
-        .attr('class', 'hunger')
-        .attr('x', bw - TR - 520)
-        .attr('y', bh + 30)
-        .attr('width', 530)
-        .attr('height', 45);
-    svg.append(hunger2);
-
-    var charget = $(document.createElementNS(svgNS, 'text'))
-        .attr('class', 'charge gametext')
-        .attr('x', bw - TR - 520)
-        .attr('y', bh + 93)
-        .attr('text-anchor', 'end')
-        .attr('font-size', 20)
-        .text('Charge:');
-    svg.append(charget);
-    var charge1 = $(document.createElementNS(svgNS, 'text'))
-        .attr('class', 'charge gametext')
-        .attr('x', bw - TR - 520 + 6)
-        .attr('y', bh + 93)
-        .attr('text-anchor', 'start')
-        .attr('font-size', 20)
-        .text('Ready');
-    svg.append(charge1);
-
-    var quitb = mkimg('console-esc')
-        .attr('class', 'gameoption key')
-        .attr('x', bw - 180 - 43)
-        .attr('y', bh + 2)
-        .attr('width', 40)
-        .attr('height', 30)
-        .click(gameback);
-    svg.append(quitb);
-    var quitt = $(document.createElementNS(svgNS, 'text'))
-        .attr('class', 'gameoption key gametext')
-        .attr('x', bw - 180)
-        .attr('y', bh + 23)
-        .attr('text-anchor', 'start')
-        .attr('font-size', 20)
-        .text('Quit')
-        .click(gameback);
-    svg.append(quitt);
-
-    var restartb = mkimg('console-r1')
-        .attr('class', 'gameoption nokey')
-        .attr('x', bw - 100 - 33)
-        .attr('y', bh + 2)
-        .attr('width', 30)
-        .attr('height', 30)
-        .click(do_restart);
-    svg.append(restartb);
-    var restartt = $(document.createElementNS(svgNS, 'text'))
-        .attr('class', 'gameoption nokey gametext')
-        .attr('x', bw - 100)
-        .attr('y', bh + 23)
-        .attr('text-anchor', 'start')
-        .attr('font-size', 20)
-        .text('Restart')
-        .click(do_restart);
-    svg.append(restartt);
-
-    var audiob = mkimg('console-m')
-        .attr('class', 'gameoption key')
-        .attr('x', bw - TR - 30 - 33)
-        .attr('y', bh + 75)
-        .attr('width', 30)
-        .attr('height', 30)
-        .click(do_audio);
-    svg.append(audiob);
-    var audioi = mkimg('audio-on')
-        .attr('class', 'gameoption')
-        .attr('x', bw - TR - 30)
-        .attr('y', bh + 75)
-        .attr('width', 30)
-        .attr('height', 30)
-        .click(do_audio);
-    svg.append(audioi);
-
-    var star1 = mkimg('starfish1b')
-        .attr('width', TR * 2)
-        .attr('height', TR * 2)
-        .attr('transform', 'translate(' + (bw - TR - 145) + ',' + (bh + 65) + ') scale(' + (50 / (TR * 2)) + ')');
-    svg.append(star1);
-    var star2 = mkimg('starfish1b')
-        .attr('width', TR * 2)
-        .attr('height', TR * 2)
-        .attr('transform', 'translate(' + (bw - TR - 190) + ',' + (bh + 65) + ') scale(' + (50 / (TR * 2)) + ')');
-    svg.append(star2);
-    var star3 = mkimg('starfish1b')
-        .attr('width', TR * 2)
-        .attr('height', TR * 2)
-        .attr('transform', 'translate(' + (bw - TR - 235) + ',' + (bh + 65) + ') scale(' + (50 / (TR * 2)) + ')');
-    svg.append(star3);
-
-    function fadeto(x, y, r, msg, callback) {
-        busy = true;
-        fadecallback = null;
-        var pageOffset = $('#'+page+' .page').offset();
-        $('#fadeouter').removeClass('passevents');
-        $('#fadebg')
-            .css('opacity', 1);
-        $('#fadecircle')
-            .attr('cx', pageOffset.left + x)
-            .attr('cy', pageOffset.top + y)
-            .attr('r', r);
-        $('#fademsgbox').hide();
-        setTimeout(function() {
-            $('#fademsg').html(msg);
-            $('#fademsgbox')
-                .css('left', x < bw/2 ? (pageOffset.left + x + r + 10) : (pageOffset.left + x - r - 10 - $('#fademsgbox').outerWidth()))
-                .css('top', pageOffset.top + y - $('#fademsgbox').outerHeight()/2)
-                .show();
-            fadecallback = callback;
-        }, 1000);
-    }
-
-    function unfade(callback) {
-        busy = true;
-        fadecallback = null;
-        $('#fadebg')
-            .css('opacity', 0);
-        $('#fadecircle')
-            .attr('cx', $(window).width()/2)
-            .attr('cy', $(window).height()/2)
-            .attr('r', 1200);
-        $('#fademsgbox').hide();
-        setTimeout(function() {
-            $('#fadeouter').addClass('passevents');
+function goto_page(next, dir, done) {
+    if (busy)
+        return;
+    $('#'+page).css('z-index', 0);
+    $('#'+next).css('z-index', 1).removeClass('hide');
+    var ease = Power3.easeInOut;
+    busy = true;
+    new TimelineLite()
+        .to('#'+page+' > .page', 0.8, {
+            'left': dir == 'left' ? 800 : -800,
+            'opacity': 0,
+            ease: ease
+        })
+        .call(function () {
+            $('#'+page).addClass('hide');
+            page = next;
             busy = false;
-            if (callback)
-                callback();
-        }, 1000);
-    }
-
-    function updatelevelbuttons() {
-        $.each(LEVELS, function(i, level) {
-            var container = $('#menu' + 'TGCPS'.indexOf(level.id[0]) + 'levels');
-            container.empty();
+            done();
         });
-        $.each(LEVELS, function(i, level) {
-            var stars = countstars(level);
-            var container = $('#menu' + 'TGCPS'.indexOf(level.id[0]) + 'levels');
-            var button = $(document.createElement('span'))
-                .attr('class', 'levelbutton')
-                .html((i + 1) + '<br />');
-            var levelsave = level.id in save.l ? save.l[level.id] : {locked: true};
-            button.addClass(levelsave.locked ? 'l' : levelsave.finished ? 'f' : 'o');
-            if (!levelsave.locked) {
-                button.click(function() {
-                    //var needs_reset = curlevel != i;
-                    curlevel = i;
-                    $('#menu').addClass('left');
-                    $('#game').removeClass('left right');
-                    page = 'game';
-                    //if (needs_reset)
-                    reset(true);
-                });
-                button.mouseenter(function() {
-                    $('#menuselect').text(describe_level(level, i));
-                });
-            } else {
-                button.mouseenter(function() {
-                    $('#menuselect').text('(locked)');
-                });
-            }
-            button.mouseleave(function() {
-                $('#menuselect').text('');
+    TweenLite.to('#'+next+' > .page', 0.8, {
+        'left': 0,
+        'opacity': 1,
+        ease: ease
+    });
+}
+
+var introfish = [{}, {}, {}];
+function cancel_fish(fish) {
+    clearTimeout(fish.timer);
+    if (fish.img) {
+        TweenLite.killTweensOf(fish.img);
+        fish.img.remove();
+    }
+}
+function incoming_intro() {
+    introfish.forEach(cancel_fish);
+}
+function arrive_intro() {
+    function delay_fish(fish) {
+        cancel_fish(fish);
+        fish.timer = setTimeout(start_fish.bind(null, fish),
+                                Math.random()*3000);
+    }
+    function start_fish(fish) {
+        cancel_fish(fish);
+        if (page != 'intro')
+            return;
+        var type = ['guppy1', 'catfish1', 'piranha1', 'stingray1'][Math.floor(Math.random()*4)];
+        fish.img = $('<img>')
+            .attr('class', 'introfish')
+            .attr('src', 'svg/' + type + 'a.svg')
+            .attr('width', TR*2)
+            .attr('height', TR*2)
+            .css('opacity', 0);
+        fish.y = null;
+        var y;
+        do {
+            y = 100 + Math.random() * (BH - 200 - TR);
+            introfish.forEach(function(fish) {
+                if (fish.y != null && y != null && Math.abs(fish.y-y) < TR)
+                    y = null;
             });
-            if (stars == 0)
-                button.html(button.html()+'&nbsp;');
-            for (var j = 0; j < stars; j ++) {
-                var star = $(document.createElement('div'))
-                    .attr('class', 'levelbuttonstar')
-                    .html('&nbsp;');
-                if (j < levelsave.stars)
-                    star.addClass('got');
-                button.append(star);
-            }
-            container.append(button);
-        });
-    }
-
-    function addkey(k, x, y, w, h) {
-        var key = mkimg('console-' + k)
-            .attr('class', 'key')
-            .attr('x', TR + x)
-            .attr('y', bh + y)
-            .attr('width', w)
-            .attr('height', h);
-        svg.append(key);
-        return key;
-    }
-
-    var qkey = addkey('q1', 10,  0, 35, 35);
-    var wkey = addkey('w1', 45,  0, 35, 35);
-    var skey = addkey('s1', 45, 35, 35, 35);
-    var akey = addkey('a1', 10, 35, 35, 35);
-    var spkey = addkey('sp1', 0, 70, 90, 35);
-
-    function updateconsole() {
-        var eel = game.eel;
-        var nomoves = true;
-        function setkey(k, l, b) {
-            setimg(k, 'console-' + l + (b ? '2' : '1'));
-            k.toggleClass('key', b);
-            k.toggleClass('nokey', !b);
-            if (b)
-                nomoves = false;
+        } while (y == null);
+        fish.y = y;
+        fish.img.css('top', y);
+        var dy = Math.random() > 0.5 ? 1 : -1;
+        if (dy == 1) {
+            fish.img.css('left', 0);
+        } else {
+            fish.img.css('left', BW - TR).css('transform', 'scaleX(-1)');
         }
-        setimg(restartb, 'console-r' + (canrestart() ? '2' : '1'));
-        restartb.toggleClass('key', canrestart());
-        restartb.toggleClass('nokey', !canrestart());
-        restartt.toggleClass('key', canrestart());
-        restartt.toggleClass('nokey', !canrestart());
-        setkey(qkey, 'q', canmoveeel(-1, 0));
-        setkey(wkey, 'w', canmoveeel(0, -1));
-        setkey(skey, 's', canmoveeel(1, 0));
-        setkey(akey, 'a', canmoveeel(0, 1));
-        setkey(spkey, 'sp', canshock());
-        charge1.text(game.charge ? (game.hp <= SHOCKHP ? 'Too hungry' : 'Ready') : 'Not ready');
-        hungerbar.attr('width', Math.max(0, 25 * (MAXHP - game.hp) - 1))
-            .toggleClass('red', game.hp <= SHOCKHP)
-            .toggleClass('yellow', game.hp > SHOCKHP && game.hp <= SHOCKHP + MOVEHP);
-        setimg(star1, 'starfish1' + (game.stars > 0 ? 'a' : 'b'))
-            .toggle(game.hasstars > 0);
-        setimg(star2, 'starfish1' + (game.stars > 1 ? 'a' : 'b'))
-            .toggle(game.hasstars > 1);
-        setimg(star3, 'starfish1' + (game.stars > 2 ? 'a' : 'b'))
-            .toggle(game.hasstars > 2);
-        
-        if (!busy && !game.over && nomoves)
-            defeat();
+        var t = 10 + Math.random()*3;
+        $('#intro .page').append(fish.img);
+        TweenLite.to(fish.img, t, {
+            'left': dy == 1 ? (BW - TR) : 0,
+            ease: Power0.easeNone
+        });
+        new TimelineLite()
+            .to(fish.img, 1, {
+                'opacity': 1
+            })
+            .to(fish.img, 1, {
+                'opacity': 0
+            }, '+=' + (t - 2))
+            .call(delay_fish.bind(null, fish));
     }
 
-    function tx(x, y) {
-        return bw/2 + TR * (x - y);
-    }
+    introfish.forEach(function(fish, i) {
+        if (i == 0)
+            start_fish(fish);
+        else
+            delay_fish(fish);
+    });
+}
 
-    function ty(x, y) {
-        return bh/2 + TR * (x + y);
-    }
+function incoming_menu() {
+    cancel_solver();
+    [0,1,2,3,4].forEach(function(i) {
+        $('#menu' + i + 'levels').empty();
+    });
+    LEVELS.forEach(function(level, i) {
+        var stars = countstars(level);
+        var container = $('#menu' + 'TGCPS'.indexOf(level.id[0]) + 'levels');
+        var button = $('<span>')
+            .attr('class', 'levelbutton')
+            .html((i + 1) + '<br />');
+        var levelsave = level.id in savestate.l ? savestate.l[level.id] : {l: true};
+        button.addClass(levelsave.l ? 'l' : levelsave.f ? 'f' : 'o');
+        if (!levelsave.l) {
+            button.click(function() {
+                if (busy)
+                    return;
+                curlevel = i;
+                incoming_game();
+                goto_page('game', 'right', arrive_game);
+            });
+            button.mouseenter(function() {
+                $('#menuselect').text(describe_level(level, i));
+            });
+        } else {
+            button.mouseenter(function() {
+                $('#menuselect').text('(locked)');
+            });
+        }
+        button.mouseleave(function() {
+            $('#menuselect').text('');
+        });
+        for (var j = 0; j < stars; j ++) {
+            var stardiv = $('<div>')
+                .attr('class', 'levelbuttonstardiv');
+            var star = $('<img>')
+                .attr('class', 'levelbuttonstar')
+                .attr('src', 'svg/starfish1' + (j < levelsave.s ? 'a' : 'b') + '.svg');
+            stardiv.append(star);
+            button.append(stardiv);
+        }
+        container.append(button);
+    });
+}
+function arrive_menu() {
+    clearInterval(gridlines_timer);
+}
 
-    function gridline_create(x, y, nw) {
-        var path = $(document.createElementNS(svgNS, 'path'))
-            .attr('transform', 'translate(' + tx(x, y) + ',' + ty(x, y) + ')')
-            .attr('class', 'gridline');
-        path.gridline_nw = nw;
-        path.gridline_seed = (x * 2 * MR + y) * 2 + (nw ? 1 : 0);
-        board.append(path);
-        return path;
-    }
-
-    function gridline_update(path) {
+var gridlines = [];
+var gridlines_timer = null;
+function gridlines_update() {
+    var t = time();
+    gridlines.forEach(function(path) {
         var d = [];
         function curve(x1, y1, x2, y2, p1, p2) {
             d.push('M', x1, y1);
@@ -1729,869 +1564,929 @@ $(document).ready(function() {
         }
         var z = 0;
         function roff() {
-            z ++;
-            return GLWA * perlin1(path.gridline_seed * 33.7 + z * 7.7 + time());
+            return GLWA * perlin1(path.gridline_seed * 33.7 + (++z) * 7.7 + t);
         }
         if (path.gridline_nw)
             curve(-TR + GLG, -GLG, -GLG, -TR + GLG, roff(), roff());
         else
             curve(-TR + GLG, GLG, -GLG, TR - GLG, roff(), roff());
         path.attr('d', d.join(' '));
-        //.css('opacity', roff() * 2 + 0.5);
-    }
-
-    var gridlines = [];
-
-    function putthing(x, y, thing, rot, flip) {
-        rot = rot || 0;
-        var flipscale = flip ? ' scale(-1,1)' : '';
-        var thing = mkimg(thing)
-            .attr('x', -TR)
-            .attr('y', -TR)
-            .attr('width', TR*2)
-            .attr('height', TR*2)
-            .attr('transform', 'translate(' + tx(x, y) + ',' + ty(x, y) + ')' + flipscale + ' rotate(' + (rot * 90) + ')');
-        board.append(thing);
-        return thing;
-    }
-
-    function puteel() {
-        var eel = game.eel;
-        var state = game.eelstate;
-        $('.eel').remove();
-        var eeltype = 'eel1';
-        for (var i = 0; i < eel.length; i += 2) {
-            var x = eel[i];
-            var y = eel[i+1];
-            var px = i > 0 && (eel[i-2] - x);
-            var py = i > 0 && (eel[i-1] - y);
-            var nx = i < eel.length - 2 && (eel[i+2] - x);
-            var ny = i < eel.length - 2 && (eel[i+3] - y);
-            var nw = px == -1 || nx == -1;
-            var ne = py == -1 || ny == -1;
-            var se = px == 1 || nx == 1;
-            var sw = py == 1 || ny == 1;
-            var spec;
-            if (i == 0) {
-                if (nw)
-                    spec = ['a', 1, false];
-                else if (se)
-                    spec = ['a', 0, true];
-                else if (ne)
-                    spec = ['a', 1, true];
-                else
-                    spec = ['a', 0, false];
-            } else if (i == eel.length - 2) {
-                if (nw)
-                    spec = ['f', 0, false];
-                else if (se)
-                    spec = ['f', -1, true];
-                else if (ne)
-                    spec = ['f', 0, true];
-                else
-                    spec = ['f', -1, false];
-            } else {
-                if (nw && se)
-                    spec = ['b', 0, true];
-                else if (nw && ne)
-                    spec = ['c', 0, false];
-                else if (nw && sw)
-                    spec = ['e', 0, true];
-                else if (ne && se)
-                    spec = ['e', 0, false];
-                else if (ne && sw)
-                    spec = ['b', 0, false];
-                else if (se && sw)
-                    spec = ['d', 0, false];
-            }
-            if (state == 'happy' && spec[0] == 'a')
-                spec[0] = 'g';
-            if (state == 'sad' && spec[0] == 'a')
-                spec[0] = 'h';
-            var thing = putthing(x, y, eeltype + spec[0], spec[1], spec[2]);
-            thing.addClass('eel');
-        }
-    }
-
-    function tutorial1() {
-        if (save.t1)
-            return;
-        function s1() {
-            var ex = game.eel[0];
-            var ey = game.eel[1];
-            fadeto(tx(ex, ey), ty(ex, ey), TR, 'You\'re an eel, and you\'re hungry.<br />You\'re going to have to eat all the fish.', s2);
-        }
-        function s2() {
-            fadeto(TR + 45, bh + 35, TR, 'Use the Q, W, A and S keys to move,<br />or click on the next place you want to go.', s3);
-        }
-        function s3() {
-            fadeto(tx(1,-1), ty(1,-1), TR, 'You have to kill the fish before you eat it.', s4);
-        }
-        function s4() {
-            fadeto(TR + 45, bh + 87, TR, 'Your electric shock attack can kill fish.<br />Press space to use it, or click on your head.', d);
-        }
-        function d() {
-            save.t1 = true;
-            $.cookie('save', save);
-            unfade();
-        }
-        s1();
-    }
-
-    function tutorial2() {
-        if (save.t2)
-            return;
-        function s1() {
-            fadeto(tx(-1, 1), ty(-1, 1), TR, 'It takes 2 shocks to kill this fish.', s2);
-        }
-        function s2() {
-            fadeto(bw - TR - 520 + 6 + 25, bh + 93 - 5, 36, 'You can shock multiple times on a level,<br />but not twice in the same place;<br />you have to move to recharge.', s3);
-        }
-        function s3() {
-            fadeto(bw - TR - 520 + 5 + 25 * (MAXHP - game.hp) + 3, bh + 30 + 14 + 10, 25, 'This is how hungry you are.<br />Each move adds ' + MOVEHP + ' hunger,<br />and the electric shock adds ' + SHOCKHP + '.', s4);
-        }
-        function s4() {
-            fadeto(bw - TR - 520 + 5 + 25 * MAXHP + 3, bh + 30 + 14 + 10, 25, 'If you get too hungry, you\'ll starve.', d);
-        }
-        function d() {
-            save.t2 = true;
-            $.cookie('save', save);
-            unfade();
-        }
-        s1();
-    }
-
-    function tutorial3() {
-        if (save.t3)
-            return;
-        function s1() {
-            fadeto(tx(0, 0), ty(0, 0), TR, 'This fish will take 3 shocks to kill,<br />but you\'re too hungry for that.', s2);
-        }
-        function s2() {
-            fadeto(tx(0, 0), ty(0, 0), TR*3, 'Kill it with just one shock<br />by surrounding it on three sides.', d);
-        }
-        function d() {
-            save.t3 = true;
-            $.cookie('save', save);
-            unfade();
-        }
-        s1();
-    }
-
-    function tutorial4() {
-        if (save.t4)
-            return;
-        function s1() {
-            fadeto(tx(0, -0.5), ty(0, -0.5), TR*3.5, 'Don\'t waste time picking off individual fish.<br />Use your length to kill all four of these at once.', d);
-        }
-        function d() {
-            save.t4 = true;
-            $.cookie('save', save);
-            unfade();
-        }
-        s1();
-    }
-
-    function tutorial5() {
-        if (save.t5)
-            return;
-        function s1() {
-            fadeto(tx(2, -0.5), ty(2, -0.5), TR*2, 'To beat the level, you just need to eat the fish.<br />If you feel that the bare minimum is enough, then okay.', s2);
-        }
-        function s2() {
-            fadeto(tx(0, 2), ty(0, 2), TR, 'But some eels want an extra challenge, and they<br />try to collect the starfish along the way.', d);
-        }
-        function d() {
-            save.t5 = true;
-            $.cookie('save', save);
-            unfade();
-        }
-        s1();
-    }
-
-    function reset(first) {
-        cancel_solver();
-        play('drop');
-        $('#overmessage').hide();
-        $('.overoption').remove();
-        $('.gameoption').show();
-        if (game && game.over) {
-            var x = game.eel[0];
-            var y = game.eel[1];
-            var x1 = bw / 2 + TR * (x - y);
-            var y1 = bh / 2 + TR * (x + y);
-            var t = time();
-            function zoomout() {
-                var f = 1-Math.min(1, (time() - t));
-                var x2 = x1*(1-f) + (bw/2) * (f);
-                var y2 = y1*(1-f) + (bh/2) * (f);
-                board.attr('transform', 'translate(' + x2 + ',' + y2 +') scale(' + (1 + f*f*f*5) + ') translate(' + (-x1) + ',' + (-y1) + ')');
-                if (f > 0)
-                    setTimeout(zoomout, 50);
-                else {
-                    game.over = false;
-                    updateconsole();
-                }
-            }
-            zoomout();
-        }
-        $('.hunger, .charge').toggle(curlevel > 0);
-        game = start();
-        leveldesc.text(game.leveldesc);
-        board.empty();
-        gridlines = [];
-        for (var x = -MR; x <= MR; x ++) {
-            for (var y = -MR; y <= MR; y ++) {
-                function passable(p) { return p != '*' && p != 'p'; }
-                var p = game.map[MR+y][MR+x];
-                var p0 = passable(p);
-                var pnw = x > -MR && passable(game.map[MR+y][MR+x-1]);
-                var psw = y < MR && passable(game.map[MR+y+1][MR+x]);
-                if (p0 || pnw)
-                    gridlines.push(gridline_create(x, y, true));
-                if (p0 || psw)
-                    gridlines.push(gridline_create(x, y, false));
-                if (p == 'p') {
-                    putthing(x, y, 'plant' + (1 + Math.floor(Math.random()*1)), Math.floor(Math.random()*4), Math.random() < 0.5);
-                }
-            }
-        }
-        $.each(game.food, function(i, f) {
-            if (game.foodhp[i] < 0)
-                return;
-            f.creature = putthing(f.x, f.y, f.type + 'a', 0, f.flip);
-            if (game.foodhp[i] > 0)
-                f.number = putthing(f.x, f.y, 'number' + game.foodhp[i]);
-        });
- 
-        var rocktype = 'rock1';
-        for (var x = -MR-1; x <= MR+1; x ++) {
-            for (var y = -MR-1; y <= MR+1; y ++) {
-                if (x < -MR || x > MR || y < -MR || y > MR) {
-                    putthing(x, y, rocktype + 'd', Math.floor(Math.random()*4));
-                    continue;
-                }
-                var p = game.map[MR+y][MR+x];
-                if (p == '*') {
-                    var neighbors = [];
-                    neighbors.push(
-                        (x <= -MR || game.map[MR+y][MR+x-1] == '*') ? '1' : '0',
-                        (y <= -MR || game.map[MR+y-1][MR+x] == '*') ? '1' : '0',
-                        (x >= MR || game.map[MR+y][MR+x+1] == '*') ? '1' : '0',
-                        (y >= MR || game.map[MR+y+1][MR+x] == '*') ? '1' : '0',
-                        (x <= -MR || y <= -MR || game.map[MR+y-1][MR+x-1] == '*') ? '1' : '0',
-                        (x >= MR || y <= -MR || game.map[MR+y-1][MR+x+1] == '*') ? '1' : '0',
-                        (x >= MR || y >= MR || game.map[MR+y+1][MR+x+1] == '*') ? '1' : '0',
-                        (x <= -MR || y >= MR || game.map[MR+y+1][MR+x-1] == '*') ? '1' : '0');
-                    neighbors = neighbors.join('');
-                    var nomatch = true;
-                    $.each(ROCKMAP, function(pattern, rock) {
-                        if ((new RegExp('^' + pattern + '$')).test(neighbors)) {
-                            var ang = rock[1];
-                            if (ang == -1)
-                                ang = Math.floor(Math.random()*4);
-                            putthing(x, y, rocktype + rock[0], ang);
-                            nomatch = false;
-                        }
-                    });
-                    if (nomatch)
-                        putthing(x, y, 'nomatch');
-                }
-            }
-        }
-
-        puteel();
-        updateconsole();
-
-        if (first) {
-            busy = true;
-            setTimeout(function() {
-                busy = false;
-                if (curlevel == 0)
-                    tutorial1();
-                if (curlevel == 1)
-                    tutorial2();
-                if (curlevel == 2)
-                    tutorial3();
-                if (curlevel == 3)
-                    tutorial4();
-                if (curlevel == 4)
-                    tutorial5();
-            }, 800);
-        }
-    }
-
-    var imgs = [];
-    imgs.push('border1', 'hunger1', 'hunger2', 'plant1', 'shock1', 'console-esc', 'console-n', 'console-m', 'audio-on', 'audio-off');
-    $.each(['starfish1', 'guppy1', 'catfish1', 'piranha1', 'stingray1'], function(i, food) {
-        imgs.push(food + 'a', food + 'b');
     });
-    $.each(['q', 'w', 'a', 's', 'sp', 'r'], function(i, key) {
-        imgs.push('console-' + key + '1', 'console-' + key + '2');
-    });
-    $.each(['eel1'], function(i, eel) {
-        $.each(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'], function(i, l) {
-            imgs.push(eel + l);
-        });
-    });
-    $.each(['rock1'], function(i, rock) {
-        $.each(['a', 'b', 'c', 'd', 'e', 'f'], function(i, l) {
-            imgs.push(rock + l);
-        });
-    });
-    $.each(['1', '2', '3', '4'], function(i, n) {
-        imgs.push('number' + n);
-    });
-    preloadsvg(imgs, function() {
+}
 
-    var introfish = [];
-        $('#introplay').show();
-        setTimeout(function() {
-            $('#introplay').css('opacity', 1);
-        }, 100);
-        setInterval(function() {
-            if (page == 'game') {
-                $.each(gridlines, function(i, gl) {
-                    gridline_update(gl);
-                });
-            }
-        }, 100);
-        setInterval(function() {
-            if (page == 'intro') {
-                for (var i = 0; i < introfish.length; i ++) {
-                    var fish = introfish[i];
-                    fish.y += fish.dy;
-                    var o = 1;
-                    if (fish.y + TR > 668)
-                        o = Math.max(0, (768 - (fish.y + TR)) / 100);
-                    if (fish.y < 100)
-                        o = Math.max(0, fish.y / 100);
-                    fish.img.css({
-                        top: fish.x,
-                        left: fish.y,
-                        opacity: o
-                    });
-                    if (fish.y + TR > 778 || fish.y < -10) {
-                        fish.img.remove();
-                        introfish.splice(i, 1);
-                        i --;
-                    }
-                }
-                while (introfish.length < 3) {
-                    var type = ['guppy1', 'catfish1', 'piranha1', 'stingray1'][Math.floor(Math.random()*4)];
-                    var x = 100 + Math.random() * (300 - TR);
-                    $.each(introfish, function(i, fish) {
-                        if (Math.abs(fish.x-x) < TR)
-                            type = null;
-                    });
-                    if (type == null)
-                        continue;
-                    var dy = 25 + Math.random() * 65;
-                    if (Math.random() > 0.5)
-                        dy = -dy;
-                    var y = dy > 0 ? 0 : (768 - TR);
-                    var img = $(document.createElement('img'))
-                        .attr('class', 'introfish')
-                        .attr('src', 'svg/' + type + 'a.svg')
-                        .css({
-                            transform: dy > 0 ? '' : 'scaleX(-1)',
-                            opacity: 0
-                        });
-                    introfish.push({
-                        x: x,
-                        y: y,
-                        dy: dy,
-                        img: img
-                    });
-                    img.css({
-                        top: x,
-                        left: y
-                    });
-                    $('#intro .page').append(img);
-                }
-            }
-        }, 1000);
-    });
+function putthing(x, y, thing, rot, flip) {
+    rot = rot || 0;
+    var flipscale = flip ? 'scaleX(-1)' : '';
+    return mkimg(thing)
+        .css('left', tx(x, y)-TR)
+        .css('top', ty(x, y)-TR)
+        .css('width', TR*2)
+        .css('height', TR*2)
+        .css('transform', flipscale + ' rotate(' + (rot * 90) + 'deg)')
+        .appendTo($('#board'));
+}
 
-    function gokey(k, txt, y, w, fn) {
-        svg.append(mkimg('console-' + k)
-                   .attr('class', 'overoption key')
-                   .attr('x', y - w - 3)
-                   .attr('y', 110)
-                   .attr('width', w)
-                   .attr('height', 30)
-                   .click(fn));
-        svg.append($(document.createElementNS(svgNS, 'text'))
-                   .attr('class', 'overoption key gametext')
-                   .attr('x', y)
-                   .attr('y', 110 + 22)
-                   .attr('text-anchor', 'start')
-                   .attr('font-size', 20)
-                   .text(txt)
-                   .click(fn));
+function puteel() {
+    var eel = game.eel;
+    var state = game.eelstate;
+    $('.eel').remove();
+    var eeltype = 'eel1';
+    for (var i = 0; i < eel.length; i += 2) {
+        var x = eel[i];
+        var y = eel[i+1];
+        var px = i > 0 && (eel[i-2] - x);
+        var py = i > 0 && (eel[i-1] - y);
+        var nx = i < eel.length - 2 && (eel[i+2] - x);
+        var ny = i < eel.length - 2 && (eel[i+3] - y);
+        var nw = px == -1 || nx == -1;
+        var ne = py == -1 || ny == -1;
+        var se = px == 1 || nx == 1;
+        var sw = py == 1 || ny == 1;
+        var spec;
+        if (i == 0) {
+            if (nw)
+                spec = ['a', 1, false];
+            else if (se)
+                spec = ['a', 0, true];
+            else if (ne)
+                spec = ['a', 1, true];
+            else
+                spec = ['a', 0, false];
+        } else if (i == eel.length - 2) {
+            if (nw)
+                spec = ['f', 0, false];
+            else if (se)
+                spec = ['f', -1, true];
+            else if (ne)
+                spec = ['f', 0, true];
+            else
+                spec = ['f', -1, false];
+        } else {
+            if (nw && se)
+                spec = ['b', 0, true];
+            else if (nw && ne)
+                spec = ['c', 0, false];
+            else if (nw && sw)
+                spec = ['e', 0, true];
+            else if (ne && se)
+                spec = ['e', 0, false];
+            else if (ne && sw)
+                spec = ['b', 0, false];
+            else if (se && sw)
+                spec = ['d', 0, false];
+        }
+        if (state == 'happy' && spec[0] == 'a')
+            spec[0] = 'g';
+        if (state == 'sad' && spec[0] == 'a')
+            spec[0] = 'h';
+        putthing(x, y, eeltype + spec[0], spec[1], spec[2])
+            .addClass('eel');
     }
+}
 
-    function victory() {
-        var eel = game.eel;
-        busy = true;
-        game.over = true;
-        var x = eel[0];
-        var y = eel[1];
-        var x1 = bw / 2 + TR * (x - y);
-        var y1 = bh / 2 + TR * (x + y);
+function canmoveeel(dx, dy) {
+    return !busy && game_canmove(game, dx, dy);
+}
+function canshock() {
+    return !busy && game_canshock(game);
+}
+function canrestart() {
+    return !(busy || (game.atstart && !game.over));
+}
+function cannext() {
+    return game.eelstate == 'happy' && !busy && curlevel < LEVELS.length - 1;
+}
+function updateconsole() {
+    var nomoves = true;
+    function setkey(l, b) {
+        var k = $('#'+l+'key');
+        setimg(k, 'console-' + l + (b ? '2' : '1'));
+        k.toggleClass('active', b).toggleClass('inactive', !b);
+        if (b)
+            nomoves = false;
+    }
+    setimg($('#esckey'), 'console-esc');
+    setimg($('#rkey'), 'console-r' + (canrestart() ? '2' : '1'));
+    $('#restartgroup').toggleClass('active', canrestart())
+        .toggleClass('inactive', !canrestart());
+    setkey('q', canmoveeel(-1, 0));
+    setkey('w', canmoveeel(0, -1));
+    setkey('s', canmoveeel(1, 0));
+    setkey('a', canmoveeel(0, 1));
+    setkey('_', canshock());
+    $('#chargestatus').text(game.charge ? (game.hp <= SHOCKHP ? 'Too hungry' : 'Ready') : 'Not ready');
+    setimg($('#star1'), 'starfish1' + (game.stars > 0 ? 'a' : 'b'))
+        .toggle(game.hasstars > 0);
+    setimg($('#star2'), 'starfish1' + (game.stars > 1 ? 'a' : 'b'))
+        .toggle(game.hasstars > 1);
+    setimg($('#star3'), 'starfish1' + (game.stars > 2 ? 'a' : 'b'))
+        .toggle(game.hasstars > 2);
+    TweenLite.to('#hungerbar', 0.1, {
+        width: Math.max(0, 25 * (MAXHP - game.hp) - 1),
+        ease: Power2.easeOut
+    });
+    $('#hungerbar')
+        .toggleClass('red', game.hp <= SHOCKHP)
+        .toggleClass('yellow', game.hp > SHOCKHP && game.hp <= SHOCKHP + MOVEHP);
+    if (!busy && !game.over && nomoves)
+        defeat();
+}
+function updateaudio() {
+    setimg($('#audioicon'), 'audio-' + (audio_on ? 'on' : 'off'));
+}
+
+var game;
+function reset() {
+    cancel_solver();
+    var board = $('#board');
+    if (game && game.over) {
+        var x = game.eel[0];
+        var y = game.eel[1];
+        var x1 = BW / 2 + TR * (x - y);
+        var y1 = BH / 2 + TR * (x + y);
         var t = time();
-        function happy() {
+        var z = 5;
+        function zoom() {
+            var f = 1-Math.min(1, (time() - t)/0.5);
+            var x2 = x1*(1-f) + (BW/2) * (f);
+            var y2 = y1*(1-f) + (BH/2) * (f);
+            $('#board').css('transform', 'translate(' + x2 + 'px,' + y2 +'px) scale(' + (1 + f*f*f*z) + ') translate(' + (-x1) + 'px,' + (-y1) + 'px)');
+            if (f > 0)
+                setTimeout(zoom, 10);
+            else {
+                game.over = false;
+                updateconsole();
+            }
+        }
+        zoom();
+    }
+    $('#victory, #defeat').hide();
+    $('.gameoption').show();
+    board.empty();
+    game = start();
+    $('.hunger, .charge, #restartgroup').toggle(curlevel > 0);
+    $('#leveldesc').text(game.leveldesc);
+    var gridline_svg = $(svg('svg'))
+        .attr('id', 'gridlines')
+        .attr('width', BW)
+        .attr('height', BH)
+        .appendTo(board);
+    function gridline_create(x, y, nw) {
+        var path = $(svg('path'))
+            .attr('transform', 'translate(' + tx(x, y) + ',' + ty(x, y) + ')')
+            .attr('class', 'gridline');
+        path.gridline_nw = nw;
+        path.gridline_seed = (x * 2 * MR + y) * 2 + (nw ? 1 : 0);
+        gridline_svg.append(path);
+        return path;
+    }
+    for (var x = -MR; x <= MR; x ++) {
+        for (var y = -MR; y <= MR; y ++) {
+            function passable(p) { return p != '*' && p != 'p'; }
+            var p = game.map[MR+y][MR+x];
+            var p0 = passable(p);
+            var pnw = x > -MR && passable(game.map[MR+y][MR+x-1]);
+            var psw = y < MR && passable(game.map[MR+y+1][MR+x]);
+            if (p0 || pnw)
+                gridlines.push(gridline_create(x, y, true));
+            if (p0 || psw)
+                gridlines.push(gridline_create(x, y, false));
+            if (p == 'p')
+                putthing(x, y, 'plant' + (1 + Math.floor(Math.random()*1)), Math.floor(Math.random()*4), Math.random() < 0.5);
+        }
+    }
+    clearInterval(gridlines_timer);
+    gridlines_timer = setInterval(gridlines_update, 100);
+    game.food.forEach(function(f, i) {
+        if (game.foodhp[i] < 0)
+            return;
+        f.creature = putthing(f.x, f.y, f.type + 'a', 0, f.flip);
+        if (game.foodhp[i] > 0)
+            f.number = putthing(f.x, f.y, 'number' + game.foodhp[i]);
+    });
+    var rocktype = 'rock1';
+    for (var x = -MR-1; x <= MR+1; x ++) {
+        for (var y = -MR-1; y <= MR+1; y ++) {
+            if (x < -MR || x > MR || y < -MR || y > MR) {
+                putthing(x, y, rocktype + 'd', Math.floor(Math.random()*4));
+                continue;
+            }
+            var p = game.map[MR+y][MR+x];
+            if (p == '*') {
+                var neighbors = [];
+                neighbors.push(
+                    (x <= -MR || game.map[MR+y][MR+x-1] == '*') ? '1' : '0',
+                    (y <= -MR || game.map[MR+y-1][MR+x] == '*') ? '1' : '0',
+                    (x >= MR || game.map[MR+y][MR+x+1] == '*') ? '1' : '0',
+                    (y >= MR || game.map[MR+y+1][MR+x] == '*') ? '1' : '0',
+                    (x <= -MR || y <= -MR || game.map[MR+y-1][MR+x-1] == '*') ? '1' : '0',
+                    (x >= MR || y <= -MR || game.map[MR+y-1][MR+x+1] == '*') ? '1' : '0',
+                    (x >= MR || y >= MR || game.map[MR+y+1][MR+x+1] == '*') ? '1' : '0',
+                    (x <= -MR || y >= MR || game.map[MR+y+1][MR+x-1] == '*') ? '1' : '0');
+                neighbors = neighbors.join('');
+                var nomatch = true;
+                $.each(ROCKMAP, function(pattern, rock) {
+                    if ((new RegExp('^' + pattern + '$')).test(neighbors)) {
+                        var ang = rock[1];
+                        if (ang == -1)
+                            ang = Math.floor(Math.random()*4);
+                        putthing(x, y, rocktype + rock[0], ang);
+                        nomatch = false;
+                    }
+                });
+                if (nomatch)
+                    putthing(x, y, 'nomatch');
+            }
+        }
+    }
+    puteel();
+    updateconsole();
+}
+
+var curlevel = null;
+function incoming_game() {
+    reset();
+}
+function arrive_game() {
+    if (curlevel == 0)
+        tutorial1();
+    if (curlevel == 1)
+        tutorial2();
+    if (curlevel == 2)
+        tutorial3();
+    if (curlevel == 3)
+        tutorial4();
+    if (curlevel == 4)
+        tutorial5();
+}
+
+function moveeel(dx, dy) {
+    if (!canmoveeel(dx, dy))
+        return false;
+    cancel_solver();
+    game.atstart = false;
+    var ate = false;
+    var star = false;
+    game_move(game, dx, dy, function(food) {
+        if (food.star)
+            star = true;
+        food.creature.remove();
+        ate = true;
+    });
+    if (star)
+        play('star');
+    else if (ate)
+        play('eat');
+    else
+        play('move');
+    if (game.nonstars == 0)
+        victory();
+    if (game.hp == 0)
+        defeat();
+    puteel();
+    updateconsole();
+    return true;
+}
+
+function shock() {
+    if (!canshock())
+        return;
+    cancel_solver();
+    game.atstart = false;
+    var eel = game.eel;
+    busy = true;
+    if (curlevel > 0)
+        game.charge = false;
+    game.hp = Math.max(0, game.hp - SHOCKHP);
+    if (game.hp == 0)
+        defeat();
+    var i = 0;
+    function next() {
+        var shocks = [];
+        game_shock1(game, i, function(rot, x, y) {
+            play('shock');
+            var thing = mkimg('shock1')
+                .css('left', tx(x,y)-TR*2)
+                .css('top', ty(x,y)-TR*2)
+                .css('width', TR*4)
+                .css('height', TR*4)
+                .css('transform', 'rotate(' + (rot * 90) + 'deg)')
+                .appendTo($('#board'));
+            shocks.push(thing);
+        }, function(food, i) {
+            var hp = game.foodhp[i];
+            food.number.remove();
+            if (hp == 0) {
+                food.creature.remove();
+                food.creature = putthing(food.x, food.y, food.type + 'b', 0, food.flip);
+            } else if (hp > 0) {
+                food.number = putthing(food.x, food.y, 'number' + hp);
+            }
+        });
+        updateconsole();
+        setTimeout(function() {
+            shocks.forEach(function(thing) {
+                thing.remove();
+            });
+        }, 250);
+        setTimeout(function() {
+            i += 2;
+            if (i >= eel.length) {
+                busy = false;
+                updateconsole();
+                return;
+            }
+            next();
+        }, 200);
+    }
+    next();
+}
+
+function victory() {
+    var eel = game.eel;
+    busy = true;
+    game.over = true;
+    play('victory');
+    $('.gameoption').hide();
+    // TODO if firefox, use spotlight instead of zoom
+    // var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+    var x = eel[0];
+    var y = eel[1];
+    var x1 = BW / 2 + TR * (x - y);
+    var y1 = BH / 2 + TR * (x + y);
+    var t = time();
+    var z = 5;
+    function zoom() {
+        var f = Math.min(1, (time() - t));
+        var x2 = x1*(1-f) + (BW/2) * (f);
+        var y2 = y1*(1-f) + (BH/2) * (f);
+        $('#board').css('transform', 'translate(' + x2 + 'px,' + y2 +'px) scale(' + (1 + f*f*f*z) + ') translate(' + (-x1) + 'px,' + (-y1) + 'px)');
+        if (f < 1)
+            setTimeout(zoom, 10);
+        else {
             game.eelstate = 'happy';
             puteel();
-            var savel = save.l[LEVELS[curlevel].id];
-            savel.finished = true;
-            savel.stars = Math.max(savel.stars, game.stars);
+            var savel = savestate.l[LEVELS[curlevel].id];
+            savel.f = true;
+            savel.s = Math.max(savel.s, game.stars);
             if (curlevel + 1 < LEVELS.length) {
-                savel = save.l[LEVELS[curlevel + 1].id];
-                savel.locked = false;
+                savel = savestate.l[LEVELS[curlevel + 1].id];
+                savel.l = false;
             }
-            $.cookie('save', save);
+            save_cookie();
             busy = false;
-            $('#overmessage').show()
-                .text('EEL WINS!');
-            $('.gameoption').hide();
-            if (game.hasstars) {
-                if (cannext()) {
-                    gokey('n', 'Next', bw/2 - 100, 30, do_next);
-                    gokey('r2', 'Restart', bw/2 - 15, 30, function() { reset(true); });
-                    gokey('esc', 'Quit', bw/2 + 100, 40, gameback);
-                } else {
-                    gokey('r2', 'Restart', bw/2 - 80, 30, function() { reset(true); });
-                    gokey('esc', 'Quit', bw/2 + 80, 40, gameback);
-                }
-            } else {
-                if (cannext()) {
-                    gokey('n', 'Next', bw/2 - 80, 30, do_next);
-                    gokey('esc', 'Quit', bw/2 + 80, 40, gameback);
-                } else {
-                    gokey('esc', 'Quit', bw/2, 40, gameback);
-                }
-            }
+            updateconsole();
+            $('#victory').show();
+            $('#vnextgroup').toggle(cannext());
+            $('#vrestartgroup').toggle(!!game.hasstars);
         }
-        function zoomin() {
-            var f = Math.min(1, (time() - t));
-            var x2 = x1*(1-f) + (bw/2) * (f);
-            var y2 = y1*(1-f) + (bh/2) * (f);
-            board.attr('transform', 'translate(' + x2 + ',' + y2 +') scale(' + (1 + f*f*f*5) + ') translate(' + (-x1) + ',' + (-y1) + ')');
-            if (f < 1)
-                setTimeout(zoomin, 50);
-            else
-                happy();
-        }
-        play('victory');
-        zoomin();
     }
+    zoom();
+}
 
-    function defeat() {
-        var eel = game.eel;
-        busy = true;
-        game.over = true;
-        var x = eel[0];
-        var y = eel[1];
-        var x1 = bw / 2 + TR * (x - y);
-        var y1 = bh / 2 + TR * (x + y);
-        var t = time();
-        function sad() {
+function defeat() {
+    var eel = game.eel;
+    busy = true;
+    game.over = true;
+    play('defeat');
+    $('.gameoption').hide();
+    // TODO if firefox, use spotlight instead of zoom
+    // var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+    var x = eel[0];
+    var y = eel[1];
+    var x1 = BW / 2 + TR * (x - y);
+    var y1 = BH / 2 + TR * (x + y);
+    var t = time();
+    var z = 5;
+    function zoom() {
+        var f = Math.min(1, (time() - t)/1.5);
+        var x2 = x1*(1-f) + (BW/2) * f;
+        var y2 = y1*(1-f) + (BH/2) * f;
+        $('#board').css('transform', 'translate(' + x2 + 'px,' + y2 +'px) scale(' + (1 + f*f*f*z) + ') translate(' + (-x1) + 'px,' + (-y1) + 'px)');
+        if (f < 1)
+            setTimeout(zoom, 10);
+        else {
             game.eelstate = 'sad';
             puteel();
             busy = false;
             updateconsole();
-            $('#overmessage').show()
-                .text('EEL LOSES!');
-            $('.gameoption').hide();
-            gokey('r2', 'Restart', bw/2 - 80, 30, function() { reset(true); });
-            gokey('esc', 'Quit', bw/2 + 80, 40, gameback);
-        }
-        function zoomin() {
-            var f = Math.min(1, (time() - t)/1.5);
-            var x2 = x1*(1-f) + (bw/2) * f;
-            var y2 = y1*(1-f) + (bh/2) * f;
-            board.attr('transform', 'translate(' + x2 + ',' + y2 +') scale(' + (1 + f*f*f*5) + ') translate(' + (-x1) + ',' + (-y1) + ')');
-            if (f < 1)
-                setTimeout(zoomin, 50);
-            else
-                sad();
-        }
-        play('defeat');
-        zoomin();
-    }
-
-    function gameback() {
-        if (page == 'game') {
-            cancel_solver();
-            $('#game').addClass('right');
-            $('#menu').removeClass('left right');
-            page = 'menu';
-            updatelevelbuttons();
-            busy = true;
-            setTimeout(function() { busy = false; }, 800);
+            $('#defeat').show();
         }
     }
+    zoom();
+}
 
-    function canmoveeel(dx, dy) {
-        return !busy && game_canmove(game, dx, dy);
-    }
-
-    function canshock() {
-        return !busy && game_canshock(game);
-    }
-
-    function canrestart() {
-        return !(busy || game.atstart);
-    }
-
-    function cannext() {
-        return game.eelstate == 'happy' && !busy && curlevel < LEVELS.length - 1;
-    }
-
-    function moveeel(dx, dy) {
-        if (!canmoveeel(dx, dy))
-            return false;
-        cancel_solver();
-        game.atstart = false;
-        var ate = false;
-        var star = false;
-        game_move(game, dx, dy, function(food) {
-            if (food.star)
-                star = true;
-            food.creature.remove();
-            ate = true;
+var fadecallback;
+function fadeto(x, y, r, msg, callback) {
+    busy = true;
+    fadecallback = null;
+    var pageOffset = $('#'+page+' .page').offset();
+    $('#fadeouter').removeClass('passevents');
+    $('#fademsgbox').hide();
+    $('#fadeouter').show();
+    TweenLite.to('#fadebg', 1, {
+        'opacity': 1,
+        ease: Power2.easeInOut
+    });
+    new TimelineLite()
+        .to('#fadecircle', 1, {
+            attr: {
+                'cx': pageOffset.left + x,
+                'cy': pageOffset.top + y,
+                'r': r
+            },
+            ease: Power2.easeInOut
+        })
+        .call(function() {
+            $('#fademsg').html(msg);
+            $('#fademsgbox')
+                .css('left', x < BW/2 ? (pageOffset.left + x + r + 10) : (pageOffset.left + x - r - 10 - $('#fademsgbox').outerWidth()))
+                .css('top', pageOffset.top + y - $('#fademsgbox').outerHeight()/2)
+                .show();
+            fadecallback = callback;
         });
-        if (star)
-            play('star');
-        else if (ate)
-            play('eat');
-        else
-            play('move');
-        if (game.nonstars == 0)
-            victory();
-        if (game.hp == 0)
-            defeat();
-        puteel();
-        updateconsole();
-        return true;
-    }
+}
 
-    function shock() {
-        if (!canshock())
-            return;
-        cancel_solver();
-        game.atstart = false;
-        var eel = game.eel;
-        busy = true;
-        if (curlevel > 0)
-            game.charge = false;
-        game.hp = Math.max(0, game.hp - SHOCKHP);
-        if (game.hp == 0)
-            defeat();
-        var i = 0;
-        function next() {
-            var shocks = [];
-            game_shock1(game, i, function(rot, x, y) {
-                play('shock');
-                var thing = mkimg('shock1')
-                    .attr('x', -TR*2)
-                    .attr('y', -TR*2)
-                    .attr('width', TR*4)
-                    .attr('height', TR*4)
-                    .attr('transform', 'translate(' + tx(x, y) + ',' + ty(x, y) + ') rotate(' + (rot * 90) + ')');
-                board.append(thing);
-                shocks.push(thing);
-            }, function(food, i) {
-                var hp = game.foodhp[i];
-                food.number.remove();
-                if (hp == 0) {
-                    food.creature.remove();
-                    food.creature = putthing(food.x, food.y, food.type + 'b', 0, food.flip);
-                } else if (hp > 0) {
-                    food.number = putthing(food.x, food.y, 'number' + hp);
-                }
-            });
-            updateconsole();
-            setTimeout(function() {
-                $.each(shocks, function(i, thing) {
-                    thing.remove();
-                });
-            }, 250);
-            setTimeout(function() {
-                i += 2;
-                if (i >= eel.length) {
-                    busy = false;
-                    updateconsole();
-                    return;
-                }
-                next();
-            }, 200);
-        }
-        next();
-    }
+function unfade(callback) {
+    busy = true;
+    fadecallback = null;
+    $('#fademsgbox').hide();
+    TweenLite.to('#fadebg', 1, {
+        'opacity': 0,
+        ease: Power2.easeInOut
+    });
+    new TimelineLite()
+        .to('#fadecircle', 1, {
+            attr: {
+                'cx': $(window).width()/2,
+                'cy': $(window).height()/2,
+                'r': 1200
+            },
+            ease: Power2.easeInOut
+        })
+        .call(function() {
+            $('#fadeouter').addClass('passevents');
+            busy = false;
+            if (callback)
+                callback();
+        });
+}
 
-    function do_q(event) {
-        moveeel(-1, 0);
-    }
-    function do_w(event) {
-        moveeel(0, -1);
-    }
-    function do_s(event) {
-        moveeel(1, 0);
-    }
-    function do_a(event) {
-        moveeel(0, 1);
-    }
-    function do_sp(event) {
-        shock();
-    }
-    function do_restart(event) {
-        if (canrestart())
-            reset();
-    }
-    function do_next(event) {
-        if (cannext()) {
-            curlevel ++;
-            reset(true);
-        }
-    }
-    function do_audio() {
-        audio_on = !audio_on;
-        setimg(audioi, 'audio-' + (audio_on ? 'on' : 'off'));
-    }
-
-    function drawsol(sol) {
-        $(".sol").remove();
-        if (!sol) return;
+function tutorial1() {
+    if (savestate.t1)
+        return;
+    function s1() {
         var ex = game.eel[0];
         var ey = game.eel[1];
-        var x = tx(ex, ey);
-        var y = ty(ex, ey) - 20;
-        for (var i = 0; i < sol.length; i ++) {
-            var col = Math.floor(i * 255 / sol.length);
-            col = 'rgb('+col+','+col+','+col+')';
-            var nx = x, ny = y;
-            if (sol[i] == 'q') {
-                nx -= TR; ny -= TR;
-            } else if (sol[i] == 'w') {
-                nx += TR; ny -= TR;
-            } else if (sol[i] == 's') {
-                nx += TR; ny += TR;
-            } else if (sol[i] == 'a') {
-                nx -= TR; ny += TR;
-            } else if (sol[i] == '*') {
-                var c = $(document.createElementNS(svgNS, 'circle'))
-                    .attr('cx', x)
-                    .attr('cy', y)
-                    .attr('r', 15)
-                    .attr('class', 'sol')
-                    .css('stroke', col);
-                board.append(c);
-                continue;
-            }
-            ny += 40/sol.length;
-            var l = $(document.createElementNS(svgNS, 'line'))
-                .attr('x1', x)
-                .attr('y1', y)
-                .attr('x2', nx)
-                .attr('y2', ny)
+        fadeto(tx(ex, ey), ty(ex, ey), TR, 'You\'re an eel, and you\'re hungry.<br />You\'re going to have to eat all the fish.', s2);
+    }
+    function s2() {
+        fadeto(TR + 45, BH + 35, TR, 'Use the Q, W, A and S keys to move,<br />or click on the next place you want to go.', s3);
+    }
+    function s3() {
+        fadeto(tx(1,-1), ty(1,-1), TR, 'You have to kill the fish before you eat it.', s4);
+    }
+    function s4() {
+        fadeto(TR + 45, BH + 87, TR, 'Your electric shock attack can kill fish.<br />Press space to use it, or click on your head.', d);
+    }
+    function d() {
+        savestate.t1 = true;
+        save_cookie();
+        unfade();
+    }
+    s1();
+}
+
+function tutorial2() {
+    if (savestate.t2)
+        return;
+    function s1() {
+        fadeto(tx(-1, 1), ty(-1, 1), TR, 'It takes 2 shocks to kill this fish.', s2);
+    }
+    function s2() {
+        fadeto(BW - TR - 520 + 6 + 25, BH + 93 - 5, 36, 'You can shock multiple times on a level,<br />but not twice in the same place;<br />you have to move to recharge.', s3);
+    }
+    function s3() {
+        fadeto(BW - TR - 520 + 5 + 25 * (MAXHP - game.hp) + 3, BH + 30 + 14 + 10, 25, 'This is how hungry you are.<br />Each move adds ' + MOVEHP + ' hunger,<br />and the electric shock adds ' + SHOCKHP + '.', s4);
+    }
+    function s4() {
+        fadeto(BW - TR - 520 + 5 + 25 * MAXHP + 3, BH + 30 + 14 + 10, 25, 'If you get too hungry, you\'ll starve.', d);
+    }
+    function d() {
+        savestate.t2 = true;
+        save_cookie();
+        unfade();
+    }
+    s1();
+}
+
+function tutorial3() {
+    if (savestate.t3)
+        return;
+    function s1() {
+        fadeto(tx(0, 0), ty(0, 0), TR, 'This fish will take 3 shocks to kill,<br />but you\'re too hungry for that.', s2);
+    }
+    function s2() {
+        fadeto(tx(0, 0), ty(0, 0), TR*3, 'Kill it with just one shock<br />by surrounding it on three sides.', d);
+    }
+    function d() {
+        savestate.t3 = true;
+        save_cookie();
+        unfade();
+    }
+    s1();
+}
+
+function tutorial4() {
+    if (savestate.t4)
+        return;
+    function s1() {
+        fadeto(tx(0, -0.5), ty(0, -0.5), TR*3.5, 'Don\'t waste time picking off individual fish.<br />Use your length to kill all four of these at once.', d);
+    }
+    function d() {
+        savestate.t4 = true;
+        save_cookie();
+        unfade();
+    }
+    s1();
+}
+
+function tutorial5() {
+    if (savestate.t5)
+        return;
+    function s1() {
+        fadeto(tx(2, -0.5), ty(2, -0.5), TR*2, 'To beat the level, you just need to eat the fish.<br />If you feel that the bare minimum is enough, then okay.', s2);
+    }
+    function s2() {
+        fadeto(tx(0, 2), ty(0, 2), TR, 'But some eels want an extra challenge, and they<br />try to collect the starfish along the way.', d);
+    }
+    function d() {
+        savestate.t5 = true;
+        save_cookie();
+        unfade();
+    }
+    s1();
+}
+
+function drawsol(sol) {
+    $('#solsvg').remove();
+    if (!sol) return;
+    var solsvg = $(svg('svg'))
+        .attr('id', 'solsvg')
+        .css('position', 'absolute')
+        .css('width', BW)
+        .css('height', BH)
+        .appendTo($('#board'));
+    var ex = game.eel[0];
+    var ey = game.eel[1];
+    var x = tx(ex, ey);
+    var y = ty(ex, ey) - 20;
+    for (var i = 0; i < sol.length; i ++) {
+        var col = Math.floor(i * 255 / sol.length);
+        col = 'rgb('+col+','+col+','+col+')';
+        var nx = x, ny = y;
+        if (sol[i] == 'q') {
+            nx -= TR; ny -= TR;
+        } else if (sol[i] == 'w') {
+            nx += TR; ny -= TR;
+        } else if (sol[i] == 's') {
+            nx += TR; ny += TR;
+        } else if (sol[i] == 'a') {
+            nx -= TR; ny += TR;
+        } else if (sol[i] == '*') {
+            var c = $(svg('circle'))
+                .attr('cx', x)
+                .attr('cy', y)
+                .attr('r', 15)
                 .attr('class', 'sol')
                 .css('stroke', col);
-            board.append(l);
-            x = nx;
-            y = ny;
+            solsvg.append(c);
+            continue;
         }
+        ny += 40/sol.length;
+        var l = $(svg('line'))
+            .attr('x1', x)
+            .attr('y1', y)
+            .attr('x2', nx)
+            .attr('y2', ny)
+            .attr('class', 'sol')
+            .css('stroke', col);
+        solsvg.append(l);
+        x = nx;
+        y = ny;
     }
+}
 
-    var mouseX, mouseY;
-    $(document).mousemove(function(event) {
-        mouseX = event.pageX;
-        mouseY = event.pageY;
-    });
-    $(document).keypress(function(event) {
-        if (busy)
-            return;
-        var keyCode = event.keyCode || event.charCode;
-        if (page == 'game') {
+function do_q(event) {
+    moveeel(-1, 0);
+}
+function do_w(event) {
+    moveeel(0, -1);
+}
+function do_s(event) {
+    moveeel(1, 0);
+}
+function do_a(event) {
+    moveeel(0, 1);
+}
+function do__(event) {
+    shock();
+}
+function do_restart(event) {
+    if (canrestart())
+        reset();
+}
+function do_next(event) {
+    if (cannext()) {
+        curlevel ++;
+        reset(true);
+    }
+}
+function do_audio() {
+    audio_on = !audio_on;
+    updateaudio();
+}
+function do_back() {
+    if (busy)
+        return;
+    if (page == 'game') {
+        incoming_menu();
+        goto_page('menu', 'left', arrive_menu);
+    } else if (page == 'menu') {
+        incoming_intro();
+        goto_page('intro', 'left', arrive_intro);
+    }
+}
+function do_play() {
+    if (busy)
+        return;
+    if (page == 'intro') {
+        incoming_menu();
+        goto_page('menu', 'right', arrive_menu);
+    }
+}
+
+var hackk = 0;
+var hack = false;
+var mouseX, mouseY;
+var boardX, boardY;
+function game_mousemove(event) {
+    mouseX = event.pageX;
+    mouseY = event.pageY;
+    var boardOffset = $('#board').offset();
+    var mx = (mouseX - boardOffset.left - BW/2) / TR;
+    var my = (mouseY - boardOffset.top - BH/2) / TR;
+    var x = Math.round(mx/2 + my/2);
+    var y = Math.round(my/2 - mx/2);
+    if (x >= -MR && x <= MR && y >= -MR && y <= MR) {
+        boardX = x;
+        boardY = y;
+        if (!hack) {
             var eel = game.eel;
-            if (DEBUG && '[][]'[hackk].charCodeAt(0) == keyCode) {
-                hackk ++
-                if (hackk == 4) {
-                    hack = !hack;
-                    $('body').css('background', hack ? 'brown' : '');
-                    hackk = 0;
-                    if (!hack) {
-                        console.info(JSON.stringify(LEVELS[curlevel], 0, 2));
-                    }
-                }
-            } else 
+            var lx = boardX - eel[0];
+            var ly = boardY - eel[1];
+            if (Math.abs(lx) + Math.abs(ly) == 1 && canmoveeel(lx, ly))
+                $('#window').css('cursor', 'pointer');
+            else if (lx == 0 && ly == 0 && canshock())
+                $('#window').css('cursor', 'pointer');
+            else
+                $('#window').css('cursor', 'default');
+        } else
+            $('#window').css('cursor', 'default');
+    } else
+        boardX = boardY = null;
+}
+function window_click(event) {
+    if (busy)
+        return;
+    if (hack)
+        return;
+    var eel = game.eel;
+    if (boardX != null) {
+        var lx = boardX - eel[0];
+        var ly = boardY - eel[1];
+        if (Math.abs(lx) + Math.abs(ly) == 1) {
+            if (lx == -1)
+                do_q();
+            else if (ly == -1)
+                do_w();
+            else if (lx == 1)
+                do_s();
+            else if (ly == 1)
+                do_a();
+        } else if (lx == 0 && ly == 0)
+            do__();
+    }
+}
+function document_keyup(event) {
+    if (fadecallback)
+        fadecallback();
+    if (busy)
+        return;
+    var keyCode = event.keyCode || event.charCode;
+    if (keyCode == 27)
+        do_back();
+    else if (keyCode == 109 || keyCode == 77)
+        do_audio();
+    if (page == 'game') {
+        if (keyCode == 114 || keyCode == 82)
+            do_restart();
+        else if (keyCode == 110 || keyCode == 78)
+            do_next();
+    }
+}
+function document_keypress(event) {
+    if (busy)
+        return;
+    var keyCode = event.keyCode || event.charCode;
+    if (page == 'game') {
+        var eel = game.eel;
+        if (DEBUG && '[][]'[hackk].charCodeAt(0) == keyCode) {
+            hackk ++
+            if (hackk == 4) {
+                hack = !hack;
+                $('body').css('background', hack ? 'grey' : '');
                 hackk = 0;
-            if (hack) {
-                var boardOffset = svg.offset();
-                var mx = (mouseX - boardOffset.left - bw/2) / TR;
-                var my = (mouseY - boardOffset.top - bh/2) / TR;
-                var x = Math.round(mx/2 + my/2);
-                var y = Math.round(my/2 - mx/2);
-                if (x >= -MR && x <= MR && y >= -MR && y <= MR) {
-                    var tile = LEVELS[curlevel].map[MR+y][MR+x];
-                    function settile(c) {
-                        var s = LEVELS[curlevel].map[MR+y];
-                        LEVELS[curlevel].map[MR+y] = s.substr(0, MR+x) + c + s.substr(MR+x+1);
-                    }
-                    if (keyCode == 32) {
-                        settile(' ');
-                    } else if (keyCode == 49) {
-                        settile('1');
-                    } else if (keyCode == 50) {
-                        settile('2');
-                    } else if (keyCode == 51) {
-                        settile('3');
-                    } else if (keyCode == 52) {
-                        settile('4');
-                    } else if (keyCode == 112) {
-                        settile('p');
-                    } else if (keyCode == 48) {
-                        settile('0');
-                    } else if (keyCode == 114) {
-                        settile('*');
-                    } else if (keyCode == 101) {
-                        LEVELS[curlevel].eel = [x, y];
-                    } else if (keyCode == 108) {
-                        var lx = Math.abs(x - eel[eel.length-2]);
-                        var ly = Math.abs(y - eel[eel.length-1]);
-                        if (lx + ly == 1)
-                            LEVELS[curlevel].eel.push(x, y);
-                        else if (lx + ly == 0)
-                            LEVELS[curlevel].eel.splice(eel.length-2, 2);
-                    } else if (keyCode == 42) {
-                        solver(start(), drawsol, function(sol, hp) {
-                            if (sol == null)
-                                return;
-                            LEVELS[curlevel].hp = hp;
-                            reset();
-                            drawsol(sol);
-                        });
-                        return;
-                    }
-                    reset();
-                }
-            } else {
-                if (keyCode == 113 || keyCode == 81)
-                    do_q();
-                else if (keyCode == 119 || keyCode == 87)
-                    do_w();
-                else if (keyCode == 115 || keyCode == 83)
-                    do_s();
-                else if (keyCode == 97 || keyCode == 65)
-                    do_a();
-                else if (keyCode == 32)
-                    do_sp();
-                else if (DEBUG && keyCode == 43) {
-                    curlevel ++; reset();
-                } else if (DEBUG && keyCode == 45) {
-                    curlevel --; reset();
-                } else if (DEBUG && keyCode == 42) {
-                    solver(game, drawsol, drawsol);
+                if (!hack) {
+                    console.info(JSON.stringify(LEVELS[curlevel], 0, 2));
                 }
             }
-            updateconsole();
-        } else if (page == 'intro') {
-            if (keyCode == 32 || keyCode == 13) {
-                introplay();
-            }
-        } else if (page == 'menu') {
-        }
-    });
-    svg.click(function(event) {
-        if (busy)
-            return;
-        if (page == 'game') {
-            if (hack)
-                return;
-            var eel = game.eel;
-            var boardOffset = svg.offset();
-            var mx = (mouseX - boardOffset.left - bw/2) / TR;
-            var my = (mouseY - boardOffset.top - bh/2) / TR;
-            var x = Math.round(mx/2 + my/2);
-            var y = Math.round(my/2 - mx/2);
-            if (x >= -MR && x <= MR && y >= -MR && y <= MR) {
-                var lx = x - eel[0];
-                var ly = y - eel[1];
-                if (Math.abs(lx) + Math.abs(ly) == 1) {
-                    if (lx == -1)
-                        do_q();
-                    else if (ly == -1)
-                        do_w();
-                    else if (lx == 1)
-                        do_s();
-                    else if (ly == 1)
-                        do_a();
-                } else if (lx == 0 && ly == 0)
-                    do_sp();
-            }
-        }
-    });
-    $(document).keyup(function(event) {
-        if (fadecallback)
-            fadecallback();
-        if (busy)
-            return;
-        var keyCode = event.keyCode || event.charCode;
-        if (page == 'game') {
-            if (keyCode == 114 || keyCode == 82)
-                do_restart();
-            else if (keyCode == 109 || keyCode == 77)
-                do_audio();
-            else if (keyCode == 110 || keyCode == 78)
-                do_next();
-            else if (keyCode == 27)
-                gameback();
-        } else if (page == 'menu') {
-            if (keyCode == 27)
-                menuback();
-        }
-    });
-    $(document).click(function(event) {
-        if (fadecallback)
-            fadecallback();
-    });
-    hunger2.click(function(event) {
+        } else 
+            hackk = 0;
         if (hack) {
-            var offset = hunger2.offset();
-            var x = Math.round((event.pageX - offset.left - 5) / 25);
-            LEVELS[curlevel].hp = MAXHP - x;
-            reset();
+            if (boardX != null) {
+                var tile = LEVELS[curlevel].map[MR+boardY][MR+boardX];
+                function settile(c) {
+                    var s = LEVELS[curlevel].map[MR+boardY];
+                    LEVELS[curlevel].map[MR+boardY] = s.substr(0, MR+boardX) + c + s.substr(MR+boardX+1);
+                }
+                if (keyCode == 32) {
+                    settile(' ');
+                } else if (keyCode == 49) {
+                    settile('1');
+                } else if (keyCode == 50) {
+                    settile('2');
+                } else if (keyCode == 51) {
+                    settile('3');
+                } else if (keyCode == 52) {
+                    settile('4');
+                } else if (keyCode == 112) {
+                    settile('p');
+                } else if (keyCode == 48) {
+                    settile('0');
+                } else if (keyCode == 114) {
+                    settile('*');
+                } else if (keyCode == 101) {
+                    LEVELS[curlevel].eel = [boardX, boardY];
+                } else if (keyCode == 108) {
+                    var lx = Math.abs(boardX - eel[eel.length-2]);
+                    var ly = Math.abs(boardY - eel[eel.length-1]);
+                    if (lx + ly == 1)
+                        LEVELS[curlevel].eel.push(boardX, boardY);
+                    else if (lx + ly == 0)
+                        LEVELS[curlevel].eel.splice(eel.length-2, 2);
+                } else if (keyCode == 42) {
+                    solver(start(), drawsol, function(sol, hp) {
+                        if (sol == null)
+                            return;
+                        LEVELS[curlevel].hp = hp;
+                        reset();
+                        drawsol(sol);
+                    });
+                    return;
+                }
+                reset();
+            }
+        } else {
+            if (keyCode == 113 || keyCode == 81)
+                do_q();
+            else if (keyCode == 119 || keyCode == 87)
+                do_w();
+            else if (keyCode == 115 || keyCode == 83)
+                do_s();
+            else if (keyCode == 97 || keyCode == 65)
+                do_a();
+            else if (keyCode == 32)
+                do__();
+            else if (DEBUG && keyCode == 43) {
+                curlevel ++; reset();
+            } else if (DEBUG && keyCode == 45) {
+                curlevel --; reset();
+            } else if (DEBUG && keyCode == 42) {
+                solver(game, drawsol, drawsol);
+            }
         }
-    });
-    qkey.click(do_q);
-    wkey.click(do_w);
-    skey.click(do_s);
-    akey.click(do_a);
-    spkey.click(do_sp);
+        updateconsole();
+    } else if (page == 'intro') {
+        if (keyCode == 32 || keyCode == 13) {
+            do_play();
+        }
+    } else if (page == 'menu') {
+    }
+}
+function hunger_click(event) {
+    if (hack) {
+        var offset = $('#hunger2').offset();
+        var x = Math.round((event.pageX - offset.left - 5) / 25);
+        LEVELS[curlevel].hp = MAXHP - x;
+        reset();
+    }
+}
 
-    window.introplay = function() {
-        if (page == 'intro') {
-            $('#intro').addClass('left');
-            $('#menu').removeClass('left right');
-            page = 'menu';
-            updatelevelbuttons();
-            busy = true;
-            setTimeout(function() { busy = false; }, 800);
-        }
-    };
-    window.menuback = function() {
-        if (page == 'menu') {
-            $('#menu').addClass('right');
-            $('#intro').removeClass('left right');
-            page = 'intro';
-            busy = true;
-            setTimeout(function() { busy = false; }, 800);
-        }
-    };
-    window.fadeto = fadeto;
-    window.unfade = unfade;
-    window.solverhp = function(starthp) {
-        solver(game, drawsol, drawsol, starthp);
-    };
+function loaded() {
+    busy = false;
+    $(document)
+        .keyup(document_keyup)
+        .keypress(document_keypress)
+        .click(function(event) {
+            if (fadecallback)
+                fadecallback();
+        });
+    $('#introplay > a').click(do_play);
+    $('#menuback > a, #quitgroup, #vquitgroup, #dquitgroup').click(do_back);
+    $('#restartgroup, #vrestartgroup, #drestartgroup').click(do_restart);
+    $('#vnextgroup').click(do_next);
+    $('#game .page').mousemove(game_mousemove);
+    $('#window').click(window_click);
+    ['q', 'w', 'a', 's', '_'].forEach(function(k) {
+        $('#'+k+'key').click(window['do_'+k]);
+    });
+    setimg($('#hunger1'), 'hunger1');
+    setimg($('#hunger2'), 'hunger2');
+    setimg($('#mkey'), 'console-m');
+    setimg($('#vnkey'), 'console-n');
+    setimg($('#vrkey, #drkey'), 'console-r2');
+    setimg($('#vesckey, #desckey'), 'console-esc');
+    $('#hunger2').click(hunger_click);
+    $('#audiooverlay').show();
+    $('#audiogroup').click(do_audio);
+    updateaudio();
+    $('#fadecircle')
+        .attr('cx', $(window).width()/2)
+        .attr('cy', $(window).height()/2);
+    
+    $('#window, #board_outer')
+        .css('width', BW-2)
+        .css('height', BH-2)
+        .css('left', 1)
+        .css('top', 1);
+    $('#border')
+        .css('width', BW)
+        .css('height', BH);
+    $('#console')
+        .css('width', BW)
+        .css('top', BH);
+    $('#border').attr('src', 'svg/border1.svg');
+}
+
+$(document).ready(function() {
+    $(document).on('dragstart', function(e) { e.preventDefault(); });
+    load_cookie();
+    $('#menu > .page, #game > .page').css({
+        'left': 800,
+        'opacity': 0
+    });
+    var food = ['starfish1', 'guppy1', 'catfish1', 'piranha1', 'stingray1'];
+    var imgs = [];
+    food.forEach(function(food) {
+        imgs.push(food + 'a');
+    });
+    preloadsvg(imgs, function() {
+        imgs = [];
+        imgs.push('border1', 'hunger1', 'hunger2', 'plant1', 'shock1', 'console-esc', 'console-n', 'console-m', 'audio-on', 'audio-off');
+        food.forEach(function(food) {
+            imgs.push(food + 'a', food + 'b');
+        });
+        ['q', 'w', 'a', 's', '_', 'r'].forEach(function(key) {
+            imgs.push('console-' + key + '1', 'console-' + key + '2');
+        });
+        ['eel1'].forEach(function(eel) {
+            ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'].forEach(function(l) {
+                imgs.push(eel + l);
+            });
+        });
+        ['rock1'].forEach(function(rock) {
+            ['a', 'b', 'c', 'd', 'e', 'f'].forEach(function(l) {
+                imgs.push(rock + l);
+            });
+        });
+        ['1', '2', '3', '4'].forEach(function(n) {
+            imgs.push('number' + n);
+        });
+        TweenLite.to('#introstar', 1, {
+            'opacity': 1,
+            ease: Power0.easeNone
+        });
+        arrive_intro();
+        preloadsvg(imgs, function() {
+            var sounds = ['drop', 'move','shock', 'eat', 'star', 'victory', 'defeat'];
+            preloadaudio(sounds, function() {
+                loaded();
+                TweenLite.to($('#introplay').show(), 1, {
+                    'opacity': 1,
+                    ease: Power0.easeNone
+                });
+            });
+        });
+    });
 });
