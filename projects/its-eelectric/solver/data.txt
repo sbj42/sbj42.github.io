@@ -1,0 +1,33 @@
+Level	Eel Length	Food Count	Spaces	HP Given	HP Needed	Steps	Solution Count
+Brave New Eel	3	1	26	20	12	405	6
+The Eel Also Rises	3	3	23	11	8	837	2
+The Call of the Eel	3	3	13	14	10	5162	1
+Eel Farm	5	6	30	11	10	35207	661
+Eel in Wonderland	3	4	19	14	14	366672	17
+The Eel and the Fury	9	6	22	13	11	2418	6
+The Eel's Guide to the Galaxy	3	5	27	20	13	373	1
+One Flew over the Eel's Nest	5	7	32	9	6	1817	3
+A Clockwork Eel	6	4	19	20	19	13940	6
+The Eel of Monte Cristo	6	4	25	18	14	27801	39
+The Hunt for Red Eel	3	9	23	11	11	8395	13
+A Midsummer Night's Eel	3	9	13	8	5	149	4
+Interview With the Eel	7	8	15	11	7	4241	63
+Eel in a Strange Land	3	13	28	9	7	11436	47
+Eel 451	5	7	21	15	12	35704	2
+The Eels of Narnia	4	9	21	14	10	1406	4
+All the King's Eels	7	13	36	18	15	30217	3
+Eel of Darkness	9	15	36	17	15	65059	6
+The War of the Eels	5	11	21	11	7	112507	3
+The Call of the Eel	3	12	30	12	12	511476	52
+Midnight's Eels	3	12	30	15	11	4555466	6
+Twenty Thousand Eels Under the Sea	3	10	22	14	11	5036	1
+The Scarlet Eel	3	9	24	11	9	201179	10
+The Eel Machine	4	9	20	13	9	7323	6
+The Time Traveler's Eel	5	8	25	19	16	9201	4
+Lord of the Eels	4	8	24	17	15	130236	231
+Eel and Punishment	4	8	25	20	17	86585	18
+The Eel Masters	4	9	25	16	14	9177	2
+Bonfire of the Eels	6	9	19	10	6	604	1
+To Kill an Eel	5	8	27	12	10	81865	1
+Eel and Prejudice	5	9	32	14	12	82448	4
+Memoirs of an Eel	5	12	39	16	12	615135	4
