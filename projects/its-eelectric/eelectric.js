@@ -215,6 +215,7 @@ var LEVELS = [
         // ssaaqwwwwwsaasa*sw (19)
     },
 
+    // SOLVERSTART
     {
         "id": "G brave",
         "name": "Brave New Eel",
@@ -310,29 +311,6 @@ var LEVELS = [
         // qqaass*aqqwqw*wqaqaasasasws (11**)
     },
     {
-        "id": "G wonderland",
-        "name": "Eel in Wonderland",
-        "map": [
-            "*************",
-            "*************",
-            "*************",
-            "*****   *****",
-            "***** 1 0****",
-            "*****   2**p*",
-            "**p**3   ****",
-            "*****0 1 ****",
-            "******   ****",
-            "*************",
-            "***p*********",
-            "*************",
-            "*************"
-        ],
-        "eel": [-1,-3,0,-3,1,-3],
-        "hp": 14
-        // aas*a*qwwssaas*wqaa (14)
-        // aasa*s*aqqwwwsasws*a (14**)
-    },
-    {
         "id": "G fury",
         "name": "The Eel and the Fury",
         "map": [
@@ -401,7 +379,53 @@ var LEVELS = [
         // ss*wqq*w*s*ww*saaqqq (6)
         // qws*ww*qaass*www*ssaqaa (9**)
     },
+    {
+        "id": "G midsummer",
+        "name": "A Midsummer Night's Eel",
+        "map": [
+            "*************",
+            "*************",
+            "******ppp****",
+            "*************",
+            "*************",
+            "*****2130****",
+            "**p**131 ****",
+            "**p**312 ****",
+            "**p**0   ****",
+            "*************",
+            "*************",
+            "*************",
+            "*************"
+        ],
+        "eel": [2,1,2,2,1,2],
+        "hp": 8
+        // w*q*a*q*w*q*asww*qasws (5)
+        // w*q*a*q*w*q*aaswww*qassswq (8**)
+    },
 
+    {
+        "id": "C narnia",
+        "name": "The Eels of Narnia",
+        "map": [
+            "*************",
+            "*************",
+            "*************",
+            "*************",
+            "****    0****",
+            "****  2p ****",
+            "****21 32****",
+            "***  p1 3****",
+            "***0  2 1****",
+            "*************",
+            "*************",
+            "*************",
+            "*************"
+        ],
+        "eel": [-2,-1,-2,-2,-1,-2,0,-2],
+        "hp": 14
+        // s*as*asa*qqqwwwssa*sa*as*ww (10)
+        // s*as*asa*q*qqqwswsssa*as*wwwwqqa (14**)
+    },
     {
         "id": "C clockwork",
         "name": "A Clockwork Eel",
@@ -472,27 +496,27 @@ var LEVELS = [
         // aa*a*s*wswqqa*qqa*swwqaaq*qws*w (13**)
     },
     {
-        "id": "C midsummer",
-        "name": "A Midsummer Night's Eel",
+        "id": "C bonfire",
+        "name": "Bonfire of the Eels",
         "map": [
             "*************",
             "*************",
-            "******ppp****",
             "*************",
             "*************",
-            "*****2130****",
-            "**p**131 ****",
-            "**p**312 ****",
-            "**p**0   ****",
-            "*************",
+            "***** 3 p****",
+            "****0313 ****",
+            "**** 1 1 ****",
+            "**** 313 ****",
+            "****     ****",
+            "*****0 ******",
             "*************",
             "*************",
             "*************"
         ],
-        "eel": [2,1,2,2,1,2],
-        "hp": 8
-        // w*q*a*q*w*q*asww*qasws (5)
-        // w*q*a*q*w*q*aaswww*qassswq (8**)
+        "eel": [-2,2,-1,2,0,2,1,2,2,2,2,1],
+        "hp": 10
+        // ww*s*asw*s*aaqqwwwsas*ww*q (6)
+        // ww*s*asw*s*aaqaqwqwwwssas*ww*q (10**)
     },
     {
         "id": "C interview",
@@ -563,30 +587,30 @@ var LEVELS = [
         // aasaas*w*wqqaassswws*aaqq*a (12)
         // aasaas*s*wq*wqqaassss*wwwqqaaaa (15**)
     },
+
     {
-        "id": "C narnia",
-        "name": "The Eels of Narnia",
+        "id": "P thousand",
+        "name": "Twenty Thousand Eels Under the Sea",
         "map": [
             "*************",
             "*************",
             "*************",
-            "*************",
-            "****    0****",
-            "****  2p ****",
-            "****21 32****",
-            "***  p1 3****",
-            "***0  2 1****",
-            "*************",
+            "******ppp****",
+            "****0 1  p***",
+            "**** 23  p***",
+            "***p13 31p***",
+            "***p  42 ****",
+            "***p  1 0****",
+            "****ppp******",
             "*************",
             "*************",
             "*************"
         ],
-        "eel": [-2,-1,-2,-2,-1,-2,0,-2],
+        "eel": [-1,1,-1,2,-2,2],
         "hp": 14
-        // s*as*asa*qqqwwwssa*sa*as*ww (10)
-        // s*as*asa*q*qqqwswsssa*as*wwwwqqa (14**)
+        // q*w*sa*as*wwq*w*sss*a*q*aqwww (11)
+        // q*w*sa*as*wwq*w*sss*aa*aqwwqqqwwss (14**)
     },
-
     {
         "id": "P kings",
         "name": "All the King's Eels",
@@ -637,119 +661,27 @@ var LEVELS = [
         //*wswww*qqqqqa*qaaasssaq*a*qwqwqwswssswwqwsssaasswq*w*wqq (17**)
     },
     {
-        "id": "P war",
-        "name": "The War of the Eels",
-        "map": [
-            "*************",
-            "*************",
-            "*************",
-            "*****0 31****",
-            "***** 24  ***",
-            "*****1122 ***",
-            "**p**     ***",
-            "*p***1 1p****",
-            "*p***2 p*****",
-            "**p**0 ******",
-            "*************",
-            "*************",
-            "*************"
-        ],
-        "eel": [2,0,3,0,3,-1,3,-2,2,-2],
-        "hp": 11
-        // qqq*assws*wqq*aaa*qwwwwsas*ws*w*q (7)
-        // qqq*assws*wqq*aaa*aqwwwwwwsaas*ws*w*q (11**)
-    },
-    {
-        "id": "P call",
-        "name": "The Call of the Eel",
+        "id": "P masters",
+        "name": "The Eel Masters",
         "map": [
             "*************",
             "*******p*****",
-            "******* *****",
-            "******* *****",
-            "****p    ****",
-            "***p133    p*",
-            "*** 3 13 ****",
-            "***03  3 ****",
-            "*** 1331p****",
-            "***p 0 p*****",
             "*************",
             "*************",
+            "***** 10  ***",
+            "****  4   ***",
+            "*** 141410***",
+            "***   4  ****",
+            "***   1 *****",
+            "*************",
+            "*************",
+            "*****p*******",
             "*************"
         ],
-        "eel": [0,1,-1,1,-1,0],
-        "hp": 12
-        // *w*qas*aqww*qaaswwsa*a*swwqq*q*wss (12)
-        // *w*qas*aaqwww*qqasaswwsa*a*swwqq*q*wss (16**)
-    },
-    {
-        "id": "P midnight",
-        "name": "Midnight's Eels",
-        "map": [
-            "*************",
-            "*************",
-            "******  *****",
-            "******1 *****",
-            "*****p2 *****",
-            "****p1    0**",
-            "** 123 321 **",
-            "**     1p****",
-            "***** 2p*****",
-            "***** 1******",
-            "*****0 ******",
-            "*************",
-            "*************"
-        ],
-        "eel": [0,0,0,1,-1,1],
-        "hp": 15
-        // *ws*aaqqaa*swqwqq*w*sswssww*qasass*a*q (11)
-        // *ws*aaqqaa*aswwqwqq*w*sswsss*s*aswqqaqwwq*w (15**)
-    },
-    {
-        "id": "S thousand",
-        "name": "Twenty Thousand Eels Under the Sea",
-        "map": [
-            "*************",
-            "*************",
-            "*************",
-            "******ppp****",
-            "****0 1  p***",
-            "**** 23  p***",
-            "***p13 31p***",
-            "***p  42 ****",
-            "***p  1 0****",
-            "****ppp******",
-            "*************",
-            "*************",
-            "*************"
-        ],
-        "eel": [-1,1,-1,2,-2,2],
-        "hp": 14
-        // q*w*sa*as*wwq*w*sss*a*q*aqwww (11)
-        // q*w*sa*as*wwq*w*sss*aa*aqwwqqqwwss (14**)
-    },
-    {
-        "id": "P scarlet",
-        "name": "The Scarlet Eel",
-        "map": [
-            "*************",
-            "*************",
-            "*************",
-            "******12*****",
-            "*****0 1 ****",
-            "****21  0p***",
-            "*** 1  1 p***",
-            "***   12 ****",
-            "****    *****",
-            "*****pp******",
-            "*************",
-            "*************",
-            "*************"
-        ],
-        "eel": [-2,1,-3,1,-3,0],
-        "hp": 11
-        // sws*wqaq*wsss*aqa*swwwq*w*s (9)
-        // *wss*ws*aqa*swswqwq*w*saqqa*q (11**)
+        "eel": [-2,2,-3,2,-3,1,-2,1],
+        "hp": 16
+        // swq*w*w*saaas*wwqw*w*sass*a*q (14)
+        // swq*wwsw*s*s*aq*aq*a*sasww*wssaq (16**)
     },
     {
         "id": "P machine",
@@ -793,7 +725,100 @@ var LEVELS = [
             "*************"
         ],
         "eel": [0,2,1,2,2,2,2,1,2,0],
+        "hp": 19
+    },
+    {
+        "id": "P war",
+        "name": "The War of the Eels",
+        "map": [
+            "*************",
+            "*************",
+            "*************",
+            "*****0 31****",
+            "***** 24  ***",
+            "*****1122 ***",
+            "**p**     ***",
+            "*p***1 1p****",
+            "*p***2 p*****",
+            "**p**0 ******",
+            "*************",
+            "*************",
+            "*************"
+        ],
+        "eel": [2,0,3,0,3,-1,3,-2,2,-2],
+        "hp": 11
+        // qqq*assws*wqq*aaa*qwwwwsas*ws*w*q (7)
+        // qqq*assws*wqq*aaa*aqwwwwwwsaas*ws*w*q (11**)
+    },
+    {
+        "id": "P wonderland",
+        "name": "Eel in Wonderland",
+        "map": [
+            "*************",
+            "*************",
+            "*************",
+            "*****   *****",
+            "***** 1 0****",
+            "*****   2**p*",
+            "**p**3   ****",
+            "*****0 1 ****",
+            "******   ****",
+            "*************",
+            "***p*********",
+            "*************",
+            "*************"
+        ],
+        "eel": [-1,-3,0,-3,1,-3],
         "hp": 14
+        // aas*a*qwwssaas*wqaa (14)
+        // aasa*s*aqqwwwsasws*a (14**)
+    },
+
+    {
+        "id": "S call",
+        "name": "The Call of the Eel",
+        "map": [
+            "*************",
+            "*******p*****",
+            "******* *****",
+            "******* *****",
+            "****p    ****",
+            "***p133    p*",
+            "*** 3 13 ****",
+            "***03  3 ****",
+            "*** 1331p****",
+            "***p 0 p*****",
+            "*************",
+            "*************",
+            "*************"
+        ],
+        "eel": [0,1,-1,1,-1,0],
+        "hp": 12
+        // *w*qas*aqww*qaaswwsa*a*swwqq*q*wss (12)
+        // *w*qas*aaqwww*qqasaswwsa*a*swwqq*q*wss (16**)
+    },
+    {
+        "id": "S scarlet",
+        "name": "The Scarlet Eel",
+        "map": [
+            "*************",
+            "*************",
+            "*************",
+            "******12*****",
+            "*****0 1 ****",
+            "****21  0p***",
+            "*** 1  1 p***",
+            "***   12 ****",
+            "****    *****",
+            "*****pp******",
+            "*************",
+            "*************",
+            "*************"
+        ],
+        "eel": [-2,1,-3,1,-3,0],
+        "hp": 11
+        // sws*wqaq*wsss*aqa*swwwq*w*s (9)
+        // *wss*ws*aqa*swswqwq*w*saqqa*q (11**)
     },
 
     {
@@ -841,52 +866,6 @@ var LEVELS = [
         "hp": 20
         // wss*sa*q*q*qa*sswssw*ws*saq*a (17)
         // wss*sa*q*q*qa*sswwswsaa*as*ws*wq (20**)
-    },
-    {
-        "id": "S masters",
-        "name": "The Eel Masters",
-        "map": [
-            "*************",
-            "*******p*****",
-            "*************",
-            "*************",
-            "***** 10  ***",
-            "****  4   ***",
-            "*** 141410***",
-            "***   4  ****",
-            "***   1 *****",
-            "*************",
-            "*************",
-            "*****p*******",
-            "*************"
-        ],
-        "eel": [-2,2,-3,2,-3,1,-2,1],
-        "hp": 16
-        // swq*w*w*saaas*wwqw*w*sass*a*q (14)
-        // swq*wwsw*s*s*aq*aq*a*sasww*wssaq (16**)
-    },
-    {
-        "id": "S bonfire",
-        "name": "Bonfire of the Eels",
-        "map": [
-            "*************",
-            "*************",
-            "*************",
-            "*************",
-            "***** 3 p****",
-            "****0313 ****",
-            "**** 1 1 ****",
-            "**** 313 ****",
-            "****     ****",
-            "*****0 ******",
-            "*************",
-            "*************",
-            "*************"
-        ],
-        "eel": [-2,2,-1,2,0,2,1,2,2,2,2,1],
-        "hp": 10
-        // ww*s*asw*s*aaqqwwwsas*ww*q (6)
-        // ww*s*asw*s*aaqaqwqwwwssas*ww*q (10**)
     },
     {
         "id": "S kill",
@@ -956,7 +935,31 @@ var LEVELS = [
         "hp": 16
         // swssw*qqqwwssss*w*qqq*aa*swwwwss*aassw*qqqqq (12)
         // swssw*qqqwqwsssss*w*qqq*aa*swwwwss*aassw*qqqqwqa (16**)
+    },
+    {
+        "id": "S midnight",
+        "name": "Midnight's Eels",
+        "map": [
+            "*************",
+            "*************",
+            "******  *****",
+            "******1 *****",
+            "*****p2 *****",
+            "****p1    0**",
+            "** 123 321 **",
+            "**     1p****",
+            "***** 2p*****",
+            "***** 1******",
+            "*****0 ******",
+            "*************",
+            "*************"
+        ],
+        "eel": [0,0,0,1,-1,1],
+        "hp": 15
+        // *ws*aaqqaa*swqwqq*w*sswssww*qasass*a*q (11)
+        // *ws*aaqqaa*aswwqwqq*w*sswsss*s*aswqqaqwwq*w (15**)
     }
+    // SOLVEREND
 ];
 
 var curlevel = null;
@@ -1266,9 +1269,9 @@ function solver(game, callback1, callback2) {
                 var game2 = game_clone(game);
                 if (game_shock(game2)) {
                     if (!game_over(game2))
-                        todo.push([sofar + '*', game2]);
+                        todo.push([sofar + '_', game2]);
                     else if (game2.hp <= 0 && hp - game2.hp < MAXHP)
-                        failures.push([sofar + '*', game2]);
+                        failures.push([sofar + '_', game2]);
                 }
             }
             if (game_canmove(game, -1, 0)) {
@@ -1477,7 +1480,7 @@ function arrive_intro() {
         } else {
             fish.img.css('left', BW - TR).css('transform', 'scaleX(-1)');
         }
-        var t = 10 + Math.random()*3;
+        var t = 9 + Math.random()*6;
         $('#intro .page').append(fish.img);
         TweenLite.to(fish.img, t, {
             'left': dy == 1 ? (BW - TR) : 0,
@@ -2153,7 +2156,7 @@ function drawsol(sol) {
             nx += TR; ny += TR;
         } else if (sol[i] == 'a') {
             nx -= TR; ny += TR;
-        } else if (sol[i] == '*') {
+        } else if (sol[i] == '_') {
             var c = $(svg('circle'))
                 .attr('cx', x)
                 .attr('cy', y)

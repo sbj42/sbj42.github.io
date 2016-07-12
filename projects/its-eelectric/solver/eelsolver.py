@@ -139,7 +139,10 @@ def solve(game):
     game = game.clone()
     hp = 1
     todo = collections.deque()
-    solutions = []
+    hp0 = None
+    steps0 = None
+    solutions0 = []
+    solutions2 = []
     failures = collections.deque()
     steps = 0
     def step():
@@ -164,8 +167,10 @@ def solve(game):
             game2 = game.clone()
             game2.move(-1, 0)
             n = (sofar + 'q', game2)
-            if game2.food == 0:
-                solutions.append(n[0])
+            if game2.food == 0 and game2.stars == 0:
+                solutions2.append(n[0])
+            elif game2.food == 0 and not hp0:
+                solutions0.append(n[0])
             elif not game2.over():
                 todo.append(n)
             elif game2.hp <= 0 and hp - game2.hp < MAXHP:
@@ -174,8 +179,10 @@ def solve(game):
             game2 = game.clone()
             game2.move(0, -1)
             n = (sofar + 'w', game2)
-            if game2.food == 0:
-                solutions.append(n[0])
+            if game2.food == 0 and game2.stars == 0:
+                solutions2.append(n[0])
+            elif game2.food == 0 and not hp0:
+                solutions0.append(n[0])
             elif not game2.over():
                 todo.append(n)
             elif game2.hp <= 0 and hp - game2.hp < MAXHP:
@@ -184,8 +191,10 @@ def solve(game):
             game2 = game.clone()
             game2.move(1, 0)
             n = (sofar + 's', game2)
-            if game2.food == 0:
-                solutions.append(n[0])
+            if game2.food == 0 and game2.stars == 0:
+                solutions2.append(n[0])
+            elif game2.food == 0 and not hp0:
+                solutions0.append(n[0])
             elif not game2.over():
                 todo.append(n)
             elif game2.hp <= 0 and hp - game2.hp < MAXHP:
@@ -194,8 +203,10 @@ def solve(game):
             game2 = game.clone()
             game2.move(0, 1)
             n = (sofar + 'a', game2)
-            if game2.food == 0:
-                solutions.append(n[0])
+            if game2.food == 0 and game2.stars == 0:
+                solutions2.append(n[0])
+            elif game2.food == 0 and not hp0:
+                solutions0.append(n[0])
             elif not game2.over():
                 todo.append(n)
             elif game2.hp <= 0 and hp - game2.hp < MAXHP:
@@ -206,8 +217,11 @@ def solve(game):
         print('  trying hp %d' % hp)
         while todo:
             step()
-        if solutions:
-            return (hp, solutions, steps)
+        if not hp0 and solutions0:
+            hp0 = hp
+            steps0 = steps
+        if solutions2:
+            return (hp0, solutions0, steps0, hp, solutions2, steps)
         todo = failures
         failures = collections.deque()
         for t in todo:
@@ -218,7 +232,7 @@ def solve(game):
     return None
 
 with open('data.txt', 'w') as o:
-    print('Level\tEel Length\tFood Count\tSpaces\tHP Given\tHP Needed\tSteps\tSolution Count', file=o)
+    print('Level\tEel Length\tFood Count\tSpaces\tHP Given\tHP Needed (0)\tSteps (0)\tSolution Count (0)\tHP Needed (2)\tSteps (2)\tSolution Count (2)', file=o)
     for l in LEVELS:
         g = Game(l)
         print(g.name)
@@ -227,10 +241,15 @@ with open('data.txt', 'w') as o:
         print('  spaces    : %d' % g.d_emptyc())
         print('  hp given  : %d' % g.hp)
         sol = solve(g)
-        print('  hp needed : %d' % sol[0])
-        print('  steps : %d' % sol[2])
-        print('  solutions : %d' % len(sol[1]))
+        print('  hp needed (0) : %d' % sol[0])
+        print('  steps     (0) : %d' % sol[2])
+        print('  solutions (0) : %d' % len(sol[1]))
         for s in sol[1]:
             print('    ... ' + s)
-        print('%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d' % (g.name, g.d_length(), g.food, g.d_emptyc(), g.hp, sol[0], sol[2], len(sol[1])), file=o)
+        print('  hp needed (2) : %d' % sol[3])
+        print('  steps     (2) : %d' % sol[5])
+        print('  solutions (2) : %d' % len(sol[4]))
+        for s in sol[4]:
+            print('    ... ' + s)
+        print('%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d' % (g.name, g.d_length(), g.food, g.d_emptyc(), g.hp, sol[0], sol[2], len(sol[1]), sol[3], sol[5], len(sol[4])), file=o)
         o.flush()
