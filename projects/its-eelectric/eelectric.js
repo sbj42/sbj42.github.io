@@ -31,7 +31,7 @@ var MOVEHP = 1;
 var SHOCKHP = 3;
 var MAXHP = 20;
 
-var DEBUG = false;
+var DEBUG = true;
 
 var STARTTIME = new Date().getTime();
 
@@ -1699,7 +1699,7 @@ function updateaudio() {
 }
 
 var game;
-function reset() {
+function reset(bynext) {
     cancel_solver();
     var board = $('#board');
     if (game && game.over) {
@@ -1719,10 +1719,13 @@ function reset() {
             else {
                 game.over = false;
                 updateconsole();
+                if (bynext)
+                    maybe_tutorial();
             }
         }
         zoom();
-    }
+    } else if (bynext)
+        maybe_tutorial();
     $('#victory, #defeat').hide();
     $('.gameoption').show();
     board.empty();
@@ -1806,11 +1809,7 @@ function reset() {
     updateconsole();
 }
 
-var curlevel = null;
-function incoming_game() {
-    reset();
-}
-function arrive_game() {
+function maybe_tutorial() {
     if (curlevel == 0)
         tutorial1();
     if (curlevel == 1)
@@ -1821,6 +1820,14 @@ function arrive_game() {
         tutorial4();
     if (curlevel == 4)
         tutorial5();
+}
+
+var curlevel = null;
+function incoming_game() {
+    reset();
+}
+function arrive_game() {
+    maybe_tutorial();
 }
 
 function moveeel(dx, dy) {
