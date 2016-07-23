@@ -1,57 +1,12 @@
 /**
- * @file mu music theory library
+ * @file mu theory library
  * @author James Clark
  * @version 0.1.1
  */
 ;(function() {
 
-    /** polyfill for Number.isFinite (from MDN) */
-    var _isFinite = Number.isFinite || function(value) {
-        return typeof value === 'number' && isFinite(value);
-    };
-    /** polyfill for Number.isInteger (from MDN) */
-    var _isInteger = Number.isInteger || function(value) {
-        return _isFinite(value) && Math.floor(value) === value;
-    };
-    /** polyfill for Math.log2 (from MDN) */
-    var _log2 = Math.log2 || function(value) {
-        return Math.log(value) / Math.LN2;
-    };
-    /** polyfill for Array.isArray (from MDN) */
-    var _isArray = Array.isArray || function(arg) {
-        return Object.prototype.toString.call(arg) === '[object Array]';
-    };
-    /** polyfill for Array.prototype.forEach (simplified) */
-    var _arrayForEach = function(array, callback, thisArg) {
-        if (array.forEach)
-            return array.forEach(callback, thisArg);
-        for (var i = 0; i < array.length; i ++)
-            callback.call(thisArg, array[i], i, array);
-    };
-    /** polyfill for Array.prototype.map (simplified) */
-    var _map = function(array, callback, thisArg) {
-        if (array.map)
-            return array.map(callback, thisArg);
-        var ret;
-        for (var i = 0; i < array.length; i ++)
-            ret.push(callback.call(thisArg, array[i], i, array));
-        return ret;
-    };
-
-    /** utility to check for interface violations and runtime invariants */
-    function _assert(pred, message) {
-        if (!pred)
-            throw Error(message || 'assertion failed');
-    }
-
-    /** the global object */
-    var global = Function('return this')();
-
-    /**
-     * The mu library namespace object
-     * @namespace mu
-     */
-    var mu = global.mu = global.mu || {};
+    if (!mu)
+        throw Error('missing mu util library');
 
     /**
      * The unicode symbol `MUSIC FLAT SIGN`
@@ -88,7 +43,7 @@
     mu.Frequency = function(hertz) {
         if (!(this instanceof mu.Frequency))
             return new mu.Frequency(hertz);
-        _assert(_isFinite(hertz) && hertz > 0,
+        mu._assert(mu._isFinite(hertz) && hertz > 0,
                 'invalid frequency ' + hertz + ' hertz');
         this._hertz = hertz;
     };
@@ -119,7 +74,7 @@
      * @memberof mu.Frequency
      */
     mu.Frequency.prototype.multiply = function(factor) {
-        _assert(_isFinite(factor) && factor > 0,
+        mu._assert(mu._isFinite(factor) && factor > 0,
                 'invalid factor ' + factor);
         return mu.Frequency(this._hertz * factor);
     };
@@ -167,11 +122,11 @@
     mu.Pitch = function(octave, index) {
         if (!(this instanceof mu.Pitch))
             return new mu.Pitch(octave, index);
-        _assert(_isInteger(octave),
+        mu._assert(mu._isInteger(octave),
                 'invalid octave ' + octave);
-        _assert(octave >= 0 && octave <= 10,
+        mu._assert(octave >= 0 && octave <= 10,
                 'inaudible octave ' + octave);
-        _assert(_isInteger(index) && index >= 0 && index < 12,
+        mu._assert(mu._isInteger(index) && index >= 0 && index < 12,
                 'invalid pitch index ' + index);
         this._octave = octave;
         this._index = index;
@@ -268,11 +223,11 @@
      * @memberof mu.Pitch
      */
     mu.Pitch.prototype.transpose = function(semitones) {
-        _assert(_isInteger(semitones),
+        mu._assert(mu._isInteger(semitones),
                 'invalid semitone count ' + semitones);
         var ii = this._num() + semitones;
         var octave = Math.floor(ii / 12);
-        _assert(octave >= 0 && octave <= 10,
+        mu._assert(octave >= 0 && octave <= 10,
                 'inaudible octave ' + octave);
         var index = ii - octave * 12;
         return mu.Pitch(octave, index);
@@ -291,7 +246,7 @@
      * @memberof mu.Pitch
      */
     mu.Pitch.prototype.sharper = function(interval) {
-        _assert(interval instanceof mu.Interval,
+        mu._assert(interval instanceof mu.Interval,
                 'invalid interval ' + interval);
         return this.transpose(interval.semitones());
     };
@@ -309,7 +264,7 @@
      * @memberof mu.Pitch
      */
     mu.Pitch.prototype.flatter = function(interval) {
-        _assert(interval instanceof mu.Interval,
+        mu._assert(interval instanceof mu.Interval,
                 'invalid interval ' + interval);
         return this.transpose(-interval.semitones());
     };
@@ -339,7 +294,7 @@
      * @memberof mu.Pitch
      */
     mu.Pitch.prototype.subtract = function(other) {
-        _assert(other instanceof mu.Pitch,
+        mu._assert(other instanceof mu.Pitch,
                 'invalid pitch ' + other);
         return this._num() - other._num();
     };
@@ -394,9 +349,9 @@
     mu.Interval = function(semitones) {
         if (!(this instanceof mu.Interval))
             return new mu.Interval(semitones);
-        _assert(_isInteger(semitones),
+        mu._assert(mu._isInteger(semitones),
                 'invalid semitone count ' + semitones);
-        _assert(semitones >= 0 && semitones <= mu.Interval._MAX,
+        mu._assert(semitones >= 0 && semitones <= mu.Interval._MAX,
                 'inaudible semitone count ' + semitones);
         this._semitones = semitones;
     }
@@ -451,10 +406,10 @@
             C.prototype = mu.Chord.prototype;
             return new C(arguments);
         }
-        _assert(arguments.length >= 3,
+        mu._assert(arguments.length >= 3,
                 'not enough pitches (' + arguments.length + '), must have at least 3');
-        _arrayForEach(arguments, function(pitch) {
-            _assert(pitch instanceof mu.Pitch,
+        mu._argsToArray(arguments).forEach(function(pitch) {
+            mu._assert(pitch instanceof mu.Pitch,
                     'invalid pitch ' + pitch);
         });
         this._pitches = Array.prototype.slice.call(arguments);
@@ -495,7 +450,7 @@
      * @memberof mu.Chord
      */
     mu.Chord.prototype.transpose = function(semitones) {
-        return mu.Chord.apply(null, _map(this._pitches, function(pitch) {
+        return mu.Chord.apply(null, this._pitches.map(function(pitch) {
             return pitch.transpose(semitones);
         }));
     };
@@ -511,7 +466,7 @@
      */
     mu.Chord.prototype.toString = function() {
         var ret = [];
-        _arrayForEach(this._pitches, function(pitch) {
+        this._pitches.forEach(function(pitch) {
             ret.push(pitch.toString());
         });
         return ret.join(' ');
@@ -526,7 +481,7 @@
     mu.Key = function(tonic) {
         if (!(this instanceof mu.Key))
             return new mu.Key(tonic);
-        _assert(tonic instanceof mu.Pitch,
+        mu._assert(tonic instanceof mu.Pitch,
                 'invalid tonic pitch ' + tonic);
         this._tonic = tonic;
     };

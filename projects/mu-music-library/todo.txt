@@ -11,3 +11,4 @@ display - keyboard/guitar/sheet-music/constellation/names/waveform
     7 octaves + 1 note, so ~45.1" wide overall    
 piece running that can coordinate with display and player
 connector between display and player
+volume selection in player

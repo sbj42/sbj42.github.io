@@ -1,46 +1,14 @@
 /**
- * @file mu audio sequencer library
+ * @file mu player library
  * @author James Clark
  * @version 0.1.1
  */
 ;(function() {
 
-    /** polyfill for Number.isFinite (from MDN) */
-    var _isFinite = Number.isFinite || function(value) {
-        return typeof value === 'number' && isFinite(value);
-    };
-    /** polyfill for Map.prototype.forEach (simplified) */
-    var _mapForEach = function(map, callback, thisArg) {
-        if (map.forEach)
-            return map.forEach(callback, thisArg);
-        for (var key in map)
-            if (map.hasOwnProperty(key))
-                callback.call(thisArg, map[key], key, map);
-    };
-
-    /** utility to check if a value is a string primitive or a String object */
-    function _isString(value) {
-        return typeof value == 'string' ||
-            (!!value && typeof value == 'object' && Object.prototype.toString.call(value) == '[object String]');
-    }
-    /** utility to check if a value is a function primitive or a Function object */
-    function _isFunction(value) {
-        return !!value && (typeof value == 'object' || typeof value == 'function') && Object.prototype.toString.call(value) == '[object Function]';
-    }
-    /** utility to check for interface violations and runtime invariants */
-    function _assert(pred, message) {
-        if (!pred)
-            throw Error(message || 'assertion failed');
-    }
-
-    /** the global object */
-    var global = Function('return this')();
-
-    /**
-     * The mu library namespace object
-     * @namespace mu
-     */
-    var mu = global.mu = global.mu || {};
+    if (!mu)
+        throw Error('missing mu util library');
+    if (!mu.Pitch)
+        throw Error('missing mu theory library');
 
     /**
      * An interface for voices for notes played via {@link mu.play}.
@@ -63,9 +31,9 @@
      * @memberof mu.Voice
      */
     mu.Voice.addStopCallback = function(callback, duration) {
-        _assert(callback instanceof Function,
+        mu._assert(mu._isFunction(callback),
                 'invalid stop callback ' + callback);
-        _assert(_isFinite(duration) && duration > 0,
+        mu._assert(mu._isFinite(duration) && duration > 0,
                 'invalid duration ' + duration);
         var key = mu.Voice._stopKey++;
         var timer = setTimeout(function() {
@@ -133,11 +101,11 @@
     mu.Html5AudioVoice = function(baseUrl, lowest, highest) {
         if (!(this instanceof mu.Html5AudioVoice))
             return new mu.Html5AudioVoice(baseUrl, lowest, highest);
-        _assert(_isString(baseUrl),
+        mu._assert(mu._isString(baseUrl),
                 'invalid base URL ' + baseUrl);
-        _assert(lowest instanceof mu.Pitch,
+        mu._assert(lowest instanceof mu.Pitch,
                 'invalid pitch ' + lowest);
-        _assert(highest instanceof mu.Pitch,
+        mu._assert(highest instanceof mu.Pitch,
                 'invalid pitch ' + highest);
         this._baseUrl = baseUrl;
         this._lowest = lowest;
@@ -153,18 +121,15 @@
         return this._highest;
     };
     mu.Html5AudioVoice.prototype._load = function(pitch) {
-        var elem = document.createElement('audio');
-        elem.setAttribute('preload', 'auto');
-        elem.setAttribute('loop', 'loop');
-        var ogg = document.createElement('source');
-        ogg.setAttribute('type', 'audio/ogg');
-        ogg.setAttribute('src', this._baseUrl + pitch.octave() + '_' + pitch.index() + '.ogg');
-        elem.appendChild(ogg);
-        var m4a = document.createElement('source');
-        m4a.setAttribute('type', 'audio/mp4');
-        m4a.setAttribute('src', this._baseUrl + pitch.octave() + '_' + pitch.index() + '.m4a');
-        elem.appendChild(m4a);
-        document.body.appendChild(elem);
+        var elem = mu._html(document.body).append('audio')
+            .attr('preload', 'auto')
+            .attr('loop', 'loop');
+        elem.append('source')
+            .attr('type', 'audio/ogg')
+            .attr('src', this._baseUrl + pitch.octave() + '_' + pitch.index() + '.ogg');
+        elem.append('source')
+            .attr('type', 'audio/mp4')
+            .attr('src', this._baseUrl + pitch.octave() + '_' + pitch.index() + '.m4a');
         return elem;
     };
     mu.Html5AudioVoice.prototype._get = function(pitch) {
@@ -174,23 +139,23 @@
         return this._pitchElems[index] = this._load(pitch);
     };
     mu.Html5AudioVoice.prototype.play = function(pitch, duration) {
-        _assert(pitch instanceof mu.Pitch,
+        mu._assert(pitch instanceof mu.Pitch,
                 'invalid pitch ' + pitch);
-        _assert(pitch.subtract(this._lowest) >= 0
+        mu._assert(pitch.subtract(this._lowest) >= 0
                 && pitch.subtract(this._highest) <= 0,
                 'cannot play ' + pitch + ' with this voice');
-        _assert(_isFinite(duration) && duration > 0,
+        mu._assert(mu._isFinite(duration) && duration > 0,
                 'invalid duration ' + duration);
-        var elem = this._get(pitch);
-        elem.playbackRate = Math.min(2, Math.max(0.5, 1.0/duration));
-        elem.currentTime = 0;
-        elem.play();
+        var node = this._get(pitch).node();
+        node.playbackRate = Math.min(2, Math.max(0.5, 1.0/duration));
+        node.currentTime = 0;
+        node.play();
         mu.Voice.addStopCallback(function() {
-            elem.pause();
+            node.pause();
         }, duration);
     };
     mu.Html5AudioVoice.prototype.ready = function(callback) {
-        _assert(callback == null || callback instanceof Function,
+        mu._assert(callback == null || mu._isFunction(callback),
                 'invalid stop callback ' + callback);
         if (this._ready) {
             if (callback) callback();
@@ -207,9 +172,9 @@
         for (var i = 0; i < count; i ++) {
             if (!this._pitchElems[i] || this._pitchElems[i].readyState == 4) {
                 toload ++;
-                var elem = this._get(this._lowest.transpose(i));
-                elem.oncanplaythrough = onload;
-                elem.onerror = onload;
+                var node = this._get(this._lowest.transpose(i)).node();
+                node.oncanplaythrough = onload;
+                node.onerror = onload;
             }
         }
         if (toload == 0 && callback) {
