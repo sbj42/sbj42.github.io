@@ -4,7 +4,7 @@
     k.on('keymousedown', function(pitch) {
         mu._html(document.body).append('div')
             .node().innerHTML = pitch.toString() + ' ' + pitch.frequency().toString();
-        mu.SINE.play(pitch, 0.5);
+        mu.HARM.play(pitch, 0.5);
     });
 })();
 

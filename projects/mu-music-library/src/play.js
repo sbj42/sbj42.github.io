@@ -192,6 +192,14 @@
     mu.SINE = mu.Html5AudioVoice('../audio/sine/sine_', mu.C_1, mu.C_8);
 
     /**
+     * A voice for notes played via {@link mu.play}.
+     *
+     * @class
+     * @memberof mu
+     */
+    mu.HARM = mu.Html5AudioVoice('../audio/harm/harm_', mu.C_1, mu.C_8);
+
+    /**
      * A simple audio sequencer
      *
      * @example
