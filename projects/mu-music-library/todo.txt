@@ -1,0 +1,13 @@
+remove pitch constants
+add parsers
+piece or sequence or something: bpm, time signature, array of (chord-instance/rest, duration)
+display - keyboard/guitar/sheet-music/constellation/names/waveform
+  keyboard
+    c to c is 6 and 5/16, white keys are 0.91" edge-to-edge
+    with 1/16 gaps  (or 0.848 wide)
+    white keys are 5.5" long
+    black key holes are 9/16" wide, and 3 and 5/8" long
+    black key left offsets are 7/16, 11/16 and 7/16,9/16,11/16
+    7 octaves + 1 note, so ~45.1" wide overall    
+piece running that can coordinate with display and player
+connector between display and player
