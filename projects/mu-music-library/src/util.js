@@ -131,20 +131,22 @@
                    'invalid node name ' + nodeName);
         mu._assert(namespace == null || mu._isString(namespace),
                    'invalid namespace ' + namespace);
-        if (nodeName[0] == '#')
+        if (nodeName[0] == '#') {
             this._node = document.getElementById(nodeName.substr(1));
-        else {
+            if (!this._node)
+                throw Error('node not found: ' + nodeName);
+        } else {
             this._namespace = namespace || mu._html._defaultNamespace(nodeName);
-            if (namespace)
+            if (this._namespace)
                 this._node = document.createElementNS(this._namespace, nodeName);
             else
                 this._node = document.createElement(nodeName);
         }
     }
-    mu._html._svgNamespace = 'http://www.w3.org/2000/svg';
+    mu._html._SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
     mu._html._defaultNamespace = function(nodeName) {
         if (nodeName == 'svg')
-            return mu._html._svgNamespace;
+            return mu._html._SVG_NAMESPACE;
         return null;
     };
 
@@ -167,7 +169,9 @@
      */
     mu._html.prototype.append = function(nodeName, namespace) {
         var child;
-        if (nodeName instanceof mu._html) {
+        if (mu._isElement(nodeName)) {
+            child = mu._html(nodeName);
+        } else if (nodeName instanceof mu._html) {
             child = nodeName;
         } else {
             mu._assert(mu._isString(nodeName),
@@ -190,13 +194,60 @@
     mu._html.prototype.attr = function(name, value) {
         mu._assert(mu._isString(name),
                    'invalid name ' + name);
-        mu._assert(value === null || mu._isString(value),
+        mu._assert(value === null || mu._isFinite(value) || mu._isString(value),
                    'invalid value ' + value);
         if (value === null)
             this._node.removeAttribute(name);
-        else
+        else {
+            if (mu._isFinite(value))
+                value = value + 'px';
             this._node.setAttribute(name, value);
+        }
         return this;
+    };
+    
+    /**
+     * Adds an event listener to a node.
+     *
+     * @param {string} type The event type (e.g. "click")
+     * @param {Function} callback The event listener
+     * @param thisObj An object to use as `this` when the listener is called
+     * @memberof mu._html
+     */
+    mu._html.prototype.on = function(type, callback, thisObj) {
+        mu._assert(mu._isString(type),
+                   'invalid event type ' + type);
+        mu._assert(mu._isFunction(callback),
+                   'invalid event listener ' + callback);
+        this._node.addEventListener(type, function(event) {
+            callback.call(thisObj, event);
+        }); 
+        return this;
+    };
+
+    /**
+     * Registers a class as capable of firing events.
+     *
+     * @private
+     * @param {Function} classObj The constructor of the class
+     * @memberof mu._html
+     */
+    mu._eventable = function(classObj) {
+        classObj.prototype.on = function(type, callback, thisObj) {
+            var e = this._eventListeners = this._eventListeners || {};
+            var a = e[type] = e[type] || [];
+            a.push([callback, thisObj]);
+        };
+        classObj.prototype._fire = function(type) {
+            var args = mu._argsToArray(arguments).slice(1);
+            var e = this._eventListeners;
+            var a = e && e[type];
+            if (!a)
+                return;
+            a.forEach(function(reg) {
+                reg[0].apply(reg[1], args);
+            });
+        };
     };
     
 })();
