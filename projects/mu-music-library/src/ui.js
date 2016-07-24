@@ -29,6 +29,9 @@
                    'pitches swapped ' + lowPitch + ' ' + highPitch);
         this._lowPitch = lowPitch;
         this._highPitch = highPitch;
+        this._keys = {};
+        this._keysPressed = {};
+        this._keyOver = null;
         var lowWhite = mu.Keyboard._isBlack(lowPitch) ? lowPitch.transpose(-1) : lowPitch;
         var highWhite = mu.Keyboard._isBlack(highPitch) ? highPitch.transpose(1) : highPitch;
         var lowWhiteIndex = mu.Keyboard._whiteIndex(lowWhite);
@@ -41,6 +44,14 @@
         var wB = mu.Keyboard._WHITE_BORDER;
         var wR = mu.Keyboard._WHITE_ROUND;
         var cS = mu.Keyboard._MIDDLE_C_MARK_SIZE;
+        this._onKeyDownListener = this._onKeyDown.bind(this);
+        document.addEventListener('keydown', this._onKeyDownListener);
+        this._onKeyUpListener = this._onKeyUp.bind(this);
+        document.addEventListener('keyup', this._onKeyUpListener);
+        this._onFocusOutListener = this.silence.bind(this);
+        document.addEventListener('focusout', this._onFocusOutListener);
+        this._onBlurListener = this.silence.bind(this);
+        window.addEventListener('blur', this._onBlurListener);
         this._svg = mu._html('svg')
             .attr('width', span * (wW + wB) + wB)
             .attr('height', wL + wB * 2);
@@ -65,10 +76,10 @@
                     .attr('class', 'mu_keyboard_white')
                     .attr('fill', 'white')
                     .attr('stroke', 'black');
-                g.on('mouseover', this._onMouseOver(rect, pitch, false), this)
-                    .on('mouseout', this._onMouseOut(rect, pitch, false), this)
-                    .on('mousedown', this._onMouseDown(rect, pitch), this)
-                    .on('mouseup', this._onMouseUp(rect, pitch), this);
+                this._keys[pitch.subtract(mu.C_0)] = rect;
+                g.on('mouseover', this._onMouseOver.bind(this, pitch))
+                    .on('mouseout', this._onMouseOut.bind(this, pitch))
+                    .on('mousedown', this._onMouseDown.bind(this, pitch));
                 if (o == 4 && i == 0) {
                     g.append('circle')
                         .attr('cx', x * (wW + wB) + wB + wW / 2)
@@ -111,10 +122,10 @@
                     .attr('class', 'mu_keyboard_black')
                     .attr('fill', 'black')
                     .attr('stroke', 'black');
-                rect.on('mouseover', this._onMouseOver(rect, pitch, true), this)
-                    .on('mouseout', this._onMouseOut(rect, pitch, true), this)
-                    .on('mousedown', this._onMouseDown(rect, pitch), this)
-                    .on('mouseup', this._onMouseUp(rect, pitch), this);
+                this._keys[pitch.subtract(mu.C_0)] = rect;
+                rect.on('mouseover', this._onMouseOver.bind(this, pitch))
+                    .on('mouseout', this._onMouseOut.bind(this, pitch))
+                    .on('mousedown', this._onMouseDown.bind(this, pitch));
             }
         }
     };
@@ -137,37 +148,79 @@
     mu.Keyboard._whiteIndex = function(pitch) {
         return [0, -1, 1, -1, 2, 3, -1, 4, -1, 5, -1, 6][pitch.index()];
     };
-    mu.Keyboard.prototype._onMouseOver = function(rect, pitch, black) {
-        var self = this;
-        return function(event) {
-            rect.attr('fill', black ? '#ff8' : '#ff8');
-            self._fire('keymouseover', pitch);
-        };
+    mu.Keyboard.prototype.silence = function() {
+        mu._mapForEach(this._keysPressed, function(pitch) {
+            this._releaseKey(pitch);
+        }, this);
     };
-    mu.Keyboard.prototype._onMouseOut = function(rect, pitch, black) {
-        var self = this;
-        return function(event) {
-            rect.attr('fill', black ? 'black' : 'white');
-            self._fire('keymouseout', pitch);
-        };
+    mu.Keyboard.prototype._updateKey = function(pitch) {
+        var index = pitch.subtract(mu.C_0);
+        var rect = this._keys[index];
+        if (this._isPressed(pitch))
+            rect.attr('fill', '#bbf');
+        else if (index == this._keyOver)
+            rect.attr('fill', '#ff8');
+        else
+            rect.attr('fill', mu.Keyboard._isBlack(pitch) ? 'black' : 'white');
     };
-    mu.Keyboard.prototype._onMouseDown = function(rect, pitch) {
-        var self = this;
-        return function(event) {
-            event.preventDefault();
-            self._fire('keydown', pitch);
-            function onMouseUpListener(event) {
+    mu.Keyboard.prototype._releaseKey = function(pitch) {
+        if (this._disposed)
+            return;
+        delete this._keysPressed[pitch.subtract(mu.C_0)];
+        this._updateKey(pitch);
+        this._fire('keyup', pitch);
+    };
+    mu.Keyboard.prototype._pressKey = function(pitch) {
+        if (this._disposed)
+            return;
+        this._keysPressed[pitch.subtract(mu.C_0)] = pitch;
+        this._updateKey(pitch);
+        this._fire('keydown', pitch);
+    };
+    mu.Keyboard.prototype._onKeyDown = function(event) {
+        var key = event.key || event.keyIdentifier;
+        if (key = 'Shift')
+            this._shiftDown = true;
+    };
+    mu.Keyboard.prototype._onKeyUp = function(event) {
+        var key = event.key || event.keyIdentifier;
+        if (key = 'Shift') {
+            this._shiftDown = false;
+            this.silence();
+        }
+    };
+    mu.Keyboard.prototype._onMouseOver = function(pitch, event) {
+        if (this._disposed)
+            return;
+        this._keyOver = pitch.subtract(mu.C_0);
+        this._updateKey(pitch);
+        this._fire('keyover', pitch);
+    };
+    mu.Keyboard.prototype._onMouseOut = function(pitch, event) {
+        if (this._disposed)
+            return;
+        this._keyOver = null;
+        this._updateKey(pitch);
+        this._fire('keyout', pitch);
+    };
+    mu.Keyboard.prototype._onMouseDown = function(pitch, event) {
+        if (this._disposed)
+            return;
+        event.preventDefault();
+        if (this._shiftDown && this._isPressed(pitch)) {
+            this._releaseKey(pitch);
+            return;
+        }
+        this._pressKey(pitch);
+        if (!this._shiftDown) {
+            var onMouseUpListener;
+            function onMouseUp(event) {
                 window.removeEventListener('mouseup', onMouseUpListener);
-                self._fire('keyup', pitch);
+                this._releaseKey(pitch);
             };
+            onMouseUpListener = onMouseUp.bind(this);
             window.addEventListener('mouseup', onMouseUpListener);
-        };
-    };
-    mu.Keyboard.prototype._onMouseUp = function(rect, pitch) {
-        var self = this;
-        return function(event) {
-            self._fire('keymouseup', pitch);
-        };
+        }
     };
     /**
      * Returns the Element for this UI.
@@ -177,6 +230,16 @@
      */
     mu.Keyboard.prototype.node = function() {
         return this._svg.node();
+    };
+    mu.Keyboard.prototype.dispose = function() {
+        document.removeEventListener('keydown', this._onKeyDownListener);
+        document.removeEventListener('keydown', this._onKeyUpListener);
+        this.silence();
+        this._disposed = true;
+    };
+    mu.Keyboard.prototype._isPressed = function(pitch) {
+        var index = pitch.subtract(mu.C_0);
+        return index in this._keysPressed;
     };
     
 })();
