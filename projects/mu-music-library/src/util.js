@@ -31,7 +31,7 @@
      * @memberof mu
      */
     mu._isInteger = Number.isInteger || function(value) {
-        return _isFinite(value) && Math.floor(value) === value;
+        return mu._isFinite(value) && Math.floor(value) === value;
     };
 
     /**

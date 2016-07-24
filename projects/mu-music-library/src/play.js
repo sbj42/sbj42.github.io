@@ -74,11 +74,12 @@
         return 'unknown voice';
     };
     /**
-     * Removes the voice and closes any resources used by it.
+     * Silences the voice, deactivates it, and closes any resources used by it.
      *
      * @memberof mu.Voice
      */
     mu.Voice.prototype.dispose = function(pitch) {
+        this.silence();
         mu.Voice._deactivateVoice(this);
     };
     /**
@@ -115,6 +116,18 @@
         return null;
     };
     /**
+     * Returns true if this voice can play the given {@mu.Pitch}.
+     *
+     * @return {boolean} True if this voice can play the given {@mu.Pitch}.
+     * @memberof mu.Voice
+     */
+    mu.Voice.prototype.canPlayPitch = function(pitch) {
+        mu._assert(pitch instanceof mu.Pitch,
+                'invalid pitch ' + pitch);
+        return (this.lowest() == null || pitch.subtract(this.lowest()) >= 0)
+                && (this.highest() == null || pitch.subtract(this.highest()) <= 0);
+    };
+    /**
      * Silences this voice.
      *
      * @abstract
@@ -127,7 +140,8 @@
      * Starts playing a given {@link mu.Pitch}.
      *
      * @abtract
-     * @param {mu.Pitch} pitch the pitch to play
+     * @param {mu.Pitch} pitch The pitch to play
+     * @return {Function} A function which can be called to stop the pitch, equivalent to `{@link mu.Voice#stopPitch}(pitch)`
      * @memberof mu.Voice
      */
     mu.Voice.prototype.startPitch = function(pitch) {
@@ -137,7 +151,7 @@
      * Stops playing a given {@link mu.Pitch}.
      *
      * @abtract
-     * @param {mu.Pitch} pitch the pitch to play
+     * @param {mu.Pitch} pitch The pitch to play
      * @memberof mu.Voice
      */
     mu.Voice.prototype.stopPitch = function(pitch) {
@@ -218,7 +232,7 @@
     };
     mu.BasicSoundFileVoice.prototype.ready = function(callback) {
         mu._assert(callback == null || mu._isFunction(callback),
-                'invalid stop callback ' + callback);
+                'invalid callback ' + callback);
         if (this._ready) {
             if (callback) callback();
             return;
@@ -239,18 +253,19 @@
     mu.BasicSoundFileVoice.prototype.startPitch = function(pitch) {
         mu._assert(pitch instanceof mu.Pitch,
                 'invalid pitch ' + pitch);
-        mu._assert(pitch.subtract(this._lowest) >= 0
-                && pitch.subtract(this._highest) <= 0,
+        mu._assert(this.canPlayPitch(pitch),
                 'cannot play ' + pitch + ' with this voice');
         var node = this._get(pitch).node();
         node.currentTime = 0;
         node.play();
+        return function() {
+            node.pause();
+        };
     };
     mu.BasicSoundFileVoice.prototype.stopPitch = function(pitch) {
         mu._assert(pitch instanceof mu.Pitch,
                 'invalid pitch ' + pitch);
-        mu._assert(pitch.subtract(this._lowest) >= 0
-                && pitch.subtract(this._highest) <= 0,
+        mu._assert(this.canPlayPitch(pitch),
                 'cannot play ' + pitch + ' with this voice');
         var node = this._get(pitch).node();
         node.pause();
@@ -275,9 +290,8 @@
     };
 
     /**
-     * A basic voice using a library of simple sound files based on
-     * pure sine wave with some harmonics thrown in to make it a little
-     * easier on the ear.
+     * A basic voice using a library of simple sound files with some harmonics
+     * thrown in to make it a little easier on the ear.
      *
      * This one only goes up to C7, because the sample rate was kept low
      * (16kHz) to minimize the file size, and the harmonics for some notes in
@@ -290,13 +304,157 @@
     mu.BasicHarmonicVoice = function() {
         if (!(this instanceof mu.BasicHarmonicVoice))
             return new mu.BasicHarmonicVoice();
-        mu.BasicSoundFileVoice.call(this, '../audio/harm/harm_', mu.C_1, mu.C_7);
+        mu.BasicSoundFileVoice.call(this, '../audio/harm/harm_', mu.C_1, mu.B_6);
     };
     mu.BasicHarmonicVoice.prototype = Object.create(mu.BasicSoundFileVoice.prototype);
     mu.BasicHarmonicVoice.prototype.constructor = mu.BasicHarmonicVoice;
     mu.BasicHarmonicVoice.prototype.toString = function() {
         return 'basic harmonic voice';
     };
+
+    if (window.AudioContext) {
+
+        /**
+         * A voice that generates tones using html5 web audio.  It always has
+         * an oscillator with relative frequency 1 and relative amplitude 1.
+         * Others can be added using the `profile` argument.
+         *
+         * @class
+         * @param {number[]} [profile] An array of values to set up additional
+         * oscillators.  The array needs two entries per oscillator: the first
+         * is the relative frequency and the second is the relative amplitude.
+         * @extends {mu.Voice}
+         * @memberof mu
+         */
+        mu.GeneratorVoice = function(profile) {
+            if (!(this instanceof mu.GeneratorVoice))
+                return new mu.GeneratorVoice();
+            profile = profile || [];
+            mu._assert(Array.isArray(profile),
+                       'invalid profile ' + profile);
+            mu._assert(profile.length % 2 == 0,
+                       'invalid profile length ' + profile.length);
+            for (var i = 0; i < profile.length; i += 2) {
+                mu._assert(mu._isFinite(profile[i]) && profile[i] > 0,
+                           'invalid relative frequency ' + profile[i]);
+                mu._assert(mu._isFinite(profile[i+1]) && profile[i+1] >= 0,
+                           'invalid relative amplitude ' + profile[i+1]);
+            }
+            mu.Voice.call(this);
+            this._profile = profile;
+            this._context = new AudioContext();
+            this._pitches = {};
+        };
+        mu.GeneratorVoice.prototype = Object.create(mu.Voice.prototype);
+        mu.GeneratorVoice.prototype.constructor = mu.GeneratorVoice;
+        mu.GeneratorVoice.prototype._stopPitchIndex = function(index) {
+            if (!this._pitches[index])
+                return;
+            var nodes = this._pitches[index];
+            nodes.forEach(function(node) {
+                node.disconnect();
+            });
+            delete this._pitches[index];
+        };
+        mu.GeneratorVoice.prototype.toString = function() {
+            return 'unknown generator voice';
+        };
+        mu.GeneratorVoice.prototype.dispose = function() {
+            mu.Voice.prototype.dispose.call(this);
+        };
+        mu.GeneratorVoice.prototype.ready = function(callback) {
+            mu._assert(callback == null || mu._isFunction(callback),
+                       'invalid callback ' + callback);
+            callback();
+        };
+        mu.GeneratorVoice.prototype.silence = function() {
+            mu._mapForEach(this._pitches, function(nodes, index) {
+                this._stopPitchIndex(index);
+            }, this);
+            this._pitches = {};
+        };
+        mu.GeneratorVoice.prototype.startPitch = function(pitch) {
+            mu._assert(pitch instanceof mu.Pitch,
+                       'invalid pitch ' + pitch);
+            var index = pitch.subtract(mu.C_0);
+            if (this._pitches[index])
+                return;
+            var nodes = [];
+            var context = this._context;
+            function addOscillator(relFreq, relAmp) {
+                var freq = pitch.frequency().hertz() * relFreq;
+                if (freq > context.sampleRate / 2) // avoid aliasing
+                    return;
+                var oscillator = context.createOscillator();
+                oscillator.frequency.value = freq;
+                var gain = context.createGain();
+                gain.gain.value = 0.125 * relAmp;
+                oscillator.connect(gain);
+                gain.connect(context.destination);
+                oscillator.start();
+                nodes.push(oscillator);
+                nodes.push(gain);
+            }
+            addOscillator(1, 1);
+            for (var i = 0; i < this._profile.length; i += 2)
+                addOscillator(this._profile[i], this._profile[i+1]);
+            this._pitches[index] = nodes;
+        };
+        mu.GeneratorVoice.prototype.stopPitch = function(pitch) {
+            mu._assert(pitch instanceof mu.Pitch,
+                       'invalid pitch ' + pitch);
+            this._stopPitchIndex(pitch.subtract(mu.C_0));
+        };
+
+        /**
+         * A pure sine wave generator voice.
+         *
+         * @class
+         * @extends {mu.GeneratorVoice}
+         * @memberof mu
+         */
+        mu.SineVoice = function() {
+            if (!(this instanceof mu.SineVoice))
+                return new mu.SineVoice();
+            mu.GeneratorVoice.call(this);
+        };
+        mu.SineVoice.prototype = Object.create(mu.GeneratorVoice.prototype);
+        mu.SineVoice.prototype.constructor = mu.SineVoice;
+        mu.SineVoice.prototype.toString = function() {
+            return 'sine voice';
+        };
+
+        /**
+         * A generator voice with some harmonics thrown in to make it a
+         * little easier on the ear.
+         *
+         * @class
+         * @extends {mu.GeneratorVoice}
+         * @memberof mu
+         */
+        mu.HarmonicVoice = function() {
+            if (!(this instanceof mu.HarmonicVoice))
+                return new mu.HarmonicVoice();
+            mu.GeneratorVoice.call(this, [
+                2, 0.399,
+                3, 0.299,
+                4, 0.152,
+                5, 0.197,
+                6, 0.094,
+                7, 0.061,
+                8, 0.139,
+                10, 0.071
+            ]);
+        };
+        mu.HarmonicVoice.prototype = Object.create(mu.GeneratorVoice.prototype);
+        mu.HarmonicVoice.prototype.constructor = mu.HarmonicVoice;
+        mu.HarmonicVoice.prototype.toString = function() {
+            return 'sine voice';
+        };
+    } else {
+        mu.SineVoice = mu.BasicSineVoice;
+        mu.HarmonicVoice = mu.BasicHarmonicVoice;
+    }
 
     /**
      * A simple audio sequencer

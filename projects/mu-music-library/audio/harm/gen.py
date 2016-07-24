@@ -33,8 +33,8 @@ with open('gen.bat', 'w') as f:
     f.write('@echo off\n')
     f.write('set FFMPEG="c:\\Program Files (x86)\\FFmpeg for Audacity\\ffmpeg.exe"\n')
     a4 = 4 * 12 + 9
-    for o in range(1, 8):
-        for i in range(12 if o < 7 else 1):
+    for o in range(1, 7):
+        for i in range(12):
             n = o * 12 + i
             freq = 440 * pow(pow(2, 1.0/12), (n - a4))
             graph = mix([(freq*(h+1), harm[h] * len(harm), (h+1)*1.0/freq/len(harm)) for h in range(len(harm))])

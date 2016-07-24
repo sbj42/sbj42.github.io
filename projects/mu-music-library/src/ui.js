@@ -154,7 +154,13 @@
     mu.Keyboard.prototype._onMouseDown = function(rect, pitch) {
         var self = this;
         return function(event) {
-            self._fire('keymousedown', pitch);
+            event.preventDefault();
+            self._fire('keydown', pitch);
+            function onMouseUpListener(event) {
+                window.removeEventListener('mouseup', onMouseUpListener);
+                self._fire('keyup', pitch);
+            };
+            window.addEventListener('mouseup', onMouseUpListener);
         };
     };
     mu.Keyboard.prototype._onMouseUp = function(rect, pitch) {

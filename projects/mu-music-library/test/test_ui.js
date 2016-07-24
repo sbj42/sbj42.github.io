@@ -1,16 +1,16 @@
-var basicHarm = mu.BasicHarmonicVoice();
-basicHarm.ready(function() {
-    var v = basicHarm;
+var harm = mu.HarmonicVoice();
+harm.ready(function() {
+    var v = harm;
     var k = mu.Keyboard(v.lowest(), v.highest());
     mu._html('#keyboard').append(k.node());
-    k.on('keymousedown', function(pitch) {
+    k.on('keydown', function(pitch) {
         mu._html(document.body).append('div')
             .node().innerHTML = pitch.toString() + ' ' + pitch.frequency().toString();
-        if (pitch.subtract(v.lowest()) >= 0 && pitch.subtract(v.highest()) <= 0)
+        if (v.canPlayPitch(pitch))
             v.startPitch(pitch);
     });
-    k.on('keymouseup', function(pitch) {
-        if (pitch.subtract(v.lowest()) >= 0 && pitch.subtract(v.highest()) <= 0)
+    k.on('keyup', function(pitch) {
+        if (v.canPlayPitch(pitch))
             v.stopPitch(pitch);
     });
 });
