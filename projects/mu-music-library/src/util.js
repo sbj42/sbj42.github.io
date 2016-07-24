@@ -205,6 +205,16 @@
         }
         return this;
     };
+
+    /**
+     * Removes a node from the document.
+     *
+     * @memberof mu._html
+     */
+    mu._html.prototype.remove = function() {
+        this._node.parentNode.removeChild(this._node);
+        return this;
+    };
     
     /**
      * Adds an event listener to a node.
