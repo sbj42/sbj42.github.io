@@ -12,6 +12,14 @@
     body {
       background: #6ca78e;
     }
+    #apology {
+      text-align: center;
+      font-family: 'Poiret One', monospace;
+      font-weight: bold;
+      font-size: 40px;
+      color: #000;
+      background: #f44;
+    }
     #title, #credit {
       text-align: center;
       font-family: 'Poiret One', monospace;
@@ -38,9 +46,27 @@
   </style>
 </head>
 <body>
-  <div id="title">Keyboard Demo</div>
-  <div id="credit"><a href="http://arbitraryclark.blogspot.com/">James Clark</a></div>
-  <div id="keyboard"></div>
+  <div id="apology">
+    <!--[if lt IE 9]>
+      <div>
+        This demo requires a modern browser
+      </div>
+    <![endif]-->
+    <![if gte IE 9]>
+    <noscript>
+      <div>
+        This demo requires JavaScript
+      </div>
+    </noscript>
+    <![endif]>
+  </div>
+  <![if gte IE 9]>
+  <div id="jsok" style="display: none;">
+    <div id="title">Keyboard Demo</div>
+    <div id="credit"><a href="http://arbitraryclark.blogspot.com/">James Clark</a></div>
+    <div id="keyboard"></div>
+  </div>
   <script src="keyboard.js"></script>
+  <![endif]>
 </body>
 </html>

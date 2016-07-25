@@ -1,3 +1,4 @@
+mu._html('#jsok').node().style.display = 'block';
 var harm = mu.HarmonicVoice();
 harm.ready(function() {
     var v = harm;
