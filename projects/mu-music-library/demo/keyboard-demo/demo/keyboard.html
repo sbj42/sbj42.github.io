@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="https://fonts.googleapis.com/css?family=Poiret+One" rel="stylesheet">
+  <link rel="shortcut icon" type="image/png" href="keyboard-favicon.png"/>
+  <script src="../src/util.js"></script>
+  <script src="../src/theory.js"></script>
+  <script src="../src/ui.js"></script>
+  <script src="../src/play.js"></script>
+  <title>Keyboard Demo</title>
+  <style type="text/css">
+    body {
+      background: #6ca78e;
+    }
+    #title, #credit {
+      text-align: center;
+      font-family: 'Poiret One', monospace;
+      font-weight: bold;
+    }
+    #title {
+      margin-top: 60px;
+      font-size: 30px;
+      color: #000;
+      text-shadow: 1px 1px 2px #405f4f;
+    }
+    #credit {
+      font-size: 17px;
+      opacity: 0.9;
+    }
+    #credit a, #credit a:visited {
+      color: #008 !important;
+      opacity: 0.8;
+    }
+    #keyboard > svg {
+      display: block;
+      margin: 20px auto 0px;
+    }
+  </style>
+</head>
+<body>
+  <div id="title">Keyboard Demo</div>
+  <div id="credit"><a href="http://arbitraryclark.blogspot.com/">James Clark</a></div>
+  <div id="keyboard"></div>
+  <script src="keyboard.js"></script>
+</body>
+</html>
