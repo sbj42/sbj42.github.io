@@ -38,5 +38,5 @@ with open('gen.bat', 'w') as f:
             n = o * 12 + i
             freq = 440 * pow(pow(2, 1.0/12), (n - a4))
             graph = mix([(freq*(h+1), harm[h] * len(harm), (h+1)*1.0/freq/len(harm)) for h in range(len(harm))])
-            f.write('%%FFMPEG%% -y -f lavfi -i "%s" harm_%i_%i.ogg 2> nul\n' % (graph, o, i))
+            #f.write('%%FFMPEG%% -y -f lavfi -i "%s" harm_%i_%i.ogg 2> nul\n' % (graph, o, i))
             f.write('%%FFMPEG%% -y -f lavfi -i "%s" harm_%i_%i.m4a 2> nul\n' % (graph, o, i))

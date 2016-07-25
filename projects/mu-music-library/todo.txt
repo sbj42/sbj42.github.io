@@ -1,7 +1,13 @@
 piece or sequence or something: bpm, time signature, array of (chord-instance/rest, duration)
 display - guitar/sheet-music/constellation/names/waveform
+  guitar: lots of variation, number of strings, number of frets, tuning
 piece running that can coordinate with display and player
 connector between display and player
+  keyboard should not own whether keys are down, controller should
+  so when you click on the key, the keyboard tells the controller the user
+  wants the key down, the controller puts it down and then tells keyboard
+  to draw that
 volume selection in player
 use fletcher-munson curves in the generator voice to try to get equal volume from low and high notes, use replaygain on the audio files for same
 sound envelopes in generators
+

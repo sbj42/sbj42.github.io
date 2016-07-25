@@ -271,47 +271,6 @@
         node.pause();
     };
 
-    /**
-     * A basic voice using a library of pure sine wave sound files.
-     *
-     * @class
-     * @extends {mu.BasicSoundFileVoice}
-     * @memberof mu
-     */
-    mu.BasicSineVoice = function() {
-        if (!(this instanceof mu.BasicSineVoice))
-            return new mu.BasicSineVoice();
-        mu.BasicSoundFileVoice.call(this, '../audio/sine/sine_', mu.C_1, mu.C_8);
-    };
-    mu.BasicSineVoice.prototype = Object.create(mu.BasicSoundFileVoice.prototype);
-    mu.BasicSineVoice.prototype.constructor = mu.BasicSineVoice;
-    mu.BasicSineVoice.prototype.toString = function() {
-        return 'basic sine voice';
-    };
-
-    /**
-     * A basic voice using a library of simple sound files with some harmonics
-     * thrown in to make it a little easier on the ear.
-     *
-     * This one only goes up to C7, because the sample rate was kept low
-     * (16kHz) to minimize the file size, and the harmonics for some notes in
-     * the 7th octave have sampling issues at that rate.
-     *
-     * @class
-     * @extends {mu.BasicSoundFileVoice}
-     * @memberof mu
-     */
-    mu.BasicHarmonicVoice = function() {
-        if (!(this instanceof mu.BasicHarmonicVoice))
-            return new mu.BasicHarmonicVoice();
-        mu.BasicSoundFileVoice.call(this, '../audio/harm/harm_', mu.C_1, mu.B_6);
-    };
-    mu.BasicHarmonicVoice.prototype = Object.create(mu.BasicSoundFileVoice.prototype);
-    mu.BasicHarmonicVoice.prototype.constructor = mu.BasicHarmonicVoice;
-    mu.BasicHarmonicVoice.prototype.toString = function() {
-        return 'basic harmonic voice';
-    };
-
     if (window.AudioContext) {
 
         /**
@@ -452,8 +411,46 @@
             return 'sine voice';
         };
     } else {
-        mu.SineVoice = mu.BasicSineVoice;
-        mu.HarmonicVoice = mu.BasicHarmonicVoice;
+        /**
+         * A basic voice using a library of pure sine wave sound files.
+         *
+         * @class
+         * @extends {mu.BasicSoundFileVoice}
+         * @memberof mu
+         */
+        mu.SineVoice = function() {
+            if (!(this instanceof mu.SineVoice))
+                return new mu.SineVoice();
+            mu.BasicSoundFileVoice.call(this, '../audio/sine/sine_', mu.C_1, mu.C_8);
+        };
+        mu.SineVoice.prototype = Object.create(mu.BasicSoundFileVoice.prototype);
+        mu.SineVoice.prototype.constructor = mu.SineVoice;
+        mu.SineVoice.prototype.toString = function() {
+            return 'sine voice';
+        };
+
+        /**
+         * A basic voice using a library of simple sound files with some harmonics
+         * thrown in to make it a little easier on the ear.
+         *
+         * This one only goes up to C7, because the sample rate was kept low
+         * (16kHz) to minimize the file size, and the harmonics for some notes in
+         * the 7th octave have sampling issues at that rate.
+         *
+         * @class
+         * @extends {mu.BasicSoundFileVoice}
+         * @memberof mu
+         */
+        mu.HarmonicVoice = function() {
+            if (!(this instanceof mu.HarmonicVoice))
+                return new mu.HarmonicVoice();
+            mu.BasicSoundFileVoice.call(this, '../audio/harm/harm_', mu.C_1, mu.B_6);
+        };
+        mu.HarmonicVoice.prototype = Object.create(mu.BasicSoundFileVoice.prototype);
+        mu.HarmonicVoice.prototype.constructor = mu.HarmonicVoice;
+        mu.HarmonicVoice.prototype.toString = function() {
+            return 'harmonic voice';
+        };
     }
 
     /**
