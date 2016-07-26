@@ -207,6 +207,36 @@
     };
 
     /**
+     * Adds or removes a CSS class on this node.
+     *
+     * @param {string} name The name of the CSS class
+     * @param {boolean} value True if the CSS class is to be added, false to remove it
+     * @memberof mu._html
+     */
+    mu._html.prototype.classed = function(name, value) {
+        mu._assert(mu._isString(name),
+                   'invalid name ' + name);
+        mu._assert(typeof value == 'boolean',
+                   'invalid value ' + value);
+        var classStr = (this._node.getAttribute('class') || '').trim();
+        var classes = classStr ? classStr.split(/\s+/) : [];
+        if (value) {
+            for (var i = 0; i < classes.length; i ++)
+                if (classes[i] == name)
+                    return;
+            classes.push(name);
+        } else {
+            for (var i = 0; i < classes.length; i ++)
+                if (classes[i] == name) {
+                    classes.splice(i, 1);
+                    i --;
+                }
+        }
+        this._node.setAttribute('class', classes.join(' '));
+        return this;
+    };
+
+    /**
      * Removes a node from the document.
      *
      * @memberof mu._html

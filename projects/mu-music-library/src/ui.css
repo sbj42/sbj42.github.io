@@ -1,0 +1,21 @@
+.mu_keyboard_key {
+    cursor: pointer;
+}
+.mu_keyboard_white {
+    fill: #fff;
+    stroke: #000;
+}
+.mu_keyboard_black {
+    fill: #000;
+    stroke: #000;
+}
+.mu_keyboard_hover {
+    fill: #ff8;
+}
+.mu_keyboard_playing {
+    fill: #bbf;
+}
+.mu_keyboard_middle_c_mark {
+    fill: #ccc;
+    stroke: none;
+}

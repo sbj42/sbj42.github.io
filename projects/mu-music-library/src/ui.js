@@ -177,9 +177,8 @@
                     .attr('height', wL + wB)
                     .attr('rx', wR)
                     .attr('ry', wR)
-                    .attr('class', 'mu_keyboard_white')
-                    .attr('fill', 'white')
-                    .attr('stroke', 'black');
+                    .classed('mu_keyboard_key', true)
+                    .classed('mu_keyboard_white', true);
                 this._pitches[pitch.toNum()] = rect;
                 g.on('mouseover', this._onMouseOver.bind(this, pitch))
                     .on('mouseout', this._onMouseOut.bind(this, pitch))
@@ -189,8 +188,7 @@
                         .attr('cx', x * (wW + wB) + wB + wW / 2)
                         .attr('cy', wB/2 + wL - cS)
                         .attr('r', cS / 2)
-                        .attr('fill', '#ccc')
-                        .attr('stroke', 'none');
+                        .attr('class', 'mu_keyboard_middle_c_mark');
                 }
             }
         }
@@ -225,9 +223,8 @@
                     .attr('height', bL + bB)
                     .attr('rx', bR)
                     .attr('ry', bR)
-                    .attr('class', 'mu_keyboard_black')
-                    .attr('fill', 'black')
-                    .attr('stroke', 'black');
+                    .classed('mu_keyboard_key', true)
+                    .classed('mu_keyboard_black', true);
                 this._pitches[pitch.toNum()] = rect;
                 rect.on('mouseover', this._onMouseOver.bind(this, pitch))
                     .on('mouseout', this._onMouseOut.bind(this, pitch))
@@ -255,16 +252,6 @@
     mu.Keyboard._whiteIndex = function(pitch) {
         return [0, -1, 1, -1, 2, 3, -1, 4, -1, 5, -1, 6][pitch.index()];
     };
-    mu.Keyboard.prototype._updateKey = function(pitch) {
-        var index = pitch.toNum();
-        var rect = this._pitches[index];
-        if (this._isPlaying(pitch))
-            rect.attr('fill', '#bbf');
-        else if (index == this._keyOver)
-            rect.attr('fill', '#ff8');
-        else
-            rect.attr('fill', mu.Keyboard._isBlack(pitch) ? 'black' : 'white');
-    };
     mu.Keyboard.prototype._isPlaying = function(pitch) {
         var index = pitch.toNum();
         return index in this._pitchesPlaying;
@@ -284,15 +271,13 @@
     mu.Keyboard.prototype._onMouseOver = function(pitch, event) {
         if (this._disposed)
             return;
-        this._keyOver = pitch.toNum();
-        this._updateKey(pitch);
+        this._pitches[pitch.toNum()].classed('mu_keyboard_hover', true);
         this._fire('pitchenter', {ui: this, pitch: pitch});
     };
     mu.Keyboard.prototype._onMouseOut = function(pitch, event) {
         if (this._disposed)
             return;
-        this._keyOver = null;
-        this._updateKey(pitch);
+        this._pitches[pitch.toNum()].classed('mu_keyboard_hover', false);
         this._fire('pitchleave', {ui: this, pitch: pitch});
     };
     mu.Keyboard.prototype._onMouseDown = function(pitch, event) {
@@ -316,11 +301,11 @@
     };
     mu.Keyboard.prototype.startPitch = function(pitch) {
         this._pitchesPlaying[pitch.toNum()] = true;
-        this._updateKey(pitch);
+        this._pitches[pitch.toNum()].classed('mu_keyboard_playing', true);
     };
     mu.Keyboard.prototype.stopPitch = function(pitch) {
         delete this._pitchesPlaying[pitch.toNum()];
-        this._updateKey(pitch);
+        this._pitches[pitch.toNum()].classed('mu_keyboard_playing', false);
     };
     mu.Keyboard.prototype.silence = function() {
         mu._mapForEach(this._pitchesPlaying, function(x, num) {
