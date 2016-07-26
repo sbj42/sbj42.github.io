@@ -64,4 +64,24 @@ assertNoThrow(function() { mu._assert(true, 'x'); });
     assertEquals(h.node().childNodes.length, 2);
 })();
 
+var o = {x: 0, y: 0};
+mu._eventable(o);
+o.addEventListener('x', function(o) {
+    o.x ++;
+});
+function yFunc(o) {
+    o.y ++;
+}
+o.addEventListener('y', yFunc);
+o._fire('x', o);
+o._fire('y', o);
+o.addEventListener('x', function(o) {
+    o.x ++;
+});
+o.removeEventListener('y', yFunc);
+o._fire('x', o);
+o._fire('y', o);
+assertEquals(o.x, 3);
+assertEquals(o.y, 1);
+
 document.write('tests passed');

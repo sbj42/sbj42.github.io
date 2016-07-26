@@ -174,12 +174,30 @@
     mu.Pitch._SHARP_NAMES = 'CCDDEFFGGAAB';
     mu.Pitch._FLAT_NAMES = 'CDDEEFGGAABB';
     /**
-     * @private
+     * Converts a pitch number to a pitch. See {@link mu.Pitch#toNum}.
+     *
+     * @param {number} num The index of this pitch in the entire supported
+     * pitch range
+     * @return {mu.Pitch} The corresponding pitch
+     * @memberof mu.Pitch
+     */
+    mu.Pitch.fromNum = function(num) {
+        var octave = Math.floor(num / 12);
+        mu._assert(octave >= 0 && octave <= 10,
+                'inaudible octave ' + octave);
+        var index = num - octave * 12;
+        return mu.Pitch(octave, index);
+    };
+    /**
+     * Returns a pitch number, an index within the entire supported pitch
+     * range. Useful as a hash key and can be converted back into a pitch
+     * with {@link mu.Pitch~fromNum}.
+     *
      * @return {number} The index of this pitch in the entire supported
      * pitch range
      * @memberof mu.Pitch
      */
-    mu.Pitch.prototype._num = function() {
+    mu.Pitch.prototype.toNum = function() {
         return this._octave * 12 + this._index;
     };
     /**
@@ -225,12 +243,7 @@
     mu.Pitch.prototype.transpose = function(semitones) {
         mu._assert(mu._isInteger(semitones),
                 'invalid semitone count ' + semitones);
-        var ii = this._num() + semitones;
-        var octave = Math.floor(ii / 12);
-        mu._assert(octave >= 0 && octave <= 10,
-                'inaudible octave ' + octave);
-        var index = ii - octave * 12;
-        return mu.Pitch(octave, index);
+        return mu.Pitch.fromNum(this.toNum() + semitones);
     };
     /**
      * Return a {@link mu.Pitch} representing the pitch which is the
@@ -280,7 +293,7 @@
      * @memberof mu.Pitch
      */
     mu.Pitch.prototype.frequency = function() {
-        return mu.Pitch._A_4_FREQUENCY.multiply(Math.pow(mu.Pitch._12TH_ROOT_OF_2, this._num() - mu.A_4._num()));
+        return mu.Pitch._A_4_FREQUENCY.multiply(Math.pow(mu.Pitch._12TH_ROOT_OF_2, this.toNum() - mu.A_4.toNum()));
     };
     /**
      * Returns the number of semitones between this pitch and the `other`.
@@ -296,7 +309,7 @@
     mu.Pitch.prototype.subtract = function(other) {
         mu._assert(other instanceof mu.Pitch,
                 'invalid pitch ' + other);
-        return this._num() - other._num();
+        return this.toNum() - other.toNum();
     };
     /**
      * Returns the interval between this pitch and the other.
@@ -355,7 +368,7 @@
                 'inaudible semitone count ' + semitones);
         this._semitones = semitones;
     }
-    mu.Interval._MAX = mu.Pitch._MAX._num() - mu.Pitch._MIN._num();
+    mu.Interval._MAX = mu.Pitch._MAX.toNum() - mu.Pitch._MIN.toNum();
     /**
      * Returns the number of semitones in this interval
      *

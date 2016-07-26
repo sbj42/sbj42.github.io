@@ -179,12 +179,12 @@
     };
     mu.Keyboard.prototype._onKeyDown = function(event) {
         var key = event.key || event.keyIdentifier;
-        if (key == 'Shift')
+        if (key = 'Shift')
             this._shiftDown = true;
     };
     mu.Keyboard.prototype._onKeyUp = function(event) {
         var key = event.key || event.keyIdentifier;
-        if (key == 'Shift') {
+        if (key = 'Shift') {
             this._shiftDown = false;
             this.silence();
         }

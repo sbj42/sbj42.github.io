@@ -236,28 +236,78 @@
     };
 
     /**
-     * Registers a class as capable of firing events.
+     * An interface for objects which can fire mu events.  Not the same as
+     * the browser's built-in events.
+     *
+     * @interface Eventable
+     * @memberof mu
+     */
+
+    /**
+     * Registers an object as capable of firing events.
      *
      * @private
-     * @param {Function} classObj The constructor of the class
+     * @param {Function} obj The object
      * @memberof mu._html
      */
-    mu._eventable = function(classObj) {
-        classObj.prototype.on = function(type, callback, thisObj) {
+    mu._eventable = function(obj) {
+        if (obj._fire)
+            return;
+
+        /**
+         * Attaches an event listener.
+         *
+         * @name addEventListener
+         * @param {string} type The type of the event
+         * @param {Function} callback The function to call
+         * @param thisObj The value of `this` when the function is called
+         * @memberof mu.Eventable
+         */
+        obj.addEventListener = function(type, callback, thisObj) {
             var e = this._eventListeners = this._eventListeners || {};
             var a = e[type] = e[type] || [];
             a.push([callback, thisObj]);
         };
-        classObj.prototype._fire = function(type) {
-            var args = mu._argsToArray(arguments).slice(1);
+
+        /**
+         * Removes an event listener.
+         *
+         * @name removeEventListener
+         * @param {string} type The type of the event
+         * @param {Function} callback The function to call
+         * @param thisObj The value of `this` when the function is called
+         * @memberof mu.Eventable
+         */
+        obj.removeEventListener = function(type, callback, thisObj) {
+            var e = this._eventListeners = this._eventListeners || {};
+            var a = e[type] = e[type] || [];
+            for (var i = 0; i < a.length; i ++) {
+                if (a[i][0] === callback && a[i][1] === thisObj) {
+                    a.splice(i, 1);
+                    return;
+                }
+            }
+        };
+
+        /**
+         * Fires an event.
+         * 
+         * @name _fire
+         * @protected
+         * @param {string} type The type of the event
+         * @param {object} data The argument to pass to the listeners
+         * @memberof mu.Eventable
+         */
+        obj._fire = function(type, data) {
             var e = this._eventListeners;
             var a = e && e[type];
             if (!a)
                 return;
             a.forEach(function(reg) {
-                reg[0].apply(reg[1], args);
+                reg[0].call(reg[1], data);
             });
         };
     };
+    mu._eventable(mu);
     
 })();

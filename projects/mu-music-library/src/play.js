@@ -11,7 +11,7 @@
         throw Error('missing mu theory library');
 
     /**
-     * Silences all voices.
+     * Silences all voices.  Emergency stop button.
      *
      * @memberof mu
      */
@@ -22,9 +22,28 @@
     };
 
     /**
+     * An event indicating that a pitch has started playing.
+     *
+     * @event pitchstart
+     * @property {mu.Voice} voice The voice playing the pitch
+     * @property {mu.Pitch} pitch The pitch
+     * @memberof mu.Voice
+     */
+
+    /**
+     * An event indicating that a pitch has stopped playing.
+     *
+     * @event pitchstop
+     * @property {mu.Voice} voice The voice playing the pitch
+     * @property {mu.Pitch} pitch The pitch
+     * @memberof mu.Voice
+     */
+
+    /**
      * An interface for voices for notes played via {@link mu.play}.
      *
      * @interface
+     * @implements mu.Eventable
      * @memberof mu
      */
     mu.Voice = function() {
@@ -32,9 +51,10 @@
             return new mu.Voice();
         mu.Voice._activateVoice(this);
     };
+    mu._eventable(mu.Voice.prototype);
     mu.Voice._activeVoices = [];
     /**
-     * Activates a voice as active, so it can be silenced using
+     * Activates a voice, so it can be silenced using
      * {@link mu.silence}.
      *
      * @protected
@@ -43,7 +63,7 @@
      */
     mu.Voice._activateVoice = function(voice) {
         mu._assert(voice instanceof mu.Voice,
-                'invalid voice ' + voice);
+                   'invalid voice ' + voice);
         mu.Voice._activeVoices.push(voice);
     };
     /**
@@ -55,7 +75,7 @@
      */
     mu.Voice._deactivateVoice = function(voice) {
         mu._assert(voice instanceof mu.Voice,
-                'invalid voice ' + key);
+                   'invalid voice ' + key);
         var av = mu.Voice._activeVoices;
         for (var i = 0; i < av.length; i ++) {
             if (av[i] === voice) {
@@ -91,7 +111,9 @@
      * @memberof mu.Voice
      */
     mu.Voice.prototype.ready = function(callback) {
-        throw Error('unimplemented');
+        mu._assert(callback == null || mu._isFunction(callback),
+                   'invalid callback ' + callback);
+        callback();
     };
     /**
      * Returns the lowest pitch this voice can play, or null if it can play
@@ -123,7 +145,7 @@
      */
     mu.Voice.prototype.canPlayPitch = function(pitch) {
         mu._assert(pitch instanceof mu.Pitch,
-                'invalid pitch ' + pitch);
+                   'invalid pitch ' + pitch);
         return (this.lowest() == null || pitch.subtract(this.lowest()) >= 0)
                 && (this.highest() == null || pitch.subtract(this.highest()) <= 0);
     };
@@ -134,7 +156,6 @@
      * @memberof mu.Voice
      */
     mu.Voice.prototype.silence = function(pitch) {
-        throw Error('unimplemented');
     };
     /**
      * Starts playing a given {@link mu.Pitch}.
@@ -145,7 +166,7 @@
      * @memberof mu.Voice
      */
     mu.Voice.prototype.startPitch = function(pitch) {
-        throw Error('unimplemented');
+        this._fire('pitchstart', {voice: this, pitch: pitch});
     };
     /**
      * Stops playing a given {@link mu.Pitch}.
@@ -155,7 +176,7 @@
      * @memberof mu.Voice
      */
     mu.Voice.prototype.stopPitch = function(pitch) {
-        throw Error('unimplemented');
+        this._fire('pitchstop', {voice: this, pitch: pitch});
     };
 
     /**
@@ -172,16 +193,16 @@
         if (!(this instanceof mu.BasicSoundFileVoice))
             return new mu.BasicSoundFileVoice(baseUrl, lowest, highest);
         mu._assert(mu._isString(baseUrl),
-                'invalid base URL ' + baseUrl);
+                   'invalid base URL ' + baseUrl);
         mu._assert(lowest instanceof mu.Pitch,
-                'invalid pitch ' + lowest);
+                   'invalid pitch ' + lowest);
         mu._assert(highest instanceof mu.Pitch,
-                'invalid pitch ' + highest);
+                   'invalid pitch ' + highest);
         mu.Voice.call(this);
         this._baseUrl = baseUrl;
         this._lowest = lowest;
         this._highest = highest;
-        this._pitchElems = [];
+        this._pitches = {};
         this._readyCallbacks = [];
         this._elem = mu._html(document.body).append('div')
             .attr('class', 'mu_html5_audio_voice');
@@ -191,13 +212,22 @@
         function onload() {
             if (--toload == 0) {
                 self._ready = true;
-                self._readyCallbacks.forEach(function(callback) {
-                    callback();
-                });
+                self._readyCallbacks.forEach(mu.Voice.prototype.ready.bind(this));
             }
         }
         for (var i = 0; i < count; i ++) {
-            var node = this._get(this._lowest.transpose(i)).node();
+            var num = pitch.toNum();
+            var elem = this._elem.append('audio')
+                .attr('preload', 'auto')
+                .attr('loop', 'loop');
+            elem.append('source')
+                .attr('type', 'audio/ogg')
+                .attr('src', this._baseUrl + pitch.octave() + '_' + pitch.index() + '.ogg');
+            elem.append('source')
+                .attr('type', 'audio/mp4')
+                .attr('src', this._baseUrl + pitch.octave() + '_' + pitch.index() + '.m4a');
+            this._pitches[num] = elem;
+            var node = elem.node();
             node.oncanplaythrough = onload;
             node.onerror = onload;
         }
@@ -205,23 +235,8 @@
     };
     mu.BasicSoundFileVoice.prototype = Object.create(mu.Voice.prototype);
     mu.BasicSoundFileVoice.prototype.constructor = mu.BasicSoundFileVoice;
-    mu.BasicSoundFileVoice.prototype._load = function(pitch) {
-        var elem = this._elem.append('audio')
-            .attr('preload', 'auto')
-            .attr('loop', 'loop');
-        elem.append('source')
-            .attr('type', 'audio/ogg')
-            .attr('src', this._baseUrl + pitch.octave() + '_' + pitch.index() + '.ogg');
-        elem.append('source')
-            .attr('type', 'audio/mp4')
-            .attr('src', this._baseUrl + pitch.octave() + '_' + pitch.index() + '.m4a');
-        return elem;
-    };
-    mu.BasicSoundFileVoice.prototype._get = function(pitch) {
-        var index = pitch.subtract(this._lowest);
-        if (this._pitchElems[index])
-            return this._pitchElems[index];
-        return this._pitchElems[index] = this._load(pitch);
+    mu.BasicSoundFileVoice.prototype._getNode = function(pitch) {
+        return this._pitches[pitch.toNum()].node();
     };
     mu.BasicSoundFileVoice.prototype.toString = function() {
         return 'unknown basic sound file voice';
@@ -232,12 +247,11 @@
     };
     mu.BasicSoundFileVoice.prototype.ready = function(callback) {
         mu._assert(callback == null || mu._isFunction(callback),
-                'invalid callback ' + callback);
-        if (this._ready) {
-            if (callback) callback();
-            return;
-        }
-        this._readyCallbacks.push(callback);
+                   'invalid callback ' + callback);
+        if (this._ready)
+            mu.Voice.prototype.ready.call(this, callback);
+        else
+            this._readyCallbacks.push(callback);
     };
     mu.BasicSoundFileVoice.prototype.lowest = function() {
         return this._lowest;
@@ -246,29 +260,38 @@
         return this._highest;
     };
     mu.BasicSoundFileVoice.prototype.silence = function() {
-        this._pitchElems.forEach(function(elem) {
-            elem.node().pause();
-        });
+        if (!this._ready)
+            return;
+        mu._mapForEach(this._pitches, function(x, num) {
+            this.stopPitch(mu.Pitch.fromNum(num));
+        }, this);
     };
     mu.BasicSoundFileVoice.prototype.startPitch = function(pitch) {
         mu._assert(pitch instanceof mu.Pitch,
-                'invalid pitch ' + pitch);
+                   'invalid pitch ' + pitch);
+        mu._assert(this._ready,
+                   'this voice is not yet ready');
         mu._assert(this.canPlayPitch(pitch),
-                'cannot play ' + pitch + ' with this voice');
-        var node = this._get(pitch).node();
+                   'cannot play ' + pitch + ' with this voice');
+        var node = this._getNode(pitch);
+        if (!node.paused)
+            return;
         node.currentTime = 0;
         node.play();
-        return function() {
-            node.pause();
-        };
+        mu.Voice.prototype.startPitch.call(this, pitch);
     };
     mu.BasicSoundFileVoice.prototype.stopPitch = function(pitch) {
         mu._assert(pitch instanceof mu.Pitch,
-                'invalid pitch ' + pitch);
+                   'invalid pitch ' + pitch);
+        mu._assert(this._ready,
+                   'this voice is not yet ready');
         mu._assert(this.canPlayPitch(pitch),
-                'cannot play ' + pitch + ' with this voice');
-        var node = this._get(pitch).node();
+                   'cannot play ' + pitch + ' with this voice');
+        var node = this._getNode(pitch);
+        if (node.paused)
+            return;
         node.pause();
+        mu.Voice.prototype.stopPitch.call(this, pitch);
     };
 
     if (window.AudioContext) {
@@ -306,37 +329,20 @@
         };
         mu.GeneratorVoice.prototype = Object.create(mu.Voice.prototype);
         mu.GeneratorVoice.prototype.constructor = mu.GeneratorVoice;
-        mu.GeneratorVoice.prototype._stopPitchIndex = function(index) {
-            if (!this._pitches[index])
-                return;
-            var nodes = this._pitches[index];
-            nodes.forEach(function(node) {
-                node.disconnect();
-            });
-            delete this._pitches[index];
-        };
         mu.GeneratorVoice.prototype.toString = function() {
             return 'unknown generator voice';
         };
-        mu.GeneratorVoice.prototype.dispose = function() {
-            mu.Voice.prototype.dispose.call(this);
-        };
-        mu.GeneratorVoice.prototype.ready = function(callback) {
-            mu._assert(callback == null || mu._isFunction(callback),
-                       'invalid callback ' + callback);
-            callback();
-        };
         mu.GeneratorVoice.prototype.silence = function() {
-            mu._mapForEach(this._pitches, function(nodes, index) {
-                this._stopPitchIndex(index);
+            mu._mapForEach(this._pitches, function(x, num) {
+                this.stopPitch(mu.Pitch.fromNum(num));
             }, this);
             this._pitches = {};
         };
         mu.GeneratorVoice.prototype.startPitch = function(pitch) {
             mu._assert(pitch instanceof mu.Pitch,
                        'invalid pitch ' + pitch);
-            var index = pitch.subtract(mu.C_0);
-            if (this._pitches[index])
+            var num = pitch.toNum();
+            if (this._pitches[num])
                 return;
             var nodes = [];
             var context = this._context;
@@ -357,12 +363,21 @@
             addOscillator(1, 1);
             for (var i = 0; i < this._profile.length; i += 2)
                 addOscillator(this._profile[i], this._profile[i+1]);
-            this._pitches[index] = nodes;
+            this._pitches[num] = nodes;
+            mu.Voice.prototype.startPitch.call(this, pitch);
         };
         mu.GeneratorVoice.prototype.stopPitch = function(pitch) {
             mu._assert(pitch instanceof mu.Pitch,
                        'invalid pitch ' + pitch);
-            this._stopPitchIndex(pitch.subtract(mu.C_0));
+            var num = pitch.toNum();
+            if (!this._pitches[num])
+                return;
+            var nodes = this._pitches[num];
+            nodes.forEach(function(node) {
+                node.disconnect();
+            });
+            delete this._pitches[num];
+            mu.Voice.prototype.stopPitch.call(this, pitch);
         };
 
         /**
@@ -408,7 +423,7 @@
         mu.HarmonicVoice.prototype = Object.create(mu.GeneratorVoice.prototype);
         mu.HarmonicVoice.prototype.constructor = mu.HarmonicVoice;
         mu.HarmonicVoice.prototype.toString = function() {
-            return 'sine voice';
+            return 'harmonic voice';
         };
     } else {
         /**
