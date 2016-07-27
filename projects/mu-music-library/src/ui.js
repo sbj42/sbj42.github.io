@@ -11,19 +11,19 @@
         throw Error('missing mu theory library');
 
     /**
-     * An event indicating that a UI would like a pitch to start.
+     * An event indicating that the user has pressed a pitch in a UI.
      *
-     * @event pitchstart
-     * @property {mu.UI} ui The UI requesting the action
+     * @event pitchpress
+     * @property {mu.UI} ui The UI where the action took place
      * @property {mu.Pitch} pitch The pitch
      * @memberof mu.Voice
      */
 
     /**
-     * An event indicating that a UI would like a pitch to stop.
+     * An event indicating that the user has released a pitch in a UI.
      *
-     * @event pitchstop
-     * @property {mu.UI} ui The UI requesting the action
+     * @event pitchrelease
+     * @property {mu.UI} ui The UI where the action took place
      * @property {mu.Pitch} pitch The pitch
      * @memberof mu.UI
      */
@@ -68,19 +68,11 @@
         return 'unknown ui';
     };
     /**
-     * Asks for all pitches connected to this UI be stopped.
-     *
-     * @memberof mu.UI
-     */
-    mu.UI.prototype.silence = function() {
-    };
-    /**
-     * Silences this UI and closes any resources used by it.
+     * Closes any resources used by this UI.
      *
      * @memberof mu.UI
      */
     mu.UI.prototype.dispose = function(pitch) {
-        this.silence();
     };
     /**
      * Returns the Element for this UI.
@@ -97,7 +89,7 @@
      * @param {mu.Pitch} pitch The pitch
      * @memberof mu.UI
      */
-    mu.UI.prototype.pitchStart = function(pitch) {
+    mu.UI.prototype.pitchStarted = function(pitch) {
     };
     /**
      * Notifies the UI that a {@link mu.Pitch} has stopped.
@@ -105,7 +97,7 @@
      * @param {mu.Pitch} pitch The pitch
      * @memberof mu.UI
      */
-    mu.UI.prototype.pitchStop = function(pitch) {
+    mu.UI.prototype.pitchStopped = function(pitch) {
     };
 
     /**
@@ -131,7 +123,7 @@
         this._highPitch = highPitch;
         this._pitches = {};
         this._pitchesPlaying = {};
-        this._keyOver = null;
+        this._pitchOver = null;
 
         var lowWhite = mu.Keyboard._isBlack(lowPitch) ? lowPitch.transpose(-1) : lowPitch;
         var highWhite = mu.Keyboard._isBlack(highPitch) ? highPitch.transpose(1) : highPitch;
@@ -150,9 +142,9 @@
         document.addEventListener('keydown', this._onKeyDownListener);
         this._onKeyUpListener = this._onKeyUp.bind(this);
         document.addEventListener('keyup', this._onKeyUpListener);
-        this._onFocusOutListener = this.silence.bind(this);
+        this._onFocusOutListener = this.stopAll.bind(this);
         document.addEventListener('focusout', this._onFocusOutListener);
-        this._onBlurListener = this.silence.bind(this);
+        this._onBlurListener = this.stopAll.bind(this);
         window.addEventListener('blur', this._onBlurListener);
 
         this._svg = mu._html('svg')
@@ -265,18 +257,28 @@
         var key = event.key || event.keyIdentifier;
         if (key == 'Shift') {
             this._shiftDown = false;
-            this.silence();
+            this.stopAll();
         }
     };
     mu.Keyboard.prototype._onMouseOver = function(pitch, event) {
         if (this._disposed)
             return;
+        this._pitchOver = pitch;
+        if (this._mouseDown) {
+            if (this._dragPress)
+                this._fire('pitchpress', {ui: this, pitch: pitch});
+            else
+                this._fire('pitchrelease', {ui: this, pitch: pitch});
+        }
         this._pitches[pitch.toNum()].classed('mu_keyboard_hover', true);
         this._fire('pitchenter', {ui: this, pitch: pitch});
     };
     mu.Keyboard.prototype._onMouseOut = function(pitch, event) {
         if (this._disposed)
             return;
+        delete this._pitchOver;
+        if (this._mouseDown && this._dragPress && !this._shiftDown)
+            this._fire('pitchrelease', {ui: this, pitch: pitch});
         this._pitches[pitch.toNum()].classed('mu_keyboard_hover', false);
         this._fire('pitchleave', {ui: this, pitch: pitch});
     };
@@ -284,39 +286,43 @@
         if (this._disposed)
             return;
         event.preventDefault();
+        this._mouseDown = true;
         if (this._shiftDown && this._isPlaying(pitch)) {
-            this._fire('pitchstop', {ui: this, pitch: pitch});
+            this._dragPress = false;
+            this._fire('pitchrelease', {ui: this, pitch: pitch});
             return;
         }
-        this._fire('pitchstart', {ui: this, pitch: pitch});
-        if (!this._shiftDown) {
-            var onMouseUpListener;
-            function onMouseUp(event) {
-                window.removeEventListener('mouseup', onMouseUpListener);
-                this._fire('pitchstop', {ui: this, pitch: pitch});
-            };
-            onMouseUpListener = onMouseUp.bind(this);
-            window.addEventListener('mouseup', onMouseUpListener);
-        }
+        this._dragPress = true;
+        this._fire('pitchpress', {ui: this, pitch: pitch});
+        var onMouseUpListener;
+        function onMouseUp(event) {
+            window.removeEventListener('mouseup', onMouseUpListener);
+            this._mouseDown = false;
+            delete this._dragPress;
+            if (!this._shiftDown)
+                this._fire('pitchrelease', {ui: this, pitch: this._pitchOver || pitch});
+        };
+        onMouseUpListener = onMouseUp.bind(this);
+        window.addEventListener('mouseup', onMouseUpListener);
     };
-    mu.Keyboard.prototype.startPitch = function(pitch) {
+    mu.Keyboard.prototype.pitchStarted = function(pitch) {
         this._pitchesPlaying[pitch.toNum()] = true;
         this._pitches[pitch.toNum()].classed('mu_keyboard_playing', true);
     };
-    mu.Keyboard.prototype.stopPitch = function(pitch) {
+    mu.Keyboard.prototype.pitchStopped = function(pitch) {
         delete this._pitchesPlaying[pitch.toNum()];
         this._pitches[pitch.toNum()].classed('mu_keyboard_playing', false);
     };
-    mu.Keyboard.prototype.silence = function() {
+    mu.Keyboard.prototype.stopAll = function() {
         mu._mapForEach(this._pitchesPlaying, function(x, num) {
             var pitch = mu.Pitch.fromNum(num);
-            this._fire('pitchstop', {ui: this, pitch: pitch});
+            this._fire('pitchrelease', {ui: this, pitch: pitch});
         }, this);
     };
     mu.Keyboard.prototype.dispose = function() {
         document.removeEventListener('keydown', this._onKeyDownListener);
         document.removeEventListener('keydown', this._onKeyUpListener);
-        this.silence();
+        mu.UI.prototype.dispose.call(this);
         this._disposed = true;
     };
     mu.Keyboard.prototype.node = function() {

@@ -75,7 +75,7 @@
      */
     mu.Voice._deactivateVoice = function(voice) {
         mu._assert(voice instanceof mu.Voice,
-                   'invalid voice ' + key);
+                   'invalid voice ' + voice);
         var av = mu.Voice._activeVoices;
         for (var i = 0; i < av.length; i ++) {
             if (av[i] === voice) {
@@ -101,6 +101,7 @@
     mu.Voice.prototype.dispose = function(pitch) {
         this.silence();
         mu.Voice._deactivateVoice(this);
+        this._disposed = true;
     };
     /**
      * Calls the given `callback` when the voice has finished loaded any
@@ -248,6 +249,8 @@
     mu.BasicSoundFileVoice.prototype.ready = function(callback) {
         mu._assert(callback == null || mu._isFunction(callback),
                    'invalid callback ' + callback);
+        if (this._disposed)
+            return;
         if (this._ready)
             mu.Voice.prototype.ready.call(this, callback);
         else
@@ -260,7 +263,7 @@
         return this._highest;
     };
     mu.BasicSoundFileVoice.prototype.silence = function() {
-        if (!this._ready)
+        if (this._disposed || !this._ready)
             return;
         mu._mapForEach(this._pitches, function(x, num) {
             this.stopPitch(mu.Pitch.fromNum(num));
@@ -273,6 +276,8 @@
                    'this voice is not yet ready');
         mu._assert(this.canPlayPitch(pitch),
                    'cannot play ' + pitch + ' with this voice');
+        if (this._disposed)
+            return;
         var node = this._getNode(pitch);
         if (!node.paused)
             return;
@@ -287,6 +292,8 @@
                    'this voice is not yet ready');
         mu._assert(this.canPlayPitch(pitch),
                    'cannot play ' + pitch + ' with this voice');
+        if (this._disposed)
+            return;
         var node = this._getNode(pitch);
         if (node.paused)
             return;
@@ -333,6 +340,8 @@
             return 'unknown generator voice';
         };
         mu.GeneratorVoice.prototype.silence = function() {
+        if (this._disposed)
+            return;
             mu._mapForEach(this._pitches, function(x, num) {
                 this.stopPitch(mu.Pitch.fromNum(num));
             }, this);
@@ -341,6 +350,8 @@
         mu.GeneratorVoice.prototype.startPitch = function(pitch) {
             mu._assert(pitch instanceof mu.Pitch,
                        'invalid pitch ' + pitch);
+            if (this._disposed)
+                return;
             var num = pitch.toNum();
             if (this._pitches[num])
                 return;
@@ -369,6 +380,8 @@
         mu.GeneratorVoice.prototype.stopPitch = function(pitch) {
             mu._assert(pitch instanceof mu.Pitch,
                        'invalid pitch ' + pitch);
+            if (this._disposed)
+                return;
             var num = pitch.toNum();
             if (!this._pitches[num])
                 return;
