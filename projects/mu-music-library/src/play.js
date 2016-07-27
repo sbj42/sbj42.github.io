@@ -107,7 +107,6 @@
      * Calls the given `callback` when the voice has finished loaded any
      * resources it needs.
      *
-     * @abstract
      * @param {Function} callback The function to call when the voice is ready
      * @memberof mu.Voice
      */
@@ -153,7 +152,6 @@
     /**
      * Silences this voice.
      *
-     * @abstract
      * @memberof mu.Voice
      */
     mu.Voice.prototype.silence = function(pitch) {
@@ -161,7 +159,6 @@
     /**
      * Starts playing a given {@link mu.Pitch}.
      *
-     * @abtract
      * @param {mu.Pitch} pitch The pitch to play
      * @return {Function} A function which can be called to stop the pitch, equivalent to `{@link mu.Voice#stopPitch}(pitch)`
      * @memberof mu.Voice
@@ -172,7 +169,6 @@
     /**
      * Stops playing a given {@link mu.Pitch}.
      *
-     * @abtract
      * @param {mu.Pitch} pitch The pitch to play
      * @memberof mu.Voice
      */

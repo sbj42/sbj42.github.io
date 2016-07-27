@@ -16,7 +16,7 @@
      * @event pitchpress
      * @property {mu.UI} ui The UI where the action took place
      * @property {mu.Pitch} pitch The pitch
-     * @memberof mu.Voice
+     * @memberof mu.UI
      */
 
     /**
@@ -34,7 +34,7 @@
      * @event pitchenter
      * @property {mu.UI} ui The UI where the mouse is hovering
      * @property {mu.Pitch} pitch The pitch
-     * @memberof mu.Voice
+     * @memberof mu.UI
      */
 
     /**
@@ -43,7 +43,7 @@
      * @event pitchleave
      * @property {mu.UI} ui The UI where the mouse is hovering
      * @property {mu.Pitch} pitch The pitch
-     * @memberof mu.Voice
+     * @memberof mu.UI
      */
 
     /**
@@ -84,20 +84,20 @@
         throw new Error('unimplemented');
     };
     /**
-     * Notifies the UI that a {@link mu.Pitch} has started.
+     * Updates the UI to show that a pitch has started.
      *
      * @param {mu.Pitch} pitch The pitch
      * @memberof mu.UI
      */
-    mu.UI.prototype.pitchStarted = function(pitch) {
+    mu.UI.prototype.startPitch = function(pitch) {
     };
     /**
-     * Notifies the UI that a {@link mu.Pitch} has stopped.
+     * Updates the UI to show that a pitch has stopped.
      *
      * @param {mu.Pitch} pitch The pitch
      * @memberof mu.UI
      */
-    mu.UI.prototype.pitchStopped = function(pitch) {
+    mu.UI.prototype.stopPitch = function(pitch) {
     };
 
     /**
@@ -305,11 +305,11 @@
         onMouseUpListener = onMouseUp.bind(this);
         window.addEventListener('mouseup', onMouseUpListener);
     };
-    mu.Keyboard.prototype.pitchStarted = function(pitch) {
+    mu.Keyboard.prototype.startPitch = function(pitch) {
         this._pitchesPlaying[pitch.toNum()] = true;
         this._pitches[pitch.toNum()].classed('mu_keyboard_playing', true);
     };
-    mu.Keyboard.prototype.pitchStopped = function(pitch) {
+    mu.Keyboard.prototype.stopPitch = function(pitch) {
         delete this._pitchesPlaying[pitch.toNum()];
         this._pitches[pitch.toNum()].classed('mu_keyboard_playing', false);
     };
@@ -327,6 +327,123 @@
     };
     mu.Keyboard.prototype.node = function() {
         return this._svg.node();
+    };
+
+    /**
+     * A controller - connects one or more UIs to a voice.
+     *
+     * @class
+     * @param {mu.Voice} [voice] The voice to control
+     * @implements mu.Eventable
+     * @memberof mu
+     */
+    mu.Controller = function(voice) {
+        if (!(this instanceof mu.Controller))
+            return new mu.Controller(voice);
+        mu._assert(voice == null || voice instanceof mu.Voice,
+                   'invalid voice ' + voice);
+        this.setVoice(voice);
+        this._uis = [];
+    };
+    mu.Controller.prototype._onPitchPress = function(data) {
+        if (this._voice && this._voice.canPlayPitch(data.pitch))
+            this._voice.startPitch(data.pitch);
+    };
+    mu.Controller.prototype._onPitchRelease = function(data) {
+        if (this._voice && this._voice.canPlayPitch(data.pitch))
+            this._voice.stopPitch(data.pitch);
+    };
+    mu.Controller.prototype._onPitchStart = function(data) {
+        this._uis.forEach(function(ui) {
+            ui.startPitch(data.pitch);
+        });
+    };
+    mu.Controller.prototype._onPitchStop = function(data) {
+        this._uis.forEach(function(ui) {
+            ui.stopPitch(data.pitch);
+        });
+    };
+    /**
+     * Returns a string description of the controller.
+     *
+     * @return {string} A string description of the controller
+     * @memberof mu.Controller
+     */
+    mu.Controller.prototype.toString = function() {
+        return 'controller';
+    };
+    /**
+     * Gets the voice controlled by this controller
+     *
+     * @return {mu.Voice|null} The voice controlled by this controller
+     * @memberof mu.Controller
+     */
+    mu.Controller.prototype.voice = function() {
+        return this._voice;
+    };
+    /**
+     * Sets the voice to be controlled.
+     *
+     * @param {mu.Voice} voice The voice to control
+     * @memberof mu.Controller
+     */
+    mu.Controller.prototype.setVoice = function(voice) {
+        mu._assert(voice == null || voice instanceof mu.Voice,
+                   'invalid voice ' + voice);
+        if (this._voice == voice)
+            return;
+        if (this._voice) {
+            this._voice.removeEventListener('pitchstart', this._onPitchStart, this);
+            this._voice.removeEventListener('pitchstop', this._onPitchStop, this);
+        }
+        this._voice = voice;
+        if (this._voice) {
+            this._voice.addEventListener('pitchstart', this._onPitchStart, this);
+            this._voice.addEventListener('pitchstop', this._onPitchStop, this);
+        }
+    };
+    /**
+     * Connectes a UI to this controller.
+     *
+     * @param {mu.UI} ui The ui to connect
+     * @memberof mu.Controller
+     */
+    mu.Controller.prototype.connectUI = function(ui) {
+        mu._assert(ui instanceof mu.UI,
+                   'invalid ui ' + ui);
+        for (var i = 0; i < this._uis.length; i ++) {
+            if (this._uis === ui)
+                return;
+        }
+        this._uis.push(ui);
+        ui.addEventListener('pitchpress', this._onPitchPress, this);
+        ui.addEventListener('pitchrelease', this._onPitchRelease, this);
+    };
+    /**
+     * Disconnectes a UI to this controller.
+     *
+     * @param {mu.UI} ui The ui to disconnect
+     * @memberof mu.Controller
+     */
+    mu.Controller.prototype.disconnectUI = function(ui) {
+        mu._assert(ui instanceof mu.UI,
+                   'invalid ui ' + ui);
+        for (var i = 0; i < this._uis.length; i ++) {
+            if (this._uis === ui) {
+                this.uis.splice(i, 1);
+                break;
+            }
+        }
+        if (i == this._uis.length)
+            return;
+        ui.removeEventListener('pitchpress', this._onPitchPress, this);
+        ui.removeEventListener('pitchrelease', this._onPitchRelease, this);
+    };
+    mu.Keyboard.prototype.dispose = function() {
+        document.removeEventListener('keydown', this._onKeyDownListener);
+        document.removeEventListener('keydown', this._onKeyUpListener);
+        mu.UI.prototype.dispose.call(this);
+        this._disposed = true;
     };
     
 })();

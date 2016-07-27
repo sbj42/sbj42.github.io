@@ -292,8 +292,13 @@
          * @param {Function} callback The function to call
          * @param thisObj The value of `this` when the function is called
          * @memberof mu.Eventable
+         * @inner
          */
         obj.addEventListener = function(type, callback, thisObj) {
+            mu._assert(mu._isString(type),
+                       'invalid event type ' + type);
+            mu._assert(mu._isFunction(callback),
+                       'invalid callback ' + callback);
             var e = this._eventListeners = this._eventListeners || {};
             var a = e[type] = e[type] || [];
             a.push([callback, thisObj]);
@@ -307,8 +312,13 @@
          * @param {Function} callback The function to call
          * @param thisObj The value of `this` when the function is called
          * @memberof mu.Eventable
+         * @inner
          */
         obj.removeEventListener = function(type, callback, thisObj) {
+            mu._assert(mu._isString(type),
+                       'invalid event type ' + type);
+            mu._assert(mu._isFunction(callback),
+                       'invalid callback ' + callback);
             var e = this._eventListeners = this._eventListeners || {};
             var a = e[type] = e[type] || [];
             for (var i = 0; i < a.length; i ++) {
