@@ -339,37 +339,45 @@
      * @extends mu.UI
      * @memberof mu
      */
-    mu.PitchConstellation = function(rootIndex, lowPitch, highPitch) {
+    mu.PitchConstellation = function(root, lowPitch, highPitch) {
         if (!(this instanceof mu.PitchConstellation))
-            return new mu.PitchConstellation(rootIndex, lowPitch, highPitch);
-        mu._assert(rootIndex == null
-                   || (mu._isInteger(rootIndex) && rootIndex >= 0 && rootIndex <= 11),
-                   'invalid root index ' + rootIndex);
+            return new mu.PitchConstellation(root, lowPitch, highPitch);
+        mu._assert(root instanceof mu.PitchClass,
+                   'invalid pitch class ' + root);
         mu._assert(lowPitch == null || lowPitch instanceof mu.Pitch,
                    'invalid low pitch ' + lowPitch);
         mu._assert(highPitch == null || highPitch instanceof mu.Pitch,
                    'invalid high pitch ' + highPitch);
-        rootIndex = rootIndex || 0;
+        root = root || mu.C;
         lowPitch = lowPitch || mu.C_1;
         highPitch = highPitch || mu.C_8;
         mu._assert(highPitch.subtract(lowPitch) >= 0,
                    'pitches swapped ' + lowPitch + ' ' + highPitch);
         mu.UI.call(this);
-        this._rootIndex = rootIndex;
+        this._root = root;
         this._lowPitch = lowPitch;
         this._highPitch = highPitch;
-        this._indexes = [];
+        this._lines = [];
+        this._labels = [];
         this._pitchesPlaying = {};
 
         var r = mu.PitchConstellation._RADIUS;
-        var rT = r - mu.PitchConstellation._TEXT_HEIGHT;
+        var tF = mu.PitchConstellation._FONT_FAMILY;
+        var tS = mu.PitchConstellation._FONT_SIZE;
+        var tH = tS;
+        var rT = r - 2*tH;
         var rI = rT - mu.PitchConstellation._TEXT_GAP;
 
         this._svg = mu._html('svg')
             .attr('width', 2*r)
-            .attr('height', 2*r);
+            .attr('height', 2*r)
+            .on('mousemove', this._onMouseMove, this)
+            .on('mousedown', this._onMouseDown, this)
+            .on('mouseup', this._onMouseUp, this);
 
         for (var i = 0; i < 12; i ++) {
+            var pitchClass = this._root.transpose(i);
+            var strings = pitchClass.toStrings();
             var deg = i * 180 / 6;
             var rad = i * Math.PI / 6;
             this._svg.append('line')
@@ -378,12 +386,16 @@
                 .attr('x2', r + rI * Math.sin(rad))
                 .attr('y2', r - rI * Math.cos(rad))
                 .classed('mu_pitchconstellation_ray', true);
-            this._svg.append('text')
-                .attr('x', r)
-                .attr('y', r - rT)
-                .attr('text-anchor', 'middle')
-                .attr('transform', 'rotate(' + deg + ' ' + r + ',' + r + ')')
-                .node().innerHTML = String(i);
+            strings.forEach(function(str, line) {
+                this._svg.append('text')
+                    .attr('x', r)
+                    .attr('y', r - rT - tH * (strings.length - line - 1))
+                    .attr('text-anchor', 'middle')
+                    .attr('font-family', tF)
+                    .attr('font-size', tS)
+                    .attr('transform', 'rotate(' + deg + ' ' + r + ',' + r + ')')
+                    .node().innerHTML = str;
+            }, this);
         }
         /*
         this._svg.append('circle')
@@ -393,11 +405,58 @@
             .classed('mu_pitchconstellation_center', true);
         */
     };
-    mu.PitchConstellation._RADIUS = 60;
-    mu.PitchConstellation._TEXT_HEIGHT = 15;
-    mu.PitchConstellation._TEXT_GAP = 5;
+    mu.PitchConstellation.prototype = Object.create(mu.UI.prototype);
+    mu.PitchConstellation.prototype.constructor = mu.PitchConstellation;
+    mu.PitchConstellation._RADIUS = 80;
+    mu.PitchConstellation._TEXT_GAP = 4;
+    mu.PitchConstellation._FONT_FAMILY = 'Verdana';
+    mu.PitchConstellation._FONT_SIZE = 13;
     mu.PitchConstellation.prototype.node = function() {
         return this._svg.node();
+    };
+    mu.PitchConstellation.prototype._onPitchEvent = function(pitchClass, type) {
+        if (this._disposed)
+            return;
+        var hnum = this._highPitch.toNum();
+        for (var num = this._lowPitch.toNum(); num <= hnum; num ++) {
+            var pitch = mu.Pitch.fromNum(num);
+            if (pitch.pitchClass().equals(pitchClass))
+                this._fire(type, {ui: this, pitch: pitch});
+        }
+    };
+    mu.PitchConstellation.prototype._onMouseMove = function(event) {
+        if (this._disposed)
+            return;
+        var rect = this._svg.node().getBoundingClientRect();
+        var r = mu.PitchConstellation._RADIUS;
+        var x = event.clientX - rect.left - r;
+        var y = event.clientY - rect.top - r;
+        var a = Math.round(Math.atan2(x, -y) * 6 / Math.PI);
+        if (a < 0)
+            a += 12;
+        else if (a == 0)
+            a = 0;
+        var pitchClass = mu.PitchClass(a);
+        if (this._pitchClassOver && pitchClass.equals(this._pitchClassOver))
+            return;
+        if (this._mouseDown)
+            this._onPitchEvent(this._pitchClassOver, 'pitchrelease');
+        this._pitchClassOver = mu.PitchClass(a);
+        if (this._mouseDown)
+            this._onPitchEvent(this._pitchClassOver, 'pitchpress');
+    };
+    mu.PitchConstellation.prototype._onMouseUp = function(event) {
+        if (this._disposed)
+            return;
+        this._mouseDown = false;
+        this._onPitchEvent(this._pitchClassOver, 'pitchrelease');
+    };
+    mu.PitchConstellation.prototype._onMouseDown = function(event) {
+        if (this._disposed)
+            return;
+        event.preventDefault();
+        this._mouseDown = true;
+        this._onPitchEvent(this._pitchClassOver, 'pitchpress');
     };
 
     /**

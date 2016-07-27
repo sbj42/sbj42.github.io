@@ -56,21 +56,17 @@
     assertEquals(c2.equals(c2), true);
     assertClose(c2.frequency().hertz(), 65.406, 0.001);
     assertEquals(c2.toString(), 'C2');
-    var e7 = mu.Pitch(4, 7);
-    assertEquals(e7.octave(), 7);
-    assertEquals(e7.pitchClass().index(), 4);
-    assertEquals(e7.toString(), 'E7');
     assertThrow(function() { mu.C_0.transpose(-1); });
     assertThrow(function() { mu.B_10.transpose(1); });
     assertThrow(function() { mu.C_0.transpose('1'); });
-    assertThrow(function() { mu.Pitch(0, -1); });
+    assertThrow(function() { mu.Pitch(mu.C, -1); });
     assertThrow(function() { mu.Pitch(-1, 0); });
     assertThrow(function() { mu.Pitch(12, 0); });
-    assertThrow(function() { mu.Pitch(0, 11); });
+    assertThrow(function() { mu.Pitch(mu.C, 11); });
     assertThrow(function() { mu.Pitch('0', 0); });
-    assertThrow(function() { mu.Pitch(0, '0'); });
+    assertThrow(function() { mu.Pitch(mu.C, '0'); });
     assertThrow(function() { mu.Pitch(0.5, 0); });
-    assertThrow(function() { mu.Pitch(0, 0.5); });
+    assertThrow(function() { mu.Pitch(mu.C, 0.5); });
 })();
 
 (function() {
