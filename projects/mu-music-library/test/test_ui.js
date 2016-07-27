@@ -1,10 +1,16 @@
 var harm = mu.HarmonicVoice();
 harm.ready(function() {
-    var v = harm;
-    var c = mu.Controller(v);
-    var k = mu.Keyboard(v.lowest(), v.highest());
-    mu._html('#keyboard').append(k.node());
-    c.connectUI(k);
+    var voice = harm;
+    var c = mu.Controller(voice);
+
+    var keyboard = mu.Keyboard(voice.lowest(), voice.highest());
+    mu._html('#keyboard').append(keyboard.node());
+    c.connectUI(keyboard);
+
+    var constellation = mu.PitchConstellation(0, voice.lowest(), voice.highest());
+    mu._html('#constellation').append(constellation.node());
+    c.connectUI(constellation);
+    
     c.voice().startPitch(mu.F_4);
     c.voice().startPitch(mu.A_FLAT_4);
     setTimeout(function() {

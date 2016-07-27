@@ -16,7 +16,7 @@
      * @memberof mu
      */
     mu.silence = function() {
-        _mapForEach(mu.Voice._activeVoices, function(voice) {
+        mu._mapForEach(mu.Voice._activeVoices, function(voice) {
             voice.silence();
         });
     };
@@ -219,10 +219,10 @@
                 .attr('loop', 'loop');
             elem.append('source')
                 .attr('type', 'audio/ogg')
-                .attr('src', this._baseUrl + pitch.octave() + '_' + pitch.index() + '.ogg');
+                .attr('src', this._baseUrl + pitch.octave() + '_' + pitch.pitchClass().index() + '.ogg');
             elem.append('source')
                 .attr('type', 'audio/mp4')
-                .attr('src', this._baseUrl + pitch.octave() + '_' + pitch.index() + '.m4a');
+                .attr('src', this._baseUrl + pitch.octave() + '_' + pitch.pitchClass().index() + '.m4a');
             this._pitches[num] = elem;
             var node = elem.node();
             node.oncanplaythrough = onload;
@@ -336,8 +336,8 @@
             return 'unknown generator voice';
         };
         mu.GeneratorVoice.prototype.silence = function() {
-        if (this._disposed)
-            return;
+            if (this._disposed)
+                return;
             mu._mapForEach(this._pitches, function(x, num) {
                 this.stopPitch(mu.Pitch.fromNum(num));
             }, this);
@@ -477,7 +477,8 @@
         };
     }
 
-    /**
+/*
+    **
      * A simple audio sequencer
      *
      * @example
@@ -488,8 +489,9 @@
      * @class
      * @param {number} hertz The frequency in hertz; a positive number
      * @memberof mu
-     */
+     *
     mu.Synth = function() {
     };
+*/
     
 })();

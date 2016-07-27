@@ -99,6 +99,165 @@
     };
 
     /**
+     * A musical pitch class, limited to the twelve-note chromatic scale.
+     *
+     * @example
+     * // returns mu.C
+     * mu.PitchClass(0)
+     *
+     * @class
+     * @param {number} index The index of the pitch class within an octave;
+     * an integer from 0 to 11 inclusive.  The pitches within an octave
+     * start at C (index 0) and end at B (index 11).
+     * @memberof mu
+     */
+    mu.PitchClass = function(index) {
+        if (!(this instanceof mu.PitchClass))
+            return new mu.PitchClass(index);
+        mu._assert(mu._isInteger(index) && index >= 0 && index < 12,
+                   'invalid pitch index ' + index);
+        this._index = index;
+    };
+    (function() {
+        mu.C = mu.PitchClass(0);
+        mu.C_SHARP =
+            mu.D_FLAT = mu.PitchClass(1);
+        mu.D = mu.PitchClass(2);
+        mu.D_SHARP =
+            mu.E_FLAT = mu.PitchClass(3);
+        mu.E = mu.PitchClass(4);
+        mu.F = mu.PitchClass(5);
+        mu.F_SHARP =
+            mu.G_FLAT = mu.PitchClass(6);
+        mu.G = mu.PitchClass(7);
+        mu.G_SHARP =
+            mu.A_FLAT = mu.PitchClass(8);
+        mu.A = mu.PitchClass(9);
+        mu.A_SHARP =
+            mu.B_FLAT = mu.PitchClass(10);
+        mu.B = mu.PitchClass(11);
+    })();
+    mu.PitchClass._SHARP_NAMES = 'CCDDEFFGGAAB';
+    mu.PitchClass._FLAT_NAMES = 'CDDEEFGGAABB';
+    /**
+     * Returns the index of this pitch within its octave.
+     *
+     * @example
+     * // returns 9
+     * mu.A.index()
+     *
+     * @return {number} The index of this pitch within its octave;
+     * an integer from 0 to 11 inclusive
+     * @memberof mu.PitchClass
+     */
+    mu.PitchClass.prototype.index = function() {
+        return this._index;
+    };
+    /**
+     * Returns true if this pitch class is equivalent to the `other`.
+     *
+     * @param {mu.PitchClass} other The pitch class to compare against
+     * @return {boolean} True If the pitch classes are equivalent
+     * @memberof mu.PitchClass
+     */
+    mu.PitchClass.prototype.equals = function(other) {
+        mu._assert(other instanceof mu.PitchClass,
+                   'invalid pitch class ' + other);
+        return this._index == other._index;
+    };
+    /**
+     * Return a {@link mu.PitchClass} representing the pitch class which is the
+     * given number of `semitones` above this pitch class.
+     *
+     * @example
+     * // returns a pitch equivalent to mu.F_SHARP
+     * mu.D.transpose(4)
+     *
+     * @param {number} semitones The number of semitones by which to
+     * raise the returned pitch class; an integer
+     * @return {mu.PitchClass} The new pitch class
+     * @memberof mu.PitchClass
+     */
+    mu.PitchClass.prototype.transpose = function(semitones) {
+        mu._assert(mu._isInteger(semitones),
+                   'invalid semitone count ' + semitones);
+        var num = this.index() + semitones;
+        num = num % 12;
+        if (num < 0)
+            num += 12;
+        return mu.PitchClass(num);
+    };
+    /**
+     * Return a {@link mu.PitchClass} representing the pitch class which is the
+     * given `interval` above this pitch class.
+     *
+     * @example
+     * // returns a pitch class equivalent to mu.F_SHARP
+     * mu.D.sharper(mu.Interval(4))
+     *
+     * @param {mu.Interval} semitones The interval by which to raise
+     * the returned pitch class
+     * @return {mu.PitchClass} The new pitch class
+     * @memberof mu.PitchClass
+     */
+    mu.PitchClass.prototype.sharper = function(interval) {
+        mu._assert(interval instanceof mu.Interval,
+                   'invalid interval ' + interval);
+        return this.transpose(interval.semitones());
+    };
+    /**
+     * Return a {@link mu.PitchClass} representing the pitch class which is the
+     * given `interval` below this pitch class.
+     *
+     * @example
+     * // returns a pitch class equivalent to mu.B_FLAT
+     * mu.D.flatter(mu.Interval(4))
+     *
+     * @param {mu.Interval} interval The interval by which to lower
+     * the returned pitch class
+     * @return {mu.PitchClass} The new pitch class
+     * @memberof mu.PitchClass
+     */
+    mu.PitchClass.prototype.flatter = function(interval) {
+        mu._assert(interval instanceof mu.Interval,
+                   'invalid interval ' + interval);
+        return this.transpose(-interval.semitones());
+    };
+    /**
+     * Returns the interval between this pitch class and the other.
+     *
+     * @example
+     * // returns an interval equivalent to mu.Interval(4)
+     * mu.D.interval(mu.B_FLAT)
+     * @example
+     * // also returns an interval equivalent to mu.Interval(4)
+     * mu.B_FLAT.interval(mu.D)
+     *
+     * @return {mu.Interval} The interval between this pitch class and the other
+     * @memberof mu.PitchClass
+     */
+    mu.PitchClass.prototype.interval = function(other) {
+        return mu.Interval(Math.abs(this.index() - other.index()));
+    };
+    /**
+     * Describes this pitch class.
+     *
+     * @example
+     * // returns "C&#x266f;/D&#x266d;"
+     * mu.C_SHARP.toString()
+     *
+     * @return {string} A description of this pitch class
+     * @memberof mu.PitchClass
+     */
+    mu.PitchClass.prototype.toString = function() {
+        var s = mu.PitchClass._SHARP_NAMES[this._index];
+        var f = mu.PitchClass._FLAT_NAMES[this._index];
+        if (s === f)
+            return s + this._octave;
+        return s + mu.SHARP_CHAR + '/' + f + mu.FLAT_CHAR;
+    };
+
+    /**
      * A musical pitch, limited to the twelve-note chromatic scale.
      *
      * Usually you should not need to call this constructor.  All the
@@ -107,51 +266,58 @@
      *
      * @example
      * // returns mu.C_4 (representing middle C)
-     * mu.Pitch(4, 0)
+     * mu.Pitch(0, 4)
+     * @example
+     * // returns mu.A_4 (the A above middle C)
+     * mu.Pitch(mu.A, 4)
      *
      * @class
-     * @param {number} octave The octave number of the pitch as described
+     * @param {number|mu.PitchClass} pitchClass The pitch class, either as
+     * a {@link mu.PitchClass} or as an index of the pitch within that octave.
+     * @param {number} [octave] The octave number of the pitch as described
      * by scientific pitch notation; an integer from 0 to 10 inclusive.
      * {@link mu.C_4} (middle C) is in octave 4,
      * and it is the fourth C on a standard 88-key piano keyboard.
-     * @param {number} index The index of the pitch within that octave;
-     * an integer from 0 to 11 inclusive.  The pitches within an octave
-     * start at C (index 0) and end at B (index 11).
      * @memberof mu
      */
-    mu.Pitch = function(octave, index) {
+    mu.Pitch = function(pitchClass, octave) {
         if (!(this instanceof mu.Pitch))
-            return new mu.Pitch(octave, index);
+            return new mu.Pitch(pitchClass, octave);
+        mu._assert(pitchClass instanceof mu.PitchClass
+                   || (mu._isInteger(pitchClass) && pitchClass >= 0 && pitchClass < 12),
+                   'invalid pitch class ' + pitchClass);
+        if (!(pitchClass instanceof mu.PitchClass))
+            pitchClass = mu.PitchClass(pitchClass);
+        if (octave == null)
+            octave = 4;
         mu._assert(mu._isInteger(octave),
-                'invalid octave ' + octave);
+                   'invalid octave ' + octave);
         mu._assert(octave >= 0 && octave <= 10,
-                'inaudible octave ' + octave);
-        mu._assert(mu._isInteger(index) && index >= 0 && index < 12,
-                'invalid pitch index ' + index);
+                   'inaudible octave ' + octave);
+        this._pitchClass = pitchClass;
         this._octave = octave;
-        this._index = index;
     };
     (function() {
         // these constants are documented in pitches.js,
         // which is generated by the docgen.py script
         for (var octave = 0; octave <= 10; octave ++) {
-            mu['C_' + octave] = mu.Pitch(octave, 0);
+            mu['C_' + octave] = mu.Pitch(0, octave);
             mu['C_SHARP_' + octave] = 
-            mu['D_FLAT_' + octave] = mu.Pitch(octave, 1);
-            mu['D_' + octave] = mu.Pitch(octave, 2);
+            mu['D_FLAT_' + octave] = mu.Pitch(1, octave);
+            mu['D_' + octave] = mu.Pitch(2, octave);
             mu['D_SHARP_' + octave] = 
-            mu['E_FLAT_' + octave] = mu.Pitch(octave, 3);
-            mu['E_' + octave] = mu.Pitch(octave, 4);
-            mu['F_' + octave] = mu.Pitch(octave, 5);
+            mu['E_FLAT_' + octave] = mu.Pitch(3, octave);
+            mu['E_' + octave] = mu.Pitch(4, octave);
+            mu['F_' + octave] = mu.Pitch(5, octave);
             mu['F_SHARP_' + octave] = 
-            mu['G_FLAT_' + octave] = mu.Pitch(octave, 6);
-            mu['G_' + octave] = mu.Pitch(octave, 7);
+            mu['G_FLAT_' + octave] = mu.Pitch(6, octave);
+            mu['G_' + octave] = mu.Pitch(7, octave);
             mu['G_SHARP_' + octave] = 
-            mu['A_FLAT_' + octave] = mu.Pitch(octave, 8);
-            mu['A_' + octave] = mu.Pitch(octave, 9);
+            mu['A_FLAT_' + octave] = mu.Pitch(8, octave);
+            mu['A_' + octave] = mu.Pitch(9, octave);
             mu['A_SHARP_' + octave] = 
-            mu['B_FLAT_' + octave] = mu.Pitch(octave, 10);
-            mu['B_' + octave] = mu.Pitch(octave, 11);
+            mu['B_FLAT_' + octave] = mu.Pitch(10, octave);
+            mu['B_' + octave] = mu.Pitch(11, octave);
         }
     })();
     mu.Pitch._MIN = mu.C_0;
@@ -171,8 +337,6 @@
      * @memberof mu.Pitch
      */
     mu.Pitch._A_4_FREQUENCY = mu.Frequency(440);
-    mu.Pitch._SHARP_NAMES = 'CCDDEFFGGAAB';
-    mu.Pitch._FLAT_NAMES = 'CDDEEFGGAABB';
     /**
      * Converts a pitch number to a pitch. See {@link mu.Pitch#toNum}.
      *
@@ -185,8 +349,8 @@
         var octave = Math.floor(num / 12);
         mu._assert(octave >= 0 && octave <= 10,
                 'inaudible octave ' + octave);
-        var index = num - octave * 12;
-        return mu.Pitch(octave, index);
+        var pitchClass = num - octave * 12;
+        return mu.Pitch(pitchClass, octave);
     };
     /**
      * Returns a pitch number, an index within the entire supported pitch
@@ -198,7 +362,7 @@
      * @memberof mu.Pitch
      */
     mu.Pitch.prototype.toNum = function() {
-        return this._octave * 12 + this._index;
+        return this._octave * 12 + this._pitchClass.index();
     };
     /**
      * Returns the octave number of this pitch.
@@ -214,18 +378,29 @@
         return this._octave;
     };
     /**
-     * Returns the index of this pitch within its octave.
+     * Returns the pitch class of this pitch.
      *
      * @example
-     * // returns 9
-     * mu.A_4.index()
+     * // returns mu.A
+     * mu.A_4.pitchClass()
      *
-     * @return {number} The index of this pitch within its octave;
-     * an integer from 0 to 11 inclusive
+     * @return {mu.PitchClass} The pitch class of this pitch
      * @memberof mu.Pitch
      */
-    mu.Pitch.prototype.index = function() {
-        return this._index;
+    mu.Pitch.prototype.pitchClass = function() {
+        return this._pitchClass;
+    };
+    /**
+     * Returns true if this pitch is equivalent to the `other`.
+     *
+     * @param {mu.Pitch} The pitch to compare against
+     * @return {boolean} True if the two pitches are equivalent
+     * @memberof mu.Pitch
+     */
+    mu.Pitch.prototype.equals = function(other) {
+        mu._assert(other instanceof mu.Pitch,
+                   'invalid pitch ' + other);
+        return this._octave == other._octave && this._pitchClass.equals(other._pitchClass);
     };
     /**
      * Return a {@link mu.Pitch} representing the pitch which is the
@@ -242,7 +417,7 @@
      */
     mu.Pitch.prototype.transpose = function(semitones) {
         mu._assert(mu._isInteger(semitones),
-                'invalid semitone count ' + semitones);
+                   'invalid semitone count ' + semitones);
         return mu.Pitch.fromNum(this.toNum() + semitones);
     };
     /**
@@ -260,7 +435,7 @@
      */
     mu.Pitch.prototype.sharper = function(interval) {
         mu._assert(interval instanceof mu.Interval,
-                'invalid interval ' + interval);
+                   'invalid interval ' + interval);
         return this.transpose(interval.semitones());
     };
     /**
@@ -278,7 +453,7 @@
      */
     mu.Pitch.prototype.flatter = function(interval) {
         mu._assert(interval instanceof mu.Interval,
-                'invalid interval ' + interval);
+                   'invalid interval ' + interval);
         return this.transpose(-interval.semitones());
     };
     /**
@@ -308,7 +483,7 @@
      */
     mu.Pitch.prototype.subtract = function(other) {
         mu._assert(other instanceof mu.Pitch,
-                'invalid pitch ' + other);
+                   'invalid pitch ' + other);
         return this.toNum() - other.toNum();
     };
     /**
@@ -338,8 +513,9 @@
      * @memberof mu.Pitch
      */
     mu.Pitch.prototype.toString = function() {
-        var s = mu.Pitch._SHARP_NAMES[this._index];
-        var f = mu.Pitch._FLAT_NAMES[this._index];
+        var index = this._pitchClass.index();
+        var s = mu.PitchClass._SHARP_NAMES[index];
+        var f = mu.PitchClass._FLAT_NAMES[index];
         if (s === f)
             return s + this._octave;
         return s + mu.SHARP_CHAR + this._octave + '/' + f + mu.FLAT_CHAR + this._octave;

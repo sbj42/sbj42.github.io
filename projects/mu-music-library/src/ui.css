@@ -19,3 +19,10 @@
     fill: #ccc;
     stroke: none;
 }
+
+.mu_pitchconstellation_ray {
+    stroke: #000;
+    stroke-width: 2px;
+    stroke-linecap: round;
+    opacity: 0.2;
+}
