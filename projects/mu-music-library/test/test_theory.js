@@ -16,6 +16,21 @@
 })();
 
 (function() {
+    console.info('testing mu.Tempo');
+    var t = mu.Tempo(120);
+    assertEquals(t.bpm(), 120);
+    assertEquals(t.toString(), '120 bpm');
+    var t2 = mu.Tempo(56.59);
+    assertClose(t2.bpm(), 56.59, 0.01);
+    assertEquals(t2.toString(), '56.6 bpm');
+    assertThrow(function() { mu.Tempo(-1); });
+    assertThrow(function() { mu.Tempo(0); });
+    assertThrow(function() { mu.Tempo(1/0); });
+    assertThrow(function() { mu.Tempo('x'); });
+    assertThrow(function() { mu.Tempo('1'); });
+})();
+
+(function() {
     console.info('testing mu.PitchClass');
     var a = mu.A;
     assertEquals(a.index(), 9);

@@ -99,6 +99,70 @@
     };
 
     /**
+     * The tempo of a musical sequence.
+     *
+     * @example
+     * mu.Tempo(120)
+     *
+     * @class
+     * @param {number} bpm The tempo in beats per minute; a positive number
+     * @memberof mu
+     */
+    mu.Tempo = function(bpm) {
+        if (!(this instanceof mu.Tempo))
+            return new mu.Tempo(bpm);
+        mu._assert(mu._isFinite(bpm) && bpm > 0,
+                'invalid tempo ' + bpm + ' bpm');
+        this._bpm = bpm;
+    };
+    /**
+     * Returns the tempo in beats per minute of this {@link mu.Tempo} object.
+     *
+     * @example
+     * // returns 120
+     * mu.Tempo(120).bpm()
+     *
+     * @return {number} The tempo in beats per minute
+     * @memberof mu.Tempo
+     */
+    mu.Tempo.prototype.bpm = function() {
+        return this._bpm;
+    };
+    /**
+     * Returns the duration (in seconds) of a single beat in this
+     * {@link mu.Tempo}.
+     *
+     * @example
+     * // returns 0.5
+     * mu.Tempo(120).beatDuration()
+     *
+     * @return {number} The duration of a single beat, in seconds
+     * @memberof mu.Tempo
+     */
+    mu.Tempo.prototype.beatDuration = function() {
+        return 60.0 / this._bpm;
+    };
+    /**
+     * Describes the {@link mu.Tempo} object.
+     *
+     * @example
+     * // returns "120 bpm"
+     * mu.Tempo(120).toString()
+     *
+     * @return {string} A description of this {@link mu.Tempo} object
+     * @memberof mu.Tempo
+     */
+    mu.Tempo.prototype.toString = function() {
+        var str;
+        if (this._bpm < 100) {
+            str = this._bpm.toFixed(1);
+        } else if (this._bpm < 1000)
+            str = this._bpm.toFixed(0);
+        else str = parseInt(this._bpm).toLocaleString();
+        return str + ' bpm';
+    };
+
+    /**
      * A musical pitch class, limited to the twelve-note chromatic scale.
      *
      * @example
@@ -680,8 +744,8 @@
         });
         return ret.join(' ');
     };
-/*
 
+/*
     mu.ScaleType = function(intervals) {
         
     };
@@ -700,5 +764,4 @@
 
 */
 
-    return mu;
 })();

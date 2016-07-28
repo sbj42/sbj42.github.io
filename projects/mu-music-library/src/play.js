@@ -10,6 +10,8 @@
     if (!mu.Pitch)
         throw Error('missing mu theory library');
 
+    mu._gain = 0.5; // master volume
+
     /**
      * Silences all voices.  Emergency stop button.
      *
@@ -277,6 +279,7 @@
         var node = this._getNode(pitch);
         if (!node.paused)
             return;
+        node.volume = Math.min(mu._gain, 1);
         node.currentTime = 0;
         node.play();
         mu.Voice.prototype.startPitch.call(this, pitch);
@@ -360,7 +363,7 @@
                 var oscillator = context.createOscillator();
                 oscillator.frequency.value = freq;
                 var gain = context.createGain();
-                gain.gain.value = 0.125 * relAmp;
+                gain.gain.value = 0.125 * mu._gain * relAmp;
                 oscillator.connect(gain);
                 gain.connect(context.destination);
                 oscillator.start();
