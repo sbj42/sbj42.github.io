@@ -7,7 +7,7 @@ harm.ready(function() {
     mu._html('#keyboard').append(keyboard.node());
     c.connectUI(keyboard);
 
-    var constellation = mu.PitchConstellation(mu.C, voice.lowest(), voice.highest());
+    var constellation = mu.PitchConstellation(mu.C, mu.C_4, mu.B_4);
     mu._html('#constellation').append(constellation.node());
     c.connectUI(constellation);
     

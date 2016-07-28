@@ -6,5 +6,4 @@ volume fader, gain knob
 use fletcher-munson curves in the generator voice to try to get equal volume from low and high notes, use replaygain on the audio files for same
 sound envelopes in generators
 
-constellation, progression, progression ui
-
+progression, progression ui

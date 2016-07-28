@@ -324,7 +324,9 @@
     };
     mu.Keyboard.prototype.dispose = function() {
         document.removeEventListener('keydown', this._onKeyDownListener);
-        document.removeEventListener('keydown', this._onKeyUpListener);
+        document.removeEventListener('keyup', this._onKeyUpListener);
+        document.removeEventListener('focusout', this._onFocusOutListener);
+        window.removeEventListener('blur', this._onBlurListener);
         mu.UI.prototype.dispose.call(this);
         this._disposed = true;
     };
@@ -358,8 +360,16 @@
         this._lowPitch = lowPitch;
         this._highPitch = highPitch;
         this._lines = [];
-        this._labels = [];
-        this._pitchesPlaying = {};
+        this._marks = [];
+        this._pitchClassesPlaying = [];
+
+        this._onKeyDownListener = this._onKeyDown.bind(this);
+        document.addEventListener('keydown', this._onKeyDownListener);
+        this._onKeyUpListener = this._onKeyUp.bind(this);
+        document.addEventListener('keyup', this._onKeyUpListener);
+        document.addEventListener('focusout', this._onFocusOutListener);
+        this._onBlurListener = this.stopAll.bind(this);
+        window.addEventListener('blur', this._onBlurListener);
 
         var r = mu.PitchConstellation._RADIUS;
         var tF = mu.PitchConstellation._FONT_FAMILY;
@@ -372,20 +382,27 @@
             .attr('width', 2*r)
             .attr('height', 2*r)
             .on('mousemove', this._onMouseMove, this)
-            .on('mousedown', this._onMouseDown, this)
-            .on('mouseup', this._onMouseUp, this);
+            .on('mousedown', this._onMouseDown, this);
+        var bottom = this._svg.append('g');
 
         for (var i = 0; i < 12; i ++) {
+            this._pitchClassesPlaying.push(0);
             var pitchClass = this._root.transpose(i);
             var strings = pitchClass.toStrings();
             var deg = i * 180 / 6;
             var rad = i * Math.PI / 6;
-            this._svg.append('line')
+            bottom.append('line')
                 .attr('x1', r)
                 .attr('y1', r)
                 .attr('x2', r + rI * Math.sin(rad))
                 .attr('y2', r - rI * Math.cos(rad))
                 .classed('mu_pitchconstellation_ray', true);
+            this._lines.push(this._svg.append('line')
+                .attr('x1', r)
+                .attr('y1', r)
+                .attr('x2', r + rI * Math.sin(rad))
+                .attr('y2', r - rI * Math.cos(rad))
+                .classed('mu_pitchconstellation_ray2', true));
             strings.forEach(function(str, line) {
                 this._svg.append('text')
                     .attr('x', r)
@@ -414,6 +431,9 @@
     mu.PitchConstellation.prototype.node = function() {
         return this._svg.node();
     };
+    mu.PitchConstellation.prototype._isPlaying = function(pitchClass) {
+        return this._pitchClassesPlaying[pitchClass.index()] != 0;
+    };
     mu.PitchConstellation.prototype._onPitchEvent = function(pitchClass, type) {
         if (this._disposed)
             return;
@@ -422,6 +442,18 @@
             var pitch = mu.Pitch.fromNum(num);
             if (pitch.pitchClass().equals(pitchClass))
                 this._fire(type, {ui: this, pitch: pitch});
+        }
+    };
+    mu.PitchConstellation.prototype._onKeyDown = function(event) {
+        var key = event.key || event.keyIdentifier;
+        if (key == 'Shift')
+            this._shiftDown = true;
+    };
+    mu.PitchConstellation.prototype._onKeyUp = function(event) {
+        var key = event.key || event.keyIdentifier;
+        if (key == 'Shift') {
+            this._shiftDown = false;
+            this.stopAll();
         }
     };
     mu.PitchConstellation.prototype._onMouseMove = function(event) {
@@ -439,24 +471,62 @@
         var pitchClass = mu.PitchClass(a);
         if (this._pitchClassOver && pitchClass.equals(this._pitchClassOver))
             return;
-        if (this._mouseDown)
+        if (this._mouseDown && this._dragPress && !this._shiftDown)
             this._onPitchEvent(this._pitchClassOver, 'pitchrelease');
         this._pitchClassOver = mu.PitchClass(a);
-        if (this._mouseDown)
-            this._onPitchEvent(this._pitchClassOver, 'pitchpress');
-    };
-    mu.PitchConstellation.prototype._onMouseUp = function(event) {
-        if (this._disposed)
-            return;
-        this._mouseDown = false;
-        this._onPitchEvent(this._pitchClassOver, 'pitchrelease');
+        if (this._mouseDown) {
+            if (this._dragPress)
+                this._onPitchEvent(this._pitchClassOver, 'pitchpress');
+            else
+                this._onPitchEvent(this._pitchClassOver, 'pitchrelease');
+        }
     };
     mu.PitchConstellation.prototype._onMouseDown = function(event) {
         if (this._disposed)
             return;
         event.preventDefault();
         this._mouseDown = true;
+        if (this._shiftDown && this._isPlaying(this._pitchClassOver)) {
+            this._dragPress = false;
+            this._onPitchEvent(this._pitchClassOver, 'pitchrelease');
+            return;
+        }
+        this._dragPress = true;
         this._onPitchEvent(this._pitchClassOver, 'pitchpress');
+        var onMouseUpListener;
+        function onMouseUp(event) {
+            if (this._disposed)
+                return;
+            this._mouseDown = false;
+            delete this._dragPress;
+            if (!this._shiftDown)
+                this._onPitchEvent(this._pitchClassOver, 'pitchrelease');
+        };
+        onMouseUpListener = onMouseUp.bind(this);
+        window.addEventListener('mouseup', onMouseUpListener);
+    };
+    mu.PitchConstellation.prototype.startPitch = function(pitch) {
+        var index = pitch.pitchClass().index();
+        var count = this._pitchClassesPlaying[index] ++;
+        if (count == 0)
+            this._lines[index].classed('mu_pitchconstellation_ray2_playing', true);
+    };
+    mu.PitchConstellation.prototype.stopPitch = function(pitch) {
+        var index = pitch.pitchClass().index();
+        var count = -- this._pitchClassesPlaying[index];
+        if (count == 0)
+            this._lines[index].classed('mu_pitchconstellation_ray2_playing', false);
+    };
+    mu.PitchConstellation.prototype.stopAll = function() {
+        mu._mapForEach(this._pitchClassesPlaying, function(x, num) {
+            this._onPitchEvent(mu.PitchClass(num), 'pitchrelease');
+        }, this);
+    };
+    mu.PitchConstellation.prototype.dispose = function() {
+        document.removeEventListener('focusout', this._onFocusOutListener);
+        window.removeEventListener('blur', this._onBlurListener);
+        mu.UI.prototype.dispose.call(this);
+        this._disposed = true;
     };
 
     /**
