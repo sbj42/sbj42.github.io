@@ -9,41 +9,49 @@
         throw Error('missing mu util library');
     if (!mu.Pitch)
         throw Error('missing mu theory library');
+    if (!mu.audio.Voice)
+        throw Error('missing mu player library');
+
+    /**
+     * The mu ui library namespace object
+     * @namespace mu.ui
+     */
+    mu.ui = mu.ui || {};
 
     /**
      * An event indicating that the user has pressed a pitch in a UI.
      *
      * @event pitchpress
-     * @property {mu.UI} ui The UI where the action took place
+     * @property {mu.ui.UI} ui The UI where the action took place
      * @property {mu.Pitch} pitch The pitch
-     * @memberof mu.UI
+     * @memberof mu.ui.UI
      */
 
     /**
      * An event indicating that the user has released a pitch in a UI.
      *
      * @event pitchrelease
-     * @property {mu.UI} ui The UI where the action took place
+     * @property {mu.ui.UI} ui The UI where the action took place
      * @property {mu.Pitch} pitch The pitch
-     * @memberof mu.UI
+     * @memberof mu.ui.UI
      */
 
     /**
      * An event indicating that the mouse has entered a pitch in a UI.
      *
      * @event pitchenter
-     * @property {mu.UI} ui The UI where the mouse is hovering
+     * @property {mu.ui.UI} ui The UI where the mouse is hovering
      * @property {mu.Pitch} pitch The pitch
-     * @memberof mu.UI
+     * @memberof mu.ui.UI
      */
 
     /**
      * An event indicating that the mouse has left a pitch in a UI.
      *
      * @event pitchleave
-     * @property {mu.UI} ui The UI where the mouse is hovering
+     * @property {mu.ui.UI} ui The UI where the mouse is hovering
      * @property {mu.Pitch} pitch The pitch
-     * @memberof mu.UI
+     * @memberof mu.ui.UI
      */
 
     /**
@@ -53,63 +61,63 @@
      * @implements mu.Eventable
      * @memberof mu
      */
-    mu.UI = function() {
-        if (!(this instanceof mu.UI))
-            return new mu.UI();
+    mu.ui.UI = function() {
+        if (!(this instanceof mu.ui.UI))
+            return new mu.ui.UI();
     };
-    mu._eventable(mu.UI.prototype);
+    mu._eventable(mu.ui.UI.prototype);
     /**
      * Returns a string description of the UI.
      *
      * @return {string} A string description of the voice
-     * @memberof mu.UI
+     * @memberof mu.ui.UI
      */
-    mu.UI.prototype.toString = function() {
+    mu.ui.UI.prototype.toString = function() {
         return 'unknown ui';
     };
     /**
      * Closes any resources used by this UI.
      *
-     * @memberof mu.UI
+     * @memberof mu.ui.UI
      */
-    mu.UI.prototype.dispose = function() {
+    mu.ui.UI.prototype.dispose = function() {
     };
     /**
      * Returns the Element for this UI.
      *
      * @return {Element} The Element for this UI
-     * @memberof mu.UI
+     * @memberof mu.ui.UI
      */
-    mu.UI.prototype.node = function() {
+    mu.ui.UI.prototype.node = function() {
         throw new Error('unimplemented');
     };
     /**
      * Updates the UI to show that a pitch has started.
      *
      * @param {mu.Pitch} pitch The pitch
-     * @memberof mu.UI
+     * @memberof mu.ui.UI
      */
-    mu.UI.prototype.startPitch = function(pitch) {
+    mu.ui.UI.prototype.startPitch = function(pitch) {
     };
     /**
      * Updates the UI to show that a pitch has stopped.
      *
      * @param {mu.Pitch} pitch The pitch
-     * @memberof mu.UI
+     * @memberof mu.ui.UI
      */
-    mu.UI.prototype.stopPitch = function(pitch) {
+    mu.ui.UI.prototype.stopPitch = function(pitch) {
     };
 
     /**
      * A keyboard UI.
      *
      * @class
-     * @extends mu.UI
+     * @extends mu.ui.UI
      * @memberof mu
      */
-    mu.Keyboard = function(lowPitch, highPitch) {
-        if (!(this instanceof mu.Keyboard))
-            return new mu.Keyboard(lowPitch, highPitch);
+    mu.ui.Keyboard = function(lowPitch, highPitch) {
+        if (!(this instanceof mu.ui.Keyboard))
+            return new mu.ui.Keyboard(lowPitch, highPitch);
         mu._assert(lowPitch == null || lowPitch instanceof mu.Pitch,
                    'invalid low pitch ' + lowPitch);
         mu._assert(highPitch == null || highPitch instanceof mu.Pitch,
@@ -118,25 +126,25 @@
         highPitch = highPitch || mu.C_8;
         mu._assert(highPitch.subtract(lowPitch) >= 0,
                    'pitches swapped ' + lowPitch + ' ' + highPitch);
-        mu.UI.call(this);
+        mu.ui.UI.call(this);
         this._lowPitch = lowPitch;
         this._highPitch = highPitch;
         this._pitches = {};
         this._pitchesPlaying = {};
         this._pitchOver = null;
 
-        var lowWhite = mu.Keyboard._isBlack(lowPitch) ? lowPitch.transpose(-1) : lowPitch;
-        var highWhite = mu.Keyboard._isBlack(highPitch) ? highPitch.transpose(1) : highPitch;
-        var lowWhiteIndex = mu.Keyboard._whiteIndex(lowWhite);
-        var highWhiteIndex = mu.Keyboard._whiteIndex(highWhite);
+        var lowWhite = mu.ui.Keyboard._isBlack(lowPitch) ? lowPitch.transpose(-1) : lowPitch;
+        var highWhite = mu.ui.Keyboard._isBlack(highPitch) ? highPitch.transpose(1) : highPitch;
+        var lowWhiteIndex = mu.ui.Keyboard._whiteIndex(lowWhite);
+        var highWhiteIndex = mu.ui.Keyboard._whiteIndex(highWhite);
         var lowOctave = lowWhite.octave();
         var highOctave = highWhite.octave();
         var span = (highOctave - lowOctave) * 7 + highWhiteIndex - lowWhiteIndex + 1;
-        var wW = mu.Keyboard._WHITE_WIDTH;
-        var wL = mu.Keyboard._WHITE_LENGTH;
-        var wB = mu.Keyboard._WHITE_BORDER;
-        var wR = mu.Keyboard._WHITE_ROUND;
-        var cS = mu.Keyboard._MIDDLE_C_MARK_SIZE;
+        var wW = mu.ui.Keyboard._WHITE_WIDTH;
+        var wL = mu.ui.Keyboard._WHITE_LENGTH;
+        var wB = mu.ui.Keyboard._WHITE_BORDER;
+        var wR = mu.ui.Keyboard._WHITE_ROUND;
+        var cS = mu.ui.Keyboard._MIDDLE_C_MARK_SIZE;
 
         this._onKeyDownListener = this._onKeyDown.bind(this);
         document.addEventListener('keydown', this._onKeyDownListener);
@@ -185,11 +193,11 @@
             }, this);
         }
 
-        var bW = mu.Keyboard._BLACK_WIDTH;
-        var bL = mu.Keyboard._BLACK_LENGTH;
-        var bB = mu.Keyboard._BLACK_BORDER;
-        var bR = mu.Keyboard._BLACK_ROUND;
-        var bA = mu.Keyboard._BLACK_ADJUST;
+        var bW = mu.ui.Keyboard._BLACK_WIDTH;
+        var bL = mu.ui.Keyboard._BLACK_LENGTH;
+        var bB = mu.ui.Keyboard._BLACK_BORDER;
+        var bR = mu.ui.Keyboard._BLACK_ROUND;
+        var bA = mu.ui.Keyboard._BLACK_ADJUST;
 
         x = -1;
         for (var o = lowOctave; o <= highOctave; o ++) {
@@ -227,43 +235,43 @@
             }, this);
         }
     };
-    mu.Keyboard.prototype = Object.create(mu.UI.prototype);
-    mu.Keyboard.prototype.constructor = mu.Keyboard;
-    mu.Keyboard._INCH = 21;
-    mu.Keyboard._WHITE_WIDTH = mu.Keyboard._INCH * 0.848;
-    mu.Keyboard._WHITE_BORDER = mu.Keyboard._WHITE_WIDTH * 0.074;
-    mu.Keyboard._WHITE_LENGTH = mu.Keyboard._WHITE_WIDTH * 6.486;
-    mu.Keyboard._WHITE_ROUND = mu.Keyboard._WHITE_WIDTH * 0.25;
-    mu.Keyboard._BLACK_WIDTH = mu.Keyboard._WHITE_WIDTH * 0.515;
-    mu.Keyboard._BLACK_BORDER = mu.Keyboard._WHITE_BORDER;
-    mu.Keyboard._BLACK_LENGTH = mu.Keyboard._WHITE_LENGTH * 0.659;
-    mu.Keyboard._BLACK_ADJUST = mu.Keyboard._BLACK_WIDTH * 0.18;
-    mu.Keyboard._BLACK_ROUND = mu.Keyboard._BLACK_WIDTH * 0.3;
-    mu.Keyboard._MIDDLE_C_MARK_SIZE = mu.Keyboard._WHITE_WIDTH * 0.5;
-    mu.Keyboard._isBlack = function(pitch) {
+    mu.ui.Keyboard.prototype = Object.create(mu.ui.UI.prototype);
+    mu.ui.Keyboard.prototype.constructor = mu.ui.Keyboard;
+    mu.ui.Keyboard._INCH = 21;
+    mu.ui.Keyboard._WHITE_WIDTH = mu.ui.Keyboard._INCH * 0.848;
+    mu.ui.Keyboard._WHITE_BORDER = mu.ui.Keyboard._WHITE_WIDTH * 0.074;
+    mu.ui.Keyboard._WHITE_LENGTH = mu.ui.Keyboard._WHITE_WIDTH * 6.486;
+    mu.ui.Keyboard._WHITE_ROUND = mu.ui.Keyboard._WHITE_WIDTH * 0.25;
+    mu.ui.Keyboard._BLACK_WIDTH = mu.ui.Keyboard._WHITE_WIDTH * 0.515;
+    mu.ui.Keyboard._BLACK_BORDER = mu.ui.Keyboard._WHITE_BORDER;
+    mu.ui.Keyboard._BLACK_LENGTH = mu.ui.Keyboard._WHITE_LENGTH * 0.659;
+    mu.ui.Keyboard._BLACK_ADJUST = mu.ui.Keyboard._BLACK_WIDTH * 0.18;
+    mu.ui.Keyboard._BLACK_ROUND = mu.ui.Keyboard._BLACK_WIDTH * 0.3;
+    mu.ui.Keyboard._MIDDLE_C_MARK_SIZE = mu.ui.Keyboard._WHITE_WIDTH * 0.5;
+    mu.ui.Keyboard._isBlack = function(pitch) {
         var i = pitch.pitchClass().index();
         return i == 1 || i == 3 || i == 6 || i == 8 || i == 10;
     };
-    mu.Keyboard._whiteIndex = function(pitch) {
+    mu.ui.Keyboard._whiteIndex = function(pitch) {
         return [0, -1, 1, -1, 2, 3, -1, 4, -1, 5, -1, 6][pitch.pitchClass().index()];
     };
-    mu.Keyboard.prototype._isPlaying = function(pitch) {
+    mu.ui.Keyboard.prototype._isPlaying = function(pitch) {
         var num = pitch.toNum();
         return num in this._pitchesPlaying;
     };
-    mu.Keyboard.prototype._onKeyDown = function(event) {
+    mu.ui.Keyboard.prototype._onKeyDown = function(event) {
         var key = event.key || event.keyIdentifier;
         if (key == 'Shift')
             this._shiftDown = true;
     };
-    mu.Keyboard.prototype._onKeyUp = function(event) {
+    mu.ui.Keyboard.prototype._onKeyUp = function(event) {
         var key = event.key || event.keyIdentifier;
         if (key == 'Shift') {
             this._shiftDown = false;
             this.stopAll();
         }
     };
-    mu.Keyboard.prototype._onMouseOver = function(pitch, event) {
+    mu.ui.Keyboard.prototype._onMouseOver = function(pitch, event) {
         if (this._disposed)
             return;
         this._pitchOver = pitch;
@@ -276,7 +284,7 @@
         this._pitches[pitch.toNum()].classed('mu_keyboard_hover', true);
         this._fire('pitchenter', {ui: this, pitch: pitch});
     };
-    mu.Keyboard.prototype._onMouseOut = function(pitch, event) {
+    mu.ui.Keyboard.prototype._onMouseOut = function(pitch, event) {
         if (this._disposed)
             return;
         delete this._pitchOver;
@@ -285,7 +293,7 @@
         this._pitches[pitch.toNum()].classed('mu_keyboard_hover', false);
         this._fire('pitchleave', {ui: this, pitch: pitch});
     };
-    mu.Keyboard.prototype._onMouseDown = function(pitch, event) {
+    mu.ui.Keyboard.prototype._onMouseDown = function(pitch, event) {
         if (this._disposed)
             return;
         event.preventDefault();
@@ -308,29 +316,29 @@
         onMouseUpListener = onMouseUp.bind(this);
         window.addEventListener('mouseup', onMouseUpListener);
     };
-    mu.Keyboard.prototype.startPitch = function(pitch) {
+    mu.ui.Keyboard.prototype.startPitch = function(pitch) {
         this._pitchesPlaying[pitch.toNum()] = true;
         this._pitches[pitch.toNum()].classed('mu_keyboard_playing', true);
     };
-    mu.Keyboard.prototype.stopPitch = function(pitch) {
+    mu.ui.Keyboard.prototype.stopPitch = function(pitch) {
         delete this._pitchesPlaying[pitch.toNum()];
         this._pitches[pitch.toNum()].classed('mu_keyboard_playing', false);
     };
-    mu.Keyboard.prototype.stopAll = function() {
+    mu.ui.Keyboard.prototype.stopAll = function() {
         mu._mapForEach(this._pitchesPlaying, function(x, num) {
             var pitch = mu.Pitch.fromNum(num);
             this._fire('pitchrelease', {ui: this, pitch: pitch});
         }, this);
     };
-    mu.Keyboard.prototype.dispose = function() {
+    mu.ui.Keyboard.prototype.dispose = function() {
         document.removeEventListener('keydown', this._onKeyDownListener);
         document.removeEventListener('keyup', this._onKeyUpListener);
         document.removeEventListener('focusout', this._onFocusOutListener);
         window.removeEventListener('blur', this._onBlurListener);
-        mu.UI.prototype.dispose.call(this);
+        mu.ui.UI.prototype.dispose.call(this);
         this._disposed = true;
     };
-    mu.Keyboard.prototype.node = function() {
+    mu.ui.Keyboard.prototype.node = function() {
         return this._svg.node();
     };
 
@@ -338,12 +346,12 @@
      * A pitch constellation UI.
      *
      * @class
-     * @extends mu.UI
+     * @extends mu.ui.UI
      * @memberof mu
      */
-    mu.PitchConstellation = function(root, lowPitch, highPitch) {
-        if (!(this instanceof mu.PitchConstellation))
-            return new mu.PitchConstellation(root, lowPitch, highPitch);
+    mu.ui.PitchConstellation = function(root, lowPitch, highPitch) {
+        if (!(this instanceof mu.ui.PitchConstellation))
+            return new mu.ui.PitchConstellation(root, lowPitch, highPitch);
         mu._assert(root instanceof mu.PitchClass,
                    'invalid pitch class ' + root);
         mu._assert(lowPitch == null || lowPitch instanceof mu.Pitch,
@@ -355,7 +363,7 @@
         highPitch = highPitch || mu.C_8;
         mu._assert(highPitch.subtract(lowPitch) >= 0,
                    'pitches swapped ' + lowPitch + ' ' + highPitch);
-        mu.UI.call(this);
+        mu.ui.UI.call(this);
         this._root = root;
         this._lowPitch = lowPitch;
         this._highPitch = highPitch;
@@ -371,12 +379,12 @@
         this._onBlurListener = this.stopAll.bind(this);
         window.addEventListener('blur', this._onBlurListener);
 
-        var r = mu.PitchConstellation._RADIUS;
-        var tF = mu.PitchConstellation._FONT_FAMILY;
-        var tS = mu.PitchConstellation._FONT_SIZE;
+        var r = mu.ui.PitchConstellation._RADIUS;
+        var tF = mu.ui.PitchConstellation._FONT_FAMILY;
+        var tS = mu.ui.PitchConstellation._FONT_SIZE;
         var tH = tS;
         var rT = r - 2*tH;
-        var rI = rT - mu.PitchConstellation._TEXT_GAP;
+        var rI = rT - mu.ui.PitchConstellation._TEXT_GAP;
 
         this._svg = mu._html('svg')
             .attr('width', 2*r)
@@ -414,27 +422,20 @@
                     .node().innerHTML = str;
             }, this);
         }
-        /*
-        this._svg.append('circle')
-            .attr('cx', r)
-            .attr('cy', r)
-            .attr('r', 4)
-            .classed('mu_pitchconstellation_center', true);
-        */
     };
-    mu.PitchConstellation.prototype = Object.create(mu.UI.prototype);
-    mu.PitchConstellation.prototype.constructor = mu.PitchConstellation;
-    mu.PitchConstellation._RADIUS = 80;
-    mu.PitchConstellation._TEXT_GAP = 4;
-    mu.PitchConstellation._FONT_FAMILY = 'Verdana';
-    mu.PitchConstellation._FONT_SIZE = 13;
-    mu.PitchConstellation.prototype.node = function() {
+    mu.ui.PitchConstellation.prototype = Object.create(mu.ui.UI.prototype);
+    mu.ui.PitchConstellation.prototype.constructor = mu.ui.PitchConstellation;
+    mu.ui.PitchConstellation._RADIUS = 80;
+    mu.ui.PitchConstellation._TEXT_GAP = 4;
+    mu.ui.PitchConstellation._FONT_FAMILY = 'Verdana';
+    mu.ui.PitchConstellation._FONT_SIZE = 13;
+    mu.ui.PitchConstellation.prototype.node = function() {
         return this._svg.node();
     };
-    mu.PitchConstellation.prototype._isPlaying = function(pitchClass) {
+    mu.ui.PitchConstellation.prototype._isPlaying = function(pitchClass) {
         return this._pitchClassesPlaying[pitchClass.index()] != 0;
     };
-    mu.PitchConstellation.prototype._onPitchEvent = function(pitchClass, type) {
+    mu.ui.PitchConstellation.prototype._onPitchEvent = function(pitchClass, type) {
         if (this._disposed)
             return;
         var hnum = this._highPitch.toNum();
@@ -444,23 +445,23 @@
                 this._fire(type, {ui: this, pitch: pitch});
         }
     };
-    mu.PitchConstellation.prototype._onKeyDown = function(event) {
+    mu.ui.PitchConstellation.prototype._onKeyDown = function(event) {
         var key = event.key || event.keyIdentifier;
         if (key == 'Shift')
             this._shiftDown = true;
     };
-    mu.PitchConstellation.prototype._onKeyUp = function(event) {
+    mu.ui.PitchConstellation.prototype._onKeyUp = function(event) {
         var key = event.key || event.keyIdentifier;
         if (key == 'Shift') {
             this._shiftDown = false;
             this.stopAll();
         }
     };
-    mu.PitchConstellation.prototype._onMouseMove = function(event) {
+    mu.ui.PitchConstellation.prototype._onMouseMove = function(event) {
         if (this._disposed)
             return;
         var rect = this._svg.node().getBoundingClientRect();
-        var r = mu.PitchConstellation._RADIUS;
+        var r = mu.ui.PitchConstellation._RADIUS;
         var x = event.clientX - rect.left - r;
         var y = event.clientY - rect.top - r;
         var a = Math.round(Math.atan2(x, -y) * 6 / Math.PI);
@@ -481,7 +482,7 @@
                 this._onPitchEvent(this._pitchClassOver, 'pitchrelease');
         }
     };
-    mu.PitchConstellation.prototype._onMouseDown = function(event) {
+    mu.ui.PitchConstellation.prototype._onMouseDown = function(event) {
         if (this._disposed)
             return;
         event.preventDefault();
@@ -505,27 +506,27 @@
         onMouseUpListener = onMouseUp.bind(this);
         window.addEventListener('mouseup', onMouseUpListener);
     };
-    mu.PitchConstellation.prototype.startPitch = function(pitch) {
+    mu.ui.PitchConstellation.prototype.startPitch = function(pitch) {
         var index = pitch.pitchClass().index();
         var count = this._pitchClassesPlaying[index] ++;
         if (count == 0)
             this._lines[index].classed('mu_pitchconstellation_ray2_playing', true);
     };
-    mu.PitchConstellation.prototype.stopPitch = function(pitch) {
+    mu.ui.PitchConstellation.prototype.stopPitch = function(pitch) {
         var index = pitch.pitchClass().index();
         var count = -- this._pitchClassesPlaying[index];
         if (count == 0)
             this._lines[index].classed('mu_pitchconstellation_ray2_playing', false);
     };
-    mu.PitchConstellation.prototype.stopAll = function() {
+    mu.ui.PitchConstellation.prototype.stopAll = function() {
         mu._mapForEach(this._pitchClassesPlaying, function(x, num) {
             this._onPitchEvent(mu.PitchClass(num), 'pitchrelease');
         }, this);
     };
-    mu.PitchConstellation.prototype.dispose = function() {
+    mu.ui.PitchConstellation.prototype.dispose = function() {
         document.removeEventListener('focusout', this._onFocusOutListener);
         window.removeEventListener('blur', this._onBlurListener);
-        mu.UI.prototype.dispose.call(this);
+        mu.ui.UI.prototype.dispose.call(this);
         this._disposed = true;
     };
 
@@ -533,32 +534,32 @@
      * A controller - connects one or more UIs to a voice.
      *
      * @class
-     * @param {mu.Voice} [voice] The voice to control
+     * @param {mu.audio.Voice} [voice] The voice to control
      * @implements mu.Eventable
      * @memberof mu
      */
-    mu.Controller = function(voice) {
-        if (!(this instanceof mu.Controller))
-            return new mu.Controller(voice);
-        mu._assert(voice == null || voice instanceof mu.Voice,
+    mu.ui.Controller = function(voice) {
+        if (!(this instanceof mu.ui.Controller))
+            return new mu.ui.Controller(voice);
+        mu._assert(voice == null || voice instanceof mu.audio.Voice,
                    'invalid voice ' + voice);
         this.setVoice(voice);
         this._uis = [];
     };
-    mu.Controller.prototype._onPitchPress = function(data) {
+    mu.ui.Controller.prototype._onPitchPress = function(data) {
         if (this._voice && this._voice.canPlayPitch(data.pitch))
             this._voice.startPitch(data.pitch);
     };
-    mu.Controller.prototype._onPitchRelease = function(data) {
+    mu.ui.Controller.prototype._onPitchRelease = function(data) {
         if (this._voice && this._voice.canPlayPitch(data.pitch))
             this._voice.stopPitch(data.pitch);
     };
-    mu.Controller.prototype._onPitchStart = function(data) {
+    mu.ui.Controller.prototype._onPitchStart = function(data) {
         this._uis.forEach(function(ui) {
             ui.startPitch(data.pitch);
         });
     };
-    mu.Controller.prototype._onPitchStop = function(data) {
+    mu.ui.Controller.prototype._onPitchStop = function(data) {
         this._uis.forEach(function(ui) {
             ui.stopPitch(data.pitch);
         });
@@ -567,28 +568,28 @@
      * Returns a string description of the controller.
      *
      * @return {string} A string description of the controller
-     * @memberof mu.Controller
+     * @memberof mu.ui.Controller
      */
-    mu.Controller.prototype.toString = function() {
+    mu.ui.Controller.prototype.toString = function() {
         return 'controller';
     };
     /**
      * Gets the voice controlled by this controller
      *
-     * @return {mu.Voice|null} The voice controlled by this controller
-     * @memberof mu.Controller
+     * @return {mu.audio.Voice|null} The voice controlled by this controller
+     * @memberof mu.ui.Controller
      */
-    mu.Controller.prototype.voice = function() {
+    mu.ui.Controller.prototype.voice = function() {
         return this._voice;
     };
     /**
      * Sets the voice to be controlled.
      *
-     * @param {mu.Voice} voice The voice to control
-     * @memberof mu.Controller
+     * @param {mu.audio.Voice} voice The voice to control
+     * @memberof mu.ui.Controller
      */
-    mu.Controller.prototype.setVoice = function(voice) {
-        mu._assert(voice == null || voice instanceof mu.Voice,
+    mu.ui.Controller.prototype.setVoice = function(voice) {
+        mu._assert(voice == null || voice instanceof mu.audio.Voice,
                    'invalid voice ' + voice);
         if (this._disposed)
             return;
@@ -607,11 +608,11 @@
     /**
      * Connectes a UI to this controller.
      *
-     * @param {mu.UI} ui The ui to connect
-     * @memberof mu.Controller
+     * @param {mu.ui.UI} ui The ui to connect
+     * @memberof mu.ui.Controller
      */
-    mu.Controller.prototype.connectUI = function(ui) {
-        mu._assert(ui instanceof mu.UI,
+    mu.ui.Controller.prototype.connectUI = function(ui) {
+        mu._assert(ui instanceof mu.ui.UI,
                    'invalid ui ' + ui);
         if (this._disposed)
             return;
@@ -626,11 +627,11 @@
     /**
      * Disconnectes a UI to this controller.
      *
-     * @param {mu.UI} ui The ui to disconnect
-     * @memberof mu.Controller
+     * @param {mu.ui.UI} ui The ui to disconnect
+     * @memberof mu.ui.Controller
      */
-    mu.Controller.prototype.disconnectUI = function(ui) {
-        mu._assert(ui instanceof mu.UI,
+    mu.ui.Controller.prototype.disconnectUI = function(ui) {
+        mu._assert(ui instanceof mu.ui.UI,
                    'invalid ui ' + ui);
         if (this._disposed)
             return;
@@ -645,7 +646,7 @@
         ui.removeEventListener('pitchpress', this._onPitchPress, this);
         ui.removeEventListener('pitchrelease', this._onPitchRelease, this);
     };
-    mu.Controller.prototype.dispose = function() {
+    mu.ui.Controller.prototype.dispose = function() {
         _.each(this._uis, this.disconnectUI, this);
         this.setVoice(null);
         this._disposed = true;

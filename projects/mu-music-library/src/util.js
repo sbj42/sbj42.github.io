@@ -337,6 +337,7 @@
          * @param {string} type The type of the event
          * @param {object} data The argument to pass to the listeners
          * @memberof mu.Eventable
+         * @inner
          */
         obj._fire = function(type, data) {
             var e = this._eventListeners;

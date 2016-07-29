@@ -42,8 +42,8 @@
     var c = mu.C;
     assertEquals(c.index(), 0);
     assertEquals(c.toString(), 'C');
-    assertEquals(c.equals(a), false);
-    assertEquals(c.equals(c), true);
+    assert(!c.equals(a));
+    assert(c.equals(c));
     assertThrow(function() { mu.C.transpose('1'); });
     assertThrow(function() { mu.PitchClass(-1); });
     assertThrow(function() { mu.PitchClass(12); });
@@ -62,13 +62,13 @@
     assertEquals(a4.transpose(-1).toString(), 'G\u266F4/A\u266D4');
     assertEquals(a4.transpose(3).toString(), 'C5');
     assertEquals(a4.transpose(-5).toString(), 'E4');
-    assertEquals(mu.Pitch.fromNum(a4.toNum()).equals(a4), true);
+    assert(mu.Pitch.fromNum(a4.toNum()).equals(a4));
     var c2 = mu.Pitch(mu.C, 2);
     assertEquals(c2.octave(), 2);
     assertEquals(c2.pitchClass().index(), 0);
     assertEquals(a4.subtract(c2), 33);
-    assertEquals(c2.equals(a4), false);
-    assertEquals(c2.equals(c2), true);
+    assert(!c2.equals(a4));
+    assert(c2.equals(c2));
     assertClose(c2.frequency().hertz(), 65.406, 0.001);
     assertEquals(c2.toString(), 'C2');
     assertThrow(function() { mu.C_0.transpose(-1); });

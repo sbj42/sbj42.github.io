@@ -1,7 +1,7 @@
-var sine = mu.SineVoice();
+var sine = mu.audio.SineVoice();
 var harm;
 sine.ready(function() {
-    assertEquals(sine.canPlayPitch(mu.C_4), true);
+    assert(sine.canPlayPitch(mu.C_4));
     sine.startPitch(mu.C_4);
     setTimeout(function() {
         sine.silence();
@@ -16,7 +16,7 @@ sine.ready(function() {
         sine.dispose();
         sine.startPitch(mu.C_3);
     }, 750);
-    harm = mu.HarmonicVoice();
+    harm = mu.audio.HarmonicVoice();
     harm.ready(function() {
         setTimeout(function() {
             harm.startPitch(mu.C_3);

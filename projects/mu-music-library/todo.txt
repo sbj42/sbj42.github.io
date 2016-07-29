@@ -6,4 +6,7 @@ volume fader, gain knob
 use fletcher-munson curves in the generator voice to try to get equal volume from low and high notes, use replaygain on the audio files for same
 sound envelopes in generators
 
-progression, progression ui
+progression ui (possibly editor at some point)
+chord analysis
+  detect chord type, form some descriptions of it, show that in test_ui
+  compare to root for key-relative chord descriptions

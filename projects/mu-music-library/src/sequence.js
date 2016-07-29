@@ -14,7 +14,6 @@
      * A simple musical sequence composed of chords and rests, with no
      * other events.
      *
-     * @interface
      * @class
      * @param {mu.Tempo} tempo The tempo of the sequence
      * @memberof mu
@@ -145,7 +144,7 @@
      * @memberof mu.SimpleChordProgression
      */
     mu.SimpleChordProgression.prototype.toString = function() {
-        var ret = 'chord progression (tempo=' + this._tempo + ' length=' + this._length + ' chords=' + this._events.length + ')';
+        var ret = 'simple chord progression (tempo=' + this._tempo + ' length=' + this._length + ' chords=' + this._events.length + ')';
     };
 
     // /**
@@ -199,9 +198,22 @@
         this._length += duration;
     };
 
+    /**
+     * A sequencer that tracks a position in a sequence and calls a provided
+     * callback function when changes occur in the sequence.
+     *
+     * @class
+     * @param {mu.Sequence} sequence The sequence to track
+     * @param {Function} callback The change callback
+     * @memberof mu
+     */
     mu.Cursor = function(sequence, callback) {
         if (!(this instanceof mu.Cursor))
             return new mu.Cursor(sequence, callback);
+        mu._assert(sequence != null && mu._isFunction(sequence.nextChange),
+                   'invalid sequence ' + sequence);
+        mu._assert(mu._isFunction(callback),
+                   'invalid callback ' + callback);
         this._sequence = sequence;
         this._callback = callback;
         this._time = 0;
@@ -211,9 +223,12 @@
         if (!this._playing)
             return;
         this._time = change.time;
+        this._lastChange = change;
         this._callback(change);
-        if (!this._continue(true))
+        if (!this._continue(true)) {
+            delete this._lastChange;
             this._pause();
+        }
     };
     mu.Cursor.prototype._continue = function(next) {
         var change = this._sequence.nextChange(this._time + (next ? 1e-6 : 0));
@@ -233,18 +248,58 @@
         delete this._timerNow;
         delete this._timerBeats;
     };
+
+    /**
+     * Returns true if the cursor is playing.
+     *
+     * @return {boolean} True if the cursor is playing
+     * @memberof mu.Cursor
+     */
+    mu.Cursor.prototype.playing = function() {
+        return this._playing;
+    };
+
+    /**
+     * Returns the current position of the cursor, in beats.
+     *
+     * @return {number} The current position of the cursor, in beats
+     * @memberof mu.Cursor
+     */
+    mu.Cursor.prototype.time = function() {
+        if (!this._playing)
+            return this._time;
+        var delta = Date.now() - this._timerNow;
+        var beats = Math.min(this._timerBeats, delta / (1000 * this._sequence.tempo().beatDuration()));
+        return this._time + beats;
+    };
+
+    /**
+     * Starts playing the cursor at its current position in the sequence.
+     *
+     * @return {boolean} True if the cursor has started playing (false
+     * indicates that the cursor was already past the end of the sequence).
+     * @memberof mu.Cursor
+     */
     mu.Cursor.prototype.play = function() {
         if (this._playing)
             return true;
+        if (this._lastChange)
+            this._callback(this._lastChange);
         if (this._continue(false))
             this._playing = true;
         return this._playing;
     };
+
+    /**
+     * Pauses the cursor at its current position in the sequence.
+     *
+     * @memberof mu.Cursor
+     */
     mu.Cursor.prototype.pause = function() {
         if (!this._playing)
             return;
         var delta = Date.now() - this._timerNow;
-        var beats = Math.max(this._timerBeats, delta / (1000 * this._sequence.tempo().beatDuration()));
+        var beats = Math.min(this._timerBeats, delta / (1000 * this._sequence.tempo().beatDuration()));
         this._time += beats;
         this._pause();
     };
