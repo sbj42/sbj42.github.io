@@ -20,6 +20,9 @@
     stroke: none;
 }
 
+.mu_pitchconstellation {
+    cursor: pointer;
+}
 .mu_pitchconstellation_ray {
     stroke: #000;
     stroke-width: 2px;

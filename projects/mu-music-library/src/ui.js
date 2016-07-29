@@ -157,7 +157,8 @@
 
         this._svg = mu._html('svg')
             .attr('width', span * (wW + wB) + wB)
-            .attr('height', wL + wB * 2);
+            .attr('height', wL + wB * 2)
+            .classed('mu_keyboard', true);
 
         var white_keys = [mu.C, mu.D, mu.E, mu.F, mu.G, mu.A, mu.B];
         var x = -1;
@@ -389,6 +390,7 @@
         this._svg = mu._html('svg')
             .attr('width', 2*r)
             .attr('height', 2*r)
+            .classed('mu_pitchconstellation', true)
             .on('mousemove', this._onMouseMove, this)
             .on('mousedown', this._onMouseDown, this);
         var bottom = this._svg.append('g');
