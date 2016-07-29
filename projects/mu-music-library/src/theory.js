@@ -744,6 +744,52 @@
         });
         return ret.join(' ');
     };
+    /**
+     * Guesses a name for this chord based on the pitches present
+     *
+     * @return {string}
+     * @memberof mu.Chord
+     */
+    mu.Chord.prototype.guessName = function() {
+        var pitchClasses = [];
+        this._pitches.forEach(function(pitch) {
+            pitchClasses[pitch.pitchClass().index()] = true;
+        });
+        mu._mapForEach(pitchClasses, function(x, index) {
+            var start = mu.PitchClass(index);
+            var intervals = [0];
+            for (var i = 1; i < 12; i ++) {
+                var other = start.transpose(i);
+                if (pitchClasses[other.index()])
+                    intervals.push(i);
+            }
+            var name = '';
+            var abbrev = '';
+            switch (intervals.join('-')) {
+            case '0-2-7': abbrev = 'sus2'; name = 'suspended second'; break;
+            case '0-3-6': abbrev = 'dim'; name = 'diminished'; break;
+            case '0-3-7': abbrev = 'min'; name = 'minor'; break;
+            case '0-4-7': abbrev = 'maj'; name = 'major'; break;
+            case '0-4-8': abbrev = 'aug'; name = 'augmented'; break;
+            case '0-5-7': abbrev = 'sus4'; name = 'suspended fourth'; break;
+            case '0-3-6-9': abbrev = 'dim7'; name = 'diminished seventh'; break;
+            case '0-3-6-10': abbrev = '-7'; name = 'half-diminished seventh'; break;
+            case '0-3-7-10': abbrev = 'min7'; name = 'minor seventh'; break;
+            case '0-3-7-11': abbrev = 'm maj7'; name = 'minor major seventh'; break;
+            case '0-4-7-10':
+            case '0-4-10': abbrev = '7'; name = 'dominant seventh'; break;
+            case '0-4-7-11': abbrev = 'maj7'; name = 'major seventh'; break;
+            case '0-4-8-10': abbrev = 'aug7'; name = 'augmented seventh'; break;
+            case '0-4-8-11': abbrev = 'aug maj7'; name = 'augmented major seventh'; break;
+            case '0-2-4-7-10': abbrev = '9'; name = 'dominant ninth'; break;
+            case '0-2-5-7-10': abbrev = '9sus4'; name = 'dominant 9sus4'; break;
+            case '0-2-4-5-7-10': abbrev = '11'; name = 'dominant eleventh'; break;
+            case '0-2-4-5-7-9-10': abbrev = '13'; name = 'dominant thirteenth'; break;
+            }
+            console.info(start.toString() + ' ' + intervals.join('-') + ' ' + name);
+        }, this);
+        return '';
+    };
 
 /*
     mu.ScaleType = function(intervals) {

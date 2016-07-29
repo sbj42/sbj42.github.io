@@ -567,11 +567,11 @@
         this._cursorGroup = this._svg.append('g');
         this._update();
     };
-    mu.ui.ChordLine._HEIGHT = 40;
+    mu.ui.ChordLine._HEIGHT = 50;
     mu.ui.ChordLine._LINE_WIDTH = 4;
     mu.ui.ChordLine._MINORTICK_HEIGHT = 20;
     mu.ui.ChordLine._MINORTICK_WIDTH = 2;
-    mu.ui.ChordLine._CHORD_HEIGHT = 30;
+    mu.ui.ChordLine._CHORD_HEIGHT = 40;
     mu.ui.ChordLine._CHORD_ROUND = 0;
     mu.ui.ChordLine._CHORD_BORDER = 0;
     mu.ui.ChordLine._CHORD_FONT_SIZE = 16;
@@ -636,15 +636,35 @@
     mu.ui.ChordLine.prototype.node = function() {
         return this._svg.node();
     };
+    /**
+     * Returns the chord progression loaded into this chord line.
+     *
+     * @return {mu.seq.SimpleChordProgression} The chord progression loaded
+     * into this chord line
+     * @memberof mu.ui.ChordLine
+     */
     mu.ui.ChordLine.prototype.chordProgression = function() {
         return this._prog;
     };
+    /**
+     * Loads a chord progression into this chord line.
+     *
+     * @param {mu.seq.SimpleChordProgression} prog The chord progression
+     * to load into this chord line
+     * @memberof mu.ui.ChordLine
+     */
     mu.ui.ChordLine.prototype.setChordProgression = function(prog) {
         mu._assert(prog instanceof mu.seq.SimpleChordProgression,
                    'invalid chord progression ' + prog);
         this._prog = prog;
         this._update();
     };
+    /**
+     * Moves the cursor line to the specified location.
+     *
+     * @param {number} time The time position, in beats
+     * @memberof mu.ui.ChordLine
+     */
     mu.ui.ChordLine.prototype.setCursor = function(time) {
         this._cursorGroup.clear();
         if (time != null) {
