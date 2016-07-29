@@ -32,9 +32,32 @@
 .mu_pitchconstellation_ray2 {
     stroke: none;
 }
+.mu_pitchconstellation_label {
+    fill: #000;
+    font-family: Verdana;
+}
 .mu_pitchconstellation_ray2_playing {
     stroke: #f00;
     stroke-width: 3px;
     stroke-linecap: round;
     opacity: 1;
+}
+
+.mu_chordline_base {
+    stroke: #d8d8d8;
+}
+.mu_chordline_minortick {
+    stroke: #4e4e4e;
+    stroke-linecap: round;
+}
+.mu_chordline_cursor {
+    stroke: #f00;
+    stroke-linecap: round;
+}
+.mu_chordline_chord {
+    fill: #84eaa1;
+    stroke: #548e65;
+}
+.mu_chordline_chord_label {
+    font-family: Verdana;
 }

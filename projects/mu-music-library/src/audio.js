@@ -220,8 +220,9 @@
                 self._readyCallbacks.forEach(mu.audio.Voice.prototype.ready.bind(this));
             }
         }
-        for (var i = 0; i < count; i ++) {
-            var num = pitch.toNum();
+        var lowNum = this._lowest.toNum();
+        for (var i = lowNum; i < lowNum + count; i ++) {
+            var pitch = mu.Pitch.fromNum(i);
             var elem = this._elem.append('audio')
                 .attr('preload', 'auto')
                 .attr('loop', 'loop');
@@ -231,7 +232,7 @@
             elem.append('source')
                 .attr('type', 'audio/mp4')
                 .attr('src', this._baseUrl + pitch.octave() + '_' + pitch.pitchClass().index() + '.m4a');
-            this._pitches[num] = elem;
+            this._pitches[i] = elem;
             var node = elem.node();
             node.oncanplaythrough = onload;
             node.onerror = onload;

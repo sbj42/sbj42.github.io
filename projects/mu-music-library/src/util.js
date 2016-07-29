@@ -237,6 +237,30 @@
     };
 
     /**
+     * Sets the text contents of this node.
+     *
+     * @param {string} text The text to set
+     * @memberof mu._html
+     */
+    mu._html.prototype.text = function(text) {
+        mu._assert(mu._isString(text),
+                   'invalid string ' + text);
+        this._node.textContent = text;
+        return this;
+    };
+
+    /**
+     * Removes all children of this node.
+     *
+     * @memberof mu._html
+     */
+    mu._html.prototype.clear = function() {
+        while (this._node.firstChild)
+            this._node.removeChild(this._node.firstChild);
+        return this;
+    };
+    
+    /**
      * Removes a node from the document.
      *
      * @memberof mu._html

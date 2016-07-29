@@ -110,11 +110,12 @@
      * given `time`.
      *
      * @param {number} [time] The time to start looking for a change
+     * @param {boolean} [after] True if the returned change must start after the given time (as opposed to "at or after")
      * @return {SimpleChordProgressionChange|null} The next change, or null
      * if the given time is at or after the end of the progression
      * @memberof mu.seq.SimpleChordProgression
      */
-    mu.seq.SimpleChordProgression.prototype.nextChange = function(time) {
+    mu.seq.SimpleChordProgression.prototype.nextChange = function(time, after) {
         mu._assert(time == null
                    || (mu._isFinite(time) && time >= 0),
                    'invalid time ' + time);
@@ -126,13 +127,13 @@
         var nextChord = null;
         for (var i = 0; i < this._events.length; i ++) {
             var event = this._events[i];
-            if (event.time >= time) {
+            if ((!after && event.time >= time) || (after && event.time > time)) {
                 if (!(nextTime < event.time)) {
                     nextTime = event.time;
                     nextChord = event.chord;
                 }
                 break;
-            } else if (event.time + event.duration >= time) {
+            } else if ((!after && event.time + event.duration >= time) || (after && event.time + event.duration > time)) {
                 if (!(nextTime < event.time + event.duration))
                     nextTime = event.time + event.duration;
             }
@@ -237,7 +238,7 @@
         }
     };
     mu.seq.Cursor.prototype._continue = function(next) {
-        var change = this._sequence.nextChange(this._time + (next ? 1e-6 : 0));
+        var change = this._sequence.nextChange(this._time, next);
         if (change == null)
             return false;
         this._timerBeats = change.time - this._time;

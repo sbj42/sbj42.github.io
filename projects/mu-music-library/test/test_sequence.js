@@ -1,7 +1,7 @@
 (function() {
     console.info('testing mu.seq.SimpleChordProgression');
-    var s = mu.seq.SimpleChordProgression(mu.Tempo(180));
-    assertEquals(s.tempo().bpm(), 180);
+    var s = mu.seq.SimpleChordProgression(mu.Tempo(120));
+    assertEquals(s.tempo().bpm(), 120);
     assertEquals(s.duration(), 0);
     s.addChord(mu.Chord(mu.C_4, mu.E_4, mu.G_4), 1);
     s.addRest(1);
@@ -24,7 +24,12 @@
     assertEquals(s.nextChange(6), null);
     assertThrow(function() { mu.addChord(2); });
     assertThrow(function() { mu.addRest(mu.Chord(mu.C_4, mu.E_4, mu.G_4), 2); });
-    
+
+    var ui = mu.ui.ChordLine();
+    mu._html('#chordline')
+        .append(ui.node());
+    ui.setChordProgression(s);
+
     var v = mu.audio.HarmonicVoice();
     v.ready(function() {
         var t = Date.now();
@@ -41,14 +46,17 @@
         assertEquals(c.play(), true);
         setTimeout(function() {
             assert(c.time() > 0 && c.time() < 1, true);
-        }, 100);
-        setTimeout(function() {
-            c.pause();
-            //console.info(c.time());
-        }, 150);
-        setTimeout(function() {
-            c.play();
-        }, 250);
+            setTimeout(function() {
+                c.pause();
+                //console.info(c.time());
+                setTimeout(function() {
+                    c.play();
+                }, 500);
+            }, 100);
+        }, 200);
+        setInterval(function() {
+            ui.setCursor(c.time());
+        }, 20);
     });
 })();
 

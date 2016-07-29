@@ -381,7 +381,6 @@
         window.addEventListener('blur', this._onBlurListener);
 
         var r = mu.ui.PitchConstellation._RADIUS;
-        var tF = mu.ui.PitchConstellation._FONT_FAMILY;
         var tS = mu.ui.PitchConstellation._FONT_SIZE;
         var tH = tS;
         var rT = r - 2*tH;
@@ -418,10 +417,10 @@
                     .attr('x', r)
                     .attr('y', r - rT - tH * (strings.length - line - 1))
                     .attr('text-anchor', 'middle')
-                    .attr('font-family', tF)
                     .attr('font-size', tS)
                     .attr('transform', 'rotate(' + deg + ' ' + r + ',' + r + ')')
-                    .node().innerHTML = str;
+                    .classed('mu_pitchconstellation_label', true)
+                    .text(str);
             }, this);
         }
     };
@@ -429,7 +428,6 @@
     mu.ui.PitchConstellation.prototype.constructor = mu.ui.PitchConstellation;
     mu.ui.PitchConstellation._RADIUS = 80;
     mu.ui.PitchConstellation._TEXT_GAP = 4;
-    mu.ui.PitchConstellation._FONT_FAMILY = 'Verdana';
     mu.ui.PitchConstellation._FONT_SIZE = 13;
     mu.ui.PitchConstellation.prototype.node = function() {
         return this._svg.node();
@@ -530,6 +528,140 @@
         window.removeEventListener('blur', this._onBlurListener);
         mu.ui.UI.prototype.dispose.call(this);
         this._disposed = true;
+    };
+
+    /**
+     * A chord progression UI.
+     *
+     * @class
+     * @extends mu.ui.UI
+     * @memberof mu
+     */
+    mu.ui.ChordLine = function(width, prog) {
+        if (!(this instanceof mu.ui.ChordLine))
+            return new mu.ui.ChordLine(prog);
+        mu._assert(width == null || (mu._isFinite(width) && width > 0),
+                   'invalid width ' + width);
+        mu._assert(prog == null || (prog instanceof mu.seq.SimpleChordProgression),
+                   'invalid chord progression ' + prog);
+        mu.ui.UI.call(this);
+        this._prog = prog;
+        this._width = width || 800;
+
+        var lW = mu.ui.ChordLine._LINE_WIDTH;
+        var h = mu.ui.ChordLine._HEIGHT;
+
+        this._svg = mu._html('svg')
+            .attr('width', this._width)
+            .attr('height', h)
+            .classed('mu_chordline', true);
+        this._svg.append('line')
+            .attr('x1', lW / 2)
+            .attr('y1', h / 2)
+            .attr('x2', this._width - lW / 2)
+            .attr('y2', h / 2)
+            .classed('mu_chordline_base', true)
+            .attr('stroke-width', lW);
+        this._chordGroup = this._svg.append('g');
+        this._tickGroup = this._svg.append('g');
+        this._cursorGroup = this._svg.append('g');
+        this._update();
+    };
+    mu.ui.ChordLine._HEIGHT = 40;
+    mu.ui.ChordLine._LINE_WIDTH = 4;
+    mu.ui.ChordLine._MINORTICK_HEIGHT = 20;
+    mu.ui.ChordLine._MINORTICK_WIDTH = 2;
+    mu.ui.ChordLine._CHORD_HEIGHT = 30;
+    mu.ui.ChordLine._CHORD_ROUND = 0;
+    mu.ui.ChordLine._CHORD_BORDER = 0;
+    mu.ui.ChordLine._CHORD_FONT_SIZE = 16;
+    mu.ui.ChordLine._CURSOR_WIDTH = 3;
+    mu.ui.ChordLine.prototype._update = function() {
+        this._tickGroup.clear();
+        this._chordGroup.clear();
+        if (this._prog) {
+            var lW = mu.ui.ChordLine._LINE_WIDTH;
+            var h = mu.ui.ChordLine._HEIGHT;
+            var cH = mu.ui.ChordLine._CHORD_HEIGHT;
+            var cR = mu.ui.ChordLine._CHORD_ROUND;
+            var cB = mu.ui.ChordLine._CHORD_BORDER;
+            var t1H = mu.ui.ChordLine._MINORTICK_HEIGHT;
+            var t1W = mu.ui.ChordLine._MINORTICK_WIDTH;
+            var cFS = mu.ui.ChordLine._CHORD_FONT_SIZE;
+            var lL = this._width - lW;
+
+            var dur = this._prog.duration();
+            for (var i = 0; i <= dur; i ++) {
+                var x = lL * i / dur;
+                this._tickGroup.append('line')
+                    .attr('x1', lW / 2 + x)
+                    .attr('y1', (h - t1H + t1W) / 2)
+                    .attr('x2', lW / 2 + x)
+                    .attr('y2', (h + t1H - t1W) / 2)
+                    .classed('mu_chordline_minortick', true)
+                    .attr('stroke-width', t1W);
+            }
+            var at = 0;
+            while (true) {
+                var start = this._prog.nextChange(at);
+                if (!start)
+                    break;
+                var end = this._prog.nextChange(start.time, true);
+                at = end.time;
+                if (!start.chord)
+                    continue;
+                mu._assert(end,
+                           'missing last change');
+                var x1 = lL * start.time / dur;
+                var x2 = lL * end.time / dur;
+                this._chordGroup.append('rect')
+                    .attr('x', lW / 2 + x1)
+                    .attr('y', (h - cH + cB) / 2)
+                    .attr('width', x2 - x1)
+                    .attr('height', cH - cB)
+                    .attr('rx', cR)
+                    .attr('ry', cR)
+                    .classed('mu_chordline_chord', true)
+                    .attr('stroke-width', cB);
+                var label = this._chordGroup.append('text')
+                    .attr('x', lW / 2 + x1 + cB + 3)
+                    .attr('y', h / 2)
+                    .attr('dy', '0.4em')
+                    .attr('font-size', cFS)
+                    .classed('mu_chordline_chord_label', true)
+                    .text(start.chord.toString());
+            }
+        }
+    };
+    mu.ui.ChordLine.prototype.node = function() {
+        return this._svg.node();
+    };
+    mu.ui.ChordLine.prototype.chordProgression = function() {
+        return this._prog;
+    };
+    mu.ui.ChordLine.prototype.setChordProgression = function(prog) {
+        mu._assert(prog instanceof mu.seq.SimpleChordProgression,
+                   'invalid chord progression ' + prog);
+        this._prog = prog;
+        this._update();
+    };
+    mu.ui.ChordLine.prototype.setCursor = function(time) {
+        this._cursorGroup.clear();
+        if (time != null) {
+            var lW = mu.ui.ChordLine._LINE_WIDTH;
+            var h = mu.ui.ChordLine._HEIGHT;
+            var aW = mu.ui.ChordLine._CURSOR_WIDTH;
+            var lL = this._width - lW;
+            var dur = this._prog.duration();
+            var x = lL * time / dur;
+            this._cursorGroup.append('line')
+                .attr('x1', lW / 2 + x)
+                .attr('y1', 0 - aW / 2)
+                .attr('x2', lW / 2 + x)
+                .attr('y2', h - aW / 2)
+                .classed('mu_chordline_cursor', true)
+                .attr('stroke-width', aW);
+        }
     };
 
     /**
