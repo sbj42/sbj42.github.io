@@ -1,6 +1,6 @@
 (function() {
-    console.info('testing mu.SimpleChordProgression');
-    var s = mu.SimpleChordProgression(mu.Tempo(180));
+    console.info('testing mu.seq.SimpleChordProgression');
+    var s = mu.seq.SimpleChordProgression(mu.Tempo(180));
     assertEquals(s.tempo().bpm(), 180);
     assertEquals(s.duration(), 0);
     s.addChord(mu.Chord(mu.C_4, mu.E_4, mu.G_4), 1);
@@ -28,7 +28,7 @@
     var v = mu.audio.HarmonicVoice();
     v.ready(function() {
         var t = Date.now();
-        var c = mu.Cursor(s, function(change) {
+        var c = mu.seq.Cursor(s, function(change) {
             v.silence();
             //console.info((Date.now() - t) / 1000, change);
             if (change && change.chord) {

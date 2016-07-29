@@ -11,6 +11,12 @@
         throw Error('missing mu theory library');
 
     /**
+     * The mu sequence library namespace object
+     * @namespace mu.seq
+     */
+    mu.seq = mu.seq || {};
+
+    /**
      * A simple musical sequence composed of chords and rests, with no
      * other events.
      *
@@ -18,9 +24,9 @@
      * @param {mu.Tempo} tempo The tempo of the sequence
      * @memberof mu
      */
-    mu.SimpleChordProgression = function(tempo) {
-        if (!(this instanceof mu.SimpleChordProgression))
-            return new mu.SimpleChordProgression(tempo);
+    mu.seq.SimpleChordProgression = function(tempo) {
+        if (!(this instanceof mu.seq.SimpleChordProgression))
+            return new mu.seq.SimpleChordProgression(tempo);
         mu._assert(tempo == null || tempo instanceof mu.Tempo,
                    'invalid tempo ' + tempo);
         this._tempo = tempo || mu.Tempo(120);
@@ -28,7 +34,7 @@
         this._length = 0;
     };
 
-    // mu.SimpleChordProgression.prototype._cutAt = function(i, time, duration) {
+    // mu.seq.SimpleChordProgression.prototype._cutAt = function(i, time, duration) {
     //     var end = time + duration;
     //     var event = this._events[i];
     //     if (event.time < time && event.time + event.duration > end) {
@@ -49,7 +55,7 @@
     //     }
     //     return i;
     // };
-    // mu.SimpleChordProgression.prototype._set = function(time, chord, duration) {
+    // mu.seq.SimpleChordProgression.prototype._set = function(time, chord, duration) {
     //     mu._assert(_.isFinite(time) && time >= 0
     //                'invalid time ' + time);
     //     mu._assert(_.isFinite(duration) && duration > 0
@@ -78,9 +84,9 @@
      * Returns the tempo of this progression.
      *
      * @return {mu.Tempo} The tempo of this progression
-     * @memberof mu.SimpleChordProgression
+     * @memberof mu.seq.SimpleChordProgression
      */
-    mu.SimpleChordProgression.prototype.tempo = function() {
+    mu.seq.SimpleChordProgression.prototype.tempo = function() {
         return this._tempo;
     };
 
@@ -88,9 +94,9 @@
      * Returns the overall duration of this progression, in beats.
      *
      * @return {number} The overall duration of this progression, in beats
-     * @memberof mu.SimpleChordProgression
+     * @memberof mu.seq.SimpleChordProgression
      */
-    mu.SimpleChordProgression.prototype.duration = function() {
+    mu.seq.SimpleChordProgression.prototype.duration = function() {
         return this._length;
     };
 
@@ -106,9 +112,9 @@
      * @param {number} [time] The time to start looking for a change
      * @return {SimpleChordProgressionChange|null} The next change, or null
      * if the given time is at or after the end of the progression
-     * @memberof mu.SimpleChordProgression
+     * @memberof mu.seq.SimpleChordProgression
      */
-    mu.SimpleChordProgression.prototype.nextChange = function(time) {
+    mu.seq.SimpleChordProgression.prototype.nextChange = function(time) {
         mu._assert(time == null
                    || (mu._isFinite(time) && time >= 0),
                    'invalid time ' + time);
@@ -141,9 +147,9 @@
      * Describes this chord progression.
      *
      * @return {string} A description of this chord progression
-     * @memberof mu.SimpleChordProgression
+     * @memberof mu.seq.SimpleChordProgression
      */
-    mu.SimpleChordProgression.prototype.toString = function() {
+    mu.seq.SimpleChordProgression.prototype.toString = function() {
         var ret = 'simple chord progression (tempo=' + this._tempo + ' length=' + this._length + ' chords=' + this._events.length + ')';
     };
 
@@ -153,9 +159,9 @@
     //  * @param {number} time The start time of the chord, in beats
     //  * @param {mu.Chord} chord The chord
     //  * @param {number} duration The duration of the chord, in beats
-    //  * @memberof mu.SimpleChordProgression
+    //  * @memberof mu.seq.SimpleChordProgression
     //  */
-    // mu.SimpleChordProgression.prototype.setChord = function(time, chord, duration) {
+    // mu.seq.SimpleChordProgression.prototype.setChord = function(time, chord, duration) {
     //     mu._assert(chord == null || chord instanceof mu.Chord,
     //                'invalid chord ' + chord);
     //     this._set(time, chord, duration);
@@ -166,9 +172,9 @@
     //  *
     //  * @param {number} time The start time of the rest, in beats
     //  * @param {number} duration The duration of the ret, in beats
-    //  * @memberof mu.SimpleChordProgression
+    //  * @memberof mu.seq.SimpleChordProgression
     //  */
-    // mu.SimpleChordProgression.prototype.setRest = function(time, duration) {
+    // mu.seq.SimpleChordProgression.prototype.setRest = function(time, duration) {
     //     this._set(time, null, duration);
     // };
 
@@ -177,9 +183,9 @@
      *
      * @param {mu.Chord} chord The chord
      * @param {number} duration The duration of the chord, in beats
-     * @memberof mu.SimpleChordProgression
+     * @memberof mu.seq.SimpleChordProgression
      */
-    mu.SimpleChordProgression.prototype.addChord = function(chord, duration) {
+    mu.seq.SimpleChordProgression.prototype.addChord = function(chord, duration) {
         this._events.push({
             time: this._length,
             duration: duration,
@@ -192,9 +198,9 @@
      * Adds a rest to the end of the progression.
      *
      * @param {number} duration The duration of the rest, in beats
-     * @memberof mu.SimpleChordProgression
+     * @memberof mu.seq.SimpleChordProgression
      */
-    mu.SimpleChordProgression.prototype.addRest = function(duration) {
+    mu.seq.SimpleChordProgression.prototype.addRest = function(duration) {
         this._length += duration;
     };
 
@@ -207,9 +213,9 @@
      * @param {Function} callback The change callback
      * @memberof mu
      */
-    mu.Cursor = function(sequence, callback) {
-        if (!(this instanceof mu.Cursor))
-            return new mu.Cursor(sequence, callback);
+    mu.seq.Cursor = function(sequence, callback) {
+        if (!(this instanceof mu.seq.Cursor))
+            return new mu.seq.Cursor(sequence, callback);
         mu._assert(sequence != null && mu._isFunction(sequence.nextChange),
                    'invalid sequence ' + sequence);
         mu._assert(mu._isFunction(callback),
@@ -219,7 +225,7 @@
         this._time = 0;
         this._playing = false;
     };
-    mu.Cursor.prototype._next = function(change) {
+    mu.seq.Cursor.prototype._next = function(change) {
         if (!this._playing)
             return;
         this._time = change.time;
@@ -230,7 +236,7 @@
             this._pause();
         }
     };
-    mu.Cursor.prototype._continue = function(next) {
+    mu.seq.Cursor.prototype._continue = function(next) {
         var change = this._sequence.nextChange(this._time + (next ? 1e-6 : 0));
         if (change == null)
             return false;
@@ -240,7 +246,7 @@
         this._timer = setTimeout(this._next.bind(this, change), ms);
         return true;
     };
-    mu.Cursor.prototype._pause = function() {
+    mu.seq.Cursor.prototype._pause = function() {
         this._callback(null);
         this._playing = false;
         clearTimeout(this._timer);
@@ -253,9 +259,9 @@
      * Returns true if the cursor is playing.
      *
      * @return {boolean} True if the cursor is playing
-     * @memberof mu.Cursor
+     * @memberof mu.seq.Cursor
      */
-    mu.Cursor.prototype.playing = function() {
+    mu.seq.Cursor.prototype.playing = function() {
         return this._playing;
     };
 
@@ -263,9 +269,9 @@
      * Returns the current position of the cursor, in beats.
      *
      * @return {number} The current position of the cursor, in beats
-     * @memberof mu.Cursor
+     * @memberof mu.seq.Cursor
      */
-    mu.Cursor.prototype.time = function() {
+    mu.seq.Cursor.prototype.time = function() {
         if (!this._playing)
             return this._time;
         var delta = Date.now() - this._timerNow;
@@ -278,9 +284,9 @@
      *
      * @return {boolean} True if the cursor has started playing (false
      * indicates that the cursor was already past the end of the sequence).
-     * @memberof mu.Cursor
+     * @memberof mu.seq.Cursor
      */
-    mu.Cursor.prototype.play = function() {
+    mu.seq.Cursor.prototype.play = function() {
         if (this._playing)
             return true;
         if (this._lastChange)
@@ -293,9 +299,9 @@
     /**
      * Pauses the cursor at its current position in the sequence.
      *
-     * @memberof mu.Cursor
+     * @memberof mu.seq.Cursor
      */
-    mu.Cursor.prototype.pause = function() {
+    mu.seq.Cursor.prototype.pause = function() {
         if (!this._playing)
             return;
         var delta = Date.now() - this._timerNow;
@@ -303,7 +309,7 @@
         this._time += beats;
         this._pause();
     };
-    // mu.Cursor.prototype.seek = function(time) {
+    // mu.seq.Cursor.prototype.seek = function(time) {
     //     var playing = this._playing;
     //     if (playing)
     //         this.pause();
@@ -318,9 +324,9 @@
     //  *
     //  * @param {number} time The start time to remove, in beats
     //  * @param {number} duration The duration of the time to remove, in beats
-    //  * @memberof mu.SimpleChordProgression
+    //  * @memberof mu.seq.SimpleChordProgression
     //  */
-    // mu.SimpleChordProgression.prototype.removeTime = function(time, duration) {
+    // mu.seq.SimpleChordProgression.prototype.removeTime = function(time, duration) {
     //     mu._assert(_.isFinite(time) && time > 0
     //                'invalid time ' + time);
     //     mu._assert(_.isFinite(duration) && duration > 0
@@ -345,9 +351,9 @@
     //  * @param {number} time The time of the event, measured in beats
     //  * @memberof mu
     //  */
-    // mu.Event = function(time) {
-    //     if (!(this instanceof mu.Event))
-    //         return new mu.Event(time);
+    // mu.seq.Event = function(time) {
+    //     if (!(this instanceof mu.seq.Event))
+    //         return new mu.seq.Event(time);
     //     this.setTime(time);
     // };
 
@@ -359,9 +365,9 @@
     //  *
     //  * @return {string|null} If non-null, then no other event with the same
     //  * category can coincide with this one.
-    //  * @memberof mu.Event
+    //  * @memberof mu.seq.Event
     //  */
-    // mu.Event.prototype.category = function() {
+    // mu.seq.Event.prototype.category = function() {
     //     return null;
     // };
 
@@ -369,9 +375,9 @@
     //  * Returns the time of this event.
     //  *
     //  * @return {number} The time of the event, measured in beats
-    //  * @memberof mu.Event
+    //  * @memberof mu.seq.Event
     //  */
-    // mu.Event.prototype.time = function() {
+    // mu.seq.Event.prototype.time = function() {
     //     return this._time;
     // };
 
@@ -379,9 +385,9 @@
     //  * Sets the time of this event.
     //  *
     //  * @param {number} time The new time of this event, measured in beats.
-    //  * @memberof mu.Event
+    //  * @memberof mu.seq.Event
     //  */
-    // mu.Event.prototype.setTime = function(time) {
+    // mu.seq.Event.prototype.setTime = function(time) {
     //     mu._assert(_.isFinite(time) && time > 0,
     //                'invalid time ' + time);
     //     this._time = time;
@@ -391,9 +397,9 @@
     //  * Moves this event later in the sequence by the given `amount` of beats.
     //  *
     //  * @param {number} amount The number of beats to shift the event
-    //  * @memberof mu.Event
+    //  * @memberof mu.seq.Event
     //  */
-    // mu.Event.prototype.advance = function(amount) {
+    // mu.seq.Event.prototype.advance = function(amount) {
     //     mu._assert(_.isFinite(amount),
     //                'invalid amount ' + amount);
     //     this.setTime(this._time + amount);
@@ -404,9 +410,9 @@
     //  *
     //  * @protected
     //  * @return {string} A description of the type and properties of this event
-    //  * @memberof mu.Event
+    //  * @memberof mu.seq.Event
     //  */
-    // mu.Event.prototype._describe = function() {
+    // mu.seq.Event.prototype._describe = function() {
     //     return 'unknown event';
     // };
 
@@ -414,9 +420,9 @@
     //  * Describes this event.
     //  *
     //  * @return {string} A description of this event
-    //  * @memberof mu.Event
+    //  * @memberof mu.seq.Event
     //  */
-    // mu.Event.prototype.toString = function() {
+    // mu.seq.Event.prototype.toString = function() {
     //     return '[t=' + this._time + ',' + this._describe() + ']';
     // };
 
@@ -424,7 +430,7 @@
     //  * A tempo change in a musical sequence.
     //  *
     //  * @class
-    //  * @extends {mu.Event}
+    //  * @extends {mu.seq.Event}
     //  * @param {number} tempo The tempo to apply after this event
     //  * @memberof mu
     //  */
@@ -433,7 +439,7 @@
     //         return new mu.TempoEvent(tempo);
     //     this.setTempo(tempo);
     // };
-    // mu.TempoEvent.prototype = Object.create(mu.Event.prototype);
+    // mu.TempoEvent.prototype = Object.create(mu.seq.Event.prototype);
     // mu.TempoEvent.prototype.constructor = mu.TempoEvent;
     // mu.TempoEvent.prototype.category = function() {
     //     return 'tempo';
@@ -446,7 +452,7 @@
     //  * Returns the tempo to apply after this event.
     //  *
     //  * @return {mu.Tempo} The tempo
-    //  * @memberof mu.Event
+    //  * @memberof mu.seq.Event
     //  */
     // mu.TempoEvent.prototype.tempo = function() {
     //     return this._tempo;
@@ -456,7 +462,7 @@
     //  * Sets the tempo of this event.
     //  *
     //  * @param {mu.Tempo} tempo The new tempo
-    //  * @memberof mu.Event
+    //  * @memberof mu.seq.Event
     //  */
     // mu.TempoEvent.prototype.setTempo = function(tempo) {
     //     mu._assert(tempo instanceof mu.Tempo,
@@ -480,22 +486,22 @@
     // /**
     //  * Adds an event to this sequence.
     //  *
-    //  * @return {mu.Event} The event to add
+    //  * @return {mu.seq.Event} The event to add
     //  * @memberof mu.Sequence
     //  */
     // mu.Sequence.prototype.add = function(event) {
-    //     mu._assert(event instanceof mu.Event,
+    //     mu._assert(event instanceof mu.seq.Event,
     //                'invalid event ' + event);
     // };
 
     // /**
     //  * Removes an event to this sequence.
     //  *
-    //  * @return {mu.Event} The event to add
+    //  * @return {mu.seq.Event} The event to add
     //  * @memberof mu.Sequence
     //  */
     // mu.Sequence.prototype.add = function(event) {
-    //     mu._assert(event instanceof mu.Event,
+    //     mu._assert(event instanceof mu.seq.Event,
     //                'invalid event ' + event);
     // };
 
