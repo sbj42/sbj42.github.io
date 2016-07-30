@@ -623,13 +623,18 @@
                     .attr('ry', cR)
                     .classed('mu_chordline_chord', true)
                     .attr('stroke-width', cB);
-                var label = this._chordGroup.append('text')
+                var text = start.chord.abbr();
+                if (!text)
+                    text = start.chord.pitches().map(function(pitch) {
+                        return pitch.pitchClass().toString();
+                    }).join(' ');
+                this._chordGroup.append('text')
                     .attr('x', lW / 2 + x1 + cB + 3)
                     .attr('y', h / 2)
                     .attr('dy', '0.4em')
                     .attr('font-size', cFS)
                     .classed('mu_chordline_chord_label', true)
-                    .text(start.chord.toString());
+                    .text(text);
             }
         }
     };

@@ -48,7 +48,7 @@
 }
 .mu_chordline_minortick {
     stroke: #4e4e4e;
-    stroke-linecap: round;
+    shape-rendering: crispEdges;
 }
 .mu_chordline_cursor {
     stroke: #f00;
@@ -57,6 +57,7 @@
 .mu_chordline_chord {
     fill: #84eaa1;
     stroke: #548e65;
+    shape-rendering: crispEdges;
 }
 .mu_chordline_chord_label {
     font-family: Verdana;

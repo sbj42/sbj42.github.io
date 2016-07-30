@@ -37,7 +37,7 @@
             v.silence();
             //console.info((Date.now() - t) / 1000, change);
             if (change && change.chord) {
-                console.info(change.chord.toString() + ' - ' + change.chord.guessName());
+                console.info(change.chord.abbr() || change.chord.toString());
                 change.chord.pitches().forEach(function(pitch) {
                     v.startPitch(pitch);
                 });

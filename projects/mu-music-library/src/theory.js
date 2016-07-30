@@ -614,27 +614,68 @@
      * @example
      * // returns an interval of 5 semitones (sometimes called a "perfect fourth")
      * mu.Interval(5)
+     * @example
+     * // returns an interval of 5 semitones (sometimes called a "perfect fourth")
+     * mu.Interval(mu.C_4, mu.F_4)
      *
      * @class
-     * @param {number} semitones The number of semitones in the interval; a non-negative integer
+     * @param {mu.Pitch|number} pitch1 A pitch (when two arguments or given), or the number of semitones in the interval (when only one argument is given)
+     * @param {mu.Pitch} [pitch2] Another pitch
      * @memberof mu
      */
-    mu.Interval = function(semitones) {
+    mu.Interval = function(pitch1, pitch2) {
         if (!(this instanceof mu.Interval))
-            return new mu.Interval(semitones);
+            return new mu.Interval(pitch1, pitch2);
+        var semitones;
+        if (pitch2 != null) {
+            mu._assert(pitch1 instanceof mu.Pitch,
+                       'invalid pitch ' + pitch1);
+            mu._assert(pitch2 instanceof mu.Pitch,
+                       'invalid pitch ' + pitch2);
+            semitones = Math.abs(pitch1.subtract(pitch2));
+        } else
+            semitones = pitch1;
         mu._assert(mu._isInteger(semitones),
-                'invalid semitone count ' + semitones);
+                   'invalid semitone count ' + semitones);
         mu._assert(semitones >= 0 && semitones <= mu.Interval._MAX,
-                'inaudible semitone count ' + semitones);
+                   'inaudible semitone count ' + semitones);
         this._semitones = semitones;
     }
     mu.Interval._MAX = mu.Pitch._MAX.toNum() - mu.Pitch._MIN.toNum();
+    mu.Interval._INFO = {
+        '0':  {name: 'unison',           abbr: 'P1'},
+        '1':  {name: 'minor second',     abbr: 'm2'},
+        '2':  {name: 'major second',     abbr: 'M2'},
+        '3':  {name: 'minor third',      abbr: 'm3'},
+        '4':  {name: 'major third',      abbr: 'M3'},
+        '5':  {name: 'perfect fourth',   abbr: 'P4'},
+        '6':  {name: 'tritone',          abbr: 'TT'},
+        '7':  {name: 'perfect fifth',    abbr: 'P5'},
+        '8':  {name: 'minor sixth',      abbr: 'm6'},
+        '9':  {name: 'major sixth',      abbr: 'M6'},
+        '10': {name: 'minor seventh',    abbr: 'm7'},
+        '11': {name: 'major seventh',    abbr: 'M7'},
+        '12': {name: 'octave',           abbr: 'P8'},
+        '13': {name: 'minor ninth',      abbr: 'm9'},
+        '14': {name: 'major ninth',      abbr: 'M9'},
+        '15': {name: 'minor tenth',      abbr: 'm10'},
+        '16': {name: 'major tenth',      abbr: 'M10'},
+        '17': {name: 'perfect eleventh', abbr: 'P11'},
+        // 18 (diminished twelfth/augmented eleventh
+        '19': {name: 'perfect twelfth',  abbr: 'P12'},
+        '20': {name: 'minor thirteenth', abbr: 'm13'},
+        '21': {name: 'major thirteenth', abbr: 'M13'},
+        '22': {name: 'minor fourteenth', abbr: 'm14'},
+        '23': {name: 'major fourteenth', abbr: 'M14'},
+        '24': {name: 'double octave',    abbr: 'P15'},
+        '28': {name: 'major seventeenth',abbr: 'M17'}
+    };
     /**
      * Returns the number of semitones in this interval
      *
      * @example
      * // returns 5
-     * mu.Interval(5).semitones()
+     * mu.Interval(mu.C_4, mu.F_4).semitones()
      *
      * @return {number} The number of semitones in this interval; a non-negative integer
      * @memberof mu.Interval
@@ -643,11 +684,11 @@
         return this._semitones;
     };
     /**
-     * Describes this interval.
+     * Describes this interval, using semitone count.
      *
      * @example
      * // returns "5 semitones"
-     * mu.Interval(5).toString()
+     * mu.Interval(mu.C_4, mu.F_4).toString()
      *
      * @return {string} A description of this interval
      * @memberof mu.Interval
@@ -657,21 +698,51 @@
             return this._semitones.toLocaleString() + ' semitone';
         return this._semitones.toLocaleString() + ' semitones';
     };
+    /**
+     * Returns the name of this interval, or returns the semitone count
+     * for certain rare intervals (e.g. 26 semitones) or intervals with
+     * no canonical name (e.g. 18 semitones).  An interval can have multiple
+     * names, and the correct name depends on the particular pitches and
+     * the key, but this method attempts to return the most generic name.
+     *
+     * @example
+     * // returns "perfect fourth"
+     * mu.Interval(mu.C_4, mu.F_4).
+     *
+     * @class
+     * @return {string} The name of this interval, or an alternate description
+     * @memberof mu.Chord
+     */
+    mu.Interval.prototype.name = function() {
+        var i = mu.Interval._INFO[String(this._semitones)];
+        if (i)
+            return i.name;
+        return this.toString();
+    };
 
     /**
-     * A set of three or more pitches that are heard together.
+     * @typedef {object} ChordInfo
+     * @property {mu.Pitch} root
+     * @property {string} className
+     * @property {string} classAbbr
+     * @property {string} third
+     * @property {string} fifth
+     * @property {string} seventh
+
+    /**
+     * A set of pitches that are heard together.  Usually
+     * three or more, but this class any number.
      *
      * @example
      * // returns a chord composed of C4, E4, and G4
      * mu.Chord(mu.C_4, mu.E_4, mu.G_4)
      *
      * @class
-     * @param {mu.Pitch} pitch1 A pitch in the chord
-     * @param {mu.Pitch} pitch2 A pitch in the chord
-     * @param {...mu.Pitch} pitch3 A pitch in the chord
+     * @param {...mu.Pitch|Array.<mu.Pitch>} [pitch] A pitch (or an
+     * array of pitches) in the chord
      * @memberof mu
      */
-    mu.Chord = function(pitch1, pitch2, pitch3) {
+    mu.Chord = function(pitch) {
         if (!(this instanceof mu.Chord)) {
             function C(args) {
                 return mu.Chord.apply(this, args);
@@ -679,8 +750,6 @@
             C.prototype = mu.Chord.prototype;
             return new C(arguments);
         }
-        mu._assert(arguments.length >= 3,
-                'not enough pitches (' + arguments.length + '), must have at least 3');
         mu._argsToArray(arguments).forEach(function(pitch) {
             mu._assert(pitch instanceof mu.Pitch,
                     'invalid pitch ' + pitch);
@@ -690,10 +759,272 @@
             return a.subtract(b);
         });
     };
+    mu.Chord._INFO = [
+        {
+            abbr: 'M',
+            name: 'major',
+            third: 'major',
+            fifth: 'perfect',
+            req: [0, 4],
+            opt: [7]
+        },
+        {
+            abbr: 'M7',
+            name: 'major seventh',
+            third: 'major',
+            fifth: 'perfect',
+            seventh: 'major',
+            req: [0, 4, 11],
+            opt: [7]
+        },
+        {
+            abbr: 'maj9',
+            name: 'major ninth',
+            third: 'major',
+            fifth: 'perfect',
+            seventh: 'major',
+            req: [0, 4, 11, 14],
+            opt: [7]
+        },
+        {
+            abbr: 'maj13',
+            name: 'major thirteenth',
+            third: 'major',
+            fifth: 'perfect',
+            seventh: 'major',
+            req: [0, 4, 11, 21],
+            opt: [7, 14, 17]
+        },
+        {
+            abbr: '6',
+            name: 'sixth',
+            third: 'major',
+            fifth: 'perfect',
+            req: [0, 4, 9],
+            opt: [7]
+        },
+        {
+            abbr: '6/9',
+            name: 'sixth/ninth',
+            third: 'major',
+            fifth: 'perfect',
+            req: [0, 4, 9, 14],
+            opt: [7]
+        },
+
+        {
+            abbr: '7',
+            name: 'dominant seventh',
+            third: 'major',
+            fifth: 'perfect',
+            seventh: 'minor',
+            req: [0, 4, 10],
+            opt: [7]
+        },
+        {
+            abbr: '9',
+            name: 'dominant ninth',
+            third: 'major',
+            fifth: 'perfect',
+            seventh: 'minor',
+            req: [0, 4, 10, 14],
+            opt: [7]
+        },
+        {
+            abbr: '13',
+            name: 'dominant thirteenth',
+            third: 'major',
+            fifth: 'perfect',
+            seventh: 'minor',
+            req: [0, 4, 10, 21],
+            opt: [7, 14]
+        },
+
+        {
+            abbr: 'sus4',
+            name: 'suspended fourth',
+            fifth: 'perfect',
+            req: [0, 5],
+            opt: [7]
+        },
+        {
+            abbr: 'sus2',
+            name: 'suspended second',
+            third: 'suspended',
+            fifth: 'perfect',
+            req: [0, 2],
+            opt: [7]
+        },
+        {
+            abbr: '11',
+            name: 'eleventh',
+            third: 'suspended',
+            fifth: 'perfect',
+            seventh: 'minor',
+            req: [0, 10, 17],
+            opt: [7, 14]
+        },
+
+        {
+            abbr: 'm',
+            name: 'minor',
+            third: 'minor',
+            fifth: 'perfect',
+            req: [0, 3],
+            opt: [7]
+        },
+        {
+            abbr: 'm7',
+            name: 'minor seventh',
+            third: 'minor',
+            fifth: 'perfect',
+            seventh: 'minor',
+            req: [0, 3, 10],
+            opt: [7]
+        },
+        {
+            abbr: 'm/M7',
+            name: 'minor/major seventh',
+            third: 'minor',
+            fifth: 'perfect',
+            seventh: 'major',
+            req: [0, 3, 11],
+            opt: [7, 14]
+        },
+        {
+            abbr: 'm6',
+            name: 'minor sixth',
+            third: 'minor',
+            fifth: 'perfect',
+            req: [0, 3, 9],
+            opt: [7]
+        },
+        {
+            abbr: 'm9',
+            name: 'minor ninth',
+            third: 'minor',
+            fifth: 'perfect',
+            req: [0, 3, 10, 14],
+            opt: [7]
+        },
+        {
+            abbr: 'm11',
+            name: 'minor eleventh',
+            third: 'minor',
+            fifth: 'perfect',
+            seventh: 'minor',
+            req: [0, 3, 10, 17],
+            opt: [7, 14]
+        },
+        {
+            abbr: 'm13',
+            name: 'minor thirteenth',
+            third: 'minor',
+            fifth: 'perfect',
+            seventh: 'minor',
+            req: [0, 3, 10, 21],
+            opt: [7, 14]
+        },
+
+        {
+            abbr: 'dim',
+            name: 'diminished',
+            third: 'minor',
+            fifth: 'diminished',
+            req: [0, 3, 6],
+            opt: []
+        },
+        {
+            abbr: 'dim7',
+            name: 'diminished seventh',
+            third: 'minor',
+            fifth: 'diminished',
+            seventh: 'double-flat',
+            req: [0, 3, 6, 9],
+            opt: []
+        },
+        {
+            abbr: 'm7' + mu.FLAT_CHAR + '5',
+            name: 'half-diminished seventh',
+            third: 'minor',
+            fifth: 'diminished',
+            seventh: 'minor',
+            req: [0, 3, 6, 10],
+            opt: []
+        },
+
+        {
+            abbr: '5',
+            name: 'fifth',
+            third: '',
+            fifth: 'perfect',
+            req: [0, 7],
+            opt: []
+        },
+        {
+            abbr: 'aug',
+            name: 'augmented',
+            third: 'major',
+            fifth: 'augmented',
+            req: [0, 4, 8],
+            opt: []
+        },
+        {
+            abbr: 'aug',
+            name: 'augmented seventh',
+            third: 'major',
+            fifth: 'augmented',
+            seventh: 'minor',
+            req: [0, 4, 8, 10],
+            opt: []
+        }
+    ];
+    mu.Chord._INFO_MAP = {};
+    mu.Chord._INFO.forEach(function(info) {
+        for (var c = 0; c < Math.pow(2, info.opt.length); c ++) {
+            var arr = info.req.map(function(i) {
+                return i % 12;
+            });
+            info.opt.forEach(function(i, o) {
+                if ((c & (1 << o)) != 0)
+                    arr.push(i);
+            });
+            arr = arr.sort(function(a, b) { return a - b; });
+            var pattern = arr.join('-');
+            if (pattern in mu.Chord._INFO_MAP)
+                throw Error('duplicate chord pattern ' + pattern + ': ' + mu.Chord._INFO_MAP[pattern].name + ' and ' + info.name);
+            mu.Chord._INFO_MAP[pattern] = info;
+        }
+    });
+    mu.Chord.prototype._infos = function() {
+        var pitchClasses = [];
+        this._pitches.forEach(function(pitch) {
+            pitchClasses[pitch.pitchClass().index()] = true;
+        });
+        var results = [];
+        pitchClasses.forEach(function(present, index) {
+            if (!present)
+                return;
+            var start = mu.PitchClass(index);
+            var intervals = [0];
+            for (var i = 1; i < 12; i ++) {
+                var other = start.transpose(i);
+                if (pitchClasses[other.index()])
+                    intervals.push(i);
+            }
+            var info = mu.Chord._INFO_MAP[intervals.join('-')];
+            if (info)
+                results.push({
+                    root: start,
+                    info: info
+                });
+        });
+        return results;
+    };
     /**
      * Returns the number of pitches in this chord.
      *
-     * @return {number} The number of pitches in this chord; an integer greater than 2
+     * @return {number} The number of pitches in this chord
      * @memberof mu.Chord
      */
     mu.Chord.prototype.size = function() {
@@ -745,50 +1076,38 @@
         return ret.join(' ');
     };
     /**
-     * Guesses a name for this chord based on the pitches present
+     * Guesses a name for this chord based on the pitches present.
      *
-     * @return {string}
+     * @example
+     * // returns "F major"
+     * mu.Chord(mu.C_4, mu.F_4, mu.A_4).name();
+     *
+     * @class
+     * @return {string|null} The name of this chord, or null if it isn't known
      * @memberof mu.Chord
      */
-    mu.Chord.prototype.guessName = function() {
-        var pitchClasses = [];
-        this._pitches.forEach(function(pitch) {
-            pitchClasses[pitch.pitchClass().index()] = true;
-        });
-        mu._mapForEach(pitchClasses, function(x, index) {
-            var start = mu.PitchClass(index);
-            var intervals = [0];
-            for (var i = 1; i < 12; i ++) {
-                var other = start.transpose(i);
-                if (pitchClasses[other.index()])
-                    intervals.push(i);
-            }
-            var name = '';
-            var abbrev = '';
-            switch (intervals.join('-')) {
-            case '0-2-7': abbrev = 'sus2'; name = 'suspended second'; break;
-            case '0-3-6': abbrev = 'dim'; name = 'diminished'; break;
-            case '0-3-7': abbrev = 'min'; name = 'minor'; break;
-            case '0-4-7': abbrev = 'maj'; name = 'major'; break;
-            case '0-4-8': abbrev = 'aug'; name = 'augmented'; break;
-            case '0-5-7': abbrev = 'sus4'; name = 'suspended fourth'; break;
-            case '0-3-6-9': abbrev = 'dim7'; name = 'diminished seventh'; break;
-            case '0-3-6-10': abbrev = '-7'; name = 'half-diminished seventh'; break;
-            case '0-3-7-10': abbrev = 'min7'; name = 'minor seventh'; break;
-            case '0-3-7-11': abbrev = 'm maj7'; name = 'minor major seventh'; break;
-            case '0-4-7-10':
-            case '0-4-10': abbrev = '7'; name = 'dominant seventh'; break;
-            case '0-4-7-11': abbrev = 'maj7'; name = 'major seventh'; break;
-            case '0-4-8-10': abbrev = 'aug7'; name = 'augmented seventh'; break;
-            case '0-4-8-11': abbrev = 'aug maj7'; name = 'augmented major seventh'; break;
-            case '0-2-4-7-10': abbrev = '9'; name = 'dominant ninth'; break;
-            case '0-2-5-7-10': abbrev = '9sus4'; name = 'dominant 9sus4'; break;
-            case '0-2-4-5-7-10': abbrev = '11'; name = 'dominant eleventh'; break;
-            case '0-2-4-5-7-9-10': abbrev = '13'; name = 'dominant thirteenth'; break;
-            }
-            console.info(start.toString() + ' ' + intervals.join('-') + ' ' + name);
-        }, this);
-        return '';
+    mu.Chord.prototype.name = function() {
+        var infos = this._infos();
+        if (infos.length == 0)
+            return null;
+        return infos[0].root.toString() + ' ' + infos[0].info.name;
+    };
+    /**
+     * Guesses an abbreviated name for this chord based on the pitches present.
+     *
+     * @example
+     * // returns "F major"
+     * mu.Chord(mu.C_4, mu.F_4, mu.A_4).name();
+     *
+     * @class
+     * @return {string|null} The abbreviated name of this chord, or null if it isn't known
+     * @memberof mu.Chord
+     */
+    mu.Chord.prototype.abbr = function() {
+        var infos = this._infos();
+        if (infos.length == 0)
+            return null;
+        return infos[0].root.toString() + infos[0].info.abbr;
     };
 
 /*
