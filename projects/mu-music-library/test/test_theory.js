@@ -115,7 +115,7 @@
     assertEquals(cM.analyze().length, 1);
     assertEquals(cM.name(), 'C major');
     assertEquals(cM.abbr(), 'CM');
-    var cm = mu.Chord(mu.C_4, mu.G_4, mu.D_SHARP_4);
+    var cm = mu.Chord([mu.C_4, mu.G_4, mu.D_SHARP_4]);
     assertEquals(cm.size(), 3);
     assertEquals(cm.pitches()[0].toString(), 'C4');
     assertEquals(cm.pitches()[1].toString(), 'D\u266F4/E\u266D4');

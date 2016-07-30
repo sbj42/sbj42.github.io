@@ -10,6 +10,19 @@ harm.ready(function() {
     var constellation = mu.ui.PitchConstellation(mu.C, mu.C_4, mu.B_4);
     mu._html('#constellation').append(constellation.node());
     c.connectUI(constellation);
+
+    function onChange() {
+        var chord = mu.Chord(c.voice().playing());
+        var text = chord.abbr();
+        var status = mu._html('#status').clear();
+        if (text) {
+            var name = chord.name();
+            status.text('Chord: ' + text + ' (' + name + ')');
+        }
+    }
+
+    c.addEventListener('pitchstart', onChange);
+    c.addEventListener('pitchstop', onChange);
     
     c.voice().startPitch(mu.F_4);
     c.voice().startPitch(mu.A_FLAT_4);

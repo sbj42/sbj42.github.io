@@ -572,7 +572,7 @@
     mu.ui.ChordLine._MINORTICK_HEIGHT = 20;
     mu.ui.ChordLine._MINORTICK_WIDTH = 2;
     mu.ui.ChordLine._CHORD_HEIGHT = 40;
-    mu.ui.ChordLine._CHORD_ROUND = 0;
+    mu.ui.ChordLine._CHORD_ROUND = 4;
     mu.ui.ChordLine._CHORD_BORDER = 0;
     mu.ui.ChordLine._CHORD_FONT_SIZE = 16;
     mu.ui.ChordLine._CURSOR_WIDTH = 3;
@@ -705,6 +705,7 @@
         this.setVoice(voice);
         this._uis = [];
     };
+    mu._eventable(mu.ui.Controller.prototype);
     mu.ui.Controller.prototype._onPitchPress = function(data) {
         if (this._voice && this._voice.canPlayPitch(data.pitch))
             this._voice.startPitch(data.pitch);
@@ -717,11 +718,13 @@
         this._uis.forEach(function(ui) {
             ui.startPitch(data.pitch);
         });
+        this._fire('pitchstart', data);
     };
     mu.ui.Controller.prototype._onPitchStop = function(data) {
         this._uis.forEach(function(ui) {
             ui.stopPitch(data.pitch);
         });
+        this._fire('pitchstop', data);
     };
     /**
      * Returns a string description of the controller.

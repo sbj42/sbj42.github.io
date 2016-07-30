@@ -6,6 +6,8 @@ volume fader, gain knob
 use fletcher-munson curves in the generator voice to try to get equal volume from low and high notes, use replaygain on the audio files for same
 sound envelopes in generators
 
-chord analysis
-  detect chord type, form some descriptions of it, show that in test_ui
-  compare to root for key-relative chord descriptions
+add key class
+describe pitch class relative to key (as degree or as name normalized for staff position)
+describe chord relative to key
+favor certain root degrees in chord analysis (to avoid circularly-ambiguous chord structures like diminished seventh and augmented)?
+add base/inversion information, favor analyses where base==root?

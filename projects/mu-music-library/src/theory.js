@@ -748,7 +748,7 @@
                     mu._assert(pitch instanceof mu.Pitch,
                                'invalid pitch ' + pitch);
                     this._pitches.push(pitch);
-                }, true);
+                }, this);
             } else {
                 mu._assert(pitch instanceof mu.Pitch,
                            'invalid pitch ' + pitch);
@@ -800,8 +800,8 @@
             name: 'sixth',
             third: 'major',
             fifth: 'perfect',
-            req: [0, 4, 9],
-            opt: [7]
+            req: [0, 4, 7, 9],
+            opt: []
         },
         {
             abbr: '6/9',
@@ -844,8 +844,8 @@
             abbr: 'sus4',
             name: 'suspended fourth',
             fifth: 'perfect',
-            req: [0, 5],
-            opt: [7]
+            req: [0, 5, 7],
+            opt: []
         },
         {
             abbr: 'sus2',
@@ -894,8 +894,8 @@
             name: 'minor sixth',
             third: 'minor',
             fifth: 'perfect',
-            req: [0, 3, 9],
-            opt: [7]
+            req: [0, 3, 7, 9],
+            opt: []
         },
         {
             abbr: 'm9',

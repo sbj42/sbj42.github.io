@@ -58,6 +58,7 @@
         if (!(this instanceof mu.audio.Voice))
             return new mu.audio.Voice();
         mu.audio.Voice._activateVoice(this);
+        this._playing = {};
     };
     mu._eventable(mu.audio.Voice.prototype);
     mu.audio.Voice._activeVoices = [];
@@ -172,6 +173,7 @@
      * @memberof mu.audio.Voice
      */
     mu.audio.Voice.prototype.startPitch = function(pitch) {
+        this._playing[pitch.toNum()] = true;
         this._fire('pitchstart', {voice: this, pitch: pitch});
     };
     /**
@@ -181,7 +183,21 @@
      * @memberof mu.audio.Voice
      */
     mu.audio.Voice.prototype.stopPitch = function(pitch) {
+        delete this._playing[pitch.toNum()];
         this._fire('pitchstop', {voice: this, pitch: pitch});
+    };
+    /**
+     * Returns an array of the pitches that are currently playing.
+     *
+     * @return {Array.<mu.Pitch>} The pitches that are currently playing
+     * @memberof mu.audio.Voice
+     */
+    mu.audio.Voice.prototype.playing = function() {
+        var ret = [];
+        mu._mapForEach(this._playing, function(x, num) {
+            ret.push(mu.Pitch.fromNum(num));
+        });
+        return ret;
     };
 
     /**

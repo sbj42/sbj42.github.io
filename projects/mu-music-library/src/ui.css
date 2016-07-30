@@ -57,7 +57,6 @@
 .mu_chordline_chord {
     fill: #84eaa1;
     stroke: #548e65;
-    shape-rendering: crispEdges;
 }
 .mu_chordline_chord_label {
     font-family: Verdana;
