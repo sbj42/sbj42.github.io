@@ -69,6 +69,16 @@
     };
 
     /**
+     * Check if a value is an Object.
+     *
+     * @private
+     * @memberof mu
+     */
+    mu._isObject = function(value) {
+        return !!value && (typeof value == 'object' || typeof 'object' == 'function');
+    };
+
+    /**
      * Check if a value is either a string primitive or a String object.
      *
      * @private

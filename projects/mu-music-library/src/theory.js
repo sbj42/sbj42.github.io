@@ -721,15 +721,6 @@
     };
 
     /**
-     * @typedef {object} ChordInfo
-     * @property {mu.Pitch} root
-     * @property {string} className
-     * @property {string} classAbbr
-     * @property {string} third
-     * @property {string} fifth
-     * @property {string} seventh
-
-    /**
      * A set of pitches that are heard together.  Usually
      * three or more, but this class any number.
      *
@@ -750,11 +741,20 @@
             C.prototype = mu.Chord.prototype;
             return new C(arguments);
         }
+        this._pitches = [];
         mu._argsToArray(arguments).forEach(function(pitch) {
-            mu._assert(pitch instanceof mu.Pitch,
-                    'invalid pitch ' + pitch);
-        });
-        this._pitches = Array.prototype.slice.call(arguments);
+            if (Array.isArray(pitch)) {
+                pitch.forEach(function(pitch) {
+                    mu._assert(pitch instanceof mu.Pitch,
+                               'invalid pitch ' + pitch);
+                    this._pitches.push(pitch);
+                }, true);
+            } else {
+                mu._assert(pitch instanceof mu.Pitch,
+                           'invalid pitch ' + pitch);
+                    this._pitches.push(pitch);
+            }
+        }, this);
         this._pitches.sort(function(a, b) {
             return a.subtract(b);
         });
@@ -850,7 +850,6 @@
         {
             abbr: 'sus2',
             name: 'suspended second',
-            third: 'suspended',
             fifth: 'perfect',
             req: [0, 2],
             opt: [7]
@@ -858,7 +857,6 @@
         {
             abbr: '11',
             name: 'eleventh',
-            third: 'suspended',
             fifth: 'perfect',
             seventh: 'minor',
             req: [0, 10, 17],
@@ -956,7 +954,6 @@
         {
             abbr: '5',
             name: 'fifth',
-            third: '',
             fifth: 'perfect',
             req: [0, 7],
             opt: []
@@ -996,31 +993,6 @@
             mu.Chord._INFO_MAP[pattern] = info;
         }
     });
-    mu.Chord.prototype._infos = function() {
-        var pitchClasses = [];
-        this._pitches.forEach(function(pitch) {
-            pitchClasses[pitch.pitchClass().index()] = true;
-        });
-        var results = [];
-        pitchClasses.forEach(function(present, index) {
-            if (!present)
-                return;
-            var start = mu.PitchClass(index);
-            var intervals = [0];
-            for (var i = 1; i < 12; i ++) {
-                var other = start.transpose(i);
-                if (pitchClasses[other.index()])
-                    intervals.push(i);
-            }
-            var info = mu.Chord._INFO_MAP[intervals.join('-')];
-            if (info)
-                results.push({
-                    root: start,
-                    info: info
-                });
-        });
-        return results;
-    };
     /**
      * Returns the number of pitches in this chord.
      *
@@ -1076,6 +1048,33 @@
         return ret.join(' ');
     };
     /**
+     * Analyze the chord, returning an array of ChordAnalysis objects.
+     *
+     * @return {Array.<mu.ChordAnalysis>} The analyses of the chord
+     */
+    mu.Chord.prototype.analyze = function() {
+        var pitchClasses = [];
+        this._pitches.forEach(function(pitch) {
+            pitchClasses[pitch.pitchClass().index()] = true;
+        });
+        var results = [];
+        pitchClasses.forEach(function(present, index) {
+            if (!present)
+                return;
+            var start = mu.PitchClass(index);
+            var intervals = [0];
+            for (var i = 1; i < 12; i ++) {
+                var other = start.transpose(i);
+                if (pitchClasses[other.index()])
+                    intervals.push(i);
+            }
+            var info = mu.Chord._INFO_MAP[intervals.join('-')];
+            if (info)
+                results.push(mu.ChordAnalysis(start, mu.ChordType(info)));
+        });
+        return results;
+    };
+    /**
      * Guesses a name for this chord based on the pitches present.
      *
      * @example
@@ -1087,10 +1086,10 @@
      * @memberof mu.Chord
      */
     mu.Chord.prototype.name = function() {
-        var infos = this._infos();
-        if (infos.length == 0)
+        var a = this.analyze();
+        if (a.length == 0)
             return null;
-        return infos[0].root.toString() + ' ' + infos[0].info.name;
+        return a[0].name();
     };
     /**
      * Guesses an abbreviated name for this chord based on the pitches present.
@@ -1104,10 +1103,161 @@
      * @memberof mu.Chord
      */
     mu.Chord.prototype.abbr = function() {
-        var infos = this._infos();
-        if (infos.length == 0)
+        var a = this.analyze();
+        if (a.length == 0)
             return null;
-        return infos[0].root.toString() + infos[0].info.abbr;
+        return a[0].abbr();
+    };
+
+    /**
+     * A chord type.  This specifies the name for the type of chord
+     * (e.g. "dominant seventh"), an abbreviation for the type (e.g. "7"),
+     * and some of the interval types present in the chord (e.g. if the
+     * third is present, and whether it is a major or minor third).
+     *
+     * Don't call this constructor directly.
+     *
+     * @class
+     * @param {object} info Configuration data for this chord type
+     * @memberof mu
+     */
+    mu.ChordType = function(info) {
+        if (!(this instanceof mu.ChordType))
+            return new mu.ChordType(info);
+        mu._assert(mu._isObject(info)
+                   && mu._isString(info.name)
+                   && mu._isString(info.abbr)
+                   && (info.third == null || ['minor', 'major'].indexOf(info.third) >= 0)
+                   && (info.fifth == null || ['perfect', 'diminished', 'augmented'].indexOf(info.fifth) >= 0)
+                   && (info.seventh == null || ['minor', 'major', 'double-flat'].indexOf(info.seventh) >= 0),
+                   'invalid chord type data ' + info);
+        this._name = info.name;
+        this._abbr = info.abbr;
+        this._third = info.third;
+        this._fifth = info.fifth;
+        this._seventh = info.seventh;
+    };
+    /**
+     * Returns the name of this chord type.
+     *
+     * @return {string} the name of this chord type
+     * @memberof mu.ChordType
+     */
+    mu.ChordType.prototype.name = function() {
+        return this._name;
+    };
+    /**
+     * Returns the abbreviation of this chord type.
+     *
+     * @return {string} the abbreviation of this chord type
+     * @memberof mu.ChordType
+     */
+    mu.ChordType.prototype.abbr = function() {
+        return this._abbr;
+    };
+    /**
+     * Returns the type of third in this chord type:
+     * 'minor', 'major', or null
+     *
+     * @return {string|null} the type of third
+     * @memberof mu.ChordType
+     */
+    mu.ChordType.prototype.third = function() {
+        return this._third;
+    };
+    /**
+     * Returns the type of fifth in this chord type:
+     * 'perfect', 'diminished', 'augmented', or null
+     *
+     * @return {string|null} the type of fifth
+     * @memberof mu.ChordType
+     */
+    mu.ChordType.prototype.fifth = function() {
+        return this._fifth;
+    };
+    /**
+     * Returns the type of seventh in this chord type:
+     * 'minor', 'major', or null
+     *
+     * @return {string|null} the type of seventh
+     * @memberof mu.ChordType
+     */
+    mu.ChordType.prototype.seventh = function() {
+        return this._seventh;
+    };
+    /**
+     * Returns a desription of this chord type.
+     *
+     * @return {string} A desription of this chord type
+     * @memberof mu.ChordType
+     */
+    mu.ChordType.prototype.toString = function() {
+        return this._name + ' chord';
+    };
+
+    /**
+     * An analysis of a chord.  This specifies the root of the chord and
+     * a chord type.
+     *
+     * @class
+     * @param {mu.PitchClass} root the rood of the chord
+     * @param {mu.ChordType} type the chord type
+     * @memberof mu
+     */
+    mu.ChordAnalysis = function(root, type) {
+        if (!(this instanceof mu.ChordAnalysis))
+            return new mu.ChordAnalysis(root, type);
+        mu._assert(root instanceof mu.PitchClass,
+                   'invalid root ' + root);
+        mu._assert(type instanceof mu.ChordType,
+                   'invalid type ' + type);
+        this._root = root;
+        this._type = type;
+    };
+    /**
+     * Returns the root of this chord analysis.
+     *
+     * @return {mu.PitchClass} The root of this chord analysis
+     * @memberof mu.ChordAnalysis
+     */
+    mu.ChordAnalysis.prototype.root = function() {
+        return this._root;
+    };
+    /**
+     * Returns the chord type of this chord analysis.
+     *
+     * @return {mu.ChordType} The chord type
+     * @memberof mu.ChordAnalysis
+     */
+    mu.ChordAnalysis.prototype.type = function() {
+        return this._type;
+    };
+    /**
+     * Returns a desription of this chord analysis.
+     *
+     * @return {string} A desription of this chord analysis
+     * @memberof mu.ChordAnalysis
+     */
+    mu.ChordAnalysis.prototype.toString = function() {
+        return this.abbr();
+    };
+    /**
+     * Returns a name for this chord analysis (e.g. "F minor").
+     *
+     * @return {string} A name for this chord analysis
+     * @memberof mu.ChordAnalysis
+     */
+    mu.ChordAnalysis.prototype.name = function() {
+        return this._root.toString() + ' ' + this._type.name();
+    };
+    /**
+     * Returns an abbreviation for this chord analysis (e.g. "Fmin").
+     *
+     * @return {string} An abbreviation for this chord analysis
+     * @memberof mu.ChordAnalysis
+     */
+    mu.ChordAnalysis.prototype.abbr = function() {
+        return this._root.toString() + this._type.abbr();
     };
 
 /*

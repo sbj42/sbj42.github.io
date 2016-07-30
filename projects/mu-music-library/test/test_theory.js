@@ -112,6 +112,7 @@
     assertEquals(cM.pitches()[1].toString(), 'E4');
     assertEquals(cM.pitches()[2].toString(), 'G4');
     assertEquals(cM.toString(), 'C4 E4 G4');
+    assertEquals(cM.analyze().length, 1);
     assertEquals(cM.name(), 'C major');
     assertEquals(cM.abbr(), 'CM');
     var cm = mu.Chord(mu.C_4, mu.G_4, mu.D_SHARP_4);
@@ -120,6 +121,7 @@
     assertEquals(cm.pitches()[1].toString(), 'D\u266F4/E\u266D4');
     assertEquals(cm.pitches()[2].toString(), 'G4');
     assertEquals(cm.toString(), 'C4 D\u266F4/E\u266D4 G4');
+    assertEquals(cm.analyze().length, 1);
     assertEquals(cm.name(), 'C minor');
     assertEquals(cm.abbr(), 'Cm');
     var fM = cM.transpose(5);
@@ -128,9 +130,11 @@
     assertEquals(fM.pitches()[1].toString(), 'A4');
     assertEquals(fM.pitches()[2].toString(), 'C5');
     assertEquals(fM.toString(), 'F4 A4 C5');
+    assertEquals(fM.analyze().length, 1);
     assertEquals(fM.name(), 'F major');
     var r5 = mu.Chord(mu.C_4, mu.G_4);
     assertEquals(r5.size(), 2);
+    assertEquals(r5.analyze().length, 1);
     assertEquals(r5.name(), 'C fifth');
     var z = mu.Chord();
     assertEquals(z.toString(), '');

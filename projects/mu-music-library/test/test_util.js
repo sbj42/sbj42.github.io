@@ -1,18 +1,18 @@
-assertEquals(mu._isFinite(Infinity), false);
-assertEquals(mu._isFinite(NaN), false);
-assertEquals(mu._isFinite(-Infinity), false);
-assertEquals(mu._isFinite(0), true);
-assertEquals(mu._isFinite(2e64), true);
-assertEquals(mu._isFinite('0'), false);
-assertEquals(mu._isFinite(null), false);
+assert(!mu._isFinite(Infinity));
+assert(!mu._isFinite(NaN));
+assert(!mu._isFinite(-Infinity));
+assert(mu._isFinite(0));
+assert(mu._isFinite(2e64));
+assert(!mu._isFinite('0'));
+assert(!mu._isFinite(null));
 
-assertEquals(mu._isInteger(0), true);
-assertEquals(mu._isInteger(-100000), true);
-assertEquals(mu._isInteger(0.1), false);
-assertEquals(mu._isInteger(Math.PI), false);
-assertEquals(mu._isInteger(Infinity), false);
-assertEquals(mu._isInteger('10'), false);
-assertEquals(mu._isInteger(null), false);
+assert(mu._isInteger(0));
+assert(mu._isInteger(-100000));
+assert(!mu._isInteger(0.1));
+assert(!mu._isInteger(Math.PI));
+assert(!mu._isInteger(Infinity));
+assert(!mu._isInteger('10'));
+assert(!mu._isInteger(null));
 
 assertEquals(mu._log2(2), 1);
 assertEquals(mu._log2(1), 0);
@@ -25,7 +25,7 @@ assertEquals(mu._log2(1024), 10);
     assertEquals(a.length, 3);
     assertEquals(a[0], 1);
     assertEquals(a[2], 3);
-    assertEquals(a.slice != null, true);
+    assert(a.slice != null);
 })(1, 2, 3);
 
 (function() {
@@ -37,22 +37,28 @@ assertEquals(mu._log2(1024), 10);
     assertEquals(t.xb, 12);
 })();
 
-assertEquals(mu._isString('x'), true);
-assertEquals(mu._isString(String('x')), true);
-assertEquals(mu._isString(1), false);
-assertEquals(mu._isString([]), false);
+assert(!mu._isObject('x'));
+assert(!mu._isObject(String('x')));
+assert(!mu._isObject(1));
+assert(mu._isObject([]));
+assert(mu._isObject({}));
 
-assertEquals(mu._isFunction(function(){}), true);
-assertEquals(mu._isFunction(Function('return 1;')), true);
-assertEquals(mu._isFunction(1), false);
-assertEquals(mu._isFunction('x'), false);
+assert(mu._isString('x'));
+assert(mu._isString(String('x')));
+assert(!mu._isString(1));
+assert(!mu._isString([]));
+
+assert(mu._isFunction(function(){}));
+assert(mu._isFunction(Function('return 1;')));
+assert(!mu._isFunction(1));
+assert(!mu._isFunction('x'));
 
 assertThrow(function() { mu._assert(false, 'x'); });
 assertNoThrow(function() { mu._assert(true, 'x'); });
 
 (function() {
     var h = mu._html('#target');
-    assertEquals(h instanceof mu._html, true);
+    assert(h instanceof mu._html);
     assertEquals(h.node().childNodes.length, 0);
     h.append('div')
         .attr('style', 'color: green')
