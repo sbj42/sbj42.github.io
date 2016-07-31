@@ -1,13 +1,10 @@
 piece or sequence or something: bpm, time signature, array of (chord-instance/rest, duration)
-display - guitar/sheet-music/constellation/names/waveform
+display - guitar/sheet-music/constellation/names
   guitar: lots of variation, number of strings, number of frets, tuning
 piece running that can coordinate with display and player
 volume fader, gain knob
 use fletcher-munson curves in the generator voice to try to get equal volume from low and high notes, use replaygain on the audio files for same
 sound envelopes in generators
-
-wave ui
-play frequency (or nearest pitch)
 
 add key class
 describe pitch class relative to key (as degree or as name normalized for staff position)

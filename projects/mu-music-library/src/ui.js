@@ -72,21 +72,36 @@
      * @memberof mu.ui.UI
      */
 
-    mu.ui.frequencyColor = function(frequency, s, l) {
-        mu._assert(frequency instanceof mu.Frequency,
-                   'invalid frequency ' + frequency);
+    mu.ui._colorHelper = function(h, s, l) {
         mu._assert(s == null || (mu._isFinite(s) && s >= 0 && s <= 1),
                    'invalid saturation ' + s);
         mu._assert(l == null || (mu._isFinite(l) && l >= 0 && l <= 1),
                    'invalid lightness ' + l);
+        s = s || 0.8;
+        l = l || 0.75;
+        return 'hsl(' + Math.floor(h) + ', ' + Math.floor(s * 100) + '%, ' + Math.floor(l * 100) + '%)';
+    };
+
+    // TODO these should be based on 'degree' in the key
+    mu.ui.frequencyColor = function(frequency, s, l) {
+        mu._assert(frequency instanceof mu.Frequency,
+                   'invalid frequency ' + frequency);
         var a = Math.log2(frequency.hertz()) - Math.log2(mu.C_4.frequency().hertz());
         a = a % 1;
         if (a < 0)
             a += 1;
-        a = Math.floor(360 * a);
-        s = s || 0.8;
-        l = l || 0.6;
-        return 'hsl(' + a + ', ' + Math.floor(s * 100) + '%, ' + Math.floor(l * 100) + '%)';
+        return mu.ui._colorHelper(360 * a, s, l);
+    };
+
+    mu.ui.pitchClassColor = function(pitchClass, s, l) {
+        mu._assert(pitchClass instanceof mu.PitchClass,
+                   'invalid pitch class ' + pitchClass);
+        mu._assert(s == null || (mu._isFinite(s) && s >= 0 && s <= 1),
+                   'invalid saturation ' + s);
+        mu._assert(l == null || (mu._isFinite(l) && l >= 0 && l <= 1),
+                   'invalid lightness ' + l);
+        var a = pitchClass.index();
+        return mu.ui._colorHelper(a * 360 / 12, s, l);
     };
 
     /**
@@ -104,9 +119,9 @@
         document.addEventListener('keydown', this._onKeyDownListener);
         this._onKeyUpListener = this._onKeyUp.bind(this);
         document.addEventListener('keyup', this._onKeyUpListener);
-        this._onFocusOutListener = this.stopAll.bind(this);
+        this._onFocusOutListener = this._stopAll.bind(this);
         document.addEventListener('focusout', this._onFocusOutListener);
-        this._onBlurListener = this.stopAll.bind(this);
+        this._onBlurListener = this._stopAll.bind(this);
         window.addEventListener('blur', this._onBlurListener);
 
         this._ui_pitchesOnly = false;
@@ -130,6 +145,8 @@
         }
         if (key == 'Ctrl')
             this._ctrlDown = false;
+    };
+    mu.ui.UI.prototype._stopAll = function() {
     };
     /**
      * Returns a string description of the UI.
@@ -409,7 +426,7 @@
                    'invalid frequency ' + frequency);
         this.stopPitch(mu.Pitch.fromFrequency(frequency));
     };
-    mu.ui.Keyboard.prototype.stopAll = function() {
+    mu.ui.Keyboard.prototype._stopAll = function() {
         mu._mapForEach(this._pitchesPlaying, function(x, num) {
             var pitch = mu.Pitch.fromNum(+num);
             this._fire('pitchrelease', {ui: this, pitch: pitch});
@@ -593,7 +610,7 @@
                    'invalid frequency ' + frequency);
         this.stopPitch(mu.Pitch.fromFrequency(frequency));
     };
-    mu.ui.PitchConstellation.prototype.stopAll = function() {
+    mu.ui.PitchConstellation.prototype._stopAll = function() {
         mu._mapForEach(this._pitchClassesPlaying, function(x, num) {
             this._onPitchEvent(mu.PitchClass(+num), 'pitchrelease');
         }, this);
@@ -699,7 +716,7 @@
             this._waveGroup.append('path')
                 .attr('d', d.join(''))
                 .attr('stroke-width', wW)
-                .attr('fill', mu.ui.frequencyColor(freq))
+                .attr('fill', mu.ui.frequencyColor(freq, 0.8, 0.6))
                 .classed('mu_waveform_wave', true);
         }, this);
         mu._mapForEach(this._freqsPlaying, function(freq, x) {
@@ -708,7 +725,7 @@
                 .attr('cx', wavelength)
                 .attr('cy', h / 2)
                 .attr('r', dR)
-                .attr('fill', mu.ui.frequencyColor(freq))
+                .attr('fill', mu.ui.frequencyColor(freq, 0.8, 0.6))
                 .classed('mu_waveform_dot', true);
         }, this);
     };
@@ -784,7 +801,7 @@
                    'invalid pitch ' + pitch);
         this.stopFrequency(pitch.frequency());
     };
-    mu.ui.Waveform.prototype.stopAll = function() {
+    mu.ui.Waveform.prototype._stopAll = function() {
         mu._mapForEach(this._freqsPlaying, function(freq, x) {
             this._onEvent(freq, 'release');
         }, this);
@@ -884,7 +901,7 @@
                            'missing last change');
                 var x1 = lL * start.time / dur;
                 var x2 = lL * end.time / dur;
-                this._chordGroup.append('rect')
+                var rect = this._chordGroup.append('rect')
                     .attr('x', lW / 2 + x1)
                     .attr('y', (h - cH + cB) / 2)
                     .attr('width', x2 - x1)
@@ -893,6 +910,15 @@
                     .attr('ry', cR)
                     .classed('mu_chordline_chord', true)
                     .attr('stroke-width', cB);
+                var analyses = start.chord.analyze();
+                var analysis = analyses.length > 0 ? analyses[0] : null;
+                if (analysis) {
+                    rect.attr('fill', mu.ui.pitchClassColor(analysis.root()))
+                        .attr('stroke', mu.ui.pitchClassColor(analysis.root(), 0.5, 0.5));
+                } else {
+                    rect.attr('fill', 'hsl(0, 0%, 85%)')
+                        .attr('stroke', 'hsl(0, 0%, 50%)');
+                }
                 var text = start.chord.abbr();
                 if (!text)
                     text = start.chord.pitches().map(function(pitch) {
