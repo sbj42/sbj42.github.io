@@ -7,6 +7,10 @@ harm.ready(function() {
     mu._html('#keyboard').append(keyboard.node());
     c.connectUI(keyboard);
 
+    var waveform = mu.ui.Waveform(mu.C_2.frequency());
+    mu._html('#waveform').append(waveform.node());
+    c.connectUI(waveform);
+
     var constellation = mu.ui.PitchConstellation(mu.C, mu.C_4, mu.B_4);
     mu._html('#constellation').append(constellation.node());
     c.connectUI(constellation);

@@ -54,6 +54,23 @@
      * @memberof mu.ui.UI
      */
 
+    mu.ui.frequencyColor = function(frequency, s, l) {
+        mu._assert(frequency instanceof mu.Frequency,
+                   'invalid frequency ' + frequency);
+        mu._assert(s == null || (mu._isFinite(s) && s >= 0 && s <= 1),
+                   'invalid saturation ' + s);
+        mu._assert(l == null || (mu._isFinite(l) && l >= 0 && l <= 1),
+                   'invalid lightness ' + l);
+        var a = Math.log2(frequency.hertz()) - Math.log2(mu.C_4.frequency().hertz());
+        a = a % 1;
+        if (a < 0)
+            a += 1;
+        a = Math.floor(360 * a);
+        s = s || 0.8;
+        l = l || 0.8;
+        return 'hsl(' + a + ', ' + Math.floor(s * 100) + '%, ' + Math.floor(l * 100) + '%)';
+    };
+
     /**
      * An interface for a mu UI.
      *
@@ -64,8 +81,29 @@
     mu.ui.UI = function() {
         if (!(this instanceof mu.ui.UI))
             return new mu.ui.UI();
+
+        this._onKeyDownListener = this._onKeyDown.bind(this);
+        document.addEventListener('keydown', this._onKeyDownListener);
+        this._onKeyUpListener = this._onKeyUp.bind(this);
+        document.addEventListener('keyup', this._onKeyUpListener);
+        this._onFocusOutListener = this.stopAll.bind(this);
+        document.addEventListener('focusout', this._onFocusOutListener);
+        this._onBlurListener = this.stopAll.bind(this);
+        window.addEventListener('blur', this._onBlurListener);
     };
     mu._eventable(mu.ui.UI.prototype);
+    mu.ui.UI.prototype._onKeyDown = function(event) {
+        var key = event.key || event.keyIdentifier;
+        if (key == 'Shift')
+            this._shiftDown = true;
+    };
+    mu.ui.UI.prototype._onKeyUp = function(event) {
+        var key = event.key || event.keyIdentifier;
+        if (key == 'Shift') {
+            this._shiftDown = false;
+            this.stopAll();
+        }
+    };
     /**
      * Returns a string description of the UI.
      *
@@ -145,15 +183,6 @@
         var wB = mu.ui.Keyboard._WHITE_BORDER;
         var wR = mu.ui.Keyboard._WHITE_ROUND;
         var cS = mu.ui.Keyboard._MIDDLE_C_MARK_SIZE;
-
-        this._onKeyDownListener = this._onKeyDown.bind(this);
-        document.addEventListener('keydown', this._onKeyDownListener);
-        this._onKeyUpListener = this._onKeyUp.bind(this);
-        document.addEventListener('keyup', this._onKeyUpListener);
-        this._onFocusOutListener = this.stopAll.bind(this);
-        document.addEventListener('focusout', this._onFocusOutListener);
-        this._onBlurListener = this.stopAll.bind(this);
-        window.addEventListener('blur', this._onBlurListener);
 
         this._svg = mu._html('svg')
             .attr('width', span * (wW + wB) + wB)
@@ -260,18 +289,6 @@
         var num = pitch.toNum();
         return num in this._pitchesPlaying;
     };
-    mu.ui.Keyboard.prototype._onKeyDown = function(event) {
-        var key = event.key || event.keyIdentifier;
-        if (key == 'Shift')
-            this._shiftDown = true;
-    };
-    mu.ui.Keyboard.prototype._onKeyUp = function(event) {
-        var key = event.key || event.keyIdentifier;
-        if (key == 'Shift') {
-            this._shiftDown = false;
-            this.stopAll();
-        }
-    };
     mu.ui.Keyboard.prototype._onMouseOver = function(pitch, event) {
         if (this._disposed)
             return;
@@ -302,26 +319,30 @@
         if (this._shiftDown && this._isPlaying(pitch)) {
             this._dragPress = false;
             this._fire('pitchrelease', {ui: this, pitch: pitch});
-            return;
+        } else {
+            this._dragPress = true;
+            this._fire('pitchpress', {ui: this, pitch: pitch});
         }
-        this._dragPress = true;
-        this._fire('pitchpress', {ui: this, pitch: pitch});
         var onMouseUpListener;
         function onMouseUp(event) {
             window.removeEventListener('mouseup', onMouseUpListener);
-            this._mouseDown = false;
-            delete this._dragPress;
-            if (!this._shiftDown)
+            if (this._dragPress && !this._shiftDown)
                 this._fire('pitchrelease', {ui: this, pitch: this._pitchOver || pitch});
+            delete this._mouseDown;
+            delete this._dragPress;
         };
         onMouseUpListener = onMouseUp.bind(this);
         window.addEventListener('mouseup', onMouseUpListener);
     };
     mu.ui.Keyboard.prototype.startPitch = function(pitch) {
+        mu._assert(pitch instanceof mu.Pitch,
+                   'invalid pitch ' + pitch);
         this._pitchesPlaying[pitch.toNum()] = true;
         this._pitches[pitch.toNum()].classed('mu_keyboard_playing', true);
     };
     mu.ui.Keyboard.prototype.stopPitch = function(pitch) {
+        mu._assert(pitch instanceof mu.Pitch,
+                   'invalid pitch ' + pitch);
         delete this._pitchesPlaying[pitch.toNum()];
         this._pitches[pitch.toNum()].classed('mu_keyboard_playing', false);
     };
@@ -371,14 +392,6 @@
         this._lines = [];
         this._marks = [];
         this._pitchClassesPlaying = [];
-
-        this._onKeyDownListener = this._onKeyDown.bind(this);
-        document.addEventListener('keydown', this._onKeyDownListener);
-        this._onKeyUpListener = this._onKeyUp.bind(this);
-        document.addEventListener('keyup', this._onKeyUpListener);
-        document.addEventListener('focusout', this._onFocusOutListener);
-        this._onBlurListener = this.stopAll.bind(this);
-        window.addEventListener('blur', this._onBlurListener);
 
         var r = mu.ui.PitchConstellation._RADIUS;
         var tS = mu.ui.PitchConstellation._FONT_SIZE;
@@ -445,18 +458,6 @@
                 this._fire(type, {ui: this, pitch: pitch});
         }
     };
-    mu.ui.PitchConstellation.prototype._onKeyDown = function(event) {
-        var key = event.key || event.keyIdentifier;
-        if (key == 'Shift')
-            this._shiftDown = true;
-    };
-    mu.ui.PitchConstellation.prototype._onKeyUp = function(event) {
-        var key = event.key || event.keyIdentifier;
-        if (key == 'Shift') {
-            this._shiftDown = false;
-            this.stopAll();
-        }
-    };
     mu.ui.PitchConstellation.prototype._onMouseMove = function(event) {
         if (this._disposed)
             return;
@@ -474,7 +475,7 @@
             return;
         if (this._mouseDown && this._dragPress && !this._shiftDown)
             this._onPitchEvent(this._pitchClassOver, 'pitchrelease');
-        this._pitchClassOver = mu.PitchClass(a);
+        this._pitchClassOver = pitchClass;
         if (this._mouseDown) {
             if (this._dragPress)
                 this._onPitchEvent(this._pitchClassOver, 'pitchpress');
@@ -490,29 +491,33 @@
         if (this._shiftDown && this._isPlaying(this._pitchClassOver)) {
             this._dragPress = false;
             this._onPitchEvent(this._pitchClassOver, 'pitchrelease');
-            return;
+        } else {
+            this._dragPress = true;
+            this._onPitchEvent(this._pitchClassOver, 'pitchpress');
         }
-        this._dragPress = true;
-        this._onPitchEvent(this._pitchClassOver, 'pitchpress');
         var onMouseUpListener;
         function onMouseUp(event) {
             if (this._disposed)
                 return;
-            this._mouseDown = false;
-            delete this._dragPress;
-            if (!this._shiftDown)
+            if (this._dragPress && !this._shiftDown)
                 this._onPitchEvent(this._pitchClassOver, 'pitchrelease');
+            delete this._mouseDown;
+            delete this._dragPress;
         };
         onMouseUpListener = onMouseUp.bind(this);
         window.addEventListener('mouseup', onMouseUpListener);
     };
     mu.ui.PitchConstellation.prototype.startPitch = function(pitch) {
+        mu._assert(pitch instanceof mu.Pitch,
+                   'invalid pitch ' + pitch);
         var index = pitch.pitchClass().index();
         var count = this._pitchClassesPlaying[index] ++;
         if (count == 0)
             this._lines[index].classed('mu_pitchconstellation_ray2_playing', true);
     };
     mu.ui.PitchConstellation.prototype.stopPitch = function(pitch) {
+        mu._assert(pitch instanceof mu.Pitch,
+                   'invalid pitch ' + pitch);
         var index = pitch.pitchClass().index();
         var count = -- this._pitchClassesPlaying[index];
         if (count == 0)
@@ -529,6 +534,181 @@
         mu.ui.UI.prototype.dispose.call(this);
         this._disposed = true;
     };
+
+    /**
+     * A waveform UI.
+     *
+     * @class
+     * @extends mu.ui.UI
+     * @memberof mu
+     */
+    mu.ui.Waveform = function(lowFrequency) {
+        if (!(this instanceof mu.ui.Waveform))
+            return new mu.ui.Waveform(lowFrequency);
+        mu._assert(lowFrequency == null || lowFrequency instanceof mu.Frequency,
+                   'invalid low frequency ' + lowFrequency);
+        lowFrequency = lowFrequency || mu.C_1.frequency();
+        mu.ui.UI.call(this);
+        this._lowFreq = lowFrequency;
+        this._freqs = {};
+        this._freqsPlaying = {};
+
+        var w = mu.ui.Waveform._WIDTH;
+        var h = mu.ui.Waveform._HEIGHT;
+        var lW = mu.ui.Waveform._LINE_WIDTH;
+        var wS = mu.ui.Waveform._WAVE_STEPS;
+        var tW = mu.ui.Waveform._TICK_WIDTH;
+        var tL = mu.ui.Waveform._TICK_LENGTH;
+
+        this._svg = mu._html('svg')
+            .attr('width', 950)
+            .attr('height', h)
+            .classed('mu_waveform', true)
+            .on('mousemove', this._onMouseMove, this)
+            .on('mousedown', this._onMouseDown, this);
+        this._svg.append('line')
+            .attr('x1', 0)
+            .attr('y1', h / 2)
+            .attr('x2', w)
+            .attr('y2', h / 2)
+            .attr('stroke-width', lW)
+            .classed('mu_waveform_line', true);
+        var wavelength = w;
+        while (wavelength >= wS) {
+            this._svg.append('line')
+                .attr('x1', wavelength)
+                .attr('y1', h / 2 - tL)
+                .attr('x2', wavelength)
+                .attr('y2', h / 2 + tL)
+                .attr('stroke-width', tW)
+                .classed('mu_waveform_line', true);
+            wavelength = wavelength / Math.pow(2, 1/12);
+        }
+
+        this._waveGroup = this._svg.append('g');
+    };
+    mu.ui.Waveform.prototype = Object.create(mu.ui.UI.prototype);
+    mu.ui.Waveform.prototype.constructor = mu.ui.Waveform;
+    mu.ui.Waveform._WIDTH = 950;
+    mu.ui.Waveform._HEIGHT = 100;
+    mu.ui.Waveform._LINE_WIDTH = 1;
+    mu.ui.Waveform._WAVE_STEPS = 16;
+    mu.ui.Waveform._WAVE_WIDTH = 2;
+    mu.ui.Waveform._TICK_LENGTH = 10;
+    mu.ui.Waveform._TICK_WIDTH = 2;
+    mu.ui.Waveform._DOT_RADIUS = 5;
+    mu.ui.Waveform.prototype.node = function() {
+        return this._svg;
+    };
+    mu.ui.Waveform.prototype._update = function() {
+        if (this._disposed)
+            return;
+        this._waveGroup.clear();
+        var w = mu.ui.Waveform._WIDTH;
+        var h = mu.ui.Waveform._HEIGHT;
+        var wW = mu.ui.Waveform._WAVE_WIDTH;
+        var wS = mu.ui.Waveform._WAVE_STEPS;
+        var dR = mu.ui.Waveform._DOT_RADIUS;
+        mu._mapForEach(this._freqsPlaying, function(freq, x) {
+            var wavelength = w * this._lowFreq.hertz() / freq.hertz();
+            var stepsize = wavelength / wS;
+            var x = 0;
+            var d = ['M' + x + ' ' + (h / 2)];
+            while (x < w) {
+                x += stepsize;
+                var y = Math.sin(x * Math.PI * 2 / wavelength) * (h / 2 - wW) + h / 2;
+                d.push('L' + x.toFixed(1) + ' ' + y.toFixed(1));
+            }
+            d.push('L' + x + ' ' + (h / 2), 'z');
+            this._waveGroup.append('path')
+                .attr('d', d.join(''))
+                .attr('stroke-width', wW)
+                .attr('fill', mu.ui.frequencyColor(freq))
+                .classed('mu_waveform_wave', true);
+        }, this);
+        mu._mapForEach(this._freqsPlaying, function(freq, x) {
+            var wavelength = w * this._lowFreq.hertz() / freq.hertz();
+            this._waveGroup.append('circle')
+                .attr('cx', wavelength)
+                .attr('cy', h / 2)
+                .attr('r', dR)
+                .attr('fill', mu.ui.frequencyColor(freq))
+                .classed('mu_waveform_dot', true);
+        }, this);
+    };
+    mu.ui.Waveform.prototype._onFrequencyEvent = function(frequency, type) {
+        if (this._disposed)
+            return;
+        this._fire(type, {ui: this, frequency: frequency});
+    };
+    mu.ui.Waveform.prototype._onMouseMove = function(event) {
+        if (this._disposed)
+            return;
+        var w = mu.ui.Waveform._WIDTH;
+        var wS = mu.ui.Waveform._WAVE_STEPS;
+        var rect = this._svg.node().getBoundingClientRect();
+        var x = Math.max(event.clientX - rect.left, wS);
+        var freq = mu.Frequency(w * this._lowFreq.hertz() / x);
+        if (this._freqOver && Math.abs(this._freqOver.hertz() - freq.hertz()) <= 0.0001)
+            return;
+        if (this._mouseDown)
+            this._onFrequencyEvent(this._freqOver, 'frequencyrelease');
+        this._freqOver = freq;
+        if (this._mouseDown)
+            this._onFrequencyEvent(this._freqOver, 'frequencypress');
+    };
+    mu.ui.Waveform.prototype._onMouseDown = function(event) {
+        if (this._disposed)
+            return;
+        event.preventDefault();
+        this._mouseDown = true;
+        this._onFrequencyEvent(this._freqOver, 'frequencypress');
+        var onMouseUpListener;
+        function onMouseUp(event) {
+            if (this._disposed)
+                return;
+            this._mouseDown = false;
+            this._onFrequencyEvent(this._freqOver, 'frequencyrelease');
+        };
+        onMouseUpListener = onMouseUp.bind(this);
+        window.addEventListener('mouseup', onMouseUpListener);
+    };
+    mu.ui.Waveform.prototype.startFrequency = function(frequency) {
+        mu._assert(frequency instanceof mu.Frequency,
+                   'invalid frequency ' + frequency);
+        var hertz = frequency.hertz();
+        this._freqsPlaying[hertz] = frequency;
+        this._update();
+    };
+    mu.ui.Waveform.prototype.stopFrequency = function(frequency) {
+        mu._assert(frequency instanceof mu.Frequency,
+                   'invalid frequency ' + frequency);
+        var hertz = frequency.hertz();
+        delete this._freqsPlaying[hertz];
+        this._update();
+    };
+    mu.ui.Waveform.prototype.startPitch = function(pitch) {
+        mu._assert(pitch instanceof mu.Pitch,
+                   'invalid pitch ' + pitch);
+        this.startFrequency(pitch.frequency());
+    };
+    mu.ui.Waveform.prototype.stopPitch = function(pitch) {
+        mu._assert(pitch instanceof mu.Pitch,
+                   'invalid pitch ' + pitch);
+        this.stopFrequency(pitch.frequency());
+    };
+    mu.ui.Waveform.prototype.stopAll = function() {
+        mu._mapForEach(this._freqsPlaying, function(freq, x) {
+            this._onPitchEvent(freq, 'pitchrelease');
+        }, this);
+    };
+    mu.ui.Waveform.prototype.dispose = function() {
+        document.removeEventListener('focusout', this._onFocusOutListener);
+        window.removeEventListener('blur', this._onBlurListener);
+        mu.ui.UI.prototype.dispose.call(this);
+        this._disposed = true;
+    };
+
 
     /**
      * A chord progression UI.
