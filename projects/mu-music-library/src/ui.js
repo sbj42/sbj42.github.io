@@ -141,7 +141,7 @@
         var key = event.key || event.keyIdentifier;
         if (key == 'Shift') {
             this._shiftDown = false;
-            this.stopAll();
+            this._stopAll();
         }
         if (key == 'Ctrl')
             this._ctrlDown = false;
@@ -681,11 +681,11 @@
     mu.ui.Waveform.prototype = Object.create(mu.ui.UI.prototype);
     mu.ui.Waveform.prototype.constructor = mu.ui.Waveform;
     mu.ui.Waveform._WIDTH = 950;
-    mu.ui.Waveform._HEIGHT = 100;
+    mu.ui.Waveform._HEIGHT = 50;
     mu.ui.Waveform._LINE_WIDTH = 1;
     mu.ui.Waveform._WAVE_STEPS = 16;
     mu.ui.Waveform._WAVE_WIDTH = 2;
-    mu.ui.Waveform._TICK_LENGTH = 10;
+    mu.ui.Waveform._TICK_LENGTH = 6;
     mu.ui.Waveform._TICK_WIDTH = 2;
     mu.ui.Waveform._DOT_RADIUS = 5;
     mu.ui.Waveform.prototype._isPlaying = function(frequency) {

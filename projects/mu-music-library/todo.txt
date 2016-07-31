@@ -12,3 +12,6 @@ describe chord relative to key
 constellation should show key-relative pitch classes
 favor certain root degrees in chord analysis (to avoid circularly-ambiguous chord structures like diminished seventh and augmented)?
 add base/inversion information, favor analyses where base==root?
+
+add time signature
+use in chordline

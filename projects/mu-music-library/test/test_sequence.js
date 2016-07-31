@@ -24,6 +24,22 @@
     assertEquals(s.nextChange(6), null);
     assertThrow(function() { mu.addChord(2); });
     assertThrow(function() { mu.addRest(mu.Chord(mu.C_4, mu.E_4, mu.G_4), 2); });
+})();
+
+(function() {
+    console.info('testing chord line');
+    var s = mu.seq.SimpleChordProgression(mu.Tempo(180));
+    s.addChord(mu.Chord(mu.C_4, mu.G_4, mu.C_5, mu.E_5), 2);
+    s.addChord(mu.Chord(mu.F_3, mu.A_4, mu.C_5, mu.F_5), 2);
+
+    s.addChord(mu.Chord(mu.B_3, mu.F_4, mu.B_4, mu.D_5), 2);
+    s.addChord(mu.Chord(mu.E_3, mu.G_4, mu.B_4, mu.E_5), 2);
+
+    s.addChord(mu.Chord(mu.A_3, mu.E_4, mu.A_4, mu.C_5), 2);
+    s.addChord(mu.Chord(mu.D_3, mu.F_4, mu.A_4, mu.D_5), 2);
+
+    s.addChord(mu.Chord(mu.G_3, mu.D_4, mu.G_4, mu.B_4), 2);
+    s.addChord(mu.Chord(mu.C_3, mu.E_4, mu.G_4, mu.C_5), 2);
 
     var ui = mu.ui.ChordLine();
     mu._html('#chordline')
