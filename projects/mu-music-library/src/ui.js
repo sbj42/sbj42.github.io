@@ -505,9 +505,6 @@
     mu.ui.PitchConstellation._RADIUS = 80;
     mu.ui.PitchConstellation._TEXT_GAP = 4;
     mu.ui.PitchConstellation._FONT_SIZE = 13;
-    mu.ui.PitchConstellation.prototype.node = function() {
-        return this._svg.node();
-    };
     mu.ui.PitchConstellation.prototype._isPlaying = function(pitchClass) {
         return this._pitchClassesPlaying[pitchClass.index()] != 0;
     };
@@ -607,6 +604,9 @@
         mu.ui.UI.prototype.dispose.call(this);
         this._disposed = true;
     };
+    mu.ui.PitchConstellation.prototype.node = function() {
+        return this._svg.node();
+    };
 
     /**
      * A waveform UI.
@@ -634,11 +634,12 @@
         var tL = mu.ui.Waveform._TICK_LENGTH;
 
         this._svg = mu._html('svg')
-            .attr('width', 950)
+            .attr('width', w)
             .attr('height', h)
             .classed('mu_waveform', true)
             .on('mousemove', this._onMouseMove, this)
             .on('mousedown', this._onMouseDown, this);
+        w -= tW / 2;
         this._svg.append('line')
             .attr('x1', 0)
             .attr('y1', h / 2)
@@ -670,8 +671,8 @@
     mu.ui.Waveform._TICK_LENGTH = 10;
     mu.ui.Waveform._TICK_WIDTH = 2;
     mu.ui.Waveform._DOT_RADIUS = 5;
-    mu.ui.Waveform.prototype.node = function() {
-        return this._svg;
+    mu.ui.Waveform.prototype._isPlaying = function(frequency) {
+        return this._freqsPlaying[frequency.hertz()];
     };
     mu.ui.Waveform.prototype._update = function() {
         if (this._disposed)
@@ -682,6 +683,8 @@
         var wW = mu.ui.Waveform._WAVE_WIDTH;
         var wS = mu.ui.Waveform._WAVE_STEPS;
         var dR = mu.ui.Waveform._DOT_RADIUS;
+        var tW = mu.ui.Waveform._TICK_WIDTH;
+        w -= tW / 2;
         mu._mapForEach(this._freqsPlaying, function(freq, x) {
             var wavelength = w * this._lowFreq.hertz() / freq.hertz();
             var stepsize = wavelength / wS;
@@ -722,6 +725,8 @@
         if (this._disposed)
             return;
         var w = mu.ui.Waveform._WIDTH;
+        var tW = mu.ui.Waveform._TICK_WIDTH;
+        w -= tW / 2;
         var wS = mu.ui.Waveform._WAVE_STEPS;
         var rect = this._svg.node().getBoundingClientRect();
         var x = Math.max(event.clientX - rect.left, wS);
@@ -739,13 +744,18 @@
             return;
         event.preventDefault();
         this._mouseDown = true;
-        this._onEvent(this._freqOver, 'press');
+        if (this._shiftDown && this._isPlaying(this._freqOver)) {
+            this._onEvent(this._freqOver, 'release');
+        } else {
+            this._onEvent(this._freqOver, 'press');
+        }
         var onMouseUpListener;
         function onMouseUp(event) {
             if (this._disposed)
                 return;
             this._mouseDown = false;
-            this._onEvent(this._freqOver, 'release');
+            if (!this._shiftDown)
+                this._onEvent(this._freqOver, 'release');
         };
         onMouseUpListener = onMouseUp.bind(this);
         window.addEventListener('mouseup', onMouseUpListener);
@@ -784,6 +794,9 @@
         window.removeEventListener('blur', this._onBlurListener);
         mu.ui.UI.prototype.dispose.call(this);
         this._disposed = true;
+    };
+    mu.ui.Waveform.prototype.node = function() {
+        return this._svg;
     };
 
 
