@@ -1279,6 +1279,139 @@
         return this._root.toString() + this._type.abbr();
     };
 
+    /**
+     * A musical mode, which describes the intervals between the degrees of a
+     * diatonic scale.  There are seven modes.
+     *
+     * Don't call this constructor, instead use the constant instances of
+     * this class (e.g. mu.MAJOR or mu.DORIAN).
+     *
+     * @class
+     * @param {number} offset The offset of the tonic relative to the
+     * major scale (i.e. the shift in the interval sequence relative to
+     * the Ionian mode)
+     * @memberof mu
+     */
+    mu.Mode = function(offset) {
+        if (!(this instanceof mu.Mode))
+            return new mu.Mode(offset);
+        mu._assert(_.isInteger(offset) && offset >= 0 && offset <= 6,
+                   'invalid offset ' + offset);
+        this._offset = offset;
+        this._name = mu.Mode._NAMES[offset];
+        this._intervals = [];
+        var at = 0;
+        for (var i = 0; i < 8; i ++) {
+            this._intervals.push(mu.Interval(at));
+            at += mu.Mode._SEQUENCE[offset + i];
+        }
+    };
+    mu.Mode._NAMES = ['Ionian', 'Dorian', 'Phrygian', 'Lydian', 'Mixolydian', 'Aeolian', 'Locrian'];
+    mu.Mode._SEQUENCE = [2,2,1,2,2,2,1,2,2,1,2,2,2];
+    /**
+     * The Ionian mode (corresponding to the major scale).
+     *
+     * @type {mu.Mode}
+     * @memberof mu
+     */
+    mu.MAJOR = mu.IONIAN = mu.Mode(0);
+    /**
+     * The Dorian mode.
+     *
+     * @type {mu.Mode}
+     * @memberof mu
+     */
+    mu.DORIAN = mu.Mode(1);
+    /**
+     * The Phrygian mode.
+     *
+     * @type {mu.Mode}
+     * @memberof mu
+     */
+    mu.PHRYGIAN = mu.Mode(2);
+    /**
+     * The Lydian mode.
+     *
+     * @type {mu.Mode}
+     * @memberof mu
+     */
+    mu.LYDIAN = mu.Mode(3);
+    /**
+     * The Mixolydian mode (corresponding to the dominant scale).
+     *
+     * @type {mu.Mode}
+     * @memberof mu
+     */
+    mu.DOMINANT = mu.MIXOLYDIAN = mu.Mode(4);
+    /**
+     * The Aeolian mode (corresponding to the natural minor scale).
+     *
+     * @type {mu.Mode}
+     * @memberof mu
+     */
+    mu.NATURAL_MINOR = mu.AEOLIAN = mu.Mode(5);
+    // TODO support "aeolian sharp-7" aka "harmonic minor scale"?
+    /**
+     * The Locrian mode.
+     *
+     * @type {mu.Mode}
+     * @memberof mu
+     */
+    mu.LOCRIAN = mu.Mode(6);
+    /**
+     * Returns the name of this mode.
+     *
+     * @return {string} The name of this mode
+     * @memberof mu.Mode
+     */
+    mu.Mode.prototype.name = function() {
+        return this._name;
+    };
+    /**
+     * Returns an array of the intervals between the 7 degrees of this mode
+     * and its tonic.  The first element in the array represents the tonic
+     * and is always zero.
+     *
+     * @return {Array.<mu.Interval>} The degrees in this mode, as intervals
+     * relative to the tonic
+     * @memberof mu.Mode
+     */
+    mu.Mode.prototype.intervals = function() {
+        return this._intervals;
+    };
+    /**
+     * Returns a description of this mode.
+     *
+     * @return {string} A description of this mode
+     * @memberof mu.Mode
+     */
+    mu.Mode.prototype.toString = function() {
+        return this._name + ' mode';
+    };
+
+    /**
+     * A musical key which specifies a tonic note, a mode, and a
+     * corresponding diatonic scale.  A key can determine the descriptions
+     * of pitches (e.g. B-flat vs A-sharp), and is necessary for
+     * relative chord descriptions (e.g. "V7" instead of "G7" in the key
+     * of C).
+     *
+     * @class
+     * @param {mu.PitchClass} tonic The key note, from which other notes in
+     * the scale are derived
+     * @param {mu.Mode} mode The mechanism by which the scale is derived
+     * from the tonic
+     * @memberof mu
+     */
+    mu.Key = function(tonic, mode) {
+        mu._assert(tonic instanceof mu.PitchClass,
+                   'invalid tonic ' + tonic);
+        mu._assert(mode instanceof mu.Mode,
+                   'invalid mode ' + mode);
+        this._tonic = tonic;
+        this._mode = mode;
+    };
+
 /*
     mu.ScaleType = function(intervals) {
         
