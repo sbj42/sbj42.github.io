@@ -85,7 +85,7 @@
             a += 1;
         a = Math.floor(360 * a);
         s = s || 0.8;
-        l = l || 0.8;
+        l = l || 0.6;
         return 'hsl(' + a + ', ' + Math.floor(s * 100) + '%, ' + Math.floor(l * 100) + '%)';
     };
 
@@ -119,6 +119,8 @@
         var key = event.key || event.keyIdentifier;
         if (key == 'Shift')
             this._shiftDown = true;
+        if (key == 'Ctrl')
+            this._ctrlDown = true;
     };
     mu.ui.UI.prototype._onKeyUp = function(event) {
         var key = event.key || event.keyIdentifier;
@@ -126,6 +128,8 @@
             this._shiftDown = false;
             this.stopAll();
         }
+        if (key == 'Ctrl')
+            this._ctrlDown = false;
     };
     /**
      * Returns a string description of the UI.
@@ -395,9 +399,19 @@
         delete this._pitchesPlaying[pitch.toNum()];
         this._pitches[pitch.toNum()].classed('mu_keyboard_playing', false);
     };
+    mu.ui.Keyboard.prototype.startFrequency = function(frequency) {
+        mu._assert(frequency instanceof mu.Frequency,
+                   'invalid frequency ' + frequency);
+        this.startPitch(mu.Pitch.fromFrequency(frequency));
+    };
+    mu.ui.Keyboard.prototype.stopFrequency = function(frequency) {
+        mu._assert(frequency instanceof mu.Frequency,
+                   'invalid frequency ' + frequency);
+        this.stopPitch(mu.Pitch.fromFrequency(frequency));
+    };
     mu.ui.Keyboard.prototype.stopAll = function() {
         mu._mapForEach(this._pitchesPlaying, function(x, num) {
-            var pitch = mu.Pitch.fromNum(num);
+            var pitch = mu.Pitch.fromNum(+num);
             this._fire('pitchrelease', {ui: this, pitch: pitch});
         }, this);
     };
@@ -572,9 +586,19 @@
         if (count == 0)
             this._lines[index].classed('mu_pitchconstellation_ray2_playing', false);
     };
+    mu.ui.PitchConstellation.prototype.startFrequency = function(frequency) {
+        mu._assert(frequency instanceof mu.Frequency,
+                   'invalid frequency ' + frequency);
+        this.startPitch(mu.Pitch.fromFrequency(frequency));
+    };
+    mu.ui.PitchConstellation.prototype.stopFrequency = function(frequency) {
+        mu._assert(frequency instanceof mu.Frequency,
+                   'invalid frequency ' + frequency);
+        this.stopPitch(mu.Pitch.fromFrequency(frequency));
+    };
     mu.ui.PitchConstellation.prototype.stopAll = function() {
         mu._mapForEach(this._pitchClassesPlaying, function(x, num) {
-            this._onPitchEvent(mu.PitchClass(num), 'pitchrelease');
+            this._onPitchEvent(mu.PitchClass(+num), 'pitchrelease');
         }, this);
     };
     mu.ui.PitchConstellation.prototype.dispose = function() {
@@ -752,7 +776,7 @@
     };
     mu.ui.Waveform.prototype.stopAll = function() {
         mu._mapForEach(this._freqsPlaying, function(freq, x) {
-            this._onPitchEvent(freq, 'pitchrelease');
+            this._onEvent(freq, 'release');
         }, this);
     };
     mu.ui.Waveform.prototype.dispose = function() {
