@@ -392,7 +392,7 @@
                    'invalid frequency ' + frequency);
         this.startPitch(mu.Pitch.fromFrequency(frequency));
     };
-    mu.audio.BasicSoundFileVoice.prototype.stopPitch = function(pitch) {
+    mu.audio.BasicSoundFileVoice.prototype.stopFrequency = function(frequency) {
         mu._assert(frequency instanceof mu.Frequency,
                    'invalid frequency ' + frequency);
         this.stopPitch(mu.Pitch.fromFrequency(frequency));

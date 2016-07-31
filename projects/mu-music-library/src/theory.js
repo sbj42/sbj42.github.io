@@ -442,7 +442,7 @@
             return mu.Pitch._MIN;
         if (frequency.hertz() >= mu.Pitch._MAX.frequency().hertz())
             return mu.Pitch._MAX;
-        var o = Math.log2(frequency.hertz()) - Math.log2(mu.Pitch._MIN.frequency().hertz());
+        var o = mu._log2(frequency.hertz()) - mu._log2(mu.Pitch._MIN.frequency().hertz());
         return mu.Pitch.fromNum(Math.round(o * 12));
     };
     /**

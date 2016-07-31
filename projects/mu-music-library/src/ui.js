@@ -86,7 +86,7 @@
     mu.ui.frequencyColor = function(frequency, s, l) {
         mu._assert(frequency instanceof mu.Frequency,
                    'invalid frequency ' + frequency);
-        var a = Math.log2(frequency.hertz()) - Math.log2(mu.C_4.frequency().hertz());
+        var a = mu._log2(frequency.hertz()) - mu._log2(mu.C_4.frequency().hertz());
         a = a % 1;
         if (a < 0)
             a += 1;
