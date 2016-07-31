@@ -6,7 +6,6 @@ volume fader, gain knob
 use fletcher-munson curves in the generator voice to try to get equal volume from low and high notes, use replaygain on the audio files for same
 sound envelopes in generators
 
-add key class
 describe pitch class relative to key (as degree or as name normalized for staff position)
 describe chord relative to key
 constellation should show key-relative pitch classes
@@ -15,3 +14,5 @@ add base/inversion information, favor analyses where base==root?
 
 add time signature
 use in chordline
+
+support "aeolian sharp-7" aka "harmonic minor scale"?
