@@ -48,6 +48,24 @@
      */
 
     /**
+     * An event indicating that a frequency has started playing.
+     *
+     * @event frequencystart
+     * @property {mu.audio.Voice} voice The voice playing the frequency
+     * @property {mu.Frequency} frequency The frequency
+     * @memberof mu.audio.Voice
+     */
+
+    /**
+     * An event indicating that a frequency has stopped playing.
+     *
+     * @event frequencystop
+     * @property {mu.audio.Voice} voice The voice playing the frequency
+     * @property {mu.Frequency} frequency The frequency
+     * @memberof mu.audio.Voice
+     */
+
+    /**
      * An interface for voices for notes played via {@link mu.play}.
      *
      * @interface
@@ -58,7 +76,8 @@
         if (!(this instanceof mu.audio.Voice))
             return new mu.audio.Voice();
         mu.audio.Voice._activateVoice(this);
-        this._playing = {};
+        this._voice_pitchesPlaying = {};
+        this._voice_frequenciesPlaying = {};
     };
     mu._eventable(mu.audio.Voice.prototype);
     mu.audio.Voice._activeVoices = [];
@@ -159,6 +178,15 @@
                 && (this.highest() == null || pitch.subtract(this.highest()) <= 0);
     };
     /**
+     * Returns true if this voice can play an arbitrary frequency.
+     *
+     * @return {boolean} True if this voice can play an arbitrary frequency.
+     * @memberof mu.audio.Voice
+     */
+    mu.audio.Voice.prototype.canPlayFrequency = function() {
+        return true;
+    };
+    /**
      * Silences this voice.
      *
      * @memberof mu.audio.Voice
@@ -173,7 +201,7 @@
      * @memberof mu.audio.Voice
      */
     mu.audio.Voice.prototype.startPitch = function(pitch) {
-        this._playing[pitch.toNum()] = true;
+        this._voice_pitchesPlaying[pitch.toNum()] = true;
         this._fire('pitchstart', {voice: this, pitch: pitch});
     };
     /**
@@ -183,7 +211,7 @@
      * @memberof mu.audio.Voice
      */
     mu.audio.Voice.prototype.stopPitch = function(pitch) {
-        delete this._playing[pitch.toNum()];
+        delete this._voice_pitchesPlaying[pitch.toNum()];
         this._fire('pitchstop', {voice: this, pitch: pitch});
     };
     /**
@@ -192,10 +220,44 @@
      * @return {Array.<mu.Pitch>} The pitches that are currently playing
      * @memberof mu.audio.Voice
      */
-    mu.audio.Voice.prototype.playing = function() {
+    mu.audio.Voice.prototype.pitchesPlaying = function() {
         var ret = [];
-        mu._mapForEach(this._playing, function(x, num) {
-            ret.push(mu.Pitch.fromNum(num));
+        mu._mapForEach(this._voice_pitchesPlaying, function(x, num) {
+            ret.push(mu.Pitch.fromNum(+num));
+        });
+        return ret;
+    };
+    /**
+     * Starts playing a given {@link mu.Frequency}.
+     *
+     * @param {mu.Frequency} frequency The frequency to play
+     * @return {Function} A function which can be called to stop the frequency, equivalent to `{@link mu.audio.Voice#stopFrequency}(frequency)`
+     * @memberof mu.audio.Voice
+     */
+    mu.audio.Voice.prototype.startFrequency = function(frequency) {
+        this._voice_frequenciesPlaying[frequency.hertz()] = true;
+        this._fire('frequencystart', {voice: this, frequency: frequency});
+    };
+    /**
+     * Stops playing a given {@link mu.Frequency}.
+     *
+     * @param {mu.Frequency} frequency The frequency to play
+     * @memberof mu.audio.Voice
+     */
+    mu.audio.Voice.prototype.stopFrequency = function(frequency) {
+        delete this._voice_frequenciesPlaying[frequency.hertz()];
+        this._fire('frequencystop', {voice: this, frequency: frequency});
+    };
+    /**
+     * Returns an array of the frequencies that are currently playing.
+     *
+     * @return {Array.<mu.Frequency>} The frequencies that are currently playing
+     * @memberof mu.audio.Voice
+     */
+    mu.audio.Voice.prototype.frequenciesPlaying = function() {
+        var ret = [];
+        mu._mapForEach(this._voice_frequenciesPlaying, function(x, hertz) {
+            ret.push(mu.Frequency(hertz));
         });
         return ret;
     };
@@ -290,6 +352,9 @@
             this.stopPitch(mu.Pitch.fromNum(num));
         }, this);
     };
+    mu.audio.BasicSoundFileVoice.prototype.canPlayFrequency = function() {
+        return false;
+    };
     mu.audio.BasicSoundFileVoice.prototype.startPitch = function(pitch) {
         mu._assert(pitch instanceof mu.Pitch,
                    'invalid pitch ' + pitch);
@@ -321,6 +386,16 @@
             return;
         node.pause();
         mu.audio.Voice.prototype.stopPitch.call(this, pitch);
+    };
+    mu.audio.BasicSoundFileVoice.prototype.startFrequency = function(frequency) {
+        mu._assert(frequency instanceof mu.Frequency,
+                   'invalid frequency ' + frequency);
+        this.startPitch(mu.Pitch.fromFrequency(frequency));
+    };
+    mu.audio.BasicSoundFileVoice.prototype.stopPitch = function(pitch) {
+        mu._assert(frequency instanceof mu.Frequency,
+                   'invalid frequency ' + frequency);
+        this.stopPitch(mu.Pitch.fromFrequency(frequency));
     };
 
     if (window.AudioContext) {
@@ -355,6 +430,7 @@
             this._profile = profile;
             this._context = new AudioContext();
             this._pitches = {};
+            this._frequencies = {};
         };
         mu.audio.GeneratorVoice.prototype = Object.create(mu.audio.Voice.prototype);
         mu.audio.GeneratorVoice.prototype.constructor = mu.audio.GeneratorVoice;
@@ -365,22 +441,21 @@
             if (this._disposed)
                 return;
             mu._mapForEach(this._pitches, function(x, num) {
-                this.stopPitch(mu.Pitch.fromNum(num));
+                this.stopPitch(mu.Pitch.fromNum(+num));
             }, this);
             this._pitches = {};
+            mu._mapForEach(this._frequencies, function(x, num) {
+                this.stopFrequency(mu.Frequency(+num));
+            }, this);
+            this._frequencies = {};
         };
-        mu.audio.GeneratorVoice.prototype.startPitch = function(pitch) {
-            mu._assert(pitch instanceof mu.Pitch,
-                       'invalid pitch ' + pitch);
+        mu.audio.GeneratorVoice.prototype._start = function(hertz) {
             if (this._disposed)
-                return;
-            var num = pitch.toNum();
-            if (this._pitches[num])
                 return;
             var nodes = [];
             var context = this._context;
             function addOscillator(relFreq, relAmp) {
-                var freq = pitch.frequency().hertz() * relFreq;
+                var freq = hertz * relFreq;
                 if (freq > context.sampleRate / 2) // avoid aliasing
                     return;
                 var oscillator = context.createOscillator();
@@ -396,7 +471,22 @@
             addOscillator(1, 1);
             for (var i = 0; i < this._profile.length; i += 2)
                 addOscillator(this._profile[i], this._profile[i+1]);
-            this._pitches[num] = nodes;
+            return nodes;
+        };
+        mu.audio.GeneratorVoice.prototype._stop = function(nodes) {
+            nodes.forEach(function(node) {
+                node.disconnect();
+            });
+        };
+        mu.audio.GeneratorVoice.prototype.startPitch = function(pitch) {
+            mu._assert(pitch instanceof mu.Pitch,
+                       'invalid pitch ' + pitch);
+            if (this._disposed)
+                return;
+            var num = pitch.toNum();
+            if (this._pitches[num])
+                return;
+            this._pitches[num] = this._start(pitch.frequency().hertz());
             mu.audio.Voice.prototype.startPitch.call(this, pitch);
         };
         mu.audio.GeneratorVoice.prototype.stopPitch = function(pitch) {
@@ -407,12 +497,32 @@
             var num = pitch.toNum();
             if (!this._pitches[num])
                 return;
-            var nodes = this._pitches[num];
-            nodes.forEach(function(node) {
-                node.disconnect();
-            });
+            this._stop(this._pitches[num]);
             delete this._pitches[num];
             mu.audio.Voice.prototype.stopPitch.call(this, pitch);
+        };
+        mu.audio.GeneratorVoice.prototype.startFrequency = function(frequency) {
+            mu._assert(frequency instanceof mu.Frequency,
+                       'invalid frequency ' + frequency);
+            if (this._disposed)
+                return;
+            var num = frequency.hertz();
+            if (this._frequencies[num])
+                return;
+            this._frequencies[num] = this._start(frequency.hertz());
+            mu.audio.Voice.prototype.startFrequency.call(this, frequency);
+        };
+        mu.audio.GeneratorVoice.prototype.stopFrequency = function(frequency) {
+            mu._assert(frequency instanceof mu.Frequency,
+                       'invalid frequency ' + frequency);
+            if (this._disposed)
+                return;
+            var num = frequency.hertz();
+            if (!this._frequencies[num])
+                return;
+            this._stop(this._frequencies[num]);
+            delete this._frequencies[num];
+            mu.audio.Voice.prototype.stopFrequency.call(this, frequency);
         };
 
         /**

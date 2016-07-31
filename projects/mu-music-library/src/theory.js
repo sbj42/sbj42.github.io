@@ -420,11 +420,30 @@
      * @memberof mu.Pitch
      */
     mu.Pitch.fromNum = function(num) {
+        mu._assert(mu._isInteger(num),
+                   'invalid pitch number ' + num);
         var octave = Math.floor(num / 12);
         mu._assert(octave >= 0 && octave <= 10,
                 'inaudible octave ' + octave);
         var pitchClass = mu.PitchClass(num - octave * 12);
         return mu.Pitch(pitchClass, octave);
+    };
+    /**
+     * Converts a frequency to the nearest pitch.
+     *
+     * @param {mu.Frequency} frequency The frequency to approximate
+     * @return {mu.Pitch} The nearest pitch to that frequency
+     * @memberof mu.Pitch
+     */
+    mu.Pitch.fromFrequency = function(frequency) {
+        mu._assert(frequency instanceof mu.Frequency,
+                   'invalid frequency ' + frequency);
+        if (frequency.hertz() <= mu.Pitch._MIN.frequency().hertz())
+            return mu.Pitch._MIN;
+        if (frequency.hertz() >= mu.Pitch._MAX.frequency().hertz())
+            return mu.Pitch._MAX;
+        var o = Math.log2(frequency.hertz()) - Math.log2(mu.Pitch._MIN.frequency().hertz());
+        return mu.Pitch.fromNum(Math.round(o * 12));
     };
     /**
      * Returns a pitch number, an index within the entire supported pitch

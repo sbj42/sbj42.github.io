@@ -71,6 +71,9 @@
     assert(c2.equals(c2));
     assertClose(c2.frequency().hertz(), 65.406, 0.001);
     assertEquals(c2.toString(), 'C2');
+    assert(mu.Pitch.fromFrequency(mu.Frequency(440)).equals(mu.A_4));
+    assert(mu.Pitch.fromFrequency(mu.Frequency(330)).equals(mu.E_4));
+    assert(mu.Pitch.fromFrequency(mu.Frequency(340)).equals(mu.F_4));
     assertThrow(function() { mu.C_0.transpose(-1); });
     assertThrow(function() { mu.B_10.transpose(1); });
     assertThrow(function() { mu.C_0.transpose('1'); });

@@ -16,7 +16,7 @@ harm.ready(function() {
     c.connectUI(constellation);
 
     function onChange() {
-        var chord = mu.Chord(c.voice().playing());
+        var chord = mu.Chord(c.voice().pitchesPlaying());
         var text = chord.abbr();
         var status = mu._html('#status').clear();
         if (text) {

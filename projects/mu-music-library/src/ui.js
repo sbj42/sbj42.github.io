@@ -54,6 +54,24 @@
      * @memberof mu.ui.UI
      */
 
+    /**
+     * An event indicating that the user has pressed a frequency in a UI.
+     *
+     * @event frequencypress
+     * @property {mu.ui.UI} ui The UI where the action took place
+     * @property {mu.Frequency} frequency The frequency
+     * @memberof mu.ui.UI
+     */
+
+    /**
+     * An event indicating that the user has released a frequency in a UI.
+     *
+     * @event frequencyrelease
+     * @property {mu.ui.UI} ui The UI where the action took place
+     * @property {mu.Frequency} frequency The frequency
+     * @memberof mu.ui.UI
+     */
+
     mu.ui.frequencyColor = function(frequency, s, l) {
         mu._assert(frequency instanceof mu.Frequency,
                    'invalid frequency ' + frequency);
@@ -90,8 +108,13 @@
         document.addEventListener('focusout', this._onFocusOutListener);
         this._onBlurListener = this.stopAll.bind(this);
         window.addEventListener('blur', this._onBlurListener);
+
+        this._ui_pitchesOnly = false;
     };
     mu._eventable(mu.ui.UI.prototype);
+    mu.ui.UI.prototype._pitchesOnly = function() {
+        return this._ui_pitcheOnly;
+    };
     mu.ui.UI.prototype._onKeyDown = function(event) {
         var key = event.key || event.keyIdentifier;
         if (key == 'Shift')
@@ -130,6 +153,16 @@
         throw new Error('unimplemented');
     };
     /**
+     * Sets 'pitches only' mode on the UI, which means the UI
+     * should not attempt to press frequencies.
+     *
+     * @param {boolean} pitchesOnly Whether to turn on 'pitches only' mode
+     * @memberof mu.ui.UI
+     */
+    mu.ui.UI.prototype.setPitchesOnly = function(pitchesOnly) {
+        this._pitchesOnly = pitchesOnly;
+    };
+    /**
      * Updates the UI to show that a pitch has started.
      *
      * @param {mu.Pitch} pitch The pitch
@@ -144,6 +177,22 @@
      * @memberof mu.ui.UI
      */
     mu.ui.UI.prototype.stopPitch = function(pitch) {
+    };
+    /**
+     * Updates the UI to show that a frequency has started.
+     *
+     * @param {mu.Frequency} frequency The frequency
+     * @memberof mu.ui.UI
+     */
+    mu.ui.UI.prototype.startFrequency = function(frequency) {
+    };
+    /**
+     * Updates the UI to show that a frequency has stopped.
+     *
+     * @param {mu.Frequency} frequency The frequency
+     * @memberof mu.ui.UI
+     */
+    mu.ui.UI.prototype.stopFrequency = function(frequency) {
     };
 
     /**
@@ -636,10 +685,14 @@
                 .classed('mu_waveform_dot', true);
         }, this);
     };
-    mu.ui.Waveform.prototype._onFrequencyEvent = function(frequency, type) {
+    mu.ui.Waveform.prototype._onEvent = function(frequency, type) {
         if (this._disposed)
             return;
-        this._fire(type, {ui: this, frequency: frequency});
+        if (this._pitchesOnly) {
+            this._fire('pitch'+type, {ui: this, pitch: mu.Pitch.fromFrequency(frequency)});
+        } else {
+            this._fire('frequency'+type, {ui: this, frequency: frequency});
+        }
     };
     mu.ui.Waveform.prototype._onMouseMove = function(event) {
         if (this._disposed)
@@ -652,23 +705,23 @@
         if (this._freqOver && Math.abs(this._freqOver.hertz() - freq.hertz()) <= 0.0001)
             return;
         if (this._mouseDown)
-            this._onFrequencyEvent(this._freqOver, 'frequencyrelease');
+            this._onEvent(this._freqOver, 'release');
         this._freqOver = freq;
         if (this._mouseDown)
-            this._onFrequencyEvent(this._freqOver, 'frequencypress');
+            this._onEvent(this._freqOver, 'press');
     };
     mu.ui.Waveform.prototype._onMouseDown = function(event) {
         if (this._disposed)
             return;
         event.preventDefault();
         this._mouseDown = true;
-        this._onFrequencyEvent(this._freqOver, 'frequencypress');
+        this._onEvent(this._freqOver, 'press');
         var onMouseUpListener;
         function onMouseUp(event) {
             if (this._disposed)
                 return;
             this._mouseDown = false;
-            this._onFrequencyEvent(this._freqOver, 'frequencyrelease');
+            this._onEvent(this._freqOver, 'release');
         };
         onMouseUpListener = onMouseUp.bind(this);
         window.addEventListener('mouseup', onMouseUpListener);
@@ -882,8 +935,8 @@
             return new mu.ui.Controller(voice);
         mu._assert(voice == null || voice instanceof mu.audio.Voice,
                    'invalid voice ' + voice);
-        this.setVoice(voice);
         this._uis = [];
+        this.setVoice(voice);
     };
     mu._eventable(mu.ui.Controller.prototype);
     mu.ui.Controller.prototype._onPitchPress = function(data) {
@@ -905,6 +958,26 @@
             ui.stopPitch(data.pitch);
         });
         this._fire('pitchstop', data);
+    };
+    mu.ui.Controller.prototype._onFrequencyPress = function(data) {
+        if (this._voice && this._voice.canPlayFrequency())
+            this._voice.startFrequency(data.frequency);
+    };
+    mu.ui.Controller.prototype._onFrequencyRelease = function(data) {
+        if (this._voice && this._voice.canPlayFrequency())
+            this._voice.stopFrequency(data.frequency);
+    };
+    mu.ui.Controller.prototype._onFrequencyStart = function(data) {
+        this._uis.forEach(function(ui) {
+            ui.startFrequency(data.frequency);
+        });
+        this._fire('frequencystart', data);
+    };
+    mu.ui.Controller.prototype._onFrequencyStop = function(data) {
+        this._uis.forEach(function(ui) {
+            ui.stopFrequency(data.frequency);
+        });
+        this._fire('frequencystop', data);
     };
     /**
      * Returns a string description of the controller.
@@ -937,14 +1010,25 @@
             return;
         if (this._voice == voice)
             return;
+        if (this._voice)
+            this._voice.silence();
         if (this._voice) {
             this._voice.removeEventListener('pitchstart', this._onPitchStart, this);
             this._voice.removeEventListener('pitchstop', this._onPitchStop, this);
+            this._voice.removeEventListener('frequencystart', this._onFrequencyStart, this);
+            this._voice.removeEventListener('frequencystop', this._onFrequencyStop, this);
         }
         this._voice = voice;
         if (this._voice) {
+            this._uis.forEach(function(ui) {
+                ui.setPitchesOnly(!this._voice.canPlayFrequency());
+            }, this);
+        }
+        if (this._voice) {
             this._voice.addEventListener('pitchstart', this._onPitchStart, this);
             this._voice.addEventListener('pitchstop', this._onPitchStop, this);
+            this._voice.addEventListener('frequencystart', this._onFrequencyStart, this);
+            this._voice.addEventListener('frequencystop', this._onFrequencyStop, this);
         }
     };
     /**
@@ -963,8 +1047,12 @@
                 return;
         }
         this._uis.push(ui);
+        if (this._voice)
+            ui.setPitchesOnly(!this._voice.canPlayFrequency());
         ui.addEventListener('pitchpress', this._onPitchPress, this);
         ui.addEventListener('pitchrelease', this._onPitchRelease, this);
+        ui.addEventListener('frequencypress', this._onFrequencyPress, this);
+        ui.addEventListener('frequencyrelease', this._onFrequencyRelease, this);
     };
     /**
      * Disconnectes a UI to this controller.
@@ -987,6 +1075,8 @@
             return;
         ui.removeEventListener('pitchpress', this._onPitchPress, this);
         ui.removeEventListener('pitchrelease', this._onPitchRelease, this);
+        ui.removeEventListener('frequencypress', this._onFrequencyPress, this);
+        ui.removeEventListener('frequencyrelease', this._onFrequencyRelease, this);
     };
     mu.ui.Controller.prototype.dispose = function() {
         _.each(this._uis, this.disconnectUI, this);
