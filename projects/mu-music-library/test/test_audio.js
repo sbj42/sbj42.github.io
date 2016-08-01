@@ -3,21 +3,21 @@ var sine;
 function do_sine() {
     sine = mu.audio.SineVoice();
     sine.ready(function() {
-        assert(sine.canPlayPitch(mu.C_4));
+        assert(sine.canPlayPitch(mu.C_4.pitch()));
         assertEquals(sine.pitchesPlaying().length, 0);
         setTimeout(function() {
-            sine.startPitch(mu.C_4);
+            sine.startPitch(mu.C_4.pitch());
             setTimeout(function() {
                 sine.silence();
-                sine.startPitch(mu.E_4);
+                sine.startPitch(mu.E_4.pitch());
                 setTimeout(function() {
-                    sine.stopPitch(mu.C_4);
-                    sine.stopPitch(mu.E_4);
-                    sine.startPitch(mu.G_4);
+                    sine.stopPitch(mu.C_4.pitch());
+                    sine.stopPitch(mu.E_4.pitch());
+                    sine.startPitch(mu.G_4.pitch());
                     setTimeout(function() {
                         assertEquals(sine.pitchesPlaying().length, 1);
                         sine.dispose();
-                        sine.startPitch(mu.C_3);
+                        sine.startPitch(mu.C_3.pitch());
                         do_harm();
                     }, speed);
                 }, speed);
@@ -30,19 +30,19 @@ function do_harm() {
     harm = mu.audio.HarmonicVoice();
     harm.ready(function() {
         setTimeout(function() {
-            harm.startPitch(mu.C_3);
-            harm.startPitch(mu.C_4);
+            harm.startPitch(mu.C_3.pitch());
+            harm.startPitch(mu.C_4.pitch());
             assertEquals(harm.pitchesPlaying().length, 2);
             setTimeout(function() {
-                harm.startPitch(mu.E_FLAT_4);
+                harm.startPitch(mu.E_FLAT_4.pitch());
                 setTimeout(function() {
-                    harm.startPitch(mu.G_4);
+                    harm.startPitch(mu.G_4.pitch());
                     setTimeout(function() {
                         assertEquals(harm.pitchesPlaying().length, 4);
-                        harm.stopPitch(mu.C_3);
-                        harm.stopPitch(mu.C_4);
-                        harm.stopPitch(mu.E_FLAT_4);
-                        harm.stopPitch(mu.G_4);
+                        harm.stopPitch(mu.C_3.pitch());
+                        harm.stopPitch(mu.C_4.pitch());
+                        harm.stopPitch(mu.E_FLAT_4.pitch());
+                        harm.stopPitch(mu.G_4.pitch());
                         do_freq();
                     }, speed);
                 }, speed);

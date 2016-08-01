@@ -203,6 +203,18 @@
         return this._semitones;
     };
     /**
+     * Returns true if this accidental is equivalent to the `other`.
+     *
+     * @param {mu.Accidental} other The accidental to compare against
+     * @return {boolean} True If the accidentals are equivalent
+     * @memberof mu.Accidental
+     */
+    mu.Accidental.prototype.equals = function(other) {
+        mu._assert(other instanceof mu.Accidental,
+                   'invalid accidental ' + other);
+        return this._semitones == other._semitones;
+    };
+    /**
      * Describes this {@link mu.Accidental} object.
      *
      * @example
@@ -214,18 +226,23 @@
      */
     mu.Accidental.prototype.toString = function() {
         if (this._semitones < 0)
-            return Array(-this._semitones).join(mu.FLAT_CHAR);
+            return Array(-this._semitones+1).join(mu.FLAT_CHAR);
         if (this._semitones > 0)
-            return Array(this._semitones).join(mu.SHARP_CHAR);
+            return Array(this._semitones+1).join(mu.SHARP_CHAR);
         return mu.NATURAL_CHAR;
     };
 
     /**
-     * A musical pitch class, such as {@link mu.C} or {@link mu.A_FLAT}.
+     * A musical pitch class, such as B/C&#x266d; or G&#x266f;/A&#x266d;.
+     *
+     * Usually you should not need to call this constructor.  There are lots
+     * of other ways to make a pitch class.
      *
      * @example
-     * // returns mu.C
+     * // these all return a pitch class representing the note B&#x266f;/C.
      * mu.PitchClass(0)
+     * mu.C.pitchClass()
+     * mu.B_SHARP.pitchClass()
      *
      * @class
      * @param {number} index The index of the pitch class within an octave;
@@ -236,33 +253,16 @@
     mu.PitchClass = function(index) {
         if (!(this instanceof mu.PitchClass))
             return new mu.PitchClass(index);
-        mu._assert(mu._isInteger(index) && index >= 0 && index < 12,
+        mu._assert(mu._isInteger(index) && index >= 0 && index <= 11,
                    'invalid pitch index ' + index);
         this._index = index;
     };
-    (function() {
-        mu.C = mu.PitchClass(0);
-        mu.C_SHARP =
-            mu.D_FLAT = mu.PitchClass(1);
-        mu.D = mu.PitchClass(2);
-        mu.D_SHARP =
-            mu.E_FLAT = mu.PitchClass(3);
-        mu.E = mu.PitchClass(4);
-        mu.F = mu.PitchClass(5);
-        mu.F_SHARP =
-            mu.G_FLAT = mu.PitchClass(6);
-        mu.G = mu.PitchClass(7);
-        mu.G_SHARP =
-            mu.A_FLAT = mu.PitchClass(8);
-        mu.A = mu.PitchClass(9);
-        mu.A_SHARP =
-            mu.B_FLAT = mu.PitchClass(10);
-        mu.B = mu.PitchClass(11);
-    })();
-    mu.PitchClass._SHARP_NAMES = 'CCDDEFFGGAAB';
-    mu.PitchClass._FLAT_NAMES = 'CDDEEFGGAABB';
+    mu.PitchClass._SHARP_NAMES   = 'BC_D_EF_G_A_';
+    mu.PitchClass._NATURAL_NAMES = 'C_D_EF_G_A_B';
+    mu.PitchClass._FLAT_NAMES    = '_D_EF_G_A_BC';
     /**
-     * Returns the index of this pitch within its octave.
+     * Returns the index of this pitch class within an octave, index 0
+     * corresponds with C.
      *
      * @example
      * // returns 9
@@ -292,8 +292,8 @@
      * given number of `semitones` above this pitch class.
      *
      * @example
-     * // returns a pitch equivalent to mu.F_SHARP
-     * mu.D.transpose(4)
+     * // returns a pitch class representing F&#x266f;/G&#x266d;.
+     * mu.D.pitchClass().transpose(4)
      *
      * @param {number} semitones The number of semitones by which to
      * raise the returned pitch class; an integer
@@ -314,8 +314,8 @@
      * given `interval` above this pitch class.
      *
      * @example
-     * // returns a pitch class equivalent to mu.F_SHARP
-     * mu.D.sharper(mu.Interval(4))
+     * // returns a pitch class representing F&#x266f;/G&#x266d;.
+     * mu.D.pitchClass().sharper(mu.Interval(4))
      *
      * @param {mu.Interval} semitones The interval by which to raise
      * the returned pitch class
@@ -332,8 +332,8 @@
      * given `interval` below this pitch class.
      *
      * @example
-     * // returns a pitch class equivalent to mu.B_FLAT
-     * mu.D.flatter(mu.Interval(4))
+     * // returns a pitch class representing A&#x266f;/B&#x266d;
+     * mu.D.pitchClass().flatter(mu.Interval(4))
      *
      * @param {mu.Interval} interval The interval by which to lower
      * the returned pitch class
@@ -346,14 +346,14 @@
         return this.transpose(-interval.semitones());
     };
     /**
-     * Returns the interval between this pitch class and the other.
+     * Returns the interval between this pitch class and the `other`.
      *
      * @example
      * // returns an interval equivalent to mu.Interval(4)
-     * mu.D.interval(mu.B_FLAT)
+     * mu.D.pitchClass().interval(mu.B_FLAT.pitchClass())
      * @example
      * // also returns an interval equivalent to mu.Interval(4)
-     * mu.B_FLAT.interval(mu.D)
+     * mu.B_FLAT.pitchClass().interval(mu.D.pitchClass())
      *
      * @return {mu.Interval} The interval between this pitch class and the other
      * @memberof mu.PitchClass
@@ -366,24 +366,31 @@
      *
      * @example
      * // returns ["C&#x266f;", "D&#x266d;"]
-     * mu.C_SHARP.toStrings()
+     * mu.C_SHARP.pitchClass().toStrings()
      *
      * @return {Array.<string>} One or two descriptions of this pitch class.
      * @memberof mu.PitchClass
      */
     mu.PitchClass.prototype.toStrings = function() {
         var s = mu.PitchClass._SHARP_NAMES[this._index];
+        var n = mu.PitchClass._NATURAL_NAMES[this._index];
         var f = mu.PitchClass._FLAT_NAMES[this._index];
-        if (s === f)
-            return [s];
-        return [s + mu.SHARP_CHAR, f + mu.FLAT_CHAR];
+        var ret = [];
+        if (s != '_')
+            ret.push(s + mu.SHARP_CHAR);
+        if (n != '_')
+            ret.push(n);
+        if (f != '_')
+            ret.push(f + mu.FLAT_CHAR);
+        mu._assert(ret.length >= 1 && ret.length <= 2);
+        return ret;
     };
     /**
-     * Describes this pitch class.
+     * Returns a description of this pitch class.
      *
      * @example
      * // returns "C&#x266f;/D&#x266d;"
-     * mu.C_SHARP.toString()
+     * mu.C_SHARP.pitchClass().toString()
      *
      * @return {string} A description of this pitch class
      * @memberof mu.PitchClass
@@ -393,26 +400,25 @@
     };
 
     /**
-     * A musical pitch, limited to the twelve-note chromatic scale.
+     * A musical pitch, such as B2/C&#x266d3; or G&#x266f;4/A&#x266d;4.
      *
-     * Usually you should not need to call this constructor.  All the
-     * supported pitches have constants in the {@link mu} namespace.
-     * For instance {@link mu.A_4} and {@link mu.F_SHARP_3}.
+     * Usually you should not need to call this constructor.  There are lots
+     * of other ways to make a pitch.
      *
      * @example
-     * // returns mu.C_4 (representing middle C)
+     * // these all return a pitch representing middle C
      * mu.Pitch(0, 4)
-     * @example
-     * // returns mu.A_4 (the A above middle C)
-     * mu.Pitch(mu.A, 4)
+     * mu.Pitch(mu.C.pitchClass(), 4)
+     * mu.Pitch(mu.C, 4)
+     * mu.C_4.pitch()
      *
      * @class
      * @param {number|mu.PitchClass} pitchClass The pitch class, either as
      * a {@link mu.PitchClass} or as an index of the pitch within that octave.
      * @param {number} [octave] The octave number of the pitch as described
      * by scientific pitch notation; an integer from 0 to 10 inclusive.
-     * {@link mu.C_4} (middle C) is in octave 4,
-     * and it is the fourth C on a standard 88-key piano keyboard.
+     * Middle C is in octave 4, and it is the fourth C on a standard
+     * 88-key piano keyboard.
      * @memberof mu
      */
     mu.Pitch = function(pitchClass, octave) {
@@ -425,35 +431,12 @@
         mu._assert(mu._isInteger(octave),
                    'invalid octave ' + octave);
         mu._assert(octave >= 0 && octave <= 10,
-                   'inaudible octave ' + octave);
+                   'unsupported octave ' + octave);
         this._pitchClass = pitchClass;
         this._octave = octave;
     };
-    (function() {
-        // these constants are documented in pitches.js,
-        // which is generated by the docgen.py script
-        for (var octave = 0; octave <= 10; octave ++) {
-            mu['C_' + octave] = mu.Pitch(mu.C, octave);
-            mu['C_SHARP_' + octave] = 
-            mu['D_FLAT_' + octave] = mu.Pitch(mu.C_SHARP, octave);
-            mu['D_' + octave] = mu.Pitch(mu.D, octave);
-            mu['D_SHARP_' + octave] = 
-            mu['E_FLAT_' + octave] = mu.Pitch(mu.D_SHARP, octave);
-            mu['E_' + octave] = mu.Pitch(mu.E, octave);
-            mu['F_' + octave] = mu.Pitch(mu.F, octave);
-            mu['F_SHARP_' + octave] = 
-            mu['G_FLAT_' + octave] = mu.Pitch(mu.F_SHARP, octave);
-            mu['G_' + octave] = mu.Pitch(mu.G, octave);
-            mu['G_SHARP_' + octave] = 
-            mu['A_FLAT_' + octave] = mu.Pitch(mu.G_SHARP, octave);
-            mu['A_' + octave] = mu.Pitch(mu.A, octave);
-            mu['A_SHARP_' + octave] = 
-            mu['B_FLAT_' + octave] = mu.Pitch(mu.A_SHARP, octave);
-            mu['B_' + octave] = mu.Pitch(mu.B, octave);
-        }
-    })();
-    mu.Pitch._MIN = mu.C_0;
-    mu.Pitch._MAX = mu.B_10;
+    mu.Pitch._MIN = mu.Pitch(mu.PitchClass(0), 0);
+    mu.Pitch._MAX = mu.Pitch(mu.PitchClass(11), 10);
     /**
      * The frequency ratio between two pitches in a semitone interval;
      * The twelfth root of 2.
@@ -482,7 +465,7 @@
                    'invalid pitch number ' + num);
         var octave = Math.floor(num / 12);
         mu._assert(octave >= 0 && octave <= 10,
-                'inaudible octave ' + octave);
+                   'unsupported octave ' + octave);
         var pitchClass = mu.PitchClass(num - octave * 12);
         return mu.Pitch(pitchClass, octave);
     };
@@ -516,11 +499,13 @@
         return this._octave * 12 + this._pitchClass.index();
     };
     /**
-     * Returns the octave number of this pitch.
+     * Returns the octave number of this pitch.  The fourth octave is the
+     * one that includes middle C, and is also the fourth octave on an 88-key
+     * piano.
      *
      * @example
      * // returns 4
-     * mu.C_4.octave()
+     * mu.C_4.pitch().octave()
      *
      * @return {number} The octave number; an integer from 0 to 10 inclusive
      * @memberof mu.Pitch
@@ -532,8 +517,8 @@
      * Returns the pitch class of this pitch.
      *
      * @example
-     * // returns mu.A
-     * mu.A_4.pitchClass()
+     * // returns a pitch class representing A.
+     * mu.A_4.pitch().pitchClass()
      *
      * @return {mu.PitchClass} The pitch class of this pitch
      * @memberof mu.Pitch
@@ -558,8 +543,8 @@
      * given number of `semitones` above this pitch.
      *
      * @example
-     * // returns a pitch equivalent to mu.F_SHARP_3
-     * mu.D_3.transpose(4)
+     * // returns a pitch representing F&#x266f;3/G&#x266d;3
+     * mu.D_3.pitch().transpose(4)
      *
      * @param {number} semitones The number of semitones by which to
      * raise the returned pitch; an integer
@@ -576,8 +561,8 @@
      * given `interval` above this pitch.
      *
      * @example
-     * // returns a pitch equivalent to mu.F_SHARP_3
-     * mu.D_3.sharper(mu.Interval(4))
+     * // returns a pitch representing F&#x266f;3/G&#x266d;3
+     * mu.D_3.pitch().sharper(mu.Interval(4))
      *
      * @param {mu.Interval} semitones The interval by which to raise
      * the returned pitch
@@ -594,8 +579,8 @@
      * given `interval` below this pitch.
      *
      * @example
-     * // returns a pitch equivalent to mu.B_FLAT_2
-     * mu.D_3.flatter(mu.Interval(4))
+     * // returns a pitch representing A&#x266f;2/B&#x266d;2
+     * mu.D_3.pitch().flatter(mu.Interval(4))
      *
      * @param {mu.Interval} interval The interval by which to lower
      * the returned pitch
@@ -609,17 +594,17 @@
     };
     /**
      * Return the frequency of this pitch, in "standard pitch" (where
-     * [A4]{@link mu.A_4} is 440 hertz), as a {@link mu.Frequency} object
+     * A4 is 440 hertz), as a {@link mu.Frequency} object
      *
      * @example
      * // returns a frequency equivalent to mu.Frequency(440)
-     * mu.A_4.frequency()
+     * mu.A_4.pitch().frequency()
      *
      * @return {mu.Frequency} The frequency of this pitch
      * @memberof mu.Pitch
      */
     mu.Pitch.prototype.frequency = function() {
-        return mu.Pitch._A_4_FREQUENCY.multiply(Math.pow(mu.Pitch._12TH_ROOT_OF_2, this.toNum() - mu.A_4.toNum()));
+        return mu.Pitch._A_4_FREQUENCY.multiply(Math.pow(mu.Pitch._12TH_ROOT_OF_2, this.toNum() - mu.A_4.pitch().toNum()));
     };
     /**
      * Returns the number of semitones between this pitch and the `other`.
@@ -627,9 +612,10 @@
      *
      * @example
      * // returns 4
-     * mu.D_3.subtract(mu.B_FLAT_2)
+     * mu.D_3.pitch().subtract(mu.B_FLAT_2.pitch())
      *
-     * @return {number} The number of semitones between this pitch and the `other`; an integer
+     * @return {number} The number of semitones between this pitch and
+     * the `other`; an integer
      * @memberof mu.Pitch
      */
     mu.Pitch.prototype.subtract = function(other) {
@@ -642,10 +628,10 @@
      *
      * @example
      * // returns an interval equivalent to mu.Interval(4)
-     * mu.D_3.interval(mu.B_FLAT_2)
+     * mu.D_3.pitch().interval(mu.B_FLAT_2.pitch())
      * @example
      * // also returns an interval equivalent to mu.Interval(4)
-     * mu.B_FLAT_2.interval(mu.D_3)
+     * mu.B_FLAT_2.pitch().interval(mu.D_3.pitch())
      *
      * @return {mu.Interval} The interval between this pitch and the other
      * @memberof mu.Pitch
@@ -658,22 +644,32 @@
      *
      * @example
      * // returns ["C&#x266f;3", "D&#x266d;3"]
-     * mu.C_SHARP_3.toStrings()
+     * mu.C_SHARP_3.pitch().toStrings()
      *
      * @return {string} A description of this pitch
      * @memberof mu.Pitch
      */
     mu.Pitch.prototype.toStrings = function() {
-        return this._pitchClass.toStrings().map(function(str) {
-            return str + this._octave;
-        }, this);
+        var pc = this._pitchClass;
+        var pcstr = pc.toStrings();
+        if (pc.index() == 0) {
+            mu._assert(pcstr.length == 2);
+            return [pcstr[0] + (this._octave - 1), pcstr[1] + this._octave];
+        } else if (pc.index() == 11) {
+            mu._assert(pcstr.length == 2);
+            return [pcstr[0] + this._octave, pcstr[1] + (this._octave + 1)];
+        } else {
+            return pcstr.map(function(str) {
+                return str + this._octave;
+            }, this);
+        }
     };
     /**
      * Describes this pitch.
      *
      * @example
      * // returns "C&#x266f;3/D&#x266d;3"
-     * mu.C_SHARP_3.toString()
+     * mu.C_SHARP_3.pitch().toString()
      *
      * @return {string} A description of this pitch
      * @memberof mu.Pitch
@@ -689,11 +685,10 @@
      * interval.
      *
      * @example
-     * // returns an interval of 5 semitones (sometimes called a "perfect fourth")
+     * // these both return an interval of 5 semitones
+     * // (sometimes called a "perfect fourth")
      * mu.Interval(5)
-     * @example
-     * // returns an interval of 5 semitones (sometimes called a "perfect fourth")
-     * mu.Interval(mu.C_4, mu.F_4)
+     * mu.Interval(mu.C_4.pitch(), mu.F_4.pitch())
      *
      * @class
      * @param {mu.Pitch|number} pitch1 A pitch (when two arguments or given), or the number of semitones in the interval (when only one argument is given)
@@ -715,7 +710,7 @@
         mu._assert(mu._isInteger(semitones),
                    'invalid semitone count ' + semitones);
         mu._assert(semitones >= 0 && semitones <= mu.Interval._MAX,
-                   'inaudible semitone count ' + semitones);
+                   'unsupported semitone count ' + semitones);
         this._semitones = semitones;
     }
     mu.Interval._MAX = mu.Pitch._MAX.toNum() - mu.Pitch._MIN.toNum();
@@ -752,7 +747,7 @@
      *
      * @example
      * // returns 5
-     * mu.Interval(mu.C_4, mu.F_4).semitones()
+     * mu.Interval(mu.C_4.pitch(), mu.F_4.pitch()).semitones()
      *
      * @return {number} The number of semitones in this interval; a non-negative integer
      * @memberof mu.Interval
@@ -765,7 +760,7 @@
      *
      * @example
      * // returns "5 semitones"
-     * mu.Interval(mu.C_4, mu.F_4).toString()
+     * mu.Interval(mu.C_4.pitch(), mu.F_4.pitch()).toString()
      *
      * @return {string} A description of this interval
      * @memberof mu.Interval
@@ -784,7 +779,7 @@
      *
      * @example
      * // returns "perfect fourth"
-     * mu.Interval(mu.C_4, mu.F_4).
+     * mu.Interval(mu.C_4.pitch(), mu.F_4.pitch()).
      *
      * @class
      * @return {string} The name of this interval, or an alternate description
@@ -798,45 +793,415 @@
     };
 
     /**
-     * A set of pitches that are heard together.  Usually
-     * three or more, but this class any number.
+     * A note class (aka "note name"), such as B, C&#x266d; or G&#x266e;.
+     *
+     * Usually you should not need to call this constructor.  There are
+     * other ways to make a note class.
      *
      * @example
-     * // returns a chord composed of C4, E4, and G4
-     * mu.Chord(mu.C_4, mu.E_4, mu.G_4)
+     * // these all return a note name representing B&#x266f;.
+     * mu.NoteClass(7, mu.SHARP) 
+     * mu.B_SHARP
      *
      * @class
-     * @param {...mu.Pitch|Array.<mu.Pitch>} [pitch] A pitch (or an
-     * array of pitches) in the chord
+     * @param {number} index The index of the base note, as a degree in
+     * the C major scale; an integer from 0 to 7 inclusive
+     * @param {mu.Accidental} [accidental] An accidental to apply
      * @memberof mu
      */
-    mu.Chord = function(pitch) {
-        if (!(this instanceof mu.Chord)) {
-            function C(args) {
-                return mu.Chord.apply(this, args);
-            }
-            C.prototype = mu.Chord.prototype;
-            return new C(arguments);
-        }
-        this._pitches = [];
-        mu._argsToArray(arguments).forEach(function(pitch) {
-            if (Array.isArray(pitch)) {
-                pitch.forEach(function(pitch) {
-                    mu._assert(pitch instanceof mu.Pitch,
-                               'invalid pitch ' + pitch);
-                    this._pitches.push(pitch);
-                }, this);
-            } else {
-                mu._assert(pitch instanceof mu.Pitch,
-                           'invalid pitch ' + pitch);
-                    this._pitches.push(pitch);
-            }
-        }, this);
-        this._pitches.sort(function(a, b) {
-            return a.subtract(b);
-        });
+    mu.NoteClass = function(index, accidental) {
+        if (!(this instanceof mu.NoteClass))
+            return new mu.NoteClass(index, accidental);
+        mu._assert(mu._isInteger(index) && index >= 0 && index <= 7,
+                   'invalid base note index ' + index);
+        mu._assert(accidental == null || accidental instanceof mu.Accidental,
+                   'invalid accidental ' + accidental);
+        this._index = index;
+        this._accidental = accidental;
     };
-    mu.Chord._INFO = [
+    mu.NoteClass._BASE_LETTERS = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+    mu.NoteClass._PITCH_INDEXES = [0, 2, 4, 5, 7, 9, 11];
+    (function() {
+        mu.NoteClass._BASE_LETTERS.forEach(function(letter, index) {
+            mu[letter] = mu.NoteClass(index);
+            mu[letter + '_NATURAL'] = mu.NoteClass(index, mu.NATURAL);
+            mu[letter + '_FLAT'] = mu.NoteClass(index, mu.FLAT);
+            mu[letter + '_SHARP'] = mu.NoteClass(index, mu.SHARP);
+        });
+    })();
+    /**
+     * Returns the pitch class corresponding to this note class.
+     *
+     * @example
+     * // These both return a pitch class for A&#x266f;/B&#x266d;:
+     * mu.A_SHARP.pitchClass()
+     * mu.B_FLAT.pitchClass()
+     *
+     * @return {mu.PitchClass} The pitch class corresponding to this note class
+     * @memberof mu.NoteClass
+     */
+    mu.NoteClass.prototype.pitchClass = function() {
+        var ret = mu.PitchClass(mu.NoteClass._PITCH_INDEXES[this._index]);
+        if (this._accidental)
+            ret = ret.transpose(this._accidental.semitones());
+        return ret;
+    };
+    /**
+     * Returns true if this note class is equivalent to the `other`.
+     * This means they have the same name and accidental, so B&#x266f is not
+     * considered equal to C.  For that, try comparing the pitches.
+     *
+     * @param {mu.NoteClass} other The note class to compare against
+     * @return {boolean} True If the note classes are equivalent
+     * @memberof mu.NoteClass
+     */
+    mu.NoteClass.prototype.equals = function(other) {
+        mu._assert(other instanceof mu.NoteClass,
+                   'invalid pitch class ' + other);
+        return this._index == other._index &&
+            ((this._accidental == null && other._accidental == null)
+             || (this._accidental != null && other._accidental != null && this._accidental.equals(other._accidental)));
+    };
+    /**
+     * Returns a description of this note class.
+     *
+     * @example
+     * // returns "C&#x266f;"
+     * mu.C_SHARP.toString()
+     *
+     * @return {string} A description of this note class
+     * @memberof mu.NoteClass
+     */
+    mu.NoteClass.prototype.toString = function() {
+        var ret = mu.NoteClass._BASE_LETTERS[this._index];
+        if (this._accidental)
+            ret += this._accidental.toString();
+        return ret;
+    };
+
+    /**
+     * A note, such as B2, C&#x266d3; or G&#x266e4;.
+     *
+     * Usually you should not need to call this constructor.  There are
+     * other ways to make a note.
+     *
+     * @example
+     * // these all return a note representing middle C
+     * mu.Note(mu.C, 4)
+     * mu.C_4
+     *
+     * @class
+     * @param {mu.NoteClass} noteClass The note class for this note
+     * @param {number} [octave] The octave number of the note as described
+     * by scientific note notation; an integer from 0 to 10 inclusive.
+     * Middle C is in octave 4, and it is the fourth C on a standard
+     * 88-key piano keyboard.
+     * @memberof mu
+     */
+    mu.Note = function(noteClass, octave) {
+        if (!(this instanceof mu.Note))
+            return new mu.Note(noteClass, octave);
+        mu._assert(noteClass instanceof mu.NoteClass,
+                   'invalid note class ' + noteClass);
+        if (octave == null)
+            octave = 4;
+        mu._assert(mu._isInteger(octave),
+                   'invalid octave ' + octave);
+        mu._assert(octave >= 0 && octave <= 10,
+                   'unsupported octave ' + octave);
+        mu._assert((octave != 0 || !noteClass.equals(mu.C_FLAT))
+                   && (octave != 10 || !noteClass.equals(mu.B_SHARP)),
+                   'unsupported note ' + noteClass.toString() + ' in octave ' + octave);
+
+        this._noteClass = noteClass;
+        this._octave = octave;
+    };
+    (function() {
+        // these constants are documented in notes.js,
+        // which is generated by the docgen.py script
+        for (var octave = 0; octave <= 10; octave ++) {
+            mu.NoteClass._BASE_LETTERS.forEach(function(letter, index) {
+                mu[letter + '_' + octave] = mu.Note(mu.NoteClass(index), octave);
+                mu[letter + '_NATURAL' + '_' + octave] = mu.Note(mu.NoteClass(index, mu.NATURAL), octave);
+                if (letter != 'C' || octave != 0)
+                    mu[letter + '_FLAT' + '_' + octave] = mu.Note(mu.NoteClass(index, mu.FLAT), octave);
+                if (letter != 'B' || octave != 10)
+                    mu[letter + '_SHARP' + '_' + octave] = mu.Note(mu.NoteClass(index, mu.SHARP), octave);
+            });
+        }
+    })();
+    /**
+     * Returns the octave number of this note.  The fourth octave is the
+     * one that includes middle C, and is also the fourth octave on an 88-key
+     * piano.
+     *
+     * @example
+     * // returns 4
+     * mu.C_4.octave()
+     *
+     * @return {number} The octave number; an integer from 0 to 10 inclusive
+     * @memberof mu.Note
+     */
+    mu.Note.prototype.octave = function() {
+        return this._octave;
+    };
+    /**
+     * Returns the note class of this note.
+     *
+     * @example
+     * // returns a note class equivalent to mu.A
+     * mu.A_4.noteClass()
+     *
+     * @return {mu.NoteClass} The note class of this note
+     * @memberof mu.Note
+     */
+    mu.Note.prototype.noteClass = function() {
+        return this._noteClass;
+    };
+    /**
+     * Returns true if this note is equivalent to the `other`.
+     * This means they have the same octave and note class, so A&#x266f4 is not
+     * considered equal to B4.  For that, try comparing the pitches.
+     *
+     * @param {mu.Note} The note to compare against
+     * @return {boolean} True if the two notes are equivalent
+     * @memberof mu.Note
+     */
+    mu.Note.prototype.equals = function(other) {
+        mu._assert(other instanceof mu.Note,
+                   'invalid note ' + other);
+        return this._octave == other._octave && this._noteClass.equals(other._noteClass);
+    };
+    /**
+     * Return the pitch corresponding to this note.
+     *
+     * @return {mu.Pitch} The pitch corresponding to this note
+     * @memberof mu.Note
+     */
+    mu.Note.prototype.pitch = function() {
+        var nc = this._noteClass;
+        var pc = nc.pitchClass();
+        var octave = this._octave;
+        if (nc.equals(mu.C_FLAT))
+            octave --;
+        else if (nc.equals(mu.B_SHARP))
+            octave ++;
+        return mu.Pitch(pc, octave);
+    };
+    /**
+     * Returns a description of this note.
+     *
+     * @example
+     * // returns "C&#x266f;3"
+     * mu.C_SHARP_3.toString()
+     *
+     * @return {string} A description of this note
+     * @memberof mu.Note
+     */
+    mu.Note.prototype.toString = function() {
+        var nc = this._noteClass;
+        var octave = this._octave;
+        if (nc.equals(mu.C_FLAT))
+            octave --;
+        else if (nc.equals(mu.B_SHARP))
+            octave ++;
+        return nc.toString() + octave;
+    };
+
+    /**
+     * A musical mode, which describes the intervals between the degrees of a
+     * diatonic scale.  There are seven modes.
+     *
+     * Don't call this constructor, instead use the constant instances of
+     * this class (e.g. mu.MAJOR or mu.DORIAN).
+     *
+     * @class
+     * @param {number} offset The offset of the tonic relative to the
+     * major scale (i.e. the shift in the interval sequence relative to
+     * the Ionian mode)
+     * @memberof mu
+     */
+    mu.Mode = function(offset) {
+        if (!(this instanceof mu.Mode))
+            return new mu.Mode(offset);
+        mu._assert(mu._isInteger(offset) && offset >= 0 && offset <= 6,
+                   'invalid offset ' + offset);
+        this._offset = offset;
+        this._name = mu.Mode._NAMES[offset];
+        this._intervals = [];
+        var at = 0;
+        for (var i = 0; i < 8; i ++) {
+            this._intervals.push(mu.Interval(at));
+            at += mu.Mode._SEQUENCE[offset + i];
+        }
+    };
+    mu.Mode._NAMES = ['Ionian', 'Dorian', 'Phrygian', 'Lydian', 'Mixolydian', 'Aeolian', 'Locrian'];
+    mu.Mode._SEQUENCE = [2,2,1,2,2,2,1,2,2,1,2,2,2];
+    /**
+     * The Ionian mode (corresponding to the major scale).
+     *
+     * @type {mu.Mode}
+     * @memberof mu
+     */
+    mu.MAJOR = mu.IONIAN = mu.Mode(0);
+    /**
+     * The Dorian mode.
+     *
+     * @type {mu.Mode}
+     * @memberof mu
+     */
+    mu.DORIAN = mu.Mode(1);
+    /**
+     * The Phrygian mode.
+     *
+     * @type {mu.Mode}
+     * @memberof mu
+     */
+    mu.PHRYGIAN = mu.Mode(2);
+    /**
+     * The Lydian mode.
+     *
+     * @type {mu.Mode}
+     * @memberof mu
+     */
+    mu.LYDIAN = mu.Mode(3);
+    /**
+     * The Mixolydian mode (corresponding to the dominant scale).
+     *
+     * @type {mu.Mode}
+     * @memberof mu
+     */
+    mu.DOMINANT = mu.MIXOLYDIAN = mu.Mode(4);
+    /**
+     * The Aeolian mode (corresponding to the natural minor scale).
+     *
+     * @type {mu.Mode}
+     * @memberof mu
+     */
+    mu.NATURAL_MINOR = mu.AEOLIAN = mu.Mode(5);
+    /**
+     * The Locrian mode.
+     *
+     * @type {mu.Mode}
+     * @memberof mu
+     */
+    mu.LOCRIAN = mu.Mode(6);
+    /**
+     * Returns the name of this mode.
+     *
+     * @return {string} The name of this mode
+     * @memberof mu.Mode
+     */
+    mu.Mode.prototype.name = function() {
+        return this._name;
+    };
+    /**
+     * Returns the interval from the tonic to the given `degree` of the scale.
+     *
+     * @return {mu.Interval} The interval from the tonic to the given degree
+     * @memberof mu.Mode
+     */
+    mu.Mode.prototype.interval = function(degree) {
+        mu._assert(mu._isInteger(degree) && degree >= 1 && degree <= 7,
+                   'invalid degree ' + degree);
+        return this._intervals[degree];
+    };
+    /**
+     * Returns a description of this mode.
+     *
+     * @return {string} A description of this mode
+     * @memberof mu.Mode
+     */
+    mu.Mode.prototype.toString = function() {
+        return this._name + ' mode';
+    };
+
+    /**
+     * A musical key which specifies a tonic note, a mode, and a
+     * corresponding diatonic scale.  A key can determine the descriptions
+     * of pitches (e.g. B-flat vs A-sharp), and is necessary for
+     * relative chord descriptions (e.g. "V7" instead of "G7" in the key
+     * of C).
+     *
+     * @class
+     * @param {mu.NoteClass} tonic The key note, from which other notes in
+     * the scale are derived
+     * @param {mu.Mode} mode The mechanism by which the scale is derived
+     * from the tonic
+     * @memberof mu
+     */
+    mu.Key = function(tonic, mode) {
+        mu._assert(tonic instanceof mu.NoteClass,
+                   'invalid tonic ' + tonic);
+        mu._assert(mode instanceof mu.Mode,
+                   'invalid mode ' + mode);
+        this._tonic = tonic;
+        this._mode = mode;
+    };
+    (function() {
+        var modes = ['IONIAN', 'MAJOR', 'DORIAN', 'PHRYGIAN', 'LYDIAN',
+                     'MIXOLYDIAN', 'DOMINANT', 'AEOLIAN', 'NATURAL_MINOR',
+                     'LOCRIAN'];
+        // these constants are documented in keys.js,
+        // which is generated by the docgen.py script
+        modes.forEach(function(modeName) {
+            var mode = mu[modeName];
+            mu._assert(mode, 'missing mode ' + modeName);
+            mu.NoteClass._BASE_LETTERS.forEach(function(letter, index) {
+                mu[letter + '_' + modeName] = mu.Key(mu[letter], mode);
+                mu[letter + '_NATURAL' + '_' + modeName] = mu.Key(mu[letter + '_NATURAL'], mode);
+                mu[letter + '_FLAT' + '_' + modeName] = mu.Key(mu[letter + '_FLAT'], mode);
+                mu[letter + '_SHARP' + '_' + modeName] = mu.Key(mu[letter + '_SHARP'], mode);
+            });
+        });
+    })();
+    /**
+     * Returns a note class in this key, based on the scale degree and
+     * any accidental that might apply.
+     *
+     * @param {number} degree The scale degree
+     * @param {mu.Accidental} [accidental] An accidental to apply
+     * @memberof mu.Key
+     */
+    mu.Key.prototype.noteClassByDegree = function(degree, accidental) {
+        mu._assert(mu._isInteger(degree) && degree >= 1 && degree <= 7,
+                   'invalid degree ' + degree);
+        mu._assert(accidental instanceof mu.Accidental,
+                   'invalid accidental ' + accidental);
+        return this._tonic
+            .transpose(this._mode.interval(degree))
+            .transpose(accidental.semitones());
+    };
+
+    /**
+     * A chord type.  This specifies the name for the type of chord
+     * (e.g. "dominant seventh"), an abbreviation for the type (e.g. "7"),
+     * and some of the interval types present in the chord (e.g. if the
+     * third is present, and whether it is a major or minor third).
+     *
+     * Don't call this constructor directly.
+     *
+     * @class
+     * @param {object} info Configuration data for this chord type
+     * @memberof mu
+     */
+    mu.ChordType = function(info) {
+        if (!(this instanceof mu.ChordType))
+            return new mu.ChordType(info);
+        mu._assert(mu._isObject(info)
+                   && mu._isString(info.name)
+                   && mu._isString(info.abbr)
+                   && (info.third == null || ['minor', 'major'].indexOf(info.third) >= 0)
+                   && (info.fifth == null || ['perfect', 'diminished', 'augmented'].indexOf(info.fifth) >= 0)
+                   && (info.seventh == null || ['minor', 'major', 'double-flat'].indexOf(info.seventh) >= 0),
+                   'invalid chord type data ' + info);
+        this._name = info.name;
+        this._abbr = info.abbr;
+        this._third = info.third;
+        this._fifth = info.fifth;
+        this._seventh = info.seventh;
+    };
+    mu.ChordType._INFO = [
         {
             abbr: 'M',
             name: 'major',
@@ -1053,8 +1418,8 @@
             opt: []
         }
     ];
-    mu.Chord._INFO_MAP = {};
-    mu.Chord._INFO.forEach(function(info) {
+    mu.ChordType._INFO_MAP = {};
+    mu.ChordType._INFO.forEach(function(info) {
         for (var c = 0; c < Math.pow(2, info.opt.length); c ++) {
             var arr = info.req.map(function(i) {
                 return i % 12;
@@ -1063,157 +1428,13 @@
                 if ((c & (1 << o)) != 0)
                     arr.push(i);
             });
-            arr = arr.sort(function(a, b) { return a - b; });
+            arr.sort(function(a, b) { return a - b; });
             var pattern = arr.join('-');
-            if (pattern in mu.Chord._INFO_MAP)
-                throw Error('duplicate chord pattern ' + pattern + ': ' + mu.Chord._INFO_MAP[pattern].name + ' and ' + info.name);
-            mu.Chord._INFO_MAP[pattern] = info;
+            if (pattern in mu.ChordType._INFO_MAP)
+                throw Error('duplicate chord pattern ' + pattern + ': ' + mu.ChordType._INFO_MAP[pattern].name + ' and ' + info.name);
+            mu.ChordType._INFO_MAP[pattern] = info;
         }
     });
-    /**
-     * Returns the number of pitches in this chord.
-     *
-     * @return {number} The number of pitches in this chord
-     * @memberof mu.Chord
-     */
-    mu.Chord.prototype.size = function() {
-        return this._pitches.length;
-    };
-    /**
-     * Returns the pitches in this chord.
-     *
-     * @return {Array.<mu.Pitch>} The pitches in this chord
-     * @memberof mu.Chord
-     */
-    mu.Chord.prototype.pitches = function() {
-        return this._pitches;
-    };
-    /**
-     * Return a {@link mu.Chord} representing the transposition of this chord
-     * by the given number of `semitones`.  A positive number raises the
-     * pitches of the chord, a negative number lowers them.
-     *
-     * @example
-     * // returns a chord equivalent to mu.Chord(mu.F_4, mu.A_4, mu.C_5)
-     * mu.Chord(mu.C_4, mu.E_4, mu.G_4).transpose(5)
-     *
-     * @param {number} semitones The number of semitones by which to
-     * raise the returned chord; an integer
-     * @return {mu.Chord} The new chord
-     * @memberof mu.Chord
-     */
-    mu.Chord.prototype.transpose = function(semitones) {
-        return mu.Chord.apply(null, this._pitches.map(function(pitch) {
-            return pitch.transpose(semitones);
-        }));
-    };
-    /**
-     * Describes this chord.
-     *
-     * @example
-     * // returns "C4 E4 G4"
-     * mu.Chord(mu.C_4, mu.E_4, mu.G_4).toString()
-     *
-     * @return {string} A description of this chord
-     * @memberof mu.Chord
-     */
-    mu.Chord.prototype.toString = function() {
-        var ret = [];
-        this._pitches.forEach(function(pitch) {
-            ret.push(pitch.toString());
-        });
-        return ret.join(' ');
-    };
-    /**
-     * Analyze the chord, returning an array of ChordAnalysis objects.
-     *
-     * @return {Array.<mu.ChordAnalysis>} The analyses of the chord
-     */
-    mu.Chord.prototype.analyze = function() {
-        var pitchClasses = [];
-        this._pitches.forEach(function(pitch) {
-            pitchClasses[pitch.pitchClass().index()] = true;
-        });
-        var results = [];
-        pitchClasses.forEach(function(present, index) {
-            if (!present)
-                return;
-            var start = mu.PitchClass(index);
-            var intervals = [0];
-            for (var i = 1; i < 12; i ++) {
-                var other = start.transpose(i);
-                if (pitchClasses[other.index()])
-                    intervals.push(i);
-            }
-            var info = mu.Chord._INFO_MAP[intervals.join('-')];
-            if (info)
-                results.push(mu.ChordAnalysis(start, mu.ChordType(info)));
-        });
-        return results;
-    };
-    /**
-     * Guesses a name for this chord based on the pitches present.
-     *
-     * @example
-     * // returns "F major"
-     * mu.Chord(mu.C_4, mu.F_4, mu.A_4).name();
-     *
-     * @class
-     * @return {string|null} The name of this chord, or null if it isn't known
-     * @memberof mu.Chord
-     */
-    mu.Chord.prototype.name = function() {
-        var a = this.analyze();
-        if (a.length == 0)
-            return null;
-        return a[0].name();
-    };
-    /**
-     * Guesses an abbreviated name for this chord based on the pitches present.
-     *
-     * @example
-     * // returns "F major"
-     * mu.Chord(mu.C_4, mu.F_4, mu.A_4).name();
-     *
-     * @class
-     * @return {string|null} The abbreviated name of this chord, or null if it isn't known
-     * @memberof mu.Chord
-     */
-    mu.Chord.prototype.abbr = function() {
-        var a = this.analyze();
-        if (a.length == 0)
-            return null;
-        return a[0].abbr();
-    };
-
-    /**
-     * A chord type.  This specifies the name for the type of chord
-     * (e.g. "dominant seventh"), an abbreviation for the type (e.g. "7"),
-     * and some of the interval types present in the chord (e.g. if the
-     * third is present, and whether it is a major or minor third).
-     *
-     * Don't call this constructor directly.
-     *
-     * @class
-     * @param {object} info Configuration data for this chord type
-     * @memberof mu
-     */
-    mu.ChordType = function(info) {
-        if (!(this instanceof mu.ChordType))
-            return new mu.ChordType(info);
-        mu._assert(mu._isObject(info)
-                   && mu._isString(info.name)
-                   && mu._isString(info.abbr)
-                   && (info.third == null || ['minor', 'major'].indexOf(info.third) >= 0)
-                   && (info.fifth == null || ['perfect', 'diminished', 'augmented'].indexOf(info.fifth) >= 0)
-                   && (info.seventh == null || ['minor', 'major', 'double-flat'].indexOf(info.seventh) >= 0),
-                   'invalid chord type data ' + info);
-        this._name = info.name;
-        this._abbr = info.abbr;
-        this._third = info.third;
-        this._fifth = info.fifth;
-        this._seventh = info.seventh;
-    };
     /**
      * Returns the name of this chord type.
      *
@@ -1338,178 +1559,42 @@
     };
 
     /**
-     * A musical mode, which describes the intervals between the degrees of a
-     * diatonic scale.  There are seven modes.
-     *
-     * Don't call this constructor, instead use the constant instances of
-     * this class (e.g. mu.MAJOR or mu.DORIAN).
+     * Analyze a set of pitches as a chord.  This returns an array of zero
+     * or more {@link mu.ChordAnalysis} objects, each of which is a possible
+     * interpretation of the chord.
      *
      * @class
-     * @param {number} offset The offset of the tonic relative to the
-     * major scale (i.e. the shift in the interval sequence relative to
-     * the Ionian mode)
+     * @param {Array.<mu.Pitch>} pitches The set of pitches to analyze
+     * @result {Array.<mu.ChordAnalysis>}
      * @memberof mu
      */
-    mu.Mode = function(offset) {
-        if (!(this instanceof mu.Mode))
-            return new mu.Mode(offset);
-        mu._assert(_.isInteger(offset) && offset >= 0 && offset <= 6,
-                   'invalid offset ' + offset);
-        this._offset = offset;
-        this._name = mu.Mode._NAMES[offset];
-        this._intervals = [];
-        var at = 0;
-        for (var i = 0; i < 8; i ++) {
-            this._intervals.push(mu.Interval(at));
-            at += mu.Mode._SEQUENCE[offset + i];
-        }
-    };
-    mu.Mode._NAMES = ['Ionian', 'Dorian', 'Phrygian', 'Lydian', 'Mixolydian', 'Aeolian', 'Locrian'];
-    mu.Mode._SEQUENCE = [2,2,1,2,2,2,1,2,2,1,2,2,2];
-    /**
-     * The Ionian mode (corresponding to the major scale).
-     *
-     * @type {mu.Mode}
-     * @memberof mu
-     */
-    mu.MAJOR = mu.IONIAN = mu.Mode(0);
-    /**
-     * The Dorian mode.
-     *
-     * @type {mu.Mode}
-     * @memberof mu
-     */
-    mu.DORIAN = mu.Mode(1);
-    /**
-     * The Phrygian mode.
-     *
-     * @type {mu.Mode}
-     * @memberof mu
-     */
-    mu.PHRYGIAN = mu.Mode(2);
-    /**
-     * The Lydian mode.
-     *
-     * @type {mu.Mode}
-     * @memberof mu
-     */
-    mu.LYDIAN = mu.Mode(3);
-    /**
-     * The Mixolydian mode (corresponding to the dominant scale).
-     *
-     * @type {mu.Mode}
-     * @memberof mu
-     */
-    mu.DOMINANT = mu.MIXOLYDIAN = mu.Mode(4);
-    /**
-     * The Aeolian mode (corresponding to the natural minor scale).
-     *
-     * @type {mu.Mode}
-     * @memberof mu
-     */
-    mu.NATURAL_MINOR = mu.AEOLIAN = mu.Mode(5);
-    /**
-     * The Locrian mode.
-     *
-     * @type {mu.Mode}
-     * @memberof mu
-     */
-    mu.LOCRIAN = mu.Mode(6);
-    /**
-     * Returns the name of this mode.
-     *
-     * @return {string} The name of this mode
-     * @memberof mu.Mode
-     */
-    mu.Mode.prototype.name = function() {
-        return this._name;
-    };
-    /**
-     * Returns the interval from the tonic to the given `degree` of the scale.
-     *
-     * @return {mu.Interval} The interval from the tonic to the given degree
-     * @memberof mu.Mode
-     */
-    mu.Mode.prototype.interval = function(degree) {
-        mu._assert(mu._isInteger(degree) && degree >= 1 && degree <= 7,
-                   'invalid degree ' + degree);
-        return this._intervals[degree];
-    };
-    /**
-     * Returns a description of this mode.
-     *
-     * @return {string} A description of this mode
-     * @memberof mu.Mode
-     */
-    mu.Mode.prototype.toString = function() {
-        return this._name + ' mode';
-    };
-
-    /**
-     * A musical key which specifies a tonic note, a mode, and a
-     * corresponding diatonic scale.  A key can determine the descriptions
-     * of pitches (e.g. B-flat vs A-sharp), and is necessary for
-     * relative chord descriptions (e.g. "V7" instead of "G7" in the key
-     * of C).
-     *
-     * @class
-     * @param {mu.PitchClass} tonic The key note, from which other notes in
-     * the scale are derived
-     * @param {mu.Mode} mode The mechanism by which the scale is derived
-     * from the tonic
-     * @memberof mu
-     */
-    mu.Key = function(tonic, mode) {
-        mu._assert(tonic instanceof mu.PitchClass,
-                   'invalid tonic ' + tonic);
-        mu._assert(mode instanceof mu.Mode,
-                   'invalid mode ' + mode);
-        this._tonic = tonic;
-        this._mode = mode;
-    };
-    (function() {
-        var modes = ['IONIAN', 'MAJOR', 'DORIAN', 'PHRYGIAN', 'LYDIAN',
-                     'MIXOLYDIAN', 'DOMINANT', 'AEOLIAN', 'MINOR', 'LOCRIAN'];
-        // these constants are documented in keys.js,
-        // which is generated by the docgen.py script
-        modes.forEach(function(modeName) {
-            var mode = mu[modeName];
-            mu._assert(mode, 'missing mode ' + modeName);
-            mu['C_' + modeName] = mu.Key(mu.C, mode);
-            mu['C_SHARP_' + modeName] = 
-            mu['D_FLAT_' + modeName] = mu.Key(mu.C_SHARP, mode);
-            mu['D_' + modeName] = mu.Key(mu.D, mode);
-            mu['D_SHARP_' + modeName] = 
-            mu['E_FLAT_' + modeName] = mu.Key(mu.D_SHARP, mode);
-            mu['E_' + modeName] = mu.Key(mu.E, mode);
-            mu['F_' + modeName] = mu.Key(mu.F, mode);
-            mu['F_SHARP_' + modeName] = 
-            mu['G_FLAT_' + modeName] = mu.Key(mu.F_SHARP, mode);
-            mu['G_' + modeName] = mu.Key(mu.G, mode);
-            mu['G_SHARP_' + modeName] = 
-            mu['A_FLAT_' + modeName] = mu.Key(mu.G_SHARP, mode);
-            mu['A_' + modeName] = mu.Key(mu.A, mode);
-            mu['A_SHARP_' + modeName] = 
-            mu['B_FLAT_' + modeName] = mu.Key(mu.A_SHARP, mode);
-            mu['B_' + modeName] = mu.Key(mu.B, mode);
+    mu.analyzeChord = function(pitches) {
+        mu._assert(Array.isArray(pitches),
+                   'invalid pitch array ' + pitches);
+        pitches.forEach(function(pitch) {
+            mu._assert(pitch instanceof mu.Pitch,
+                       'invalid pitch array ' + pitches);
         });
-    })();
-    /**
-     * Returns a pitch class in this key, based on the scale degree and
-     * any accidental that might apply.
-     *
-     * @param {number} degree The scale degree
-     * @param {mu.Accidental} [accidental] An accidental to apply
-     * @memberof mu.Key
-     */
-    mu.Key.prototype.pitchClassByDegree = function(degree, accidental) {
-        mu._assert(mu._isInteger(degree) && degree >= 1 && degree <= 7,
-                   'invalid degree ' + degree);
-        mu._assert(accidental instanceof mu.Accidental,
-                   'invalid accidental ' + accidental);
-        return this._tonic
-            .transpose(this._mode.interval(degree))
-            .transpose(accidental.semitones());
+        var pitchClasses = [];
+        pitches.forEach(function(pitch) {
+            pitchClasses[pitch.pitchClass().index()] = true;
+        });
+        var results = [];
+        pitchClasses.forEach(function(present, index) {
+            if (!present)
+                return;
+            var intervals = [0];
+            for (var i = 1; i < 12; i ++) {
+                var other = (index + i) % 12;
+                if (pitchClasses[other])
+                    intervals.push(i);
+            }
+            var info = mu.ChordType._INFO_MAP[intervals.join('-')];
+            if (info)
+                results.push(mu.ChordAnalysis(mu.PitchClass(index),
+                                              mu.ChordType(info)));
+        });
+        return results;
     };
 
 /*
