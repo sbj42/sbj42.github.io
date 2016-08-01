@@ -835,7 +835,7 @@
      *
      * @class
      * @return {string} The name of this interval, or an alternate description
-     * @memberof mu.Chord
+     * @memberof mu.Interval
      */
     mu.Interval.prototype.name = function() {
         var i = mu.Interval._INFO[String(this._semitones)];
@@ -1474,24 +1474,106 @@
     };
 
     /**
-     * Analyze a set of pitches as a chord.  This returns an array of zero
-     * or more {@link mu.ChordAnalysis} objects, each of which is a possible
-     * interpretation of the chord.
+     * A set of pitches that are heard together.  Usually
+     * three or more pitches, but this class accepts any number.
+     *
+     * @example
+     * // returns a chord composed of C4, E4, and G4
+     * mu.Chord(mu.C_4, mu.E_4, mu.G_4)
      *
      * @class
-     * @param {Array.<mu.Pitch>} pitches The set of pitches to analyze
-     * @result {Array.<mu.ChordAnalysis>}
+     * @param {...mu.Pitch|Array.<mu.Pitch>} [pitch] A pitch (or an
+     * array of pitches) in the chord
      * @memberof mu
      */
-    mu.analyzeChord = function(pitches) {
-        mu._assert(Array.isArray(pitches),
-                   'invalid pitch array ' + pitches);
-        pitches.forEach(function(pitch) {
-            mu._assert(pitch instanceof mu.Pitch,
-                       'invalid pitch array ' + pitches);
+    mu.Chord = function(pitch) {
+        if (!(this instanceof mu.Chord)) {
+            function C(args) {
+                return mu.Chord.apply(this, args);
+            }
+            C.prototype = mu.Chord.prototype;
+            return new C(arguments);
+        }
+        this._pitches = [];
+        mu._argsToArray(arguments).forEach(function(pitch) {
+            if (Array.isArray(pitch)) {
+                pitch.forEach(function(pitch) {
+                    mu._assert(pitch instanceof mu.Pitch,
+                               'invalid pitch ' + pitch);
+                    this._pitches.push(pitch);
+                }, this);
+            } else {
+                mu._assert(pitch instanceof mu.Pitch,
+                           'invalid pitch ' + pitch);
+                    this._pitches.push(pitch);
+            }
+        }, this);
+        this._pitches.sort(function(a, b) {
+            return a.subtract(b);
         });
+    };
+    /**
+     * Returns the number of pitches in this chord.
+     *
+     * @return {number} The number of pitches in this chord
+     * @memberof mu.Chord
+     */
+    mu.Chord.prototype.size = function() {
+        return this._pitches.length;
+    };
+    /**
+     * Returns the pitches in this chord.
+     *
+     * @return {Array.<mu.Pitch>} The pitches in this chord
+     * @memberof mu.Chord
+     */
+    mu.Chord.prototype.pitches = function() {
+        return this._pitches;
+    };
+    /**
+     * Return a {@link mu.Chord} representing the transposition of this chord
+     * by the given number of `semitones`.  A positive number raises the
+     * pitches of the chord, a negative number lowers them.
+     *
+     * @example
+     * // returns a chord equivalent to mu.Chord(mu.F_4, mu.A_4, mu.C_5)
+     * mu.Chord(mu.C_4, mu.E_4, mu.G_4).transpose(5)
+     *
+     * @param {number} semitones The number of semitones by which to
+     * raise the returned chord; an integer
+     * @return {mu.Chord} The new chord
+     * @memberof mu.Chord
+     */
+    mu.Chord.prototype.transpose = function(semitones) {
+        return mu.Chord.apply(null, this._pitches.map(function(pitch) {
+            return pitch.transpose(semitones);
+        }));
+    };
+    /**
+     * Describes the pitches in this chord.
+     *
+     * @example
+     * // returns "C4 E4 G4"
+     * mu.Chord(mu.C_4, mu.E_4, mu.G_4).toString()
+     *
+     * @return {string} A description of this chord
+     * @memberof mu.Chord
+     */
+    mu.Chord.prototype.toString = function() {
+        var ret = [];
+        this._pitches.forEach(function(pitch) {
+            ret.push(pitch.toString());
+        });
+        return ret.join(' ');
+    };
+    /**
+     * Analyze the chord, returning an array of ChordAnalysis objects.
+     *
+     * @return {Array.<mu.ChordAnalysis>} The analyses of the chord
+     */
+    mu.Chord.prototype.analyze = function() {
         var pitchClasses = [];
-        pitches.forEach(function(pitch) {
+        this._pitches.forEach(function(pitch) {
             pitchClasses[pitch.pitchClass().index()] = true;
         });
         var results = [];
@@ -1510,6 +1592,40 @@
                                               mu.ChordType(info)));
         });
         return results;
+    };
+    /**
+     * Guesses a name for this chord based on the pitches present.
+     *
+     * @example
+     * // returns "F major"
+     * mu.Chord(mu.C_4, mu.F_4, mu.A_4).name();
+     *
+     * @class
+     * @return {string|null} The name of this chord, or null if it isn't known
+     * @memberof mu.Chord
+     */
+    mu.Chord.prototype.name = function() {
+        var a = this.analyze();
+        if (a.length == 0)
+            return null;
+        return a[0].name();
+    };
+    /**
+     * Guesses an abbreviated name for this chord based on the pitches present.
+     *
+     * @example
+     * // returns "F major"
+     * mu.Chord(mu.C_4, mu.F_4, mu.A_4).name();
+     *
+     * @class
+     * @return {string|null} The abbreviated name of this chord, or null if it isn't known
+     * @memberof mu.Chord
+     */
+    mu.Chord.prototype.abbr = function() {
+        var a = this.analyze();
+        if (a.length == 0)
+            return null;
+        return a[0].abbr();
     };
 
 /*
