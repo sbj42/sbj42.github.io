@@ -160,4 +160,32 @@
     assertThrow(function() { mu.Chord('C4 G4'); });
 })();
 
+(function() {
+    console.info('testing mu.Mode');
+    var M = mu.MAJOR;
+    assertEquals(M.toString(), 'Ionian');
+    assertEquals(M.degree(1).semitones(), 0);
+    assertEquals(M.degree(2).semitones(), 2);
+    assertEquals(M.degree(3).semitones(), 4);
+    var m = mu.MINOR;
+    assertEquals(m.toString(), 'Aeolian');
+    assertEquals(m.degree(1).semitones(), 0);
+    assertEquals(m.degree(2).semitones(), 2);
+    assertEquals(m.degree(3).semitones(), 3);
+})();
+
+(function() {
+    console.info('testing mu.Key');
+    var cM = mu.C_MAJOR;
+    assertEquals(cM.toString(), 'C Ionian');
+    assert(cM.degree(1).equals(mu.C));
+    assert(cM.degree(2).equals(mu.D));
+    assert(cM.degree(3).equals(mu.E));
+    var fm = mu.F_MINOR;
+    assertEquals(fm.toString(), 'F Aeolian');
+    assert(fm.degree(1).equals(mu.F));
+    assert(fm.degree(2).equals(mu.G));
+    assert(fm.degree(3).equals(mu.G_SHARP));
+})();
+
 document.write('tests passed');

@@ -279,8 +279,8 @@
     mu.PITCH_CLASSES = [mu.C, mu.C_SHARP, mu.D, mu.D_SHARP, mu.E,
                         mu.F, mu.F_SHARP, mu.G, mu.G_SHARP, mu.A,
                         mu.A_SHARP, mu.B];
-    mu.PitchClass._SHARP_NAMES = 'CCDDEFFGGABC';
-    mu.PitchClass._FLAT_NAMES  = 'CDDEEFGGAABC';
+    mu.PitchClass._SHARP_NAMES = 'CCDDEFFGGAAB';
+    mu.PitchClass._FLAT_NAMES  = 'CDDEEFGGAABB';
     mu.PitchClass._IN_CMAJOR   = [true, false, true, false, true,
                                   true, false, true, false, true, false, true];
     /**
@@ -845,250 +845,6 @@
     };
 
     /**
-     * A note name, such as B or C&#x266d;.  This distinguishes between two
-     * names even when they are the same pitch class.  This is useful for
-     * naming keys (e.g. {@link mu.C_SHARP_MAJOR} vs {@link mu.D_FLAT_MAJOR}).
-     *
-     * @example
-     * // Returns a note name for B&#x266f;:
-     * mu.NoteName(mu.B, mu.SHARP) 
-     * @example
-     * // These both return a pitch class name for B:
-     * mu.NoteName(mu.B) 
-     * mu.NoteName(mu.B, mu.NATURAL) 
-     *
-     * @class
-     * @param {mu.PitchClass} base The base note, given as a pitch from
-     * the C major scale: mu.C, mu.D, mu.E, mu.F, mu.G, mu.A, mu.B
-     * @param {mu.Accidental} [accidental] An accidental to apply to the base
-     * note
-     * @memberof mu
-     */
-    mu.NoteName = function(base, accidental) {
-        if (!(this instanceof mu.NoteName))
-            return new mu.NoteName(base, accidental);
-        mu._assert(base instanceof mu.PitchClass && base.inCMajor(),
-                   'invalid base note ' + base);
-        mu._assert(accidental == null || accidental instanceof mu.Accidental,
-                   'invalid accidental ' + accidental);
-        this._base = base;
-        this._accidental = accidental || mu.NATURAL;
-    };
-    /**
-     * Returns the pitch class corresponding to this note name.
-     *
-     * @example
-     * // These both return a pitch class equivalent to mu.A_SHARP
-     * mu.NoteName(mu.A, mu.SHARP).pitchClass()
-     * mu.NoteName(mu.B, mu.FLAT).pitchClass()
-     *
-     * @return {mu.PitchClass} The pitch class corresponding to this note name
-     * @memberof mu.NoteName
-     */
-    mu.NoteName.prototype.pitchClass = function() {
-        return this._base.transpose(this._accidental.semitones());
-    };
-    /**
-     * Returns true if this note name is equivalent to the `other`.
-     * This means they have the same name and accidental, so B&#x266f is not
-     * considered equal to C.  To get pitch equivalency, compare the pitch
-     * classes instead.
-     *
-     * @param {mu.NoteName} other The note name to compare against
-     * @return {boolean} True If the note names are equivalent
-     * @memberof mu.NoteName
-     */
-    mu.NoteName.prototype.equals = function(other) {
-        mu._assert(other instanceof mu.NoteName,
-                   'invalid note name ' + other);
-        return this._index == other._index &&
-            this._accidental.equals(other._accidental);
-    };
-    /**
-     * Returns a description of this note class.
-     *
-     * @example
-     * // returns "C&#x266f;"
-     * mu.C_SHARP.toString()
-     *
-     * @return {string} A description of this note class
-     * @memberof mu.NoteName
-     */
-    mu.NoteName.prototype.toString = function() {
-        var ret = this._base.toString();
-        if (!this._accidental.equals(mu.NATURAL))
-            ret += this._accidental.toString();
-        return ret;
-    };
-
-    /**
-     * A musical mode, which describes the intervals between the degrees of a
-     * diatonic scale.  There are seven modes.
-     *
-     * Don't call this constructor, instead use the constant instances of
-     * this class (e.g. mu.MAJOR or mu.DORIAN).
-     *
-     * @class
-     * @param {number} offset The offset of the tonic relative to the
-     * major scale (i.e. the shift in the interval sequence relative to
-     * the Ionian mode)
-     * @memberof mu
-     */
-    mu.Mode = function(offset) {
-        if (!(this instanceof mu.Mode))
-            return new mu.Mode(offset);
-        mu._assert(mu._isInteger(offset) && offset >= 0 && offset <= 6,
-                   'invalid offset ' + offset);
-        this._offset = offset;
-        this._name = mu.Mode._NAMES[offset];
-        this._intervals = [];
-        var at = 0;
-        for (var i = 0; i < 8; i ++) {
-            this._intervals.push(mu.Interval(at));
-            at += mu.Mode._SEQUENCE[offset + i];
-        }
-    };
-    mu.Mode._NAMES = ['Ionian', 'Dorian', 'Phrygian', 'Lydian', 'Mixolydian', 'Aeolian', 'Locrian'];
-    mu.Mode._SEQUENCE = [2,2,1,2,2,2,1,2,2,1,2,2,2];
-    /**
-     * The Ionian mode (corresponding to the major scale).
-     *
-     * @type {mu.Mode}
-     * @memberof mu
-     */
-    mu.MAJOR = mu.IONIAN = mu.Mode(0);
-    /**
-     * The Dorian mode.
-     *
-     * @type {mu.Mode}
-     * @memberof mu
-     */
-    mu.DORIAN = mu.Mode(1);
-    /**
-     * The Phrygian mode.
-     *
-     * @type {mu.Mode}
-     * @memberof mu
-     */
-    mu.PHRYGIAN = mu.Mode(2);
-    /**
-     * The Lydian mode.
-     *
-     * @type {mu.Mode}
-     * @memberof mu
-     */
-    mu.LYDIAN = mu.Mode(3);
-    /**
-     * The Mixolydian mode (corresponding to the dominant scale).
-     *
-     * @type {mu.Mode}
-     * @memberof mu
-     */
-    mu.DOMINANT = mu.MIXOLYDIAN = mu.Mode(4);
-    /**
-     * The Aeolian mode (corresponding to the natural minor scale).
-     *
-     * @type {mu.Mode}
-     * @memberof mu
-     */
-    mu.NATURAL_MINOR = mu.AEOLIAN = mu.Mode(5);
-    /**
-     * The Locrian mode.
-     *
-     * @type {mu.Mode}
-     * @memberof mu
-     */
-    mu.LOCRIAN = mu.Mode(6);
-    /**
-     * Returns the name of this mode.
-     *
-     * @return {string} The name of this mode
-     * @memberof mu.Mode
-     */
-    mu.Mode.prototype.name = function() {
-        return this._name;
-    };
-    /**
-     * Returns the interval from the tonic to the given `degree` of the scale.
-     *
-     * @return {mu.Interval} The interval from the tonic to the given degree
-     * @memberof mu.Mode
-     */
-    mu.Mode.prototype.interval = function(degree) {
-        mu._assert(mu._isInteger(degree) && degree >= 1 && degree <= 7,
-                   'invalid degree ' + degree);
-        return this._intervals[degree];
-    };
-    /**
-     * Returns a description of this mode.
-     *
-     * @return {string} A description of this mode
-     * @memberof mu.Mode
-     */
-    mu.Mode.prototype.toString = function() {
-        return this._name + ' mode';
-    };
-
-    /**
-     * A musical key which specifies a tonic note, a mode, and a
-     * corresponding diatonic scale.  A key can determine the descriptions
-     * of pitches (e.g. B-flat vs A-sharp), and is necessary for
-     * relative chord descriptions (e.g. "V7" instead of "G7" in the key
-     * of C).
-     *
-     * @class
-     * @param {mu.NoteName} tonic The key note, from which other notes in
-     * the scale are derived
-     * @param {mu.Mode} mode The mechanism by which the scale is derived
-     * from the tonic
-     * @memberof mu
-     */
-    mu.Key = function(tonic, mode) {
-        mu._assert(tonic instanceof mu.NoteName,
-                   'invalid tonic ' + tonic);
-        mu._assert(mode instanceof mu.Mode,
-                   'invalid mode ' + mode);
-        this._tonic = tonic;
-        this._mode = mode;
-    };
-    (function() {
-        var modeNames = ['IONIAN', 'MAJOR', 'DORIAN', 'PHRYGIAN', 'LYDIAN',
-                         'MIXOLYDIAN', 'DOMINANT', 'AEOLIAN', 'NATURAL_MINOR',
-                         'LOCRIAN'];
-        // these constants are documented in keys.js,
-        // which is generated by the docgen.py script
-        modeNames.forEach(function(modeName) {
-            var mode = mu[modeName];
-            mu._assert(mode, 'missing mode ' + modeName);
-            mu.PITCH_CLASSES.forEach(function(pitchClass) {
-                if (!pitchClass.inCMajor())
-                    return;
-                var letter = pitchClass.toString();
-                mu[letter + '_' + modeName] = mu.Key(mu.NoteName(pitchClass), mode);
-                mu[letter + '_FLAT' + '_' + modeName] = mu.Key(mu.NoteName(pitchClass, mu.FLAT), mode);
-                mu[letter + '_SHARP' + '_' + modeName] = mu.Key(mu.NoteName(pitchClass, mu.SHARP), mode);
-            });
-        });
-    })();
-    /**
-     * Returns a pitch in this key, based on the scale degree and
-     * any accidental that might apply.
-     *
-     * @param {number} degree The scale degree
-     * @param {mu.Accidental} [accidental] An accidental to apply
-     * @memberof mu.Key
-     */
-    mu.Key.prototype.pitchByDegree = function(degree, accidental) {
-        mu._assert(mu._isInteger(degree) && degree >= 1 && degree <= 7,
-                   'invalid degree ' + degree);
-        mu._assert(accidental instanceof mu.Accidental,
-                   'invalid accidental ' + accidental);
-        return this._tonic
-            .transpose(this._mode.interval(degree))
-            .transpose(accidental.semitones());
-    };
-
-    /**
      * A chord type.  This specifies the name for the type of chord
      * (e.g. "dominant seventh"), an abbreviation for the type (e.g. "7"),
      * and some of the interval types present in the chord (e.g. if the
@@ -1626,6 +1382,254 @@
         if (a.length == 0)
             return null;
         return a[0].abbr();
+    };
+
+    /**
+     * A note name, such as B or C&#x266d;.  This distinguishes between two
+     * names even when they are the same pitch class.  This is useful for
+     * naming keys (e.g. {@link mu.C_SHARP_MAJOR} vs {@link mu.D_FLAT_MAJOR}).
+     *
+     * @example
+     * // Returns a note name for B&#x266f;:
+     * mu.NoteName(mu.B, mu.SHARP) 
+     * @example
+     * // These both return a pitch class name for B:
+     * mu.NoteName(mu.B) 
+     * mu.NoteName(mu.B, mu.NATURAL) 
+     *
+     * @class
+     * @param {mu.PitchClass} base The base note, given as a pitch from
+     * the C major scale: mu.C, mu.D, mu.E, mu.F, mu.G, mu.A, mu.B
+     * @param {mu.Accidental} [accidental] An accidental to apply to the base
+     * note
+     * @memberof mu
+     */
+    mu.NoteName = function(base, accidental) {
+        if (!(this instanceof mu.NoteName))
+            return new mu.NoteName(base, accidental);
+        mu._assert(base instanceof mu.PitchClass && base.inCMajor(),
+                   'invalid base note ' + base);
+        mu._assert(accidental == null || accidental instanceof mu.Accidental,
+                   'invalid accidental ' + accidental);
+        this._base = base;
+        this._accidental = accidental || mu.NATURAL;
+    };
+    /**
+     * Returns the pitch class corresponding to this note name.
+     *
+     * @example
+     * // These both return a pitch class equivalent to mu.A_SHARP
+     * mu.NoteName(mu.A, mu.SHARP).pitchClass()
+     * mu.NoteName(mu.B, mu.FLAT).pitchClass()
+     *
+     * @return {mu.PitchClass} The pitch class corresponding to this note name
+     * @memberof mu.NoteName
+     */
+    mu.NoteName.prototype.pitchClass = function() {
+        return this._base.transpose(this._accidental.semitones());
+    };
+    /**
+     * Returns true if this note name is equivalent to the `other`.
+     * This means they have the same name and accidental, so B&#x266f is not
+     * considered equal to C.  To get pitch equivalency, compare the pitch
+     * classes instead.
+     *
+     * @param {mu.NoteName} other The note name to compare against
+     * @return {boolean} True If the note names are equivalent
+     * @memberof mu.NoteName
+     */
+    mu.NoteName.prototype.equals = function(other) {
+        mu._assert(other instanceof mu.NoteName,
+                   'invalid note name ' + other);
+        return this._index == other._index &&
+            this._accidental.equals(other._accidental);
+    };
+    /**
+     * Returns a description of this note class.
+     *
+     * @example
+     * // returns "C&#x266f;"
+     * mu.C_SHARP.toString()
+     *
+     * @return {string} A description of this note class
+     * @memberof mu.NoteName
+     */
+    mu.NoteName.prototype.toString = function() {
+        var ret = this._base.toString();
+        if (!this._accidental.equals(mu.NATURAL))
+            ret += this._accidental.toString();
+        return ret;
+    };
+
+    /**
+     * A musical mode, which describes the intervals between the degrees of a
+     * diatonic scale.  There are seven modes.
+     *
+     * Don't call this constructor, instead use the constant instances of
+     * this class (e.g. mu.MAJOR or mu.DORIAN).
+     *
+     * @class
+     * @param {number} offset The offset of the tonic relative to the
+     * major scale (i.e. the shift in the interval sequence relative to
+     * the Ionian mode)
+     * @memberof mu
+     */
+    mu.Mode = function(offset) {
+        if (!(this instanceof mu.Mode))
+            return new mu.Mode(offset);
+        mu._assert(mu._isInteger(offset) && offset >= 0 && offset <= 6,
+                   'invalid offset ' + offset);
+        this._offset = offset;
+        this._name = mu.Mode._NAMES[offset];
+        this._intervals = [];
+        var at = 0;
+        for (var i = 0; i < 8; i ++) {
+            this._intervals.push(mu.Interval(at));
+            at += mu.Mode._SEQUENCE[offset + i];
+        }
+    };
+    mu.Mode._NAMES = ['Ionian', 'Dorian', 'Phrygian', 'Lydian', 'Mixolydian', 'Aeolian', 'Locrian'];
+    mu.Mode._SEQUENCE = [2,2,1,2,2,2,1,2,2,1,2,2,2];
+    /**
+     * The Ionian mode (corresponding to the major scale).
+     *
+     * @type {mu.Mode}
+     * @memberof mu
+     */
+    mu.MAJOR = mu.IONIAN = mu.Mode(0);
+    /**
+     * The Dorian mode.
+     *
+     * @type {mu.Mode}
+     * @memberof mu
+     */
+    mu.DORIAN = mu.Mode(1);
+    /**
+     * The Phrygian mode.
+     *
+     * @type {mu.Mode}
+     * @memberof mu
+     */
+    mu.PHRYGIAN = mu.Mode(2);
+    /**
+     * The Lydian mode.
+     *
+     * @type {mu.Mode}
+     * @memberof mu
+     */
+    mu.LYDIAN = mu.Mode(3);
+    /**
+     * The Mixolydian mode (corresponding to the dominant scale).
+     *
+     * @type {mu.Mode}
+     * @memberof mu
+     */
+    mu.DOMINANT = mu.MIXOLYDIAN = mu.Mode(4);
+    /**
+     * The Aeolian mode (corresponding to the natural minor scale).
+     *
+     * @type {mu.Mode}
+     * @memberof mu
+     */
+    mu.MINOR = mu.AEOLIAN = mu.Mode(5);
+    /**
+     * The Locrian mode.
+     *
+     * @type {mu.Mode}
+     * @memberof mu
+     */
+    mu.LOCRIAN = mu.Mode(6);
+    /**
+     * Returns the interval from the tonic to the given `degree` of the scale.
+     *
+     * @param {number} degree The degree of the scale, an integer from 1 to 7
+     * inclusive; 1 represents the tonic, so will always have an interval of
+     * 0 semitones
+     * @return {mu.Interval} The interval from the tonic to the given degree
+     * @memberof mu.Mode
+     */
+    mu.Mode.prototype.degree = function(degree) {
+        mu._assert(mu._isInteger(degree) && degree >= 1 && degree <= 7,
+                   'invalid degree ' + degree);
+        return this._intervals[degree - 1];
+    };
+    /**
+     * Returns a description of this mode.
+     *
+     * @return {string} A description of this mode
+     * @memberof mu.Mode
+     */
+    mu.Mode.prototype.toString = function() {
+        return this._name;
+    };
+
+    /**
+     * A musical key which specifies a tonic note, a mode, and a
+     * corresponding diatonic scale.  A key can determine the descriptions
+     * of pitches (e.g. B-flat vs A-sharp), and is necessary for
+     * relative chord descriptions (e.g. "V7" instead of "G7" in the key
+     * of C).
+     *
+     * @class
+     * @param {mu.NoteName} tonic The key note, from which other notes in
+     * the scale are derived
+     * @param {mu.Mode} mode The mechanism by which the scale is derived
+     * from the tonic
+     * @memberof mu
+     */
+    mu.Key = function(tonic, mode) {
+        if (!(this instanceof mu.Key))
+            return new mu.Key(tonic, mode);
+        mu._assert(tonic instanceof mu.NoteName,
+                   'invalid tonic ' + tonic);
+        mu._assert(mode instanceof mu.Mode,
+                   'invalid mode ' + mode);
+        this._tonic = tonic;
+        this._mode = mode;
+    };
+    (function() {
+        var modeNames = ['IONIAN', 'MAJOR', 'DORIAN', 'PHRYGIAN', 'LYDIAN',
+                         'MIXOLYDIAN', 'DOMINANT', 'AEOLIAN', 'MINOR',
+                         'LOCRIAN'];
+        // these constants are documented in keys.js,
+        // which is generated by the docgen.py script
+        modeNames.forEach(function(modeName) {
+            var mode = mu[modeName];
+            mu._assert(mode, 'missing mode ' + modeName);
+            mu.PITCH_CLASSES.forEach(function(pitchClass) {
+                if (!pitchClass.inCMajor())
+                    return;
+                var letter = pitchClass.toString();
+                var natural = letter + '_' + modeName;
+                if (natural in mu)
+                    throw Error('duplicate key ' + natural);
+                mu[letter + '_' + modeName] = mu.Key(mu.NoteName(pitchClass), mode);
+                mu[letter + '_FLAT' + '_' + modeName] = mu.Key(mu.NoteName(pitchClass, mu.FLAT), mode);
+                mu[letter + '_SHARP' + '_' + modeName] = mu.Key(mu.NoteName(pitchClass, mu.SHARP), mode);
+            });
+        });
+    })();
+    /**
+     * Returns a pitch in this key, based on the scale degree and
+     * any accidental that might apply.
+     *
+     * @param {number} degree The scale degree
+     * @memberof mu.Key
+     */
+    mu.Key.prototype.degree = function(degree, accidental) {
+        mu._assert(mu._isInteger(degree) && degree >= 1 && degree <= 7,
+                   'invalid degree ' + degree);
+        return this._tonic.pitchClass()
+            .sharper(this._mode.degree(degree));
+    };
+    /**
+     * Returns a description of this key.
+     *
+     * @return {string} A description of this key
+     * @memberof mu.Key
+     */
+    mu.Key.prototype.toString = function() {
+        return this._tonic.toString() + ' ' + this._mode.toString();
     };
 
 /*
