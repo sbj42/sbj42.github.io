@@ -4,7 +4,7 @@ function assert(pred, message) {
 }
 
 function assertEquals(value, expect, message) {
-    if (isNaN(value) && isNaN(expect))
+    if (mu._isNaN(value) && mu._isNaN(expect))
         return;
     assert(value === expect, message || 'expected ' + expect + ', got ' + value);
 }

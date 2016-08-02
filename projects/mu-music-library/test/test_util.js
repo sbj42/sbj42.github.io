@@ -37,6 +37,13 @@ assertEquals(mu._log2(1024), 10);
     assertEquals(t.xb, 12);
 })();
 
+assert(mu._isNaN(NaN));
+assert(!mu._isNaN(0));
+assert(!mu._isNaN(true));
+assert(!mu._isNaN([]));
+assert(!mu._isNaN(''));
+assert(!mu._isNaN('x'));
+
 assert(!mu._isObject('x'));
 assert(!mu._isObject(String('x')));
 assert(!mu._isObject(1));

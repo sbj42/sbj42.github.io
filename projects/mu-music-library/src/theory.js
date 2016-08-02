@@ -279,10 +279,9 @@
     mu.PITCH_CLASSES = [mu.C, mu.C_SHARP, mu.D, mu.D_SHARP, mu.E,
                         mu.F, mu.F_SHARP, mu.G, mu.G_SHARP, mu.A,
                         mu.A_SHARP, mu.B];
-    mu.PitchClass._SHARP_NAMES = 'CCDDEFFGGAAB';
-    mu.PitchClass._FLAT_NAMES  = 'CDDEEFGGAABB';
-    mu.PitchClass._IN_CMAJOR   = [true, false, true, false, true,
-                                  true, false, true, false, true, false, true];
+    mu.PitchClass._LETTERS    = 'BC_D_EF_G_A_BC';
+    mu.PitchClass._IS_NATURAL = [true, false, true, false, true,
+                                 true, false, true, false, true, false, true];
     /**
      * Returns the index of this pitch class within an octave, index 0
      * corresponds with C.
@@ -299,20 +298,23 @@
         return this._index;
     };
     /**
-     * Returns true if this pitch class is one of the 7 notes of the
-     * C Major scale (C, D, E, F, G, A, B).
+     * Returns true if this pitch class can be described with a natural sign.
+     * Or, equivalently, if is one of the 7 notes of the C Major scale
+     * (C, D, E, F, G, A, B).
      *
      * @example
      * // returns true
-     * mu.A.inCMajor()
+     * mu.A.isNatural()
+     * @example
      * // returns false
-     * mu.A_SHARP.inCMajor()
+     * mu.A_SHARP.isNatural()
      *
-     * @return {boolean} True if this pitch class is in the C Major scale
+     * @return {boolean} True if this pitch class can be described with
+     * a natural sign.
      * @memberof mu.PitchClass
      */
-    mu.PitchClass.prototype.inCMajor = function() {
-        return mu.PitchClass._IN_CMAJOR[this._index];
+    mu.PitchClass.prototype.isNatural = function() {
+        return mu.PitchClass._IS_NATURAL[this._index];
     };
     /**
      * Returns true if this pitch class is equivalent to the `other`.
@@ -400,7 +402,10 @@
      * @memberof mu.PitchClass
      */
     mu.PitchClass.prototype.interval = function(other) {
-        return mu.Interval(Math.abs(this.index() - other.index()));
+        var semitones = Math.abs(this.index() - other.index());
+        if (semitones > 6)
+            semitones = 12 - semitones;
+        return mu.Interval(semitones);
     };
     /**
      * Returns one or two descriptions of this pitch class.
@@ -408,16 +413,41 @@
      * @example
      * // returns ["C&#x266f;", "D&#x266d;"]
      * mu.C_SHARP.toStrings()
+     * @example
+     * // returns ["C&#x266f;"]
+     * mu.C_SHARP.toStrings(mu.A_MAJOR)
      *
-     * @return {Array.<string>} One or two descriptions of this pitch class.
+     * @param {mu.Key} [key] An optional key to describe the pitch class in
+     * @return {Array.<string>} One or two descriptions of this pitch class
      * @memberof mu.PitchClass
      */
-    mu.PitchClass.prototype.toStrings = function() {
-        var s = mu.PitchClass._SHARP_NAMES[this._index];
-        var f = mu.PitchClass._FLAT_NAMES[this._index];
-        if (s == f)
-            return [s];
-        return [s + mu.SHARP_CHAR, f + mu.FLAT_CHAR];
+    mu.PitchClass.prototype.toStrings = function(key) {
+        mu._assert(key == null || key instanceof mu.Key,
+                   'invalid key ' + key);
+        var l = mu.PitchClass._LETTERS;
+        if (key == null) {
+            var n = l[this._index+1];
+            if (n != '_')
+                return [n];
+            var s = l[this._index];
+            var f = l[this._index+2];
+            return [s + mu.SHARP_CHAR, f + mu.FLAT_CHAR];
+        } else {
+            var degree = key.pitchClassDegree(this);
+            if (degree)
+                return [key.degreeName(degree).toString()];
+            var s = l[this._index];
+            var n = l[this._index+1];
+            var f = l[this._index+2];
+            var ret = [];
+            if (s != '_')
+                ret.push(s + mu.SHARP_CHAR);
+            if (n != '_')
+                ret.push(n + mu.NATURAL_CHAR);
+            if (f != '_')
+                ret.push(f + mu.FLAT_CHAR);
+            return ret;
+        }
     };
     /**
      * Returns a description of this pitch class.
@@ -426,11 +456,12 @@
      * // returns "C&#x266f;/D&#x266d;"
      * mu.C_SHARP.toString()
      *
+     * @param {mu.Key} [key] An optional key to describe the pitch class in
      * @return {string} A description of this pitch class
      * @memberof mu.PitchClass
      */
-    mu.PitchClass.prototype.toString = function() {
-        return this.toStrings().join('/');
+    mu.PitchClass.prototype.toString = function(key) {
+        return this.toStrings(key).join('/');
     };
 
     /**
@@ -705,13 +736,40 @@
      * // returns ["B&#x266f;2", "C&#x266d;3"]
      * mu.C_FLAT_3.toStrings()
      *
+     * @param {mu.Key} [key] An optional key to describe the pitch in
      * @return {string} A description of this pitch
      * @memberof mu.Pitch
      */
-    mu.Pitch.prototype.toStrings = function() {
-        return this._pitchClass.toStrings().map(function(str) {
-            return str + this._octave;
-        }, this);
+    mu.Pitch.prototype.toStrings = function(key) {
+        mu._assert(key == null || key instanceof mu.Key,
+                   'invalid key ' + key);
+        if (key == null)
+            return this._pitchClass.toStrings(key).map(function(str) {
+                return str + this._octave;
+            }, this);
+        var l = mu.PitchClass._LETTERS;
+        var pitchClass = this.pitchClass();
+        var degree = key.pitchClassDegree(pitchClass);
+        if (degree) {
+            var degreeName = key.degreeName(degree);
+            var str = degreeName.toString();
+            if (pitchClass.equals(mu.C) && degreeName.pitchClass().equals(mu.B))
+                return [str + (this._octave - 1)];
+            else if (pitchClass.equals(mu.B) && degreeName.pitchClass().equals(mu.C))
+                return [str + (this._octave + 1)];
+            return [str + this._octave];
+        }
+        var s = l[pitchClass.index()];
+        var n = l[pitchClass.index()+1];
+        var f = l[pitchClass.index()+2];
+        var ret = [];
+        if (s != '_')
+            ret.push(s + mu.SHARP_CHAR + (this._octave - (pitchClass.equals(mu.C) ? 1 : 0)));
+        if (n != '_')
+            ret.push(n + mu.NATURAL_CHAR + this._octave);
+        if (f != '_')
+            ret.push(f + mu.FLAT_CHAR + (this._octave + (pitchClass.equals(mu.B) ? 1 : 0)));
+        return ret;
     };
     /**
      * Describes this pitch.
@@ -723,11 +781,12 @@
      * // returns "B&#x266f;2/C&#x266d;3"
      * mu.C_FLAT_3.toString()
      *
+     * @param {mu.Key} [key] An optional key to describe the pitch in
      * @return {string} A description of this pitch
      * @memberof mu.Pitch
      */
-    mu.Pitch.prototype.toString = function() {
-        return this.toStrings().join('/');
+    mu.Pitch.prototype.toString = function(key) {
+        return this.toStrings(key).join('/');
     };
 
     /**
@@ -1385,83 +1444,6 @@
     };
 
     /**
-     * A note name, such as B or C&#x266d;.  This distinguishes between two
-     * names even when they are the same pitch class.  This is useful for
-     * naming keys (e.g. {@link mu.C_SHARP_MAJOR} vs {@link mu.D_FLAT_MAJOR}).
-     *
-     * @example
-     * // Returns a note name for B&#x266f;:
-     * mu.NoteName(mu.B, mu.SHARP) 
-     * @example
-     * // These both return a pitch class name for B:
-     * mu.NoteName(mu.B) 
-     * mu.NoteName(mu.B, mu.NATURAL) 
-     *
-     * @class
-     * @param {mu.PitchClass} base The base note, given as a pitch from
-     * the C major scale: mu.C, mu.D, mu.E, mu.F, mu.G, mu.A, mu.B
-     * @param {mu.Accidental} [accidental] An accidental to apply to the base
-     * note
-     * @memberof mu
-     */
-    mu.NoteName = function(base, accidental) {
-        if (!(this instanceof mu.NoteName))
-            return new mu.NoteName(base, accidental);
-        mu._assert(base instanceof mu.PitchClass && base.inCMajor(),
-                   'invalid base note ' + base);
-        mu._assert(accidental == null || accidental instanceof mu.Accidental,
-                   'invalid accidental ' + accidental);
-        this._base = base;
-        this._accidental = accidental || mu.NATURAL;
-    };
-    /**
-     * Returns the pitch class corresponding to this note name.
-     *
-     * @example
-     * // These both return a pitch class equivalent to mu.A_SHARP
-     * mu.NoteName(mu.A, mu.SHARP).pitchClass()
-     * mu.NoteName(mu.B, mu.FLAT).pitchClass()
-     *
-     * @return {mu.PitchClass} The pitch class corresponding to this note name
-     * @memberof mu.NoteName
-     */
-    mu.NoteName.prototype.pitchClass = function() {
-        return this._base.transpose(this._accidental.semitones());
-    };
-    /**
-     * Returns true if this note name is equivalent to the `other`.
-     * This means they have the same name and accidental, so B&#x266f is not
-     * considered equal to C.  To get pitch equivalency, compare the pitch
-     * classes instead.
-     *
-     * @param {mu.NoteName} other The note name to compare against
-     * @return {boolean} True If the note names are equivalent
-     * @memberof mu.NoteName
-     */
-    mu.NoteName.prototype.equals = function(other) {
-        mu._assert(other instanceof mu.NoteName,
-                   'invalid note name ' + other);
-        return this._index == other._index &&
-            this._accidental.equals(other._accidental);
-    };
-    /**
-     * Returns a description of this note class.
-     *
-     * @example
-     * // returns "C&#x266f;"
-     * mu.C_SHARP.toString()
-     *
-     * @return {string} A description of this note class
-     * @memberof mu.NoteName
-     */
-    mu.NoteName.prototype.toString = function() {
-        var ret = this._base.toString();
-        if (!this._accidental.equals(mu.NATURAL))
-            ret += this._accidental.toString();
-        return ret;
-    };
-
-    /**
      * A musical mode, which describes the intervals between the degrees of a
      * diatonic scale.  There are seven modes.
      *
@@ -1480,7 +1462,6 @@
         mu._assert(mu._isInteger(offset) && offset >= 0 && offset <= 6,
                    'invalid offset ' + offset);
         this._offset = offset;
-        this._name = mu.Mode._NAMES[offset];
         this._intervals = [];
         var at = 0;
         for (var i = 0; i < 8; i ++) {
@@ -1488,6 +1469,7 @@
             at += mu.Mode._SEQUENCE[offset + i];
         }
     };
+    mu.Mode._KEY_NAMES = ['Major', 'Dorian', 'Phrygian', 'Lydian', 'Mixolydian', 'Minor', 'Locrian'];
     mu.Mode._NAMES = ['Ionian', 'Dorian', 'Phrygian', 'Lydian', 'Mixolydian', 'Aeolian', 'Locrian'];
     mu.Mode._SEQUENCE = [2,2,1,2,2,2,1,2,2,1,2,2,2];
     /**
@@ -1554,13 +1536,161 @@
         return this._intervals[degree - 1];
     };
     /**
+     * Returns the name applied to a key in this mode (e.g. "Major").
+     *
+     * @return {string} The name applied to a key in this mode
+     * @memberof mu.Mode
+     */
+    mu.Mode.prototype.keyName = function() {
+        return mu.Mode._KEY_NAMES[this._offset];
+    };
+    /**
+     * Returns the name of this mode (e.g. "Ionian").
+     *
+     * @return {string} The name of this mode
+     * @memberof mu.Mode
+     */
+    mu.Mode.prototype.name = function() {
+        return mu.Mode._NAMES[this._offset];
+    };
+    /**
+     * Returns true if this mode is equivalent to the `other`.
+     *
+     * @return {boolean} True if this mode is equivalent to the `other`
+     * @memberof mu.Mode
+     */
+    mu.Mode.prototype.equals = function(other) {
+        mu._assert(other instanceof mu.Mode,
+                   'invalid mode ' + other);
+        return this._offset == other._offset;
+    };
+    /**
      * Returns a description of this mode.
      *
      * @return {string} A description of this mode
      * @memberof mu.Mode
      */
     mu.Mode.prototype.toString = function() {
-        return this._name;
+        return this.name();
+    };
+
+    /**
+     * A note name, such as B or C&#x266d;.  This distinguishes between two
+     * names even when they are the same pitch class.  This is useful for
+     * describing pitches in the context of a key.
+     *
+     * @example
+     * // Returns a note name for "B&#x266f"; (not "C"):
+     * mu.NoteName(mu.B, mu.SHARP) 
+     * @example
+     * // Returns a note name for "B" (not "B&#x266e;"):
+     * mu.NoteName(mu.B) 
+     * @example
+     * // Returns a note name for B&#x266e; (not "B"):
+     * mu.NoteName(mu.B, mu.NATURAL) 
+     *
+     * @class
+     * @param {mu.PitchClass} base The base note, given as a pitch class from
+     * the C major scale: mu.C, mu.D, mu.E, mu.F, mu.G, mu.A, mu.B
+     * @param {mu.Accidental} [accidental] An accidental to apply to the base
+     * note
+     * @memberof mu
+     */
+    mu.NoteName = function(base, accidental) {
+        if (!(this instanceof mu.NoteName))
+            return new mu.NoteName(base, accidental);
+        mu._assert(base instanceof mu.PitchClass && base.isNatural(),
+                   'invalid base note ' + base);
+        mu._assert(accidental == null || accidental instanceof mu.Accidental,
+                   'invalid accidental ' + accidental);
+        this._base = base;
+        this._accidental = accidental || null;
+    };
+    /**
+     * Returns the base note of this note name, as a pitch class from
+     * the C major scale: mu.C, mu.D, mu.E, mu.F, mu.G, mu.A, mu.B.
+     *
+     * @example
+     * // These both return a pitch class equivalent to mu.G
+     * mu.NoteName(mu.G, mu.SHARP).base()
+     * mu.NoteName(mu.G, mu.FLAT).base()
+     *
+     * @return {mu.PitchClass} The pitch class for the base note of this note
+     * name
+     * @memberof mu.NoteName
+     */
+    mu.NoteName.prototype.base = function() {
+        return this._base;
+    };
+    /**
+     * Returns the accidental of this note name.
+     *
+     * @example
+     * // Returns an accidental equivalent to mu.SHARP
+     * mu.NoteName(mu.G, mu.SHARP).accidental()
+     * @example
+     * // Returns null
+     * mu.NoteName(mu.C).accidental()
+     * @example
+     * // Returns an accidental equivalent to mu.NATURAL
+     * mu.NoteName(mu.C, mu.NATURAL).accidental()
+     *
+     * @return {mu.Accidental} The accidental of this note name
+     * @memberof mu.NoteName
+     */
+    mu.NoteName.prototype.accidental = function() {
+        return this._accidental;
+    };
+    /**
+     * Returns the pitch class corresponding to this note name.
+     *
+     * @example
+     * // These both return a pitch class equivalent to mu.A_SHARP
+     * mu.NoteName(mu.A, mu.SHARP).pitchClass()
+     * mu.NoteName(mu.B, mu.FLAT).pitchClass()
+     *
+     * @return {mu.PitchClass} The pitch class corresponding to this note name
+     * @memberof mu.NoteName
+     */
+    mu.NoteName.prototype.pitchClass = function() {
+        var ret = this._base;
+        if (this._accidental != null)
+            ret = ret.transpose(this._accidental.semitones());
+        return ret;
+    };
+    /**
+     * Returns true if this note name is equivalent to the `other`.
+     * This means they have the same name and accidental, so B&#x266f is not
+     * considered equal to C.  To get pitch equivalency, compare the pitch
+     * classes instead.
+     *
+     * @param {mu.NoteName} other The note name to compare against
+     * @return {boolean} True If the note names are equivalent
+     * @memberof mu.NoteName
+     */
+    mu.NoteName.prototype.equals = function(other) {
+        mu._assert(other instanceof mu.NoteName,
+                   'invalid note name ' + other);
+        return this._index == other._index &&
+            ((this._accidental == null && other._accidental == null)
+             || (this._accidental != null && other._accidental != null
+                 && this._accidental.equals(other._accidental)));
+    };
+    /**
+     * Returns a description of this note class.
+     *
+     * @example
+     * // returns "C&#x266f;"
+     * mu.C_SHARP.toString()
+     *
+     * @return {string} A description of this note class
+     * @memberof mu.NoteName
+     */
+    mu.NoteName.prototype.toString = function() {
+        var ret = this._base.toString();
+        if (this._accidental != null)
+            ret += this._accidental.toString();
+        return ret;
     };
 
     /**
@@ -1571,21 +1701,53 @@
      * of C).
      *
      * @class
-     * @param {mu.NoteName} tonic The key note, from which other notes in
-     * the scale are derived
+     * @param {mu.PitchClass} base The base note, given as a pitch from
+     * the C major scale: mu.C, mu.D, mu.E, mu.F, mu.G, mu.A, mu.B
+     * @param {mu.Accidental} [accidental] An accidental to apply to the base
+     * note; {@link mu.NATURAL} is considered the same as `null`
      * @param {mu.Mode} mode The mechanism by which the scale is derived
      * from the tonic
      * @memberof mu
      */
-    mu.Key = function(tonic, mode) {
+    mu.Key = function(base, accidental, mode) {
         if (!(this instanceof mu.Key))
-            return new mu.Key(tonic, mode);
-        mu._assert(tonic instanceof mu.NoteName,
-                   'invalid tonic ' + tonic);
+            return new mu.Key(base, accidental, mode);
+        if (accidental instanceof mu.Mode) {
+            mode = accidental;
+            accidental = null;
+        }
+        mu._assert(base instanceof mu.PitchClass && base.isNatural(),
+                   'invalid base note ' + base);
+        mu._assert(accidental == null || accidental instanceof mu.Accidental,
+                   'invalid accidental ' + accidental);
         mu._assert(mode instanceof mu.Mode,
                    'invalid mode ' + mode);
-        this._tonic = tonic;
+        if (accidental && accidental.equals(mu.NATURAL))
+            accidental = null;
+        this._tonic = mu.NoteName(base, accidental);
         this._mode = mode;
+        this._degreeNames = [];
+        this._pitchDegrees = {};
+        var pitchBase = base; 
+        for (var i = 1; i <= 7; i ++) {
+            if (i != 1) {
+                pitchBase = pitchBase.transpose(1);
+                if (!pitchBase.isNatural())
+                    pitchBase = pitchBase.transpose(1);
+            }
+            var pitchClass = this._tonic.pitchClass()
+                .sharper(this._mode.degree(i));
+            this._pitchDegrees[pitchClass.index()] = i;
+            var interval = pitchClass.interval(pitchBase);
+            var accidental;
+            if (interval.semitones() == 0)
+                accidental = null;
+            else if (pitchBase.sharper(interval).equals(pitchClass))
+                accidental = mu.Accidental(interval.semitones());
+            else
+                accidental = mu.Accidental(-interval.semitones());
+            this._degreeNames[i - 1] = mu.NoteName(pitchBase, accidental);
+        }
     };
     (function() {
         var modeNames = ['IONIAN', 'MAJOR', 'DORIAN', 'PHRYGIAN', 'LYDIAN',
@@ -1597,30 +1759,79 @@
             var mode = mu[modeName];
             mu._assert(mode, 'missing mode ' + modeName);
             mu.PITCH_CLASSES.forEach(function(pitchClass) {
-                if (!pitchClass.inCMajor())
+                if (!pitchClass.isNatural())
                     return;
                 var letter = pitchClass.toString();
                 var natural = letter + '_' + modeName;
                 if (natural in mu)
                     throw Error('duplicate key ' + natural);
-                mu[letter + '_' + modeName] = mu.Key(mu.NoteName(pitchClass), mode);
-                mu[letter + '_FLAT' + '_' + modeName] = mu.Key(mu.NoteName(pitchClass, mu.FLAT), mode);
-                mu[letter + '_SHARP' + '_' + modeName] = mu.Key(mu.NoteName(pitchClass, mu.SHARP), mode);
+                mu[natural] = mu.Key(pitchClass, mode);
+                mu[letter + '_FLAT' + '_' + modeName] = mu.Key(pitchClass, mu.FLAT, mode);
+                mu[letter + '_SHARP' + '_' + modeName] = mu.Key(pitchClass, mu.SHARP, mode);
             });
         });
     })();
     /**
-     * Returns a pitch in this key, based on the scale degree and
+     * Returns the tonic note for this key, as a note name
+     *
+     * @return {mu.NoteName} The tonic note for this key
+     * @memberof mu.Key
+     */
+    mu.Key.prototype.tonic = function() {
+        return this._tonic;
+    };
+    /**
+     * Returns the base note for this key, as a pitch from
+     * the C major scale: mu.C, mu.D, mu.E, mu.F, mu.G, mu.A, mu.B.
+     *
+     * @return {mu.PitchClass} The base note for this key
+     * @memberof mu.Key
+     */
+    mu.Key.prototype.base = function() {
+        return this._base;
+    };
+    /**
+     * Returns a pitch class in this key, based on the scale degree and
      * any accidental that might apply.
      *
      * @param {number} degree The scale degree
+     * @return {mu.PitchClass} The corresponding pitch class
      * @memberof mu.Key
      */
-    mu.Key.prototype.degree = function(degree, accidental) {
+    mu.Key.prototype.degreePitchClass = function(degree, accidental) {
         mu._assert(mu._isInteger(degree) && degree >= 1 && degree <= 7,
                    'invalid degree ' + degree);
-        return this._tonic.pitchClass()
-            .sharper(this._mode.degree(degree));
+        mu._assert(accidental == null || accidental instanceof mu.Accidental,
+                   'invalid accidental ' + accidental);
+        var name = this._degreeNames[degree - 1];
+        if (accidental == null)
+            return name.pitchClass();
+        return name.base().transpose(accidental.semitones());
+    };
+    /**
+     * Returns a note name for a scale degree in this key.
+     *
+     * @param {number} degree The scale degree
+     * @return {mu.NoteName} The note name for that scale degree
+     * @memberof mu.Key
+     */
+    mu.Key.prototype.degreeName = function(degree) {
+        mu._assert(mu._isInteger(degree) && degree >= 1 && degree <= 7,
+                   'invalid degree ' + degree);
+        return this._degreeNames[degree - 1];
+    };
+    /**
+     * If the given pitch class is a scale degree in this key, returns
+     * the degree number (1 to 7 inclusive), else null.
+     *
+     * @param {mu.PitchClass} pitchClass The pitch class to consider
+     * @return {number|null} The degree number of the pitch class, or null.
+     * @memberof mu.Key
+     */
+    mu.Key.prototype.pitchClassDegree = function(pitchClass) {
+        mu._assert(pitchClass instanceof mu.PitchClass,
+                   'invalid pitch class ' + pitchClass);
+        return this._pitchDegrees[pitchClass.index()] || null;
     };
     /**
      * Returns a description of this key.
@@ -1629,26 +1840,7 @@
      * @memberof mu.Key
      */
     mu.Key.prototype.toString = function() {
-        return this._tonic.toString() + ' ' + this._mode.toString();
+        return this._tonic.toString() + ' ' + this._mode.keyName();
     };
-
-/*
-    mu.ScaleType = function(intervals) {
-        
-    };
-    mu.MINOR
-
-    mu.Key = function(tonic) {
-        if (!(this instanceof mu.Key))
-            return new mu.Key(tonic);
-        mu._assert(tonic instanceof mu.Pitch,
-                'invalid tonic pitch ' + tonic);
-        this._tonic = tonic;
-    };
-    mu.Key.prototype.tonic = function() {
-        return this._tonic;
-    };
-
-*/
 
 })();

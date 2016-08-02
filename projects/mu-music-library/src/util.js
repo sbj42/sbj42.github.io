@@ -15,7 +15,7 @@
     var mu = global.mu = global.mu || {};
 
     /**
-     * Stand-in for Number.isFinite (from MDN)
+     * Stand-in for Number.isFinite (from MDN).
      *
      * @private
      * @memberof mu
@@ -25,7 +25,7 @@
     };
 
     /**
-     * Stand-in for Number.isInteger (from MDN)
+     * Stand-in for Number.isInteger (from MDN).
      *
      * @private
      * @memberof mu
@@ -35,7 +35,7 @@
     };
 
     /**
-     * Stand-in for Math.log2 (from MDN)
+     * Stand-in for Math.log2 (from MDN).
      *
      * @private
      * @memberof mu
@@ -66,6 +66,16 @@
         for (var key in map)
             if (map.hasOwnProperty(key))
                 callback.call(thisArg, map[key], key, map);
+    };
+
+    /**
+     * Stand-in for Number.isNaN.
+     *
+     * @private
+     * @memberof mu
+     */
+    mu._isNaN = Number.isNaN || function(value) {
+        return typeof value == 'number' && isNaN(value);
     };
 
     /**

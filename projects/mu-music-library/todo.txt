@@ -1,12 +1,14 @@
-piece or sequence or something: bpm, time signature, array of (chord-instance/rest, duration)
-display - guitar/sheet-music/constellation/names
+key picker based on circle of fifths
+
+time signatures
+display - guitar/sheet-music/names
   guitar: lots of variation, number of strings, number of frets, tuning
-piece running that can coordinate with display and player
 volume fader, gain knob
 use fletcher-munson curves in the generator voice to try to get equal volume from low and high notes, use replaygain on the audio files for same
 sound envelopes in generators
 
-describe pitch class relative to key (as degree or as name normalized for staff position)
+add Degree and DegreeName classes?
+describe pitch class as degree?
 describe chord relative to key
 constellation should show key-relative pitch classes
 favor certain root degrees in chord analysis (to avoid circularly-ambiguous chord structures like diminished seventh and augmented)?
