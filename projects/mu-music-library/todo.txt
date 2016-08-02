@@ -1,4 +1,8 @@
 key picker based on circle of fifths
+add key picker to test_ui,
+use selected key to change constellation
+use selected key to change pitch colors
+mark middle C on waveform ui
 
 time signatures
 display - guitar/sheet-music/names

@@ -15,6 +15,9 @@ harm.ready(function() {
     mu._html('#constellation').append(constellation.node());
     c.connectUI(constellation);
 
+    var keycircle = mu.ui.KeyCircle();
+    mu._html('#keycircle').append(keycircle.node());
+
     function onChange() {
         var chord = mu.Chord(c.voice().pitchesPlaying());
         var text = chord.abbr();

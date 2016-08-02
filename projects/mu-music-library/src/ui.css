@@ -57,6 +57,7 @@
 .mu_chordline_chord {
 }
 .mu_chordline_chord_label {
+    fill: #000;
     font-family: Verdana;
 }
 
@@ -70,4 +71,16 @@
 .mu_waveform_dot {
     stroke: #000;
     stroke-width: 2px;
+}
+
+.mu_keycircle_line {
+    stroke: #000;
+    fill: none;
+}
+.mu_keycircle_dot {
+    fill: #000;
+}
+.mu_keycircle_label {
+    fill: #000;
+    font-family: Verdana;
 }

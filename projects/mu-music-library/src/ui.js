@@ -521,7 +521,7 @@
     mu.ui.PitchConstellation.prototype.constructor = mu.ui.PitchConstellation;
     mu.ui.PitchConstellation._RADIUS = 80;
     mu.ui.PitchConstellation._TEXT_GAP = 4;
-    mu.ui.PitchConstellation._FONT_SIZE = 13;
+    mu.ui.PitchConstellation._FONT_SIZE = 14;
     mu.ui.PitchConstellation.prototype._isPlaying = function(pitchClass) {
         return this._pitchClassesPlaying[pitchClass.index()] != 0;
     };
@@ -816,7 +816,6 @@
         return this._svg;
     };
 
-
     /**
      * A chord progression UI.
      *
@@ -826,7 +825,7 @@
      */
     mu.ui.ChordLine = function(width, prog) {
         if (!(this instanceof mu.ui.ChordLine))
-            return new mu.ui.ChordLine(prog);
+            return new mu.ui.ChordLine(width, prog);
         mu._assert(width == null || (mu._isFinite(width) && width > 0),
                    'invalid width ' + width);
         mu._assert(prog == null || (prog instanceof mu.seq.SimpleChordProgression),
@@ -983,6 +982,93 @@
                 .classed('mu_chordline_cursor', true)
                 .attr('stroke-width', aW);
         }
+    };
+
+    /**
+     * A key selector/identifier using a circle of fifths diagram.
+     *
+     * @class
+     * @memberof mu
+     */
+    mu.ui.KeyCircle = function() {
+        if (!(this instanceof mu.ui.KeyCircle))
+            return new mu.ui.KeyCircle();
+
+        var oR = mu.ui.KeyCircle._OUTER_RADIUS;
+        var iR = mu.ui.KeyCircle._INNER_RADIUS;
+        var lW = mu.ui.KeyCircle._LINE_WIDTH;
+        var dR = mu.ui.KeyCircle._DOT_RADIUS;
+        var tS = mu.ui.KeyCircle._FONT_SIZE;
+        var tG = mu.ui.KeyCircle._TEXT_GAP;
+
+        var rr = Math.max(dR, lW / 2) + tG;
+        var cx = (oR * 11 / 15 + iR * 4 / 15) + rr + tS / 2;
+        var cy = (oR * 0.5 + iR * 0.5) + rr + tS / 2;
+        var w = cx + (oR * 4 / 15 + iR * 11 / 15) + rr + tS / 2;
+        var h = cy + oR + rr + tS / 2;
+
+        this._svg = mu._html('svg')
+            .attr('width', w)
+            .attr('height', h)
+            .classed('mu_keycircle', true);
+        var line = this._svg.append('path');
+        var linePath = [];
+        for (var i = -7; i <= 7; i ++) {
+            var r = oR * (7 - i) / 15 + iR * (i + 7) / 15;
+            var a = i * Math.PI / 6;
+            var deg = i * 180 / 6;
+            var majorBase = mu.ui.KeyCircle._BASES[(i + 7) % 7];
+            var minorBase = mu.ui.KeyCircle._BASES[(i + 10) % 7];
+            var majorAccidental = Math.floor((i + 1) / 7);
+            var minorAccidental = Math.floor((i + 4) / 7);
+            var majorName = mu.NoteName(majorBase, majorAccidental ? mu.Accidental(majorAccidental) : null);
+            var minorName = mu.NoteName(minorBase, minorAccidental ? mu.Accidental(minorAccidental) : null);
+            var x = cx + Math.sin(a) * r;
+            var y = cy - Math.cos(a) * r;
+            if (!linePath.length) {
+                linePath.push('M' + x.toFixed(1) + ' ' + y.toFixed(1));
+            } else {
+                linePath.push('A' + r.toFixed(1) + ' ' + r.toFixed(1) + ' 0 0 1 ' + x.toFixed(1) + ' ' + y.toFixed(1));
+            }
+            linePath.push(linePath.length ? 'L' : 'M');
+            linePath.push(x.toFixed(1) + ' ' + y.toFixed(1));
+            this._svg.append('circle')
+                .attr('cx', x)
+                .attr('cy', y)
+                .attr('r', dR)
+                .classed('mu_keycircle_dot', true);
+            this._svg.append('text')
+                .attr('x', cx)
+                .attr('y', cy - r - rr)
+                .attr('dy', '0.4em')
+                .attr('text-anchor', 'middle')
+                .attr('font-size', tS)
+                .attr('transform', 'rotate(' + deg + ' ' + cx + ',' + cy + ')')
+                .classed('mu_keycircle_label', true)
+                .text(majorName.toString());
+            this._svg.append('text')
+                .attr('x', cx)
+                .attr('y', cy - r + rr)
+                .attr('dy', '0.4em')
+                .attr('text-anchor', 'middle')
+                .attr('font-size', tS)
+                .attr('transform', 'rotate(' + deg + ' ' + cx + ',' + cy + ')')
+                .classed('mu_keycircle_label', true)
+                .text(minorName.toString().toLowerCase());
+        }
+        line.attr('d', linePath.join(''))
+            .attr('stroke-width', lW)
+            .classed('mu_keycircle_line', true);
+    };
+    mu.ui.KeyCircle._BASES = [mu.C, mu.G, mu.D, mu.A, mu.E, mu.B, mu.F];
+    mu.ui.KeyCircle._INNER_RADIUS = 70;
+    mu.ui.KeyCircle._OUTER_RADIUS = 130;
+    mu.ui.KeyCircle._LINE_WIDTH = 3;
+    mu.ui.KeyCircle._DOT_RADIUS = 4;
+    mu.ui.KeyCircle._TEXT_GAP = 8;
+    mu.ui.KeyCircle._FONT_SIZE = 14;
+    mu.ui.KeyCircle.prototype.node = function() {
+        return this._svg.node();
     };
 
     /**
