@@ -26,12 +26,12 @@ var MR = 6; // map center-to-corner
 var BW = 766; // board/window width
 var BH = 514; // board/window height
 
-var FOODHP = 4;
+var FOODHP = 3;
 var MOVEHP = 1;
-var SHOCKHP = 3;
+var SHOCKHP = 1;
 var MAXHP = 20;
 
-var DEBUG = false;
+var DEBUG = true;
 
 var STARTTIME = new Date().getTime();
 
@@ -1020,7 +1020,6 @@ function start() {
         eel: level.eel.slice(),
         leveldesc: describe_level(level, curlevel),
         hp: level.hp,
-        charge: true,
         over: false,
         hasstars: 0,
         stars: 0,
@@ -1061,7 +1060,6 @@ function game_clone(game) {
         eel: game.eel.slice(),
         leveldesc: game.leveldesc,
         hp: game.hp,
-        charge: game.charge,
         over: game.over,
         hasstars: game.hasstars,
         stars: game.stars,
@@ -1103,7 +1101,7 @@ function game_canmove(game, dx, dy) {
 }
 
 function game_canshock(game) {
-    return !game.over && game.charge && game.hp > SHOCKHP;
+    return !game.over;
 }
 
 function game_move(game, dx, dy, oneat) {
@@ -1127,7 +1125,6 @@ function game_move(game, dx, dy, oneat) {
     }
     eel.splice(eel.length - 2, 2);
     eel.splice(0, 0, nx, ny);
-    game.charge = true;
 }
 
 function game_shock1(game, i, onshock, onharm) {
@@ -1174,12 +1171,9 @@ function game_shock1(game, i, onshock, onharm) {
 }
 
 function game_shock(game) {
-    if (!game.charge)
-        return false;
     var harm = false;
     var eel = game.eel;
-    game.charge = false;
-    game.hp -= SHOCKHP;
+    game.hp = Math.max(0, game.hp - SHOCKHP);
     for (var i = 0; i < eel.length; i += 2) {
         game_shock1(game, i, null, function() { harm = true; });
     }
@@ -1265,7 +1259,7 @@ function solver(game, callback1, callback2) {
                 callback1(sofar);
                 progt = time() + PROGDUR;
             }
-            if (game.charge) {
+            {
                 var game2 = game_clone(game);
                 if (game_shock(game2)) {
                     if (!game_over(game2))
@@ -1496,12 +1490,12 @@ function arrive_intro() {
             .call(delay_fish.bind(null, fish));
     }
 
-    introfish.forEach(function(fish, i) {
+    /*introfish.forEach(function(fish, i) {
         if (i == 0)
             start_fish(fish);
         else
             delay_fish(fish);
-    });
+    });*/
 }
 
 function incoming_menu() {
@@ -1677,7 +1671,6 @@ function updateconsole() {
     setkey('s', canmoveeel(1, 0));
     setkey('a', canmoveeel(0, 1));
     setkey('_', canshock());
-    $('#chargestatus').text(game.charge ? (game.hp <= SHOCKHP ? 'Too hungry' : 'Ready') : 'Not ready');
     setimg($('#star1'), 'starfish1' + (game.stars > 0 ? 'a' : 'b'))
         .toggle(game.hasstars > 0);
     setimg($('#star2'), 'starfish1' + (game.stars > 1 ? 'a' : 'b'))
@@ -1730,7 +1723,7 @@ function reset(bynext) {
     $('.gameoption').show();
     board.empty();
     game = start();
-    $('.hunger, .charge, #restartgroup').toggle(curlevel > 0);
+    $('.hunger, #restartgroup').toggle(curlevel > 0);
     $('#leveldesc').text(game.leveldesc);
     var gridline_svg = $(svg('svg'))
         .attr('id', 'gridlines')
@@ -1865,8 +1858,6 @@ function shock() {
     game.atstart = false;
     var eel = game.eel;
     busy = true;
-    if (curlevel > 0)
-        game.charge = false;
     game.hp = Math.max(0, game.hp - SHOCKHP);
     if (game.hp == 0)
         defeat();
@@ -2074,12 +2065,9 @@ function tutorial2() {
         fadeto(tx(-1, 1), ty(-1, 1), TR, 'It takes 2 shocks to kill this fish.', s2);
     }
     function s2() {
-        fadeto(BW - TR - 520 + 6 + 25, BH + 93 - 5, 36, 'You can shock multiple times on a level,<br />but not twice in the same place;<br />you have to move to recharge.', s3);
+        fadeto(BW - TR - 520 + 5 + 25 * (MAXHP - game.hp) + 3, BH + 30 + 14 + 10, 25, 'This is how hungry you are.<br />Each move or shock makes you hungrier.', s3);
     }
     function s3() {
-        fadeto(BW - TR - 520 + 5 + 25 * (MAXHP - game.hp) + 3, BH + 30 + 14 + 10, 25, 'This is how hungry you are.<br />Each move adds ' + MOVEHP + ' hunger,<br />and the electric shock adds ' + SHOCKHP + '.', s4);
-    }
-    function s4() {
         fadeto(BW - TR - 520 + 5 + 25 * MAXHP + 3, BH + 30 + 14 + 10, 25, 'If you get too hungry, you\'ll starve.', d);
     }
     function d() {

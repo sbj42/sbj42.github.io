@@ -72,12 +72,21 @@ img {
     top: 176px;
     text-shadow: 1px 1px 1px black;
 }
+#title3 {
+    font-size: 35px;
+    width: 284px;
+    position: absolute;
+    left: 321px;
+    top: 231px;
+    text-shadow: 1px 1px 1px black;
+    color: #f19dde;
+}
 #credit {
     font-family: 'Itim', cursive;
     font-size: 20px;
     position: absolute;
-    left: 361px;
-    top: 232px;
+    left: 383px;
+    top: 265px;
     opacity: 0.5;
 }
 #introplay {
