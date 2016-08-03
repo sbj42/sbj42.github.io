@@ -72,6 +72,15 @@
      * @memberof mu.ui.UI
      */
 
+    /**
+     * An event indicating that the user has selected a key in a UI.
+     *
+     * @event keyselect
+     * @property {mu.ui.UI} ui The UI where the action took place
+     * @property {mu.Key} key The key
+     * @memberof mu.ui.UI
+     */
+
     mu.ui._colorHelper = function(h, s, l) {
         mu._assert(s == null || (mu._isFinite(s) && s >= 0 && s <= 1),
                    'invalid saturation ' + s);
@@ -988,29 +997,36 @@
      * A key selector/identifier using a circle of fifths diagram.
      *
      * @class
+     * @param {mu.Key} [key] The initially selected key (default: {@link mu.C_MAJOR})
      * @memberof mu
      */
-    mu.ui.KeyCircle = function() {
+    mu.ui.KeyCircle = function(key) {
         if (!(this instanceof mu.ui.KeyCircle))
-            return new mu.ui.KeyCircle();
+            return new mu.ui.KeyCircle(key);
+        mu._assert(key == null || key instanceof mu.Key,
+                   'invalid key ' + key);
 
         var oR = mu.ui.KeyCircle._OUTER_RADIUS;
         var iR = mu.ui.KeyCircle._INNER_RADIUS;
         var lW = mu.ui.KeyCircle._LINE_WIDTH;
         var dR = mu.ui.KeyCircle._DOT_RADIUS;
         var tS = mu.ui.KeyCircle._FONT_SIZE;
+        var mS = mu.ui.KeyCircle._MIDDLE_FONT_SIZE;
         var tG = mu.ui.KeyCircle._TEXT_GAP;
 
         var rr = Math.max(dR, lW / 2) + tG;
-        var cx = (oR * 11 / 15 + iR * 4 / 15) + rr + tS / 2;
-        var cy = (oR * 0.5 + iR * 0.5) + rr + tS / 2;
-        var w = cx + (oR * 4 / 15 + iR * 11 / 15) + rr + tS / 2;
-        var h = cy + oR + rr + tS / 2;
+        var cx = (oR * 11 / 15 + iR * 4 / 15) + rr + rr;
+        var cy = (oR * 0.5 + iR * 0.5) + rr + rr;
+        var w = cx + (oR * 4 / 15 + iR * 11 / 15) + rr + rr;
+        var h = cy + oR + rr + rr;
 
         this._svg = mu._html('svg')
             .attr('width', w)
             .attr('height', h)
-            .classed('mu_keycircle', true);
+            .classed('mu_keycircle', true)
+            .on('mousemove', this._onMouseMove, this)
+            .on('mousedown', this._onMouseDown, this);
+        this._keyInfos = [];
         var line = this._svg.append('path');
         var linePath = [];
         for (var i = -7; i <= 7; i ++) {
@@ -1037,38 +1053,149 @@
                 .attr('cy', y)
                 .attr('r', dR)
                 .classed('mu_keycircle_dot', true);
-            this._svg.append('text')
+            var majorBg = this._svg.append('circle')
+                .attr('cx', cx)
+                .attr('cy', cy - (r + rr))
+                .attr('r', rr)
+                .attr('transform', 'rotate(' + deg + ' ' + cx + ',' + cy + ')')
+                .classed('mu_keycircle_bg', true);
+            var majorLabel = this._svg.append('text')
                 .attr('x', cx)
-                .attr('y', cy - r - rr)
+                .attr('y', cy - (r + rr))
                 .attr('dy', '0.4em')
                 .attr('text-anchor', 'middle')
                 .attr('font-size', tS)
                 .attr('transform', 'rotate(' + deg + ' ' + cx + ',' + cy + ')')
                 .classed('mu_keycircle_label', true)
                 .text(majorName.toString());
-            this._svg.append('text')
+            this._keyInfos.push({
+                x: cx + Math.sin(a) * (r + rr),
+                y: cy - Math.cos(a) * (r + rr),
+                key: mu.Key(majorName, mu.MAJOR),
+                label: majorLabel,
+                bg: majorBg
+            });
+            var minorBg = this._svg.append('circle')
+                .attr('cx', cx)
+                .attr('cy', cy - (r - rr))
+                .attr('r', rr)
+                .attr('transform', 'rotate(' + deg + ' ' + cx + ',' + cy + ')')
+                .classed('mu_keycircle_bg', true);
+            var minorLabel = this._svg.append('text')
                 .attr('x', cx)
-                .attr('y', cy - r + rr)
+                .attr('y', cy - (r - rr))
                 .attr('dy', '0.4em')
                 .attr('text-anchor', 'middle')
                 .attr('font-size', tS)
                 .attr('transform', 'rotate(' + deg + ' ' + cx + ',' + cy + ')')
                 .classed('mu_keycircle_label', true)
                 .text(minorName.toString().toLowerCase());
+            this._keyInfos.push({
+                x: cx + Math.sin(a) * (r - rr),
+                y: cy - Math.cos(a) * (r - rr),
+                key: mu.Key(minorName, mu.MINOR),
+                label: minorLabel,
+                bg: minorBg
+            });
         }
+        this._middle = this._svg.append('text')
+            .attr('x', cx)
+            .attr('y', cy)
+            .attr('dy', '0.4em')
+            .attr('text-anchor', 'middle')
+            .attr('font-size', mS)
+            .classed('mu_keycircle_middle', true);
         line.attr('d', linePath.join(''))
             .attr('stroke-width', lW)
             .classed('mu_keycircle_line', true);
+        this.setKey(key);
     };
+    mu._eventable(mu.ui.KeyCircle.prototype);
     mu.ui.KeyCircle._BASES = [mu.C, mu.G, mu.D, mu.A, mu.E, mu.B, mu.F];
     mu.ui.KeyCircle._INNER_RADIUS = 70;
-    mu.ui.KeyCircle._OUTER_RADIUS = 130;
+    mu.ui.KeyCircle._OUTER_RADIUS = 140;
     mu.ui.KeyCircle._LINE_WIDTH = 3;
     mu.ui.KeyCircle._DOT_RADIUS = 4;
-    mu.ui.KeyCircle._TEXT_GAP = 8;
-    mu.ui.KeyCircle._FONT_SIZE = 14;
+    mu.ui.KeyCircle._TEXT_GAP = 10;
+    mu.ui.KeyCircle._FONT_SIZE = 17;
+    mu.ui.KeyCircle._MIDDLE_FONT_SIZE = 18;
+    mu.ui.KeyCircle.prototype._getKeyInfo = function(key) {
+        if (key == null)
+            return null;
+        for (var i = 0; i < this._keyInfos.length; i ++)
+            if (this._keyInfos[i].key.equals(key))
+                return this._keyInfos[i];
+        return null;
+    };
+    mu.ui.KeyCircle.prototype._setKey = function(keyInfo) {
+        if (keyInfo === this._selected)
+            return false;
+        if (this._selected)
+            this._selected.bg.classed('mu_keycircle_sel', false);
+        this._selected = keyInfo;
+        if (this._selected) {
+            this._selected.bg.classed('mu_keycircle_sel', true);
+            this._middle.text(this._selected.key.toString());
+        } else
+            this._middle.text('');
+        return true;
+    };
+    mu.ui.KeyCircle.prototype._onMouseMove = function(event) {
+        if (this._disposed)
+            return;
+        var rect = this._svg.node().getBoundingClientRect();
+        var x = event.clientX - rect.left;
+        var y = event.clientY - rect.top;
+
+        var lW = mu.ui.KeyCircle._LINE_WIDTH;
+        var dR = mu.ui.KeyCircle._DOT_RADIUS;
+        var tG = mu.ui.KeyCircle._TEXT_GAP;
+
+        var rr = Math.max(dR, lW / 2) + tG;
+
+        var hit = null;
+        for (var i = 0; i < this._keyInfos.length && hit == null; i ++) {
+            var key = this._keyInfos[i];
+            var d2 = (x - key.x) * (x - key.x) + (y - key.y) * (y - key.y);
+            if (d2 < rr * rr)
+                hit = key;
+        }
+        if (this._keyOver === hit)
+            return;
+        if (this._keyOver)
+            this._keyOver.bg.classed('mu_keycircle_over', false);
+        this._keyOver = hit;
+        if (this._keyOver)
+            this._keyOver.bg.classed('mu_keycircle_over', true);
+        this._svg.classed('mu_keycircle_pointer', !!this._keyOver);
+    };
+    mu.ui.KeyCircle.prototype._onMouseDown = function(event) {
+        if (this._disposed)
+            return;
+        event.preventDefault();
+        if (this._setKey(this._keyOver))
+            this._fire('keyselect', {ui: this, key: this._selected ? this._selected.key : null});
+    };
     mu.ui.KeyCircle.prototype.node = function() {
         return this._svg.node();
+    };
+    /**
+     * Returns the currently selected key.
+     *
+     * @returns {mu.Key} The currently selected key.
+     * @memberof mu.ui.KeyCircle
+     */
+    mu.ui.KeyCircle.prototype.key = function() {
+        return this._selected;
+    };
+    /**
+     * Sets the selected key
+     *
+     * @param {mu.Key} key The key to select
+     * @memberof mu.ui.KeyCircle
+     */
+    mu.ui.KeyCircle.prototype.setKey = function(key) {
+        this._setKey(this._getKeyInfo(key));
     };
 
     /**

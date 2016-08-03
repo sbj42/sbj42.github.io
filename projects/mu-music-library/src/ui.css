@@ -61,6 +61,9 @@
     font-family: Verdana;
 }
 
+.mu_waveform {
+    cursor: pointer;
+}
 .mu_waveform_line {
     stroke: #888;
 }
@@ -73,6 +76,9 @@
     stroke-width: 2px;
 }
 
+.mu_keycircle_pointer {
+    cursor: pointer;
+}
 .mu_keycircle_line {
     stroke: #000;
     fill: none;
@@ -82,5 +88,22 @@
 }
 .mu_keycircle_label {
     fill: #000;
+    font-family: Verdana;
+}
+.mu_keycircle_bg {
+    fill: none;
+}
+.mu_keycircle_over {
+    fill: #eef;
+    stroke: #00f;
+    stroke-width: 2px;
+    stroke-dasharray: 3 3;
+}
+.mu_keycircle_sel {
+    fill: #ff8;
+    stroke: #fa0;
+    stroke-width: 2px;
+}
+.mu_keycircle_middle {
     font-family: Verdana;
 }

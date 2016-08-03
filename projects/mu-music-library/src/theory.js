@@ -1671,7 +1671,7 @@
     mu.NoteName.prototype.equals = function(other) {
         mu._assert(other instanceof mu.NoteName,
                    'invalid note name ' + other);
-        return this._index == other._index &&
+        return this._base.equals(other._base) &&
             ((this._accidental == null && other._accidental == null)
              || (this._accidental != null && other._accidental != null
                  && this._accidental.equals(other._accidental)));
@@ -1715,6 +1715,10 @@
         if (accidental instanceof mu.Mode) {
             mode = accidental;
             accidental = null;
+        }
+        if (base instanceof mu.NoteName) {
+            accidental = base.accidental();
+            base = base.base();
         }
         mu._assert(base instanceof mu.PitchClass && base.isNatural(),
                    'invalid base note ' + base);
@@ -1832,6 +1836,16 @@
         mu._assert(pitchClass instanceof mu.PitchClass,
                    'invalid pitch class ' + pitchClass);
         return this._pitchDegrees[pitchClass.index()] || null;
+    };
+    /**
+     * Returns true if this key is equivalent to the other.
+     *
+     * @param {mu.Accidental} other The key to compare against
+     * @return {boolean} True If the keys are equivalent
+     * @memberof mu.Key
+     */
+    mu.Key.prototype.equals = function(other) {
+        return this._tonic.equals(other._tonic) && this._mode.equals(other._mode);
     };
     /**
      * Returns a description of this key.

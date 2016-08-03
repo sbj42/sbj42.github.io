@@ -225,7 +225,7 @@
     assert(CM.degreePitchClass(2, mu.DOUBLE_SHARP).equals(mu.E));
     assertEquals(CM.pitchClassDegree(mu.G), 5);
     assertEquals(CM.pitchClassDegree(mu.G_SHARP), null);
-    var Fm = mu.F_MINOR;
+    var Fm = mu.Key(mu.F, mu.MINOR);
     assertEquals(Fm.toString(), 'F Minor');
     assert(Fm.tonic().equals(mu.NoteName(mu.F)));
     assert(Fm.degreePitchClass(1).equals(mu.F));
@@ -236,6 +236,9 @@
     assert(Fm.degreePitchClass(3, mu.NATURAL).equals(mu.A));
     assertEquals(Fm.pitchClassDegree(mu.E_FLAT), 7);
     assertEquals(Fm.pitchClassDegree(mu.E), null);
+    assert(Fm.equals(Fm));
+    assert(!CM.equals(Fm));
+    assert(Fm.equals(mu.Key(mu.NoteName(mu.F), mu.MINOR)));
     assert(mu.C_FLAT_MAJOR.tonic().equals(mu.NoteName(mu.C, mu.FLAT)));
     assert(mu.B_SHARP_MAJOR.tonic().equals(mu.NoteName(mu.B, mu.SHARP)));
     assert(mu.G_SHARP_MAJOR.degreeName(7).equals(mu.NoteName(mu.F, mu.DOUBLE_SHARP)));
