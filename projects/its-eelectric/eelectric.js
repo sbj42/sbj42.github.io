@@ -31,7 +31,7 @@ var MOVEHP = 1;
 var SHOCKHP = 3;
 var MAXHP = 20;
 
-var DEBUG = true;
+var DEBUG = false;
 
 var STARTTIME = new Date().getTime();
 
