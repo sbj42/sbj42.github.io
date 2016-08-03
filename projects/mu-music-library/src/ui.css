@@ -24,13 +24,16 @@
     cursor: pointer;
 }
 .mu_pitchconstellation_ray {
-    stroke: #000;
+    stroke: #ccc;
     stroke-width: 2px;
     stroke-linecap: round;
-    opacity: 0.2;
 }
 .mu_pitchconstellation_ray2 {
     stroke: none;
+}
+.mu_pitchconstellation_degreemark {
+    fill: #fff;
+    stroke: #aaa;
 }
 .mu_pitchconstellation_label {
     fill: #000;
@@ -74,6 +77,10 @@
 .mu_waveform_dot {
     stroke: #000;
     stroke-width: 2px;
+}
+.mu_waveform_middle_c_mark {
+    fill: #888;
+    stroke: none;
 }
 
 .mu_keycircle_pointer {

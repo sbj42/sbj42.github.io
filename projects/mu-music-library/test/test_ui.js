@@ -11,12 +11,13 @@ harm.ready(function() {
     mu._html('#waveform').append(waveform.node());
     c.connectUI(waveform);
 
-    var constellation = mu.ui.PitchConstellation(mu.C, mu.C_4, mu.B_4);
+    var constellation = mu.ui.PitchConstellation(mu.C_MAJOR, mu.C_4, mu.B_4);
     mu._html('#constellation').append(constellation.node());
     c.connectUI(constellation);
 
     var keycircle = mu.ui.KeyCircle();
     mu._html('#keycircle').append(keycircle.node());
+    c.connectUI(keycircle);
 
     function onChange() {
         var chord = mu.Chord(c.voice().pitchesPlaying());

@@ -1,7 +1,3 @@
-use selected key to change constellation
-use selected key to change pitch colors
-mark middle C on waveform ui
-
 solfege
 
 time signatures
@@ -22,3 +18,5 @@ add time signature
 use in chordline
 
 support "aeolian sharp-7" aka "harmonic minor scale"?
+
+get rid of controller, try for a more general switchboard-like thing? 

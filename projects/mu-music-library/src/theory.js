@@ -1785,16 +1785,6 @@
         return this._tonic;
     };
     /**
-     * Returns the base note for this key, as a pitch from
-     * the C major scale: mu.C, mu.D, mu.E, mu.F, mu.G, mu.A, mu.B.
-     *
-     * @return {mu.PitchClass} The base note for this key
-     * @memberof mu.Key
-     */
-    mu.Key.prototype.base = function() {
-        return this._base;
-    };
-    /**
      * Returns a pitch class in this key, based on the scale degree and
      * any accidental that might apply.
      *

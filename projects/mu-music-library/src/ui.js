@@ -91,25 +91,31 @@
         return 'hsl(' + Math.floor(h) + ', ' + Math.floor(s * 100) + '%, ' + Math.floor(l * 100) + '%)';
     };
 
-    // TODO these should be based on 'degree' in the key
-    mu.ui.frequencyColor = function(frequency, s, l) {
+    mu.ui.frequencyColor = function(key, frequency, s, l) {
+        mu._assert(key instanceof mu.Key,
+                   'invalid key ' + key);
         mu._assert(frequency instanceof mu.Frequency,
                    'invalid frequency ' + frequency);
-        var a = mu._log2(frequency.hertz()) - mu._log2(mu.C_4.frequency().hertz());
+        var a = mu._log2(frequency.hertz()) - mu._log2(mu.C_4.transpose(key.tonic().pitchClass().index()).frequency().hertz());
         a = a % 1;
         if (a < 0)
             a += 1;
         return mu.ui._colorHelper(360 * a, s, l);
     };
 
-    mu.ui.pitchClassColor = function(pitchClass, s, l) {
+    mu.ui.pitchClassColor = function(key, pitchClass, s, l) {
+        mu._assert(key instanceof mu.Key,
+                   'invalid key ' + key);
         mu._assert(pitchClass instanceof mu.PitchClass,
                    'invalid pitch class ' + pitchClass);
         mu._assert(s == null || (mu._isFinite(s) && s >= 0 && s <= 1),
                    'invalid saturation ' + s);
         mu._assert(l == null || (mu._isFinite(l) && l >= 0 && l <= 1),
                    'invalid lightness ' + l);
-        var a = pitchClass.index();
+        var a = pitchClass.index() - key.tonic().pitchClass().index();
+        a = a % 12;
+        if (a < 0)
+            a += 12;
         return mu.ui._colorHelper(a * 360 / 12, s, l);
     };
 
@@ -223,6 +229,14 @@
      * @memberof mu.ui.UI
      */
     mu.ui.UI.prototype.stopFrequency = function(frequency) {
+    };
+    /**
+     * Updates the UI to match a selected key.
+     *
+     * @param {mu.Key} key The key
+     * @memberof mu.ui.UI
+     */
+    mu.ui.UI.prototype.setKey = function(key) {
     };
 
     /**
@@ -457,28 +471,30 @@
      * A pitch constellation UI.
      *
      * @class
+     * @param {mu.Key} [key] The key to show in the constellation
+     * @param {mu.Pitch} [lowPitch] The lowest note to play when a pitch class is clicked
+     * @param {mu.Pitch} [highPitch] The lowest note to play when a pitch class is clicked
      * @extends mu.ui.UI
      * @memberof mu
      */
-    mu.ui.PitchConstellation = function(root, lowPitch, highPitch) {
+    mu.ui.PitchConstellation = function(key, lowPitch, highPitch) {
         if (!(this instanceof mu.ui.PitchConstellation))
-            return new mu.ui.PitchConstellation(root, lowPitch, highPitch);
-        mu._assert(root instanceof mu.PitchClass,
-                   'invalid pitch class ' + root);
+            return new mu.ui.PitchConstellation(key, lowPitch, highPitch);
+        mu._assert(key == null || key instanceof mu.Key,
+                   'invalid key ' + key);
         mu._assert(lowPitch == null || lowPitch instanceof mu.Pitch,
                    'invalid low pitch ' + lowPitch);
         mu._assert(highPitch == null || highPitch instanceof mu.Pitch,
                    'invalid high pitch ' + highPitch);
-        root = root || mu.C;
+        key = key || mu.C_MAJOR;
         lowPitch = lowPitch || mu.C_1;
         highPitch = highPitch || mu.C_8;
         mu._assert(highPitch.subtract(lowPitch) >= 0,
                    'pitches swapped ' + lowPitch + ' ' + highPitch);
         mu.ui.UI.call(this);
-        this._root = root;
+        this._key = key;
         this._lowPitch = lowPitch;
         this._highPitch = highPitch;
-        this._lines = [];
         this._marks = [];
         this._pitchClassesPlaying = [];
 
@@ -496,10 +512,11 @@
             .on('mousedown', this._onMouseDown, this);
         var bottom = this._svg.append('g');
 
+        this._rayGroup = this._svg.append('g');
+        this._textGroup = this._svg.append('g');
         for (var i = 0; i < 12; i ++) {
             this._pitchClassesPlaying.push(0);
-            var pitchClass = this._root.transpose(i);
-            var strings = pitchClass.toStrings();
+            var pitchClass = this._key.tonic().base().transpose(i);
             var deg = i * 180 / 6;
             var rad = i * Math.PI / 6;
             bottom.append('line')
@@ -508,14 +525,49 @@
                 .attr('x2', r + rI * Math.sin(rad))
                 .attr('y2', r - rI * Math.cos(rad))
                 .classed('mu_pitchconstellation_ray', true);
-            this._lines.push(this._svg.append('line')
+        }
+        this._update();
+    };
+    mu.ui.PitchConstellation.prototype = Object.create(mu.ui.UI.prototype);
+    mu.ui.PitchConstellation.prototype.constructor = mu.ui.PitchConstellation;
+    mu.ui.PitchConstellation._RADIUS = 80;
+    mu.ui.PitchConstellation._DEGREE_MARK_RADIUS = 3;
+    mu.ui.PitchConstellation._TEXT_GAP = 4;
+    mu.ui.PitchConstellation._FONT_SIZE = 14;
+    mu.ui.PitchConstellation.prototype._update = function() {
+        this._lines = [];
+        this._rayGroup.clear();
+        this._textGroup.clear();
+
+        var r = mu.ui.PitchConstellation._RADIUS;
+        var dR = mu.ui.PitchConstellation._DEGREE_MARK_RADIUS;
+        var tS = mu.ui.PitchConstellation._FONT_SIZE;
+        var tH = tS;
+        var rT = r - 2*tH;
+        var rI = rT - mu.ui.PitchConstellation._TEXT_GAP;
+
+        for (var i = 0; i < 12; i ++) {
+            var pitchClass = this._key.tonic().pitchClass().transpose(i);
+            var strings = pitchClass.toStrings(this._key);
+            var deg = i * 180 / 6;
+            var rad = i * Math.PI / 6;
+            var playing = this._pitchClassesPlaying[pitchClass.index()] != 0;
+            if (this._key.pitchClassDegree(pitchClass) != null) {
+                this._rayGroup.append('circle')
+                    .attr('cx', r + (rI - dR) * Math.sin(rad))
+                    .attr('cy', r - (rI - dR) * Math.cos(rad))
+                    .attr('r', dR)
+                    .classed('mu_pitchconstellation_degreemark', true);
+            }
+            this._lines[pitchClass.index()] = this._rayGroup.append('line')
                 .attr('x1', r)
                 .attr('y1', r)
                 .attr('x2', r + rI * Math.sin(rad))
                 .attr('y2', r - rI * Math.cos(rad))
-                .classed('mu_pitchconstellation_ray2', true));
+                .classed('mu_pitchconstellation_ray2', true)
+                .classed('mu_pitchconstellation_ray2_playing', playing);
             strings.forEach(function(str, line) {
-                this._svg.append('text')
+                this._textGroup.append('text')
                     .attr('x', r)
                     .attr('y', r - rT - tH * (strings.length - line - 1))
                     .attr('text-anchor', 'middle')
@@ -526,11 +578,6 @@
             }, this);
         }
     };
-    mu.ui.PitchConstellation.prototype = Object.create(mu.ui.UI.prototype);
-    mu.ui.PitchConstellation.prototype.constructor = mu.ui.PitchConstellation;
-    mu.ui.PitchConstellation._RADIUS = 80;
-    mu.ui.PitchConstellation._TEXT_GAP = 4;
-    mu.ui.PitchConstellation._FONT_SIZE = 14;
     mu.ui.PitchConstellation.prototype._isPlaying = function(pitchClass) {
         return this._pitchClassesPlaying[pitchClass.index()] != 0;
     };
@@ -556,7 +603,7 @@
             a += 12;
         else if (a == 0)
             a = 0;
-        var pitchClass = mu.PitchClass(a);
+        var pitchClass = this._key.tonic().pitchClass().transpose(a);
         if (this._pitchClassOver && pitchClass.equals(this._pitchClassOver))
             return;
         if (this._mouseDown && this._dragPress && !this._shiftDown)
@@ -630,6 +677,12 @@
         mu.ui.UI.prototype.dispose.call(this);
         this._disposed = true;
     };
+    mu.ui.PitchConstellation.prototype.setKey = function(key) {
+        mu._assert(key instanceof mu.Key,
+                   'invalid key ' + key);
+        this._key = key;
+        this._update();
+    };
     mu.ui.PitchConstellation.prototype.node = function() {
         return this._svg.node();
     };
@@ -648,6 +701,7 @@
                    'invalid low frequency ' + lowFrequency);
         lowFrequency = lowFrequency || mu.C_1.frequency();
         mu.ui.UI.call(this);
+        this._key = mu.C_MAJOR;
         this._lowFreq = lowFrequency;
         this._freqs = {};
         this._freqsPlaying = {};
@@ -673,15 +727,25 @@
             .attr('y2', h / 2)
             .attr('stroke-width', lW)
             .classed('mu_waveform_line', true);
-        var wavelength = w;
+        var pitch = mu.Pitch.fromFrequency(this._lowFreq);
+        var wavelength = w * this._lowFreq.hertz() / pitch.frequency().hertz();
         while (wavelength >= wS) {
-            this._svg.append('line')
-                .attr('x1', wavelength)
-                .attr('y1', h / 2 - tL)
-                .attr('x2', wavelength)
-                .attr('y2', h / 2 + tL)
-                .attr('stroke-width', tW)
-                .classed('mu_waveform_line', true);
+            if (pitch.equals(mu.C_4)) {
+                this._svg.append('circle')
+                    .attr('cx', wavelength)
+                    .attr('cy', h / 2)
+                    .attr('r', tL)
+                    .classed('mu_waveform_middle_c_mark', true);
+            } else {
+                this._svg.append('line')
+                    .attr('x1', wavelength)
+                    .attr('y1', h / 2 - tL)
+                    .attr('x2', wavelength)
+                    .attr('y2', h / 2 + tL)
+                    .attr('stroke-width', tW)
+                    .classed('mu_waveform_line', true);
+            }
+            pitch = pitch.transpose(1);
             wavelength = wavelength / Math.pow(2, 1/12);
         }
 
@@ -725,7 +789,7 @@
             this._waveGroup.append('path')
                 .attr('d', d.join(''))
                 .attr('stroke-width', wW)
-                .attr('fill', mu.ui.frequencyColor(freq, 0.8, 0.6))
+                .attr('fill', mu.ui.frequencyColor(this._key, freq, 0.8, 0.6))
                 .classed('mu_waveform_wave', true);
         }, this);
         mu._mapForEach(this._freqsPlaying, function(freq, x) {
@@ -734,7 +798,7 @@
                 .attr('cx', wavelength)
                 .attr('cy', h / 2)
                 .attr('r', dR)
-                .attr('fill', mu.ui.frequencyColor(freq, 0.8, 0.6))
+                .attr('fill', mu.ui.frequencyColor(this._key, freq, 0.8, 0.6))
                 .classed('mu_waveform_dot', true);
         }, this);
     };
@@ -824,6 +888,12 @@
     mu.ui.Waveform.prototype.node = function() {
         return this._svg;
     };
+    mu.ui.Waveform.prototype.setKey = function(key) {
+        mu._assert(key instanceof mu.Key,
+                   'invalid key ' + key);
+        this._key = key;
+        this._update();
+    };
 
     /**
      * A chord progression UI.
@@ -840,6 +910,7 @@
         mu._assert(prog == null || (prog instanceof mu.seq.SimpleChordProgression),
                    'invalid chord progression ' + prog);
         mu.ui.UI.call(this);
+        this._key = mu.C_MAJOR;
         this._prog = prog;
         this._width = width || 800;
 
@@ -921,8 +992,8 @@
                 var analyses = start.chord.analyze();
                 var analysis = analyses.length > 0 ? analyses[0] : null;
                 if (analysis) {
-                    rect.attr('fill', mu.ui.pitchClassColor(analysis.root()))
-                        .attr('stroke', mu.ui.pitchClassColor(analysis.root(), 0.5, 0.5));
+                    rect.attr('fill', mu.ui.pitchClassColor(this._key, analysis.root()))
+                        .attr('stroke', mu.ui.pitchClassColor(this._key, analysis.root(), 0.5, 0.5));
                 } else {
                     rect.attr('fill', 'hsl(0, 0%, 85%)')
                         .attr('stroke', 'hsl(0, 0%, 50%)');
@@ -1005,6 +1076,7 @@
             return new mu.ui.KeyCircle(key);
         mu._assert(key == null || key instanceof mu.Key,
                    'invalid key ' + key);
+        key = key || mu.C_MAJOR;
 
         var oR = mu.ui.KeyCircle._OUTER_RADIUS;
         var iR = mu.ui.KeyCircle._INNER_RADIUS;
@@ -1108,8 +1180,10 @@
         line.attr('d', linePath.join(''))
             .attr('stroke-width', lW)
             .classed('mu_keycircle_line', true);
-        this.setKey(key);
+        this.setKey(key, false);
     };
+    mu.ui.KeyCircle.prototype = Object.create(mu.ui.UI.prototype);
+    mu.ui.KeyCircle.prototype.constructor = mu.ui.KeyCircle;
     mu._eventable(mu.ui.KeyCircle.prototype);
     mu.ui.KeyCircle._BASES = [mu.C, mu.G, mu.D, mu.A, mu.E, mu.B, mu.F];
     mu.ui.KeyCircle._INNER_RADIUS = 70;
@@ -1194,8 +1268,10 @@
      * @param {mu.Key} key The key to select
      * @memberof mu.ui.KeyCircle
      */
-    mu.ui.KeyCircle.prototype.setKey = function(key) {
-        this._setKey(this._getKeyInfo(key));
+    mu.ui.KeyCircle.prototype.setKey = function(key, fireEvent) {
+        if (this._setKey(this._getKeyInfo(key)) && fireEvent)
+            this._fire('keyselect', {ui: this, key: this._selected ? this._selected.key : null});
+        
     };
 
     /**
@@ -1212,6 +1288,7 @@
         mu._assert(voice == null || voice instanceof mu.audio.Voice,
                    'invalid voice ' + voice);
         this._uis = [];
+        this._key = mu.C_MAJOR;
         this.setVoice(voice);
     };
     mu._eventable(mu.ui.Controller.prototype);
@@ -1254,6 +1331,11 @@
             ui.stopFrequency(data.frequency);
         });
         this._fire('frequencystop', data);
+    };
+    mu.ui.Controller.prototype._onKeySelect = function(data) {
+        this._uis.forEach(function(ui) {
+            ui.setKey(data.key, false);
+        });
     };
     /**
      * Returns a string description of the controller.
@@ -1325,10 +1407,12 @@
         this._uis.push(ui);
         if (this._voice)
             ui.setPitchesOnly(!this._voice.canPlayFrequency());
+        ui.setKey(this._key, false);
         ui.addEventListener('pitchpress', this._onPitchPress, this);
         ui.addEventListener('pitchrelease', this._onPitchRelease, this);
         ui.addEventListener('frequencypress', this._onFrequencyPress, this);
         ui.addEventListener('frequencyrelease', this._onFrequencyRelease, this);
+        ui.addEventListener('keyselect', this._onKeySelect, this);
     };
     /**
      * Disconnectes a UI to this controller.
@@ -1353,6 +1437,7 @@
         ui.removeEventListener('pitchrelease', this._onPitchRelease, this);
         ui.removeEventListener('frequencypress', this._onFrequencyPress, this);
         ui.removeEventListener('frequencyrelease', this._onFrequencyRelease, this);
+        ui.removeEventListener('keyselect', this._onKeySelect, this);
     };
     mu.ui.Controller.prototype.dispose = function() {
         _.each(this._uis, this.disconnectUI, this);
