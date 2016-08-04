@@ -106,7 +106,7 @@ var perlin1 = (function() { // 1d perlin noise
 var LEVELS = [
     {
         "id": "T1",
-        "name": "Eel-22",
+        "name": "Green Eels and Ham",
         "map": [
             "*************",
             "*************",
@@ -128,97 +128,98 @@ var LEVELS = [
     },
     {
         "id": "T2",
-        "name": "The Eel in the Rye",
+        "name": "Goodnight Eel",
         "map": [
             "*************",
             "*************",
-            "*******p ****",
             "*******  ****",
+            "******p  ****",
             "******  p  **",
-            "******    p**",
-            "****     ****",
-            "**p  2 ******",
+            "******     **",
+            "***p     p***",
+            "**   2 ******",
             "**  p  ******",
+            "****  p******",
             "****  *******",
-            "**** p*******",
             "*************",
             "*************"
         ],
         "eel": [1,-1,1,-2,0,-2],
         "hp": 12
-        // qaqqa*s (9)
+        // qaq__a (6)
     },
     {
         "id": "T3",
-        "name": "Gone With the Eel",
+        "name": "Don't Let the Eel Drive the Bus",
         "map": [
             "*************",
             "*************",
             "*************",
             "*************",
-            "*****  p*****",
+            "*****ppp*****",
             "****    p****",
-            "****  3  ****",
-            "****p    ****",
-            "*****p  *****",
+            "***   3 p****",
+            "****    p****",
+            "*****ppp*****",
             "*************",
             "*************",
             "*************",
             "*************"
         ],
-        "eel": [-2,0,-2,-1,-1,-1,-1,-2,0,-2],
-        "hp": 9
-        // sassw*q (9)
+        "eel": [-1,0,-2,0,-3,0],
+        "hp": 5
+        // as__w (5)
     },
     {
         "id": "T4",
-        "name": "Of Eels and Men",
+        "name": "The Very Hungry Eel",
         "map": [
             "*************",
             "*************",
             "*************",
             "*************",
-            "*****1  p****",
-            "****   2 ****",
-            "***  2   ****",
-            "**   pp1 ****",
-            "*****  p*****",
-            "*****  ******",
-            "***** *******",
+            "*************",
+            "***** 1p*****",
+            "**     p*****",
+            "***** 1p*****",
+            "*************",
+            "*************",
+            "*************",
             "*************",
             "*************"
         ],
-        "eel": [-2,0,-3,0,-3,1,-4,1],
-        "hp": 9
-        // wssas*wwqqaassa (9)
+        "eel": [-2,0,-3,0,-4,0],
+        "hp": 5
+        // ss_wqasa (5)
     },
     {
         "id": "T5",
-        "name": "The Eels of Wrath",
+        "name": "Where the Wild Eels Are",
         "map": [
             "*************",
             "*************",
             "*************",
-            "***** 0******",
-            "*****  ******",
-            "***     1****",
-            "***     1****",
-            "*****  ******",
-            "***** 0******",
+            "*************",
+            "****** 0 ****",
+            "***      ****",
+            "*** 1ppp ****",
+            "***      ****",
+            "****** 0 ****",
             "*************",
             "*************",
             "*************",
             "*************"
         ],
-        "eel": [-2,0,-3,0,-3,-1,-2,-1],
+        "eel": [-2,1,-3,1,-3,0,-3,-1,-2,-1],
         "hp": 19
-        // ssaaqwwwwwsaasa*sw (19)
+        // _w (2)
+        // ssasswwwwqaqqq_a (16**)
     },
 
     // SOLVERSTART
     {
         "id": "G brave",
-        "name": "Brave New Eel",
+        "name": "The Giving Eel",
         "map": [
             "*************",
             "*************",
@@ -241,7 +242,7 @@ var LEVELS = [
     },
     {
         "id": "G rises",
-        "name": "The Eel Also Rises",
+        "name": "Cloudy With a Chance of Eels",
         "map": [
             "*************",
             "*************",
@@ -265,7 +266,7 @@ var LEVELS = [
     },
     {
         "id": "G call",
-        "name": "The Call of the Eel",
+        "name": "Curious Eel",
         "map": [
             "*************",
             "*************",
@@ -288,7 +289,7 @@ var LEVELS = [
     },
     {
         "id": "G farm",
-        "name": "Eel Farm",
+        "name": "We're Going on an Eel Hunt",
         "map": [
             "*************",
             "*************",
@@ -312,7 +313,7 @@ var LEVELS = [
     },
     {
         "id": "G fury",
-        "name": "The Eel and the Fury",
+        "name": "Where is Eel's Belly Button",
         "map": [
             "*************",
             "*************",
@@ -335,7 +336,7 @@ var LEVELS = [
     },
     {
         "id": "G galaxy",
-        "name": "The Eel's Guide to the Galaxy",
+        "name": "The Little Eel That Could",
         "map": [
             "*************",
             "*************",
@@ -358,7 +359,7 @@ var LEVELS = [
     },
     {
         "id": "G nest",
-        "name": "One Flew over the Eel's Nest",
+        "name": "The Eel in the Hat",
         "map": [
             "*************",
             "*************",
@@ -381,7 +382,7 @@ var LEVELS = [
     },
     {
         "id": "G midsummer",
-        "name": "A Midsummer Night's Eel",
+        "name": "Make Way for Eels",
         "map": [
             "*************",
             "*************",
@@ -405,7 +406,7 @@ var LEVELS = [
 
     {
         "id": "C narnia",
-        "name": "The Eels of Narnia",
+        "name": "How the Eel Stole Christmas",
         "map": [
             "*************",
             "*************",
@@ -428,7 +429,7 @@ var LEVELS = [
     },
     {
         "id": "C clockwork",
-        "name": "A Clockwork Eel",
+        "name": "Llama Llama Red Eel",
         "map": [
             "*************",
             "*******p*****",
@@ -474,7 +475,7 @@ var LEVELS = [
     },
     {
         "id": "C red",
-        "name": "The Hunt for Red Eel",
+        "name": "Puff, the Magic Eel",
         "map": [
             "*************",
             "*************",
@@ -497,7 +498,7 @@ var LEVELS = [
     },
     {
         "id": "C bonfire",
-        "name": "Bonfire of the Eels",
+        "name": "Charlotte's Eel",
         "map": [
             "*************",
             "*************",
@@ -520,7 +521,7 @@ var LEVELS = [
     },
     {
         "id": "C interview",
-        "name": "Interview With the Eel",
+        "name": "Charlie and the Chocolate Eel",
         "map": [
             "*************",
             "*************",
@@ -543,7 +544,7 @@ var LEVELS = [
     },
     {
         "id": "C strange",
-        "name": "Eel in a Strange Land",
+        "name": "The Velveteen Eel",
         "map": [
             "*************",
             "*************",
@@ -566,7 +567,7 @@ var LEVELS = [
     },
     {
         "id": "C 451",
-        "name": "Eel 451",
+        "name": "The Wonderful Eel of Oz",
         "map": [
             "*************",
             "*************",
@@ -590,7 +591,7 @@ var LEVELS = [
 
     {
         "id": "P thousand",
-        "name": "Twenty Thousand Eels Under the Sea",
+        "name": "The Poky Little Eel",
         "map": [
             "*************",
             "*************",
@@ -613,7 +614,7 @@ var LEVELS = [
     },
     {
         "id": "P kings",
-        "name": "All the King's Eels",
+        "name": "James and the Giant Eel",
         "map": [
             "*************",
             "*************",
@@ -638,7 +639,7 @@ var LEVELS = [
     },
     {
         "id": "P darkness",
-        "name": "Eel of Darkness",
+        "name": "Clifford the Big Red Eel",
         "map": [
             "*************",
             "*************",
@@ -662,7 +663,7 @@ var LEVELS = [
     },
     {
         "id": "P masters",
-        "name": "The Eel Masters",
+        "name": "The Eel Of Tom Sawyer",
         "map": [
             "*************",
             "*******p*****",
@@ -685,7 +686,7 @@ var LEVELS = [
     },
     {
         "id": "P machine",
-        "name": "The Eel Machine",
+        "name": "The Neverending Eel",
         "map": [
             "*************",
             "*************",
@@ -708,7 +709,7 @@ var LEVELS = [
     },
     {
         "id": "P traveler",
-        "name": "The Time Traveler's Eel",
+        "name": "The Lion, the Witch, and the Eel",
         "map": [
             "*************",
             "*************",
@@ -729,7 +730,7 @@ var LEVELS = [
     },
     {
         "id": "P war",
-        "name": "The War of the Eels",
+        "name": "How to Train Your Eel",
         "map": [
             "*************",
             "*************",
@@ -752,7 +753,7 @@ var LEVELS = [
     },
     {
         "id": "P wonderland",
-        "name": "Eel in Wonderland",
+        "name": "What Do Eels Do All Day",
         "map": [
             "*************",
             "*************",
@@ -776,7 +777,7 @@ var LEVELS = [
 
     {
         "id": "S call",
-        "name": "The Call of the Eel",
+        "name": "Diary of a Wimpy Eel",
         "map": [
             "*************",
             "*******p*****",
@@ -799,7 +800,7 @@ var LEVELS = [
     },
     {
         "id": "S scarlet",
-        "name": "The Scarlet Eel",
+        "name": "The Going-to-Bed Eel",
         "map": [
             "*************",
             "*************",
@@ -823,7 +824,7 @@ var LEVELS = [
 
     {
         "id": "S lord",
-        "name": "Lord of the Eels",
+        "name": "But Not the Eel",
         "map": [
             "*************",
             "*************",
@@ -846,7 +847,7 @@ var LEVELS = [
     },
     {
         "id": "S punishment",
-        "name": "Eel and Punishment",
+        "name": "Everywhere Eels",
         "map": [
             "*************",
             "*************",
@@ -869,7 +870,7 @@ var LEVELS = [
     },
     {
         "id": "S kill",
-        "name": "To Kill an Eel",
+        "name": "We are in an Eel",
         "map": [
             "*************",
             "*************",
@@ -892,7 +893,7 @@ var LEVELS = [
     },
     {
         "id": "S prejudice",
-        "name": "Eel and Prejudice",
+        "name": "Leonardo, the Terrible Eel",
         "map": [
             "*************",
             "*************",
@@ -915,7 +916,7 @@ var LEVELS = [
     },
     {
         "id": "S memoirs",
-        "name": "Memoirs of an Eel",
+        "name": "Blue Eel, Green Hat",
         "map": [
             "*************",
             "*************",
@@ -938,7 +939,7 @@ var LEVELS = [
     },
     {
         "id": "S midnight",
-        "name": "Midnight's Eels",
+        "name": "Z is for Eel",
         "map": [
             "*************",
             "*************",
@@ -2085,7 +2086,7 @@ function tutorial3() {
         fadeto(tx(0, 0), ty(0, 0), TR, 'This fish will take 3 shocks to kill,<br />but you\'re too hungry for that.', s2);
     }
     function s2() {
-        fadeto(tx(0, 0), ty(0, 0), TR*3, 'Kill it with just one shock<br />by surrounding it on three sides.', d);
+        fadeto(tx(-0.5, 0.5), ty(-0.5, 0.5), TR*2, 'Try shocking it from two sides at once.', d);
     }
     function d() {
         savestate.t3 = true;
@@ -2099,7 +2100,7 @@ function tutorial4() {
     if (savestate.t4)
         return;
     function s1() {
-        fadeto(tx(0, -0.5), ty(0, -0.5), TR*3.5, 'Don\'t waste time picking off individual fish.<br />Use your length to kill all four of these at once.', d);
+        fadeto(tx(0, 0), ty(0, 0), TR*2, 'You can kill both of these fish at the same time<br />with just one shock.', d);
     }
     function d() {
         savestate.t4 = true;
@@ -2108,15 +2109,15 @@ function tutorial4() {
     }
     s1();
 }
-
+ 
 function tutorial5() {
     if (savestate.t5)
         return;
     function s1() {
-        fadeto(tx(2, -0.5), ty(2, -0.5), TR*2, 'To beat the level, you just need to eat the fish.<br />If you feel that the bare minimum is enough, then okay.', s2);
+        fadeto(tx(-2, 0.5), ty(-2, 0.5), TR*1.5, 'If you eat the last fish, you beat the level.', s2);
     }
     function s2() {
-        fadeto(tx(0, 2), ty(0, 2), TR, 'But some eels want an extra challenge, and they<br />try to collect the starfish along the way.', d);
+        fadeto(tx(1, 2), ty(1, 2), TR, 'But for an extra challenge,<br />try to collect the starfish along the way.', d);
     }
     function d() {
         savestate.t5 = true;
