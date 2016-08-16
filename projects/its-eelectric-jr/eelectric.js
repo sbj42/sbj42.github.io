@@ -1445,6 +1445,7 @@ function goto_page(next, dir, done) {
             busy = false;
             done();
         });
+    TweenLite.set('#'+next+' > .page', { force3D: true});
     TweenLite.to('#'+next+' > .page', 0.8, {
         'left': 0,
         'opacity': 1,
@@ -2008,6 +2009,7 @@ function fadeto(x, y, r, msg, callback) {
     $('#fadeouter').removeClass('passevents');
     $('#fademsgbox').hide();
     $('#fadeouter').show();
+    TweenLite.set('#fadebg', { force3D: true});
     TweenLite.to('#fadebg', 1, {
         'opacity': 1,
         ease: Power2.easeInOut
@@ -2035,6 +2037,7 @@ function unfade(callback) {
     busy = true;
     fadecallback = null;
     $('#fademsgbox').hide();
+    TweenLite.set('#fadebg', { force3D: true});
     TweenLite.to('#fadebg', 1, {
         'opacity': 0,
         ease: Power2.easeInOut
