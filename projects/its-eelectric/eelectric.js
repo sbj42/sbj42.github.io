@@ -1335,6 +1335,10 @@ function preloadaudio(sounds, callback) {
             .on('error', onload)
             .attr('id', 'audio_' + s)
             .attr('preload', 'auto');
+        if (!audio[0].canPlayType) {
+            onload();
+            return;
+        }
         $('<source>')
             .attr('src', 'audio/' + s + '.ogg')
             .attr('type', 'audio/ogg')

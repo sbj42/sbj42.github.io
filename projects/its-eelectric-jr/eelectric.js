@@ -1348,6 +1348,10 @@ function preloadaudio(sounds, callback) {
             .on('error', onload)
             .attr('id', 'audio_' + s)
             .attr('preload', 'auto');
+        if (!audio[0].canPlayType) {
+            onload();
+            return;
+        }
         $('<source>')
             .attr('src', 'audio/' + s + '.ogg')
             .attr('type', 'audio/ogg')
@@ -1509,12 +1513,12 @@ function arrive_intro() {
             .call(delay_fish.bind(null, fish));
     }
 
-    /*introfish.forEach(function(fish, i) {
+    introfish.forEach(function(fish, i) {
         if (i == 0)
             start_fish(fish);
         else
             delay_fish(fish);
-    });*/
+    });
 }
 
 function incoming_menu() {
