@@ -13,3 +13,12 @@
 .numbrix-number {
   position: relative;
 }
+.numbrix-line {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  stroke: hsl(130, 77%, 51%);
+  stroke-width: 18px;
+  opacity: 0.3;
+  stroke-linecap: round;
+}

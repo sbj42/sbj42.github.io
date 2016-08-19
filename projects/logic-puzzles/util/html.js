@@ -44,11 +44,11 @@ Html.prototype.attr = function(name, value) {
     if (value === null)
         this._node.removeAttribute(name);
     else {
-        if (mu._isFinite(value))
+        if (typeof value == 'number')
             value = value + 'px';
-            this._node.setAttribute(name, value);
+        this._node.setAttribute(name, value);
     }
-        return this;
+    return this;
 };
 
 Html.prototype.classed = function(name, value) {

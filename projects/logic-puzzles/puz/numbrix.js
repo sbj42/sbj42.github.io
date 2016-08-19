@@ -1,6 +1,9 @@
-function Numbrix(size, difficulty) {
+function Numbrix() {
     if (!(this instanceof Numbrix))
-        return new Numbrix(size, difficulty);
+        return new Numbrix();
+}
+
+Numbrix.prototype.generate = function(size, difficulty, progress) {
     this._size = size;
     this._last = size * size;
     var path = hampath.generate({width: size, height: size});
@@ -8,23 +11,31 @@ function Numbrix(size, difficulty) {
     var remain = [];
     for (var i = 0; i < path.data.length; i ++) {
         this._set(path.data[i][0], path.data[i][1], i+1);
-        if (i > 0 && i < this._last-2) remain.push(i+1);
+        if (i > 0 && i < this._last-1) remain.push(i+1);
     }
 
-    var maxStretch = Math.floor(3 + 7 * difficulty / 10);
+    var maxStretch = Math.floor(3 + 5 * difficulty / 10);
+    var maxChoices = Math.pow(2.3, 11 + difficulty);
     var maxiter = remain.length;
+    var repeat = 4;
     var done = false;
+    var lastDifficulty = NaN;
     for (var i = 0; !done && i < maxiter; i ++) {
         console.info('removing, i = ' + i + ' of ' + maxiter);
-        for (var j = 0; j < 5; j ++) {
+        for (var j = 0; j < repeat; j ++) {
+            var prog1 = Math.max(0, (lastDifficulty + 5) / (difficulty + 5) || 0);
+            var p = prog1 + (1-prog1)* ((i*repeat + j)/(maxiter * repeat));
+            p *= p;
+            progress(p);
             var idx = Math.floor(Math.random() * remain.length);
             var at = remain[idx];
             console.info('  try ' + at);
             this._stretch = 0;
-            remain.splice(idx, 1);
-            for (var k = 1; k < remain.length; k ++)
-                this._stretch = Math.max(this._stretch, remain[k] - remain[k-1] - 1);
-            remain.splice(idx, 0, [at]);
+            var stest = remain.slice();
+            stest.splice(idx, 1);
+            var stest = [1].concat(stest).concat(this._last);
+            for (var k = 1; k < stest.length; k ++)
+                this._stretch = Math.max(this._stretch, stest[k] - stest[k-1] - 1);
             if (this._stretch > maxStretch) {
                 console.info('    no, too much stretch');
                 continue;
@@ -32,32 +43,40 @@ function Numbrix(size, difficulty) {
             var loc = this._find(at);
             if (loc) {
                 this._set(loc.x, loc.y);
-                this._solve();
-                this._difficulty = Math.floor(Math.log(this._choices) / Math.log(2.4) - 10);
+                this._solve(maxChoices, function(pct) {
+                    var p = prog1 + (1-prog1) * ((i*repeat + j + pct)/(maxiter * repeat));
+                    p *= p;
+                    progress(p);
+                });
+                this._difficulty = Math.floor(Math.log(this._choices) / Math.log(2.3) - 10);
                 
                 if (this._multipleSolutions) {
                     console.info('    no, multiple solutions');
-                    this._set(loc.x, loc.y, at);
-                } else if (this._difficulty > difficulty) {
+                } else if (!this._solution || this._difficulty > difficulty) {
                     console.info('    no, too difficult');
-                    this._set(loc.x, loc.y, at);
                     done = true;
                 } else {
                     console.info('    ok, stretch = ' + this._stretch + ', choices = ' + this._choices + ', difficulty = ' + this._difficulty);
                     remain.splice(idx, 1);
+                    lastDifficulty = this._difficulty;
                     done = this._difficulty == difficulty;
                     break;
                 }
+                this._set(loc.x, loc.y, at);
             } else
                 console.info('    no, not present');
         }
     }
 }
 
-Numbrix.prototype._get = function(x, y) {
-    if (x < 0 || y < 0 || x > this._size || y > this._size)
+Numbrix._get = function(grid, size, x, y) {
+    if (x < 0 || y < 0 || x > size || y > size)
         return -1;
-    return this._grid[y * this._size + x];
+    return grid[y * size + x];
+};
+
+Numbrix.prototype._get = function(x, y) {
+    return Numbrix._get(this._grid, this._size, x, y);
 };
 
 Numbrix.prototype._set = function(x, y, v) {
@@ -75,19 +94,21 @@ Numbrix.prototype._find = function(num) {
     return null;
 };
 
-Numbrix.prototype._solveNext = function(at, x, y) {
+Numbrix.prototype._solveNext = function(at, x, y, grid) {
+    //console.info('trying ' + (at-1) + ' at ' + x + ',' + y);
     if (at == this._last + 1) {
-        if (this._solution)
+        if (this._solution) {
             this._multipleSolutions = true;
-        else
-            this._solution = this._grid.slice();
+            this._solveTodo = [];
+        } else
+            this._solution = grid;
         return;
     }
     var self = this;
     function getandmaybeskip(x, y) {
-        var v = self._get(x, y);
+        var v = Numbrix._get(grid, self._size, x, y);
         if (v == at) {
-            self._solveNext(at+1, x, y);
+            self._solveNext(at+1, x, y, grid);
             return -2;
         }
         return v;
@@ -101,50 +122,103 @@ Numbrix.prototype._solveNext = function(at, x, y) {
     var w = getandmaybeskip(x-1, y);
     if (w == -2) return;
 
+    var choice = !n + !e + !s + !w > 1;
+    if (choice)
+        this._choices ++;
+    if (this._choices > this._maxChoices) {
+        this._solveTodo = [];
+        return;
+    }
+
     function tryset(d, x, y) {
         if (!d) {
-            self._set(x, y, at);
-            self._solveNext(at+1, x, y);
-            self._set(x, y);
+            if (choice) {
+                var ngrid = grid.slice();
+                ngrid[y * self._size + x] = at;
+                self._solveTodo.push([at+1, x, y, ngrid]);
+            } else {
+                grid[y * self._size + x] = at;
+                self._solveNext(at+1, x, y, grid);
+            }
             if (self._multipleSolutions)
                 return true;
         }
         return false;
     }
-    if (!n + !e + !s + !w > 1)
-        this._choices ++;
     if (tryset(n, x, y-1)) return;
     if (tryset(e, x+1, y)) return;
     if (tryset(s, x, y+1)) return;
     if (tryset(w, x-1, y)) return;
 };
 
-Numbrix.prototype._solve = function(size, grid) {
+Numbrix.prototype._solve = function(maxChoices, progress) {
+    this._maxChoices = maxChoices;
     this._choices = 0;
     this._solution = null;
     this._multipleSolutions = false;
     var loc = this._find(1);
-    this._solveNext(2, loc.x, loc.y);
+    this._solveTodo = [[2, loc.x, loc.y, this._grid.slice()]];
+    this._solveAt = 0;
+    var count = 0;
+    while (this._solveAt < this._solveTodo.length) {
+        if ((count & 0xffff) == 0)
+            progress(this._choices / maxChoices);
+        count ++;
+        var next = this._solveTodo[this._solveAt];
+        this._solveAt++;
+        if (this._solveAt > 100000) {
+            this._solveTodo.splice(0, this._solveAt);
+            this._solveAt = 0;
+        }
+        var at = next[0];
+        var x = next[1];
+        var y = next[2];
+        var grid = next[3];
+        this._solveNext(at, x, y, grid);
+    }
+    delete this._maxChoices;
 };
 
-Numbrix.prototype.render = function(html) {
+Numbrix.prototype.start = function(html) {
     var tbody = html.clear().append('table')
         .classed('grid', true)
         .append('tbody');
+    var csize = 36;
     for (var y = 0; y < this._size; y ++) {
         var tr = tbody.append('tr');
         for (var x = 0; x < this._size; x ++) {
-            var td = tr.append('td');
+            var td = tr.append('td')
+                .attr('style', 'width: '+csize+'px; height: '+csize+'px');
             var i = this._get(x, y);
-            var inner = td;
-            if (i == 1 || i == this._last) {
-                inner.append('div')
+            var n = Math.abs(this._get(x, y - 1) - i) == 1;
+            var e = Math.abs(this._get(x + 1, y) - i) == 1;
+            var s = Math.abs(this._get(x, y + 1) - i) == 1;
+            var w = Math.abs(this._get(x - 1, y) - i) == 1;
+            if (n || e || s || w) {
+                var svg = td.append('svg')
+                    .classed('numbrix-line', true)
+                    .attr('width', csize)
+                    .attr('height', csize);
+                function line(x2, y2) {
+                    svg.append('line')
+                        .attr('x1', csize/2)
+                        .attr('y1', csize/2)
+                        .attr('x2', x2)
+                        .attr('y2', y2);
+                }
+                if (n) line(csize/2, 0);
+                if (e) line(csize, csize/2);
+                if (s) line(csize/2, csize);
+                if (w) line(0, csize/2);
+            }
+            if (i == 1 || i == this._last)
+                td.append('div')
                     .classed('numbrix-start', true);
-                inner = inner.append('div');
-            } else if (i)
+            else if (i)
                 td.classed('numbrix-given', true);
-            inner.classed('numbrix-number', true);
-            inner.text(String(i || ''));
+            var num = td.append('div')
+                .classed('numbrix-number', true);
+            num.text(String(i || ''));
         }
     }
 };
