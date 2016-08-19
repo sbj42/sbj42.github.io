@@ -3,5 +3,5 @@ function prog(pct) {
 }
 
 var p = Numbrix();
-p.generate(10, 7, prog);
+p.generate(10, 1, prog);
 p.start(Html('#main'));

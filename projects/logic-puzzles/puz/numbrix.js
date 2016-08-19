@@ -14,14 +14,14 @@ Numbrix.prototype.generate = function(size, difficulty, progress) {
         if (i > 0 && i < this._last-1) remain.push(i+1);
     }
 
-    var maxStretch = Math.floor(3 + 5 * difficulty / 10);
-    var maxChoices = Math.pow(2.3, 11 + difficulty);
+    var maxStretch = Math.floor(2 + 7 * difficulty / 10);
+    var maxChoices = Math.pow(2, 5 + difficulty);
     var maxiter = remain.length;
     var repeat = 4;
     var done = false;
     var lastDifficulty = NaN;
     for (var i = 0; !done && i < maxiter; i ++) {
-        console.info('removing, i = ' + i + ' of ' + maxiter);
+        //console.info('removing, i = ' + i + ' of ' + maxiter);
         for (var j = 0; j < repeat; j ++) {
             var prog1 = Math.max(0, (lastDifficulty + 5) / (difficulty + 5) || 0);
             var p = prog1 + (1-prog1)* ((i*repeat + j)/(maxiter * repeat));
@@ -29,44 +29,45 @@ Numbrix.prototype.generate = function(size, difficulty, progress) {
             progress(p);
             var idx = Math.floor(Math.random() * remain.length);
             var at = remain[idx];
-            console.info('  try ' + at);
+            //console.info('  try ' + at);
             this._stretch = 0;
-            var stest = remain.slice();
-            stest.splice(idx, 1);
-            var stest = [1].concat(stest).concat(this._last);
+            var remainafter = remain.slice();
+            remainafter.splice(idx, 1);
+            var stest = [1].concat(remainafter).concat(this._last);
             for (var k = 1; k < stest.length; k ++)
                 this._stretch = Math.max(this._stretch, stest[k] - stest[k-1] - 1);
             if (this._stretch > maxStretch) {
-                console.info('    no, too much stretch');
+                //console.info('    no, too much stretch');
                 continue;
             }
             var loc = this._find(at);
             if (loc) {
                 this._set(loc.x, loc.y);
-                this._solve(maxChoices, function(pct) {
+                this._solve(maxChoices, remainafter, function(pct) {
                     var p = prog1 + (1-prog1) * ((i*repeat + j + pct)/(maxiter * repeat));
                     p *= p;
                     progress(p);
                 });
-                this._difficulty = Math.floor(Math.log(this._choices) / Math.log(2.3) - 10);
+                this._difficulty = Math.floor(Math.log(this._choices) / Math.log(2) - 4);
                 
                 if (this._multipleSolutions) {
-                    console.info('    no, multiple solutions');
+                    //console.info('    no, multiple solutions');
                 } else if (!this._solution || this._difficulty > difficulty) {
-                    console.info('    no, too difficult');
+                    //console.info('    no, too difficult');
                     done = true;
                 } else {
-                    console.info('    ok, stretch = ' + this._stretch + ', choices = ' + this._choices + ', difficulty = ' + this._difficulty);
-                    remain.splice(idx, 1);
+                    //console.info('    ok, stretch = ' + this._stretch + ', choices = ' + this._choices + ', difficulty = ' + this._difficulty);
+                    remain = remainafter;
                     lastDifficulty = this._difficulty;
                     done = this._difficulty == difficulty;
                     break;
                 }
                 this._set(loc.x, loc.y, at);
             } else
-                console.info('    no, not present');
+                ;//console.info('    no, not present');
         }
     }
+    console.info('done, stretch = ' + this._stretch + ', choices = ' + this._choices + ', difficulty = ' + this._difficulty);
 }
 
 Numbrix._get = function(grid, size, x, y) {
@@ -94,7 +95,7 @@ Numbrix.prototype._find = function(num) {
     return null;
 };
 
-Numbrix.prototype._solveNext = function(at, x, y, grid) {
+Numbrix.prototype._solveNext = function(at, x, y, grid, nidx) {
     //console.info('trying ' + (at-1) + ' at ' + x + ',' + y);
     if (at == this._last + 1) {
         if (this._solution) {
@@ -108,7 +109,7 @@ Numbrix.prototype._solveNext = function(at, x, y, grid) {
     function getandmaybeskip(x, y) {
         var v = Numbrix._get(grid, self._size, x, y);
         if (v == at) {
-            self._solveNext(at+1, x, y, grid);
+            self._solveNext(at+1, x, y, grid, nidx+1);
             return -2;
         }
         return v;
@@ -121,6 +122,9 @@ Numbrix.prototype._solveNext = function(at, x, y, grid) {
     if (s == -2) return;
     var w = getandmaybeskip(x-1, y);
     if (w == -2) return;
+
+    if (nidx < this._numbers.length && at == this._numbers[nidx])
+        return;
 
     var choice = !n + !e + !s + !w > 1;
     if (choice)
@@ -135,10 +139,10 @@ Numbrix.prototype._solveNext = function(at, x, y, grid) {
             if (choice) {
                 var ngrid = grid.slice();
                 ngrid[y * self._size + x] = at;
-                self._solveTodo.push([at+1, x, y, ngrid]);
+                self._solveTodo.push([at+1, x, y, ngrid, nidx]);
             } else {
                 grid[y * self._size + x] = at;
-                self._solveNext(at+1, x, y, grid);
+                self._solveNext(at+1, x, y, grid, nidx);
             }
             if (self._multipleSolutions)
                 return true;
@@ -151,13 +155,15 @@ Numbrix.prototype._solveNext = function(at, x, y, grid) {
     if (tryset(w, x-1, y)) return;
 };
 
-Numbrix.prototype._solve = function(maxChoices, progress) {
+Numbrix.prototype._solve = function(maxChoices, numbers, progress) {
     this._maxChoices = maxChoices;
+    this._numbers = numbers;
     this._choices = 0;
     this._solution = null;
     this._multipleSolutions = false;
     var loc = this._find(1);
-    this._solveTodo = [[2, loc.x, loc.y, this._grid.slice()]];
+    var nidx = numbers[0] == 2 ? 1 : 0;
+    this._solveTodo = [[2, loc.x, loc.y, this._grid.slice(), nidx]];
     this._solveAt = 0;
     var count = 0;
     while (this._solveAt < this._solveTodo.length) {
@@ -174,9 +180,11 @@ Numbrix.prototype._solve = function(maxChoices, progress) {
         var x = next[1];
         var y = next[2];
         var grid = next[3];
-        this._solveNext(at, x, y, grid);
+        var nidx = next[4];
+        this._solveNext(at, x, y, grid, nidx);
     }
     delete this._maxChoices;
+    delete this._numbers;
 };
 
 Numbrix.prototype.start = function(html) {
