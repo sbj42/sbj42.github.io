@@ -1,0 +1,15 @@
+.numbrix-given {
+  background-color: hsl(183, 100%, 93%);
+}
+.numbrix-start {
+  background: hsl(14, 100%, 73%);
+  border-radius: 50%;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+}
+.numbrix-number {
+  position: relative;
+}
