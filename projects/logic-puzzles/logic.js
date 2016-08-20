@@ -1,3 +1,5 @@
+var count = 1;
+var i = 0;
 function progress_start() {
     Html('#progress-outer').clear()
         .attr('style', 'width: ' + 400 + 'px')
@@ -9,7 +11,7 @@ function progress_start() {
 }
 function progress_update(pct) {
     Html('#progress-inner')
-        .attr('style', 'width: ' + Math.floor(pct * 400) + 'px');
+        .attr('style', 'width: ' + Math.floor((i + pct)/(count) * 400) + 'px');
 }
 function progress_clear() {
     Html('#progress')
@@ -17,10 +19,19 @@ function progress_clear() {
 }
 
 function fin() {
-    progress_clear();
-    p.start(Html('#main'));
+    var div = Html('#main')
+        .append('div')
+        .classed('griddiv', true);
+    p.start(div);
+    i++;
+    if (i == count) {
+        progress_clear();
+        return;
+    }
+    p = Numbrix();
+    p.generate(10, 3, progress_update, fin);
 }
 
 var p = Numbrix();
 progress_start();
-p.generate(10, 5, progress_update, fin);
+p.generate(10, 3, progress_update, fin);

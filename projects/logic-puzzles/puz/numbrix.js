@@ -1,7 +1,9 @@
 function Numbrix() {
     if (!(this instanceof Numbrix))
         return new Numbrix();
+    this._id = 'numbrix'+(Numbrix._instance ++)+'_';
 }
+Numbrix._instance = 1;
 
 Numbrix.prototype._generateStep = function() {
     var self = this;
@@ -231,8 +233,8 @@ Numbrix.prototype._solve = function(maxChoices, numbers, finish) {
 };
 
 Numbrix.prototype._updateCell = function(x, y) {
-    var csize = 36;
-    var td = Html('#cell_'+x+'_'+y)
+    var csize = this._cellsize;
+    var td = Html('#'+this._id+'cell_'+x+'_'+y)
         .clear()
         .classed('numbrix-cell', true);
     var num = this._get(x, y);
@@ -264,7 +266,7 @@ Numbrix.prototype._updateCell = function(x, y) {
         td.classed('numbrix-given', true);
     }
     if (num) {
-        td.attr('style', 'cursor: pointer');
+        td.classed('numbrix-pointer', true);
     } else {
     }
     td.append('div')
@@ -299,22 +301,23 @@ Numbrix.prototype._cellClick = function(x, y) {
             this._number = num - 1;
         else
             this._number = null;
-        Html('#numbrix-ui').text(String(this._number || ''));
+        Html('#'+this._id+'ui').text(String(this._number || ''));
         this._updateCell(x, y);
     }
 };
 
-Numbrix.prototype._render = function(html) {
+Numbrix.prototype._render = function(html, cellsize) {
+    this._cellsize = cellsize || 36;
+    var csize = this._cellsize;
     var tbody = html.clear().append('table')
         .classed('grid', true)
         .append('tbody');
-    var csize = 36;
     for (var y = 0; y < this._size; y ++) {
         var tr = tbody.append('tr');
         for (var x = 0; x < this._size; x ++) {
             tr.append('td')
-                .attr('id', 'cell_'+x+'_'+y)
-                .attr('style', 'width: '+csize+'px; height: '+csize+'px')
+                .attr('id', this._id+'cell_'+x+'_'+y)
+                .attr('style', 'width: '+csize+'px; height: '+csize+'px; font-size: '+(csize*19/36)+'px')
                 .on('mouseenter', this._cellEnter.bind(this, x, y))
                 .on('mouseleave', this._cellLeave.bind(this, x, y))
                 .on('click', this._cellClick.bind(this, x, y));
@@ -322,11 +325,12 @@ Numbrix.prototype._render = function(html) {
         }
     }
     html.append('div')
-        .attr('id', 'numbrix-ui');
+        .classed('numbrix-ui', true)
+        .attr('id', this._id+'ui');
 };
 
-Numbrix.prototype.start = function(html) {
+Numbrix.prototype.start = function(html, cellsize) {
     this._given = this._startGiven.slice();
     this._grid = this._startGrid.slice();
-    this._render(html);
+    this._render(html, cellsize);
 };

@@ -25,11 +25,14 @@
   top: 0px;
   stroke: hsl(130, 77%, 51%);
   stroke-width: 18px;
-  opacity: 0.3;
+  opacity: 0;
   stroke-linecap: round;
 }
-#numbrix-ui {
+.numbrix-ui {
   width: 100px;
   margin: 0px auto;
   font-size: 24px;
+}
+.numbrix-pointer {
+  cursor: pointer;
 }
