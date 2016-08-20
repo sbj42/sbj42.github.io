@@ -57,7 +57,7 @@ Html.prototype.classed = function(name, value) {
     if (value) {
         for (var i = 0; i < classes.length; i ++)
             if (classes[i] == name)
-                return;
+                return this;
         classes.push(name);
     } else {
         for (var i = 0; i < classes.length; i ++)

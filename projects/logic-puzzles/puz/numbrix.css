@@ -1,6 +1,12 @@
 .numbrix-given {
   background-color: hsl(183, 100%, 93%);
 }
+.numbrix-cell:hover {
+  background-color: hsl(61, 100%, 83%);
+}
+.numbrix-cell.numbrix-given:hover {
+  background-color: hsl(183, 100%, 73%);
+}
 .numbrix-start {
   background: hsl(14, 100%, 73%);
   border-radius: 50%;
@@ -21,4 +27,9 @@
   stroke-width: 18px;
   opacity: 0.3;
   stroke-linecap: round;
+}
+#numbrix-ui {
+  width: 100px;
+  margin: 0px auto;
+  font-size: 24px;
 }

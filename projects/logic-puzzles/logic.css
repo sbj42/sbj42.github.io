@@ -1,11 +1,10 @@
 body {
-  font-family: sans-serif;
+  font-family: 'Nunito', sans-serif;
 }
 .grid {
   margin: 0px auto;
   border-collapse: collapse;
   border: 1px solid black;
-  font-family: 'Nunito', sans-serif;
   font-size: 19px;
 }
 .grid td {
@@ -16,4 +15,24 @@ body {
   position: relative;
   cursor: default;
   padding: 0px;
+}
+
+#progress {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+}
+#progress-outer {
+  margin: 150px auto;
+  height: 20px;
+  border: 2px solid black;
+  background: #e4bda6;
+  box-shadow: 0px 0px 8px #444;
+}
+#progress-inner {
+  height: 100%;
+  background: #60ff89;
+  border-right: 2px solid black;
 }
