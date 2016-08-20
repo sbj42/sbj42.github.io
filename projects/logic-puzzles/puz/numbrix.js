@@ -233,22 +233,30 @@ Numbrix.prototype._solve = function(maxChoices, numbers, finish) {
 };
 
 Numbrix.prototype._updateCell = function(x, y) {
+    if (x < 0 || x >= this._size || y < 0 || y >= this._size)
+        return;
     var csize = this._cellsize;
-    var td = Html('#'+this._id+'cell_'+x+'_'+y)
-        .clear()
-        .classed('numbrix-cell', true);
+    var td = Html('#'+this._id+'cell_'+x+'_'+y);
+    var svg = Html('#'+this._id+'svg_'+x+'_'+y);
     var num = this._get(x, y);
     var n = Math.abs(this._get(x, y - 1) - num) == 1;
     var e = Math.abs(this._get(x + 1, y) - num) == 1;
     var s = Math.abs(this._get(x, y + 1) - num) == 1;
     var w = Math.abs(this._get(x - 1, y) - num) == 1;
+    svg.clear();
+    if (num == 1 || num == this._last) {
+        svg.append('circle')
+            .classed('numbrix-start', true)
+            .attr('cx', csize/2)
+            .attr('cy', csize/2)
+            .attr('r', csize/2);
+    }
     if (n || e || s || w) {
-        var svg = td.append('svg')
-            .classed('numbrix-line', true)
-            .attr('width', csize)
+        svg.attr('width', csize)
             .attr('height', csize);
         function line(x2, y2) {
             svg.append('line')
+                .classed('numbrix-line', true)
                 .attr('x1', csize/2)
                 .attr('y1', csize/2)
                 .attr('x2', x2)
@@ -259,18 +267,8 @@ Numbrix.prototype._updateCell = function(x, y) {
         if (s) line(csize/2, csize);
         if (w) line(0, csize/2);
     }
-    if (num == 1 || num == this._last) {
-        td.append('div')
-            .classed('numbrix-start', true);
-    } else if (num) {
-        td.classed('numbrix-given', true);
-    }
-    if (num) {
-        td.classed('numbrix-pointer', true);
-    } else {
-    }
-    td.append('div')
-        .classed('numbrix-number', true)
+    td.classed('numbrix-pointer', !!num);
+    Html('#'+this._id+'num_'+x+'_'+y)
         .text(String(num || ''));
 };
 
@@ -284,7 +282,11 @@ Numbrix.prototype._cellLeave = function(x, y) {
     this._updateCell(x, y);
 };
 
-Numbrix.prototype._cellClick = function(x, y) {
+Numbrix.prototype._mouseDown = function(event) {
+    event.preventDefault();
+};
+
+Numbrix.prototype._cellClick = function(x, y, event) {
     var num = this._get(x, y);
     if (num) {
         var before = num > 1, after = num < this._last;
@@ -295,14 +297,54 @@ Numbrix.prototype._cellClick = function(x, y) {
             if (n == num + 1)
                 after = false;
         }
-        if (after && this._number != num + 1)
+        if (after && (this._number == null || Math.abs(this._number - num) != 1)) {
             this._number = num + 1;
-        else if (before)
+            this._direction = 1;
+        } else if (before && this._number != num - 1) {
             this._number = num - 1;
-        else
-            this._number = null;
+            this._direction = -1;
+        } else {
+            this._number = this._direction = null;
+            if (num != 1 && num != this._last && this._startGiven.indexOf(num) < 0) {
+                this._set(x, y);
+                this._given.splice(this._given.indexOf(num), 1);
+                this._number = num;
+                if (this._given.indexOf(num+1) < 0 || this._given.indexOf(num-1) >= 0)
+                    this.direction = 1;
+                else 
+                    this.direction = -1;
+            }
+        }
+        this._lastLoc = {x: x, y: y};
         Html('#'+this._id+'ui').text(String(this._number || ''));
-        this._updateCell(x, y);
+    } else {
+        var num = this._number;
+        var n = Math.abs(this._get(x, y - 1) - num) == 1;
+        var e = Math.abs(this._get(x + 1, y) - num) == 1;
+        var s = Math.abs(this._get(x, y + 1) - num) == 1;
+        var w = Math.abs(this._get(x - 1, y) - num) == 1;
+        if (num && (n || e || s || w)) {
+            this._set(x, y, num);
+            this._given.push(num);
+            this._given.sort();
+            this._lastLoc = {x: x, y: y};
+            this._number += this._direction;
+            while (this._number > 1 && this._number < this._last && this._given.indexOf(this._number) >= 0) {
+                this._lastLoc = this._find(this._number);
+                this._number += this._direction || 1;
+            }
+            if (this._number == 1 || this._number == this._last)
+                this._number = this._direction = null;
+            Html('#'+this._id+'ui').text(String(this._number || ''));
+        }
+    }
+    this._updateCell(x, y);
+    this._updateCell(x-1, y);
+    this._updateCell(x, y-1);
+    this._updateCell(x+1, y);
+    this._updateCell(x, y+1);
+    if (this._given.length == this._last - 2) {
+        this._finish();
     }
 };
 
@@ -315,22 +357,37 @@ Numbrix.prototype._render = function(html, cellsize) {
     for (var y = 0; y < this._size; y ++) {
         var tr = tbody.append('tr');
         for (var x = 0; x < this._size; x ++) {
-            tr.append('td')
+            td = tr.append('td')
                 .attr('id', this._id+'cell_'+x+'_'+y)
                 .attr('style', 'width: '+csize+'px; height: '+csize+'px; font-size: '+(csize*19/36)+'px')
                 .on('mouseenter', this._cellEnter.bind(this, x, y))
                 .on('mouseleave', this._cellLeave.bind(this, x, y))
-                .on('click', this._cellClick.bind(this, x, y));
+                .on('mousedown', this._mouseDown.bind(this))
+                .on('click', this._cellClick.bind(this, x, y))
+                .classed('numbrix-cell', true);
+            var num = this._startGrid[y * this._size + x];
+            if (num > 1 && num < this._last)
+                td.classed('numbrix-given', true);
+            td.append('svg')
+                .attr('id', this._id+'svg_'+x+'_'+y)
+                .classed('numbrix-svg', true)
+                .attr('width', csize)
+                .attr('height', csize);
+            td.append('div')
+                .attr('id', this._id+'num_'+x+'_'+y)
+                .classed('numbrix-number', true);
             this._updateCell(x, y);
         }
     }
     html.append('div')
         .classed('numbrix-ui', true)
+        .attr('style', 'font-size: '+(csize*27/36)+'px')
         .attr('id', this._id+'ui');
 };
 
-Numbrix.prototype.start = function(html, cellsize) {
+Numbrix.prototype.start = function(html, cellsize, finish) {
     this._given = this._startGiven.slice();
     this._grid = this._startGrid.slice();
+    this._finish = finish;
     this._render(html, cellsize);
 };

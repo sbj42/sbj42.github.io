@@ -8,30 +8,25 @@
   background-color: hsl(183, 100%, 73%);
 }
 .numbrix-start {
-  background: hsl(14, 100%, 73%);
-  border-radius: 50%;
-  position: absolute;
-  left: 0px;
-  top: 0px;
-  bottom: 0px;
-  right: 0px;
+  fill: hsl(14, 100%, 73%);
 }
 .numbrix-number {
   position: relative;
 }
 .numbrix-line {
+  stroke: hsl(130, 77%, 51%);
+  stroke-width: 5px;
+  opacity: 0.2;
+  stroke-linecap: round;
+}
+.numbrix-svg {
   position: absolute;
   left: 0px;
   top: 0px;
-  stroke: hsl(130, 77%, 51%);
-  stroke-width: 18px;
-  opacity: 0;
-  stroke-linecap: round;
 }
 .numbrix-ui {
-  width: 100px;
   margin: 0px auto;
-  font-size: 24px;
+  text-align: center;
 }
 .numbrix-pointer {
   cursor: pointer;

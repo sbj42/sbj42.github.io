@@ -4,10 +4,9 @@ function Html(nodeName, namespace) {
     if (nodeName.nodeType === 1) {
         this._node = nodeName;
         this._namespace = nodeName.namespaceURI;
-        return;
-    }
-    if (nodeName[0] == '#') {
+    } else if (nodeName[0] == '#') {
         this._node = document.getElementById(nodeName.substr(1));
+        this._namespace = this._node.namespaceURI;
     } else {
         this._namespace = namespace || Html._defaultNamespace(nodeName);
         if (this._namespace)
