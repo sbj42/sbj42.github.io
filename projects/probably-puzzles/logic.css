@@ -20,6 +20,7 @@ a {
   font-size: 40px;
 }
 #top_subtitle {
+  margin-top: 6px;
   font-size: 16px;
   opacity: 0.5;
 }
@@ -56,14 +57,23 @@ a {
 #puzzle_menu {
   position: relative;
   margin: 20px auto 0px;
-  width: 400px;
+  width: 800px;
 }
 #puzzle_menu_name {
   margin-top: 8px;
   font-size: 20px;
 }
+#puzzle_menu_info {
+  margin-top: 12px;
+  font-size: 15px;
+  text-align: justify;
+  background: #f1f1f1;
+  border-radius: 10px;
+  padding: 4px;
+  border: 1px dashed #717171;
+}
 #puzzle_menu_inner {
-  margin-top: 20px;
+  margin-top: 15px;
   line-height: 2;
 }
 #puzzle_play {

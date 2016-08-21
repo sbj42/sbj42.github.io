@@ -4,7 +4,7 @@ function header() {
         .attr('id', 'top');
     main.append('div')
         .attr('id', 'top_title')
-        .text('Logic Puzzles')
+        .text('Probably Puzzles')
     var subtitle = main.append('div')
         .attr('id', 'top_subtitle');
     subtitle.append('span')
@@ -22,12 +22,15 @@ function puzzle_go(puz, puzzleObject) {
     menu.append('div')
         .classed('puzzle_menu_img', true)
         .append('img')
-        .attr('src', 'puz/' + puz.id + '.png');
-    menu.append('div')
-        .attr('id', 'puzzle_menu_name')
-        .html(puz.title || puz.name);
+        .attr('src', 'puz/' + puz.ID + '.png');
+    var name = menu.append('div')
+        .attr('id', 'puzzle_menu_name');
+    name.text(puz.NAME);
     var inner = menu.append('div')
         .attr('id', 'puzzle_menu_inner');
+    var name = menu.append('div')
+        .attr('id', 'puzzle_menu_info');
+    name.html(puz.INFO);
     puzzleObject.menu(inner, function() {
         puzzle_go(puz, puzzleObject);
     });
@@ -44,23 +47,18 @@ function top_go() {
         var item = menu.append('div')
             .classed('top_menu_item', true)
             .on('click', function() {
-                var puzzleObject = puz.func();
+                var puzzleObject = puz();
                 puzzle_go(puz, puzzleObject);
             });
         item.append('img')
             .classed('top_menu_img', true)
-            .attr('src', 'puz/' + puz.id + '.png');
+            .attr('src', 'puz/' + puz.ID + '.png');
         item.append('div')
             .classed('top_menu_text', true)
-            .html(puz.name);
+            .text(puz.NAME);
     }
 
-    menu_item({
-        id: 'numbrix',
-        name: 'Numbrix-like (aka Number Snake)',
-        title: '<a target="_blank" href="http://parade.com/tag/numbrix/">Numbrix</a>-like (aka Number Snake)',
-        func: Numbrix
-    });
+    menu_item(Numbrix);
 }
 
 function progress_start() {
