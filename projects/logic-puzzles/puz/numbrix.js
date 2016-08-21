@@ -2,6 +2,8 @@ function Numbrix() {
     if (!(this instanceof Numbrix))
         return new Numbrix();
     this._id = 'numbrix'+(Numbrix._instance ++)+'_';
+    this._defsize = 10;
+    this._defdifficulty = 5;
 }
 Numbrix._instance = 1;
 
@@ -286,6 +288,11 @@ Numbrix.prototype._mouseDown = function(event) {
     event.preventDefault();
 };
 
+Numbrix.prototype._updateNext = function() {
+    Html('#'+this._id+'num').text(String(this._number || ''));
+    Html('#'+this._id+'next').attr('style', 'display: '+(this._number ? 'inline' : 'none'));
+};
+
 Numbrix.prototype._cellClick = function(x, y, event) {
     var num = this._get(x, y);
     if (num) {
@@ -316,7 +323,7 @@ Numbrix.prototype._cellClick = function(x, y, event) {
             }
         }
         this._lastLoc = {x: x, y: y};
-        Html('#'+this._id+'ui').text(String(this._number || ''));
+        this._updateNext();
     } else {
         var num = this._number;
         var n = Math.abs(this._get(x, y - 1) - num) == 1;
@@ -335,7 +342,7 @@ Numbrix.prototype._cellClick = function(x, y, event) {
             }
             if (this._number == 1 || this._number == this._last)
                 this._number = this._direction = null;
-            Html('#'+this._id+'ui').text(String(this._number || ''));
+            this._updateNext();
         }
     }
     this._updateCell(x, y);
@@ -379,15 +386,74 @@ Numbrix.prototype._render = function(html, cellsize) {
             this._updateCell(x, y);
         }
     }
-    html.append('div')
-        .classed('numbrix-ui', true)
-        .attr('style', 'font-size: '+(csize*27/36)+'px')
-        .attr('id', this._id+'ui');
+    var ui = html.append('div')
+        .classed('numbrix-ui', true);
+    ui.append('div')
+        .classed('numbrix-back', true)
+        .append('a')
+        .attr('href', 'javascript: void 0')
+        .text('Quit')
+        .on('click', this._finish);
+    var next = ui.append('div')
+        .attr('id', this._id+'next')
+        .attr('style', 'display: none')
+        .classed('numbrix-next', true);
+    next.append('span')
+        .text('Next: ');
+    next.append('span')
+        .attr('id', this._id+'num');
 };
 
-Numbrix.prototype.start = function(html, cellsize, finish) {
+Numbrix.prototype.start = function(html, finish, cellsize) {
     this._given = this._startGiven.slice();
     this._grid = this._startGrid.slice();
     this._finish = finish;
     this._render(html, cellsize);
+};
+
+Numbrix.prototype.menu = function(menu, finish) {
+    var self = this;
+    var sizeDiv = menu.append('div');
+    sizeDiv.append('span')
+        .text('Size: ');
+    var size = sizeDiv.append('select');
+    for (var i = 5; i <= 16; i ++) {
+        var opt = size.append('option')
+            .attr('value', String(i))
+            .text(String(i));
+        if (i == this._defsize)
+            opt.attr('selected', 'selected');
+    }
+    var diffDiv = menu.append('div');
+    diffDiv.append('span')
+        .text('Difficulty: ');
+    var diff = diffDiv.append('select');
+    for (var i = 1; i <= 10; i ++) {
+        var opt = diff.append('option')
+            .attr('value', String(i))
+            .text(String(i));
+        if (i == this._defdifficulty)
+            opt.attr('selected', 'selected');
+    }
+
+    function go() {
+        var s = this._defsize = +size.node().value;
+        var d = this._defdifficulty = +diff.node().value;
+        progress_start();
+        self.generate(s, d, progress_update, function() {
+            progress_finish();
+            self.start(Html('#main'), finish);
+        });
+    }
+
+    var okDiv = menu.append('div')
+    okDiv.append('a')
+        .attr('href', 'javascript: void 0')
+        .text('Play')
+        .on('click', go);
+    okDiv.append('a')
+        .attr('style', 'margin-left: 20px;')
+        .attr('href', 'javascript: void 0')
+        .text('Back')
+        .on('click', top_go);
 };

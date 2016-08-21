@@ -31,3 +31,19 @@
 .numbrix-pointer {
   cursor: pointer;
 }
+@media print {
+  .numbrix-ui {
+    display: none;
+  }
+}
+.numbrix-ui {
+  margin-top: 30px;
+  font-family: 'Nunito';
+  width: 200px;
+}
+.numbrix-back {
+  float: left;
+}
+.numbrix-next {
+  float: right;
+}

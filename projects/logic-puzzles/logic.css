@@ -1,22 +1,89 @@
-body {
-  font-family: 'Nunito', sans-serif;
+body, td, input {
+  font-family: 'Quattrocento', sans-serif;
   margin: 0px;
+  font-size: 18px;
 }
-#main {
-  /*column-count: 2;*/
+a {
+  text-decoration: none;
+  background: #eef;
+  border: 1px solid #448;
+  border-radius: 6px;
+  padding: 1px 4px;
+  color: #004;
 }
+
+#top {
+  text-align: center;
+}
+#top_title {
+  margin-top: 20px;
+  font-size: 40px;
+}
+#top_subtitle {
+  font-size: 16px;
+  opacity: 0.5;
+}
+#top_menu {
+  margin: 20px auto 0px;
+  width: 400px;
+}
+.top_menu_item {
+  margin-top: 6px;
+  position: relative;
+  height: 80px;
+  border: 1px solid grey;
+  box-shadow: 2px 2px 2px #006;
+  border-radius: 20px;
+  background: #eef;
+  cursor: pointer;
+}
+.top_menu_item:hover {
+  background: #ffc;
+}
+.top_menu_img {
+  position: absolute;
+  left: 20px;
+  top: 9px;
+}
+.top_menu_text {
+  text-align: left;
+  position: absolute;
+  left: 100px;
+  width: 300px;
+  top: 31px;
+}
+
+#puzzle_menu {
+  position: relative;
+  margin: 20px auto 0px;
+  width: 400px;
+}
+#puzzle_menu_name {
+  margin-top: 8px;
+  font-size: 20px;
+}
+#puzzle_menu_inner {
+  margin-top: 20px;
+  line-height: 2;
+}
+#puzzle_play {
+  cursor: pointer;
+}
+
 .griddiv {
   padding: 20px;
   page-break-inside: avoid;
 }
 .grid {
-  margin: 0px auto;
+  margin: 30px auto 0px;
   border-collapse: collapse;
   border: 1px solid black;
   font-size: 19px;
   cursor: default;
 }
 .grid td {
+  font-family: 'Nunito';
+  font-size: 19px;
   border: 1px solid black;
   text-align: center;
   width: 36px;

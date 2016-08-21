@@ -74,6 +74,11 @@ Html.prototype.text = function(text) {
     return this;
 };
 
+Html.prototype.html = function(html) {
+    this._node.innerHTML = html;
+    return this;
+};
+
 Html.prototype.clear = function() {
     while (this._node.firstChild)
         this._node.removeChild(this._node.firstChild);
