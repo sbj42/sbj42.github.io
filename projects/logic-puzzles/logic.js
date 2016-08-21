@@ -8,7 +8,7 @@ function header() {
     var subtitle = main.append('div')
         .attr('id', 'top_subtitle');
     subtitle.append('span')
-        .text('by ');
+        .text('coded by ');
     subtitle.append('a')
         .attr('href', 'http://arbitraryclark.blogspot.com/')
         .text('James Clark');
@@ -64,6 +64,8 @@ function top_go() {
 }
 
 function progress_start() {
+    Html('#progress-fade')
+        .attr('style', 'display: block');
     Html('#progress-outer').clear()
         .attr('style', 'width: ' + 400 + 'px')
         .append('div')
@@ -77,6 +79,8 @@ function progress_update(pct) {
         .attr('style', 'width: ' + Math.floor(pct * 400) + 'px');
 }
 function progress_finish() {
+    Html('#progress-fade')
+        .attr('style', 'display: none');
     Html('#progress')
         .attr('style', 'display: none');
 }

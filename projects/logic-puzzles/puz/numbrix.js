@@ -350,8 +350,8 @@ Numbrix.prototype._cellClick = function(x, y, event) {
     this._updateCell(x, y-1);
     this._updateCell(x+1, y);
     this._updateCell(x, y+1);
-    if (this._given.length == this._last - 2) {
-        this._finish();
+    if (this._given.length == this._last) {
+        this._victory();
     }
 };
 
@@ -387,9 +387,10 @@ Numbrix.prototype._render = function(html, cellsize) {
         }
     }
     var ui = html.append('div')
+        .attr('id', this._id+'ui')
         .classed('numbrix-ui', true);
     ui.append('div')
-        .classed('numbrix-back', true)
+        .classed('numbrix-quit', true)
         .append('a')
         .attr('href', 'javascript: void 0')
         .text('Quit')
@@ -409,6 +410,20 @@ Numbrix.prototype.start = function(html, finish, cellsize) {
     this._grid = this._startGrid.slice();
     this._finish = finish;
     this._render(html, cellsize);
+};
+
+Numbrix.prototype._victory = function() {
+    this._done = true;
+    var ui = Html('#'+this._id+'ui').clear();
+    ui.append('div')
+        .classed('numbrix-victory', true)
+        .text('Solved!');
+    ui.append('div')
+        .classed('numbrix-back', true)
+        .append('a')
+        .attr('href', 'javascript: void 0')
+        .text('Back')
+        .on('click', this._finish);
 };
 
 Numbrix.prototype.menu = function(menu, finish) {
@@ -437,8 +452,8 @@ Numbrix.prototype.menu = function(menu, finish) {
     }
 
     function go() {
-        var s = this._defsize = +size.node().value;
-        var d = this._defdifficulty = +diff.node().value;
+        var s = self._defsize = +size.node().value;
+        var d = self._defdifficulty = +diff.node().value;
         progress_start();
         self.generate(s, d, progress_update, function() {
             progress_finish();

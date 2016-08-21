@@ -41,8 +41,11 @@
   font-family: 'Nunito';
   width: 200px;
 }
-.numbrix-back {
+.numbrix-quit {
   float: left;
+}
+.numbrix-victory {
+  font-size: 25px;
 }
 .numbrix-next {
   float: right;
