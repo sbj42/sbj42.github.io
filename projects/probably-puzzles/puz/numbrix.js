@@ -6,7 +6,7 @@ function Numbrix() {
     this._defdifficulty = 5;
 }
 Numbrix.ID = 'numbrix';
-Numbrix.NAME = 'Numbrix-like (aka Number Snake)';
+Numbrix.NAME = 'Numbrix-like';
 Numbrix.INFO = 'Developed by <a target="_blank" href="https://en.wikipedia.org/wiki/Marilyn_vos_Savant">Marilyn vos Savant</a>, Numbrix is a logic puzzle where you construct a hamiltonian path of consecutive numbers.  It is like Hidato except that you cannot move diagonally.  See Parade magazine&apos;s <a target="_blank" href="http://parade.com/tag/numbrix/">Numbrix page</a> for human-generated puzzles of this type.  Parade&apos;s <a target="_blank" href="http://parade.com/member/anonymousnumbrixguy/">Jeff Marchant</a> makes a harder version called Jadium.';
 Numbrix._instance = 1;
 
