@@ -1,0 +1,52 @@
+td.numbrix-given {
+  background-color: hsl(183, 100%, 93%);
+}
+.numbrix-cell:hover {
+  background-color: hsl(61, 100%, 83%);
+}
+.numbrix-cell.numbrix-given:hover {
+  background-color: hsl(183, 100%, 73%);
+}
+.numbrix-start {
+  fill: hsl(14, 100%, 73%);
+}
+.numbrix-number {
+  position: relative;
+}
+.numbrix-line {
+  stroke: hsl(130, 77%, 51%);
+  stroke-width: 5px;
+  opacity: 0.2;
+  stroke-linecap: round;
+}
+.numbrix-svg {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+.numbrix-ui {
+  margin: 0px auto;
+  text-align: center;
+}
+.numbrix-pointer {
+  cursor: pointer;
+}
+@media print {
+  .numbrix-ui {
+    display: none;
+  }
+}
+.numbrix-ui {
+  margin-top: 30px;
+  font-family: 'Nunito';
+  width: 200px;
+}
+.numbrix-quit {
+  float: left;
+}
+.numbrix-victory {
+  font-size: 25px;
+}
+.numbrix-next {
+  float: right;
+}

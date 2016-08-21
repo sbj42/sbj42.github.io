@@ -1,0 +1,135 @@
+body, td, input {
+  font-family: 'Quattrocento', sans-serif;
+  margin: 0px;
+  font-size: 18px;
+}
+a {
+  text-decoration: none;
+  background: #eef;
+  border: 1px solid #448;
+  border-radius: 6px;
+  padding: 1px 6px;
+  color: #004;
+}
+
+#top {
+  text-align: center;
+}
+#top_title {
+  margin-top: 20px;
+  font-size: 40px;
+}
+#top_subtitle {
+  margin-top: 6px;
+  font-size: 16px;
+  opacity: 0.5;
+}
+#top_menu {
+  margin: 20px auto 0px;
+  width: 400px;
+}
+.top_menu_item {
+  margin-top: 6px;
+  position: relative;
+  height: 80px;
+  border: 1px solid grey;
+  box-shadow: 2px 2px 2px #006;
+  border-radius: 20px;
+  background: #eef;
+  cursor: pointer;
+}
+.top_menu_item:hover {
+  background: #ffc;
+}
+.top_menu_img {
+  position: absolute;
+  left: 20px;
+  top: 9px;
+}
+.top_menu_text {
+  text-align: left;
+  position: absolute;
+  left: 100px;
+  width: 300px;
+  top: 31px;
+}
+
+#puzzle_menu {
+  position: relative;
+  margin: 20px auto 0px;
+  width: 800px;
+}
+#puzzle_menu_name {
+  margin-top: 8px;
+  font-size: 20px;
+}
+#puzzle_menu_info {
+  margin-top: 12px;
+  font-size: 15px;
+  text-align: justify;
+  background: #f1f1f1;
+  border-radius: 10px;
+  padding: 4px;
+  border: 1px dashed #717171;
+}
+#puzzle_menu_info a {
+  padding: 0px 3px;
+}
+#puzzle_menu_inner {
+  margin-top: 15px;
+  line-height: 2;
+}
+#puzzle_play {
+  cursor: pointer;
+}
+
+.griddiv {
+  padding: 20px;
+  page-break-inside: avoid;
+}
+.grid {
+  margin: 30px auto 0px;
+  font-size: 19px;
+  cursor: default;
+  background: black;
+  border-spacing: 1px;
+}
+.grid td {
+  font-family: 'Nunito';
+  font-size: 19px;
+  text-align: center;
+  width: 36px;
+  height: 36px;
+  position: relative;
+  padding: 0px;
+  background: white;
+}
+
+#progress {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+}
+#progress-fade {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  background: #fcfcfc;
+  opacity: 0.7;
+}
+#progress-outer {
+  margin: 150px auto;
+  height: 20px;
+  border: 2px solid black;
+  background: #e4bda6;
+  box-shadow: 0px 0px 8px #444;
+}
+#progress-inner {
+  height: 100%;
+  background: #60ff89;
+  border-right: 2px solid black;
+}
