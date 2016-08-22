@@ -296,6 +296,8 @@ Numbrix.prototype._mouseDown = function(event) {
 };
 
 Numbrix.prototype._updateNext = function() {
+    if (this._done)
+        return;
     Html('#'+this._id+'num').text(String(this._number || ''));
     Html('#'+this._id+'next').attr('style', 'display: '+(this._number ? 'inline' : 'none'));
 };

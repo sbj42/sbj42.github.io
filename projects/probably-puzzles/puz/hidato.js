@@ -7,7 +7,7 @@ function Hidato() {
 }
 Hidato.ID = 'hidato';
 Hidato.NAME = 'Hidato-like';
-Hidato.INFO = '';
+Hidato.INFO = 'Invented by Dr. Gyora M. Benedek, Hidato is a logic puzzle where you construct a Hamiltonian path of consecutive numbers.  It is like Numbrix except that you can move diagonally.  This variation uses a plain square grid, though it can come in other forms.  For instance, the <a target="_blank" href="">Hidato website</a> has some playable hexagonal ("beehive") variations.';
 Hidato._instance = 1;
 
 Hidato.prototype._generateStep = function() {
