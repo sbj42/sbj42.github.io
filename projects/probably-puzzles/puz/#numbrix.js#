@@ -1,16 +1,16 @@
-function Hidato() {
-    if (!(this instanceof Hidato))
-        return new Hidato();
-    this._id = 'hidato'+(Hidato._instance ++)+'_';
+function Numbrix() {
+    if (!(this instanceof Numbrix))
+        return new Numbrix();
+    this._id = 'numbrix'+(Numbrix._instance ++)+'_';
     this._defsize = 9;
     this._defdifficulty = 5;
 }
-Hidato.ID = 'hidato';
-Hidato.NAME = 'Hidato-like';
-Hidato.INFO = '';
-Hidato._instance = 1;
+Numbrix.ID = 'numbrix';
+Numbrix.NAME = 'Numbrix-like';
+Numbrix.INFO = 'Developed by <a target="_blank" href="https://en.wikipedia.org/wiki/Marilyn_vos_Savant">Marilyn vos Savant</a>, Numbrix is a logic puzzle where you construct a Hamiltonian path of consecutive numbers.  It is like Hidato except that you cannot move diagonally.  See Parade magazine&apos;s <a target="_blank" href="http://parade.com/tag/numbrix/">Numbrix page</a> for human-generated puzzles of this type.  Parade&apos;s <a target="_blank" href="http://parade.com/member/anonymousnumbrixguy/">Jeff Marchant</a> makes a harder version called Jadium.';
+Numbrix._instance = 1;
 
-Hidato.prototype._generateStep = function() {
+Numbrix.prototype._generateStep = function() {
     var self = this;
     var state = this._generateState;
     if (state.i >= state.count) {
@@ -69,15 +69,15 @@ Hidato.prototype._generateStep = function() {
         setTimeout(this._generateStep.bind(this), 10);
 };
 
-Hidato.prototype.generate = function(size, difficulty, progress, finish) {
+Numbrix.prototype.generate = function(size, difficulty, progress, finish) {
     var self = this;
     this._size = size;
     this._last = size * size;
-    var path = hampath.generate({width: size, height: size});
+    var path = hampath2(size);
     this._grid = Array(this._last);
     var remain = [];
-    for (var i = 0; i < path.data.length; i ++) {
-        this._set(path.data[i][0], path.data[i][1], i+1);
+    for (var i = 0; i < path.length; i ++) {
+        this._set(path[i][0], path[i][1], i+1);
         if (i > 0 && i < this._last-1) remain.push(i+1);
     }
 
@@ -106,21 +106,21 @@ Hidato.prototype.generate = function(size, difficulty, progress, finish) {
     this._generateStep();
 };
 
-Hidato._get = function(grid, size, x, y) {
+Numbrix._get = function(grid, size, x, y) {
     if (x < 0 || y < 0 || x > size || y > size)
         return -1;
     return grid[y * size + x];
 };
 
-Hidato.prototype._get = function(x, y) {
-    return Hidato._get(this._grid, this._size, x, y);
+Numbrix.prototype._get = function(x, y) {
+    return Numbrix._get(this._grid, this._size, x, y);
 };
 
-Hidato.prototype._set = function(x, y, v) {
+Numbrix.prototype._set = function(x, y, v) {
     this._grid[y * this._size + x] = v;
 };
 
-Hidato.prototype._find = function(num) {
+Numbrix.prototype._find = function(num) {
     for (var i = 0; i < this._grid.length; i ++) {
         if (this._grid[i] == num) {
             var y = Math.floor(i / this._size);
@@ -131,7 +131,7 @@ Hidato.prototype._find = function(num) {
     return null;
 };
 
-Hidato.prototype._solveNext = function(at, x, y, grid, nidx) {
+Numbrix.prototype._solveNext = function(at, x, y, grid, nidx) {
     var state = this._solveState;
     //console.info('trying ' + (at-1) + ' at ' + x + ',' + y);
     if (at == this._last + 1) {
@@ -144,7 +144,7 @@ Hidato.prototype._solveNext = function(at, x, y, grid, nidx) {
     }
     var self = this;
     function getandmaybeskip(x, y) {
-        var v = Hidato._get(grid, self._size, x, y);
+        var v = Numbrix._get(grid, self._size, x, y);
         if (v == at) {
             self._solveNext(at+1, x, y, grid, nidx+1);
             return -2;
@@ -192,7 +192,7 @@ Hidato.prototype._solveNext = function(at, x, y, grid, nidx) {
     if (tryset(w, x-1, y)) return;
 };
 
-Hidato.prototype._solveBatch = function() {
+Numbrix.prototype._solveBatch = function() {
     var state = this._solveState;
     if (state.solveAt >= state.solveTodo.length) {
         state.finish();
@@ -213,7 +213,7 @@ Hidato.prototype._solveBatch = function() {
     setTimeout(this._solveBatch.bind(this), 10);
 };
 
-Hidato.prototype._solve = function(maxChoices, numbers, finish) {
+Numbrix.prototype._solve = function(maxChoices, numbers, finish) {
     var state = this._solveState = {
         maxChoices: maxChoices,
         numbers: numbers,
@@ -237,7 +237,7 @@ Hidato.prototype._solve = function(maxChoices, numbers, finish) {
     this._solveBatch();
 };
 
-Hidato.prototype._updateCell = function(x, y) {
+Numbrix.prototype._updateCell = function(x, y) {
     if (x < 0 || x >= this._size || y < 0 || y >= this._size)
         return;
     var csize = this._cellsize;
@@ -251,7 +251,7 @@ Hidato.prototype._updateCell = function(x, y) {
     svg.clear();
     if (num == 1 || num == this._last) {
         svg.append('circle')
-            .classed('hidato-start', true)
+            .classed('numbrix-start', true)
             .attr('cx', csize/2)
             .attr('cy', csize/2)
             .attr('r', csize/2);
@@ -261,7 +261,7 @@ Hidato.prototype._updateCell = function(x, y) {
             .attr('height', csize);
         function line(x2, y2) {
             svg.append('line')
-                .classed('hidato-line', true)
+                .classed('numbrix-line', true)
                 .attr('x1', csize/2)
                 .attr('y1', csize/2)
                 .attr('x2', x2)
@@ -272,31 +272,39 @@ Hidato.prototype._updateCell = function(x, y) {
         if (s) line(csize/2, csize);
         if (w) line(0, csize/2);
     }
-    td.classed('hidato-pointer', !!num);
+    td.classed('numbrix-pointer', !!num);
     Html('#'+this._id+'num_'+x+'_'+y)
         .text(String(num || ''));
 };
 
-Hidato.prototype._cellEnter = function(x, y) {
+Numbrix.prototype._cellEnter = function(x, y) {
+    if (this._done)
+        return;
     this._hover = {x: x, y: y};
     this._updateCell(x, y);
 };
 
-Hidato.prototype._cellLeave = function(x, y) {
+Numbrix.prototype._cellLeave = function(x, y) {
+    if (this._done)
+        return;
     this._hover = null;
     this._updateCell(x, y);
 };
 
-Hidato.prototype._mouseDown = function(event) {
+Numbrix.prototype._mouseDown = function(event) {
     event.preventDefault();
 };
 
-Hidato.prototype._updateNext = function() {
+Numbrix.prototype._updateNext = function() {
+    if (this._done)
+        return;
     Html('#'+this._id+'num').text(String(this._number || ''));
     Html('#'+this._id+'next').attr('style', 'display: '+(this._number ? 'inline' : 'none'));
 };
 
-Hidato.prototype._cellClick = function(x, y, event) {
+Numbrix.prototype._cellClick = function(x, y, event) {
+    if (this._done)
+        return;
     var num = this._get(x, y);
     if (num) {
         var before = num > 1, after = num < this._last;
@@ -354,11 +362,17 @@ Hidato.prototype._cellClick = function(x, y, event) {
     this._updateCell(x+1, y);
     this._updateCell(x, y+1);
     if (this._given.length == this._last) {
-        this._victory();
+        var correct = true;
+        for (var i = 0; i < this._grid.length; i ++) {
+            if (this._grid[i] != this._solution[i])
+                correct = false;
+        }
+        if (correct)
+            this._victory();
     }
 };
 
-Hidato.prototype._render = function(html, cellsize) {
+Numbrix.prototype._render = function(html, cellsize) {
     this._cellsize = cellsize || 36;
     var csize = this._cellsize;
     var tbody = html.clear().append('table')
@@ -374,26 +388,26 @@ Hidato.prototype._render = function(html, cellsize) {
                 .on('mouseleave', this._cellLeave.bind(this, x, y))
                 .on('mousedown', this._mouseDown.bind(this))
                 .on('click', this._cellClick.bind(this, x, y))
-                .classed('hidato-cell', true);
+                .classed('numbrix-cell', true);
             var num = this._startGrid[y * this._size + x];
             if (num > 1 && num < this._last)
-                td.classed('hidato-given', true);
+                td.classed('numbrix-given', true);
             td.append('svg')
                 .attr('id', this._id+'svg_'+x+'_'+y)
-                .classed('hidato-svg', true)
+                .classed('numbrix-svg', true)
                 .attr('width', csize)
                 .attr('height', csize);
             td.append('div')
                 .attr('id', this._id+'num_'+x+'_'+y)
-                .classed('hidato-number', true);
+                .classed('numbrix-number', true);
             this._updateCell(x, y);
         }
     }
     var ui = html.append('div')
         .attr('id', this._id+'ui')
-        .classed('hidato-ui', true);
+        .classed('numbrix-ui', true);
     ui.append('div')
-        .classed('hidato-quit', true)
+        .classed('numbrix-quit', true)
         .append('a')
         .attr('href', 'javascript: void 0')
         .text('Quit')
@@ -401,35 +415,36 @@ Hidato.prototype._render = function(html, cellsize) {
     var next = ui.append('div')
         .attr('id', this._id+'next')
         .attr('style', 'display: none')
-        .classed('hidato-next', true);
+        .classed('numbrix-next', true);
     next.append('span')
         .text('Next: ');
     next.append('span')
         .attr('id', this._id+'num');
 };
 
-Hidato.prototype.start = function(html, finish, cellsize) {
+Numbrix.prototype.start = function(html, finish, cellsize) {
+    this._done = false;
     this._given = this._startGiven.slice();
     this._grid = this._startGrid.slice();
     this._finish = finish;
     this._render(html, cellsize);
 };
 
-Hidato.prototype._victory = function() {
+Numbrix.prototype._victory = function() {
     this._done = true;
     var ui = Html('#'+this._id+'ui').clear();
     ui.append('div')
-        .classed('hidato-victory', true)
+        .classed('numbrix-victory', true)
         .text('Solved!');
     ui.append('div')
-        .classed('hidato-back', true)
+        .classed('numbrix-back', true)
         .append('a')
         .attr('href', 'javascript: void 0')
         .text('Back')
         .on('click', this._finish);
 };
 
-Hidato.prototype.menu = function(menu, finish) {
+Numbrix.prototype.menu = function(menu, finish) {
     var self = this;
     var sizeDiv = menu.append('div');
     sizeDiv.append('span')

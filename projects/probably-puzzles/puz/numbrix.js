@@ -73,11 +73,11 @@ Numbrix.prototype.generate = function(size, difficulty, progress, finish) {
     var self = this;
     this._size = size;
     this._last = size * size;
-    var path = hampath.generate({width: size, height: size});
+    var path = hampath2(size);
     this._grid = Array(this._last);
     var remain = [];
-    for (var i = 0; i < path.data.length; i ++) {
-        this._set(path.data[i][0], path.data[i][1], i+1);
+    for (var i = 0; i < path.length; i ++) {
+        this._set(path[i][0], path[i][1], i+1);
         if (i > 0 && i < this._last-1) remain.push(i+1);
     }
 
@@ -360,7 +360,13 @@ Numbrix.prototype._cellClick = function(x, y, event) {
     this._updateCell(x+1, y);
     this._updateCell(x, y+1);
     if (this._given.length == this._last) {
-        this._victory();
+        var correct = true;
+        for (var i = 0; i < this._grid.length; i ++) {
+            if (this._grid[i] != this._solution[i])
+                correct = false;
+        }
+        if (correct)
+            this._victory();
     }
 };
 

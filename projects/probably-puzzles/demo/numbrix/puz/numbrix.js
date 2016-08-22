@@ -278,11 +278,15 @@ Numbrix.prototype._updateCell = function(x, y) {
 };
 
 Numbrix.prototype._cellEnter = function(x, y) {
+    if (this._done)
+        return;
     this._hover = {x: x, y: y};
     this._updateCell(x, y);
 };
 
 Numbrix.prototype._cellLeave = function(x, y) {
+    if (this._done)
+        return;
     this._hover = null;
     this._updateCell(x, y);
 };
@@ -292,11 +296,15 @@ Numbrix.prototype._mouseDown = function(event) {
 };
 
 Numbrix.prototype._updateNext = function() {
+    if (this._done)
+        return;
     Html('#'+this._id+'num').text(String(this._number || ''));
     Html('#'+this._id+'next').attr('style', 'display: '+(this._number ? 'inline' : 'none'));
 };
 
 Numbrix.prototype._cellClick = function(x, y, event) {
+    if (this._done)
+        return;
     var num = this._get(x, y);
     if (num) {
         var before = num > 1, after = num < this._last;
@@ -354,7 +362,13 @@ Numbrix.prototype._cellClick = function(x, y, event) {
     this._updateCell(x+1, y);
     this._updateCell(x, y+1);
     if (this._given.length == this._last) {
-        this._victory();
+        var correct = true;
+        for (var i = 0; i < this._grid.length; i ++) {
+            if (this._grid[i] != this._solution[i])
+                correct = false;
+        }
+        if (correct)
+            this._victory();
     }
 };
 

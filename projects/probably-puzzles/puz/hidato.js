@@ -39,7 +39,7 @@ Hidato.prototype._generateStep = function() {
             this._solve(state.maxChoices, remainafter, function(solve) {
                 var thisDifficulty = Math.floor(Math.log(solve.choices) / Math.log(2) - 4);
                 
-                if (self._multipleSolutions) {
+                if (solve.multipleSolutions) {
                     //console.info('    no, multiple solutions');
                     self._set(loc.x, loc.y, at);
                 } else if (!solve.solution || thisDifficulty > state.targetDifficulty) {
@@ -73,15 +73,13 @@ Hidato.prototype.generate = function(size, difficulty, progress, finish) {
     var self = this;
     this._size = size;
     this._last = size * size;
-    var path = hampath.generate({width: size, height: size});
+    var path = hampath2(size, true);
     this._grid = Array(this._last);
     var remain = [];
-    for (var i = 0; i < path.data.length; i ++) {
-        this._set(path.data[i][0], path.data[i][1], i+1);
+    for (var i = 0; i < path.length; i ++) {
+        this._set(path[i][0], path[i][1], i+1);
         if (i > 0 && i < this._last-1) remain.push(i+1);
     }
-
-/*
     var state = this._generateState = {
         progress: progress,
         maxStretch: Math.floor(2 + 7 * difficulty / 10),
@@ -105,11 +103,6 @@ Hidato.prototype.generate = function(size, difficulty, progress, finish) {
         finish();
     };
     this._generateStep();
-*/
-    self._given = [1].concat(remain).concat(self._last);
-    self._startGiven = self._given.slice();
-    self._startGrid = self._grid.slice();
-    finish();
 };
 
 Hidato._get = function(grid, size, x, y) {
@@ -165,11 +158,19 @@ Hidato.prototype._solveNext = function(at, x, y, grid, nidx) {
     if (s == -2) return;
     var w = getandmaybeskip(x-1, y);
     if (w == -2) return;
+    var ne = getandmaybeskip(x+1, y-1);
+    if (ne == -2) return;
+    var se = getandmaybeskip(x+1, y+1);
+    if (se == -2) return;
+    var sw = getandmaybeskip(x-1, y+1);
+    if (sw == -2) return;
+    var nw = getandmaybeskip(x-1, y-1);
+    if (nw == -2) return;
 
     if (nidx < state.numbers.length && at == state.numbers[nidx])
         return;
 
-    var choice = !n + !e + !s + !w > 1;
+    var choice = !n + !e + !s + !w + !ne + !se + !sw + !nw > 1;
     if (choice)
         state.choices ++;
     if (state.choices > state.maxChoices) {
@@ -196,6 +197,10 @@ Hidato.prototype._solveNext = function(at, x, y, grid, nidx) {
     if (tryset(e, x+1, y)) return;
     if (tryset(s, x, y+1)) return;
     if (tryset(w, x-1, y)) return;
+    if (tryset(ne, x+1, y-1)) return;
+    if (tryset(se, x+1, y+1)) return;
+    if (tryset(sw, x-1, y+1)) return;
+    if (tryset(nw, x-1, y-1)) return;
 };
 
 Hidato.prototype._solveBatch = function() {
@@ -254,6 +259,10 @@ Hidato.prototype._updateCell = function(x, y) {
     var e = Math.abs(this._get(x + 1, y) - num) == 1;
     var s = Math.abs(this._get(x, y + 1) - num) == 1;
     var w = Math.abs(this._get(x - 1, y) - num) == 1;
+    var ne = Math.abs(this._get(x + 1, y - 1) - num) == 1;
+    var se = Math.abs(this._get(x + 1, y + 1) - num) == 1;
+    var sw = Math.abs(this._get(x - 1, y + 1) - num) == 1;
+    var nw = Math.abs(this._get(x - 1, y - 1) - num) == 1;
     svg.clear();
     if (num == 1 || num == this._last) {
         svg.append('circle')
@@ -262,7 +271,7 @@ Hidato.prototype._updateCell = function(x, y) {
             .attr('cy', csize/2)
             .attr('r', csize/2);
     }
-    if (n || e || s || w) {
+    if (n || e || s || w || ne || se || sw || nw) {
         svg.attr('width', csize)
             .attr('height', csize);
         function line(x2, y2) {
@@ -277,6 +286,10 @@ Hidato.prototype._updateCell = function(x, y) {
         if (e) line(csize, csize/2);
         if (s) line(csize/2, csize);
         if (w) line(0, csize/2);
+        if (ne) line(csize, 0);
+        if (se) line(csize, csize);
+        if (sw) line(0, csize);
+        if (nw) line(0, 0);
     }
     td.classed('hidato-pointer', !!num);
     Html('#'+this._id+'num_'+x+'_'+y)
@@ -284,11 +297,15 @@ Hidato.prototype._updateCell = function(x, y) {
 };
 
 Hidato.prototype._cellEnter = function(x, y) {
+    if (this._done)
+        return;
     this._hover = {x: x, y: y};
     this._updateCell(x, y);
 };
 
 Hidato.prototype._cellLeave = function(x, y) {
+    if (this._done)
+        return;
     this._hover = null;
     this._updateCell(x, y);
 };
@@ -298,11 +315,15 @@ Hidato.prototype._mouseDown = function(event) {
 };
 
 Hidato.prototype._updateNext = function() {
+    if (this._done)
+        return;
     Html('#'+this._id+'num').text(String(this._number || ''));
     Html('#'+this._id+'next').attr('style', 'display: '+(this._number ? 'inline' : 'none'));
 };
 
 Hidato.prototype._cellClick = function(x, y, event) {
+    if (this._done)
+        return;
     var num = this._get(x, y);
     if (num) {
         var before = num > 1, after = num < this._last;
@@ -339,7 +360,11 @@ Hidato.prototype._cellClick = function(x, y, event) {
         var e = Math.abs(this._get(x + 1, y) - num) == 1;
         var s = Math.abs(this._get(x, y + 1) - num) == 1;
         var w = Math.abs(this._get(x - 1, y) - num) == 1;
-        if (num && (n || e || s || w)) {
+        var ne = Math.abs(this._get(x + 1, y - 1) - num) == 1;
+        var se = Math.abs(this._get(x + 1, y + 1) - num) == 1;
+        var sw = Math.abs(this._get(x - 1, y + 1) - num) == 1;
+        var nw = Math.abs(this._get(x - 1, y - 1) - num) == 1;
+        if (num && (n || e || s || w || ne || se || sw || nw)) {
             this._set(x, y, num);
             this._given.push(num);
             this._given.sort();
@@ -359,8 +384,18 @@ Hidato.prototype._cellClick = function(x, y, event) {
     this._updateCell(x, y-1);
     this._updateCell(x+1, y);
     this._updateCell(x, y+1);
+    this._updateCell(x-1, y-1);
+    this._updateCell(x+1, y-1);
+    this._updateCell(x+1, y+1);
+    this._updateCell(x-1, y+1);
     if (this._given.length == this._last) {
-        this._victory();
+        var correct = true;
+        for (var i = 0; i < this._grid.length; i ++) {
+            if (this._grid[i] != this._solution[i])
+                correct = false;
+        }
+        if (correct)
+            this._victory();
     }
 };
 
@@ -441,7 +476,7 @@ Hidato.prototype.menu = function(menu, finish) {
     sizeDiv.append('span')
         .text('Size: ');
     var size = sizeDiv.append('select');
-    for (var i = 5; i <= 16; i ++) {
+    for (var i = 4; i <= 16; i ++) {
         var opt = size.append('option')
             .attr('value', String(i))
             .text(String(i));
