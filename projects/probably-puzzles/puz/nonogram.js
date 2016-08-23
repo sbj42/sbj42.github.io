@@ -132,8 +132,11 @@ Nonogram.prototype._updateGivens = function(x, y, over) {
 Nonogram.prototype._cellEnter = function(x, y, event) {
     if (this._done)
         return;
-    if (event.buttons == 1)
-        this._set(x, y, this._paint);
+    if (event.buttons) {
+        var val = this._get(x, y);
+        if (!this._paint || !val)
+            this._set(x, y, this._paint);
+    }
     this._hover = {x: x, y: y};
     this._updateGivens(x, y, true);
     this._updateCell(x, y);
@@ -150,24 +153,28 @@ Nonogram.prototype._cellLeave = function(x, y, event) {
 Nonogram.prototype._mouseDown = function(x, y, event) {
     if (this._done)
         return;
-    if (event.button)
-        return;
     event.preventDefault();
     var val = this._get(x, y);
-    if (val == '_')
-        this._paint = false;
-    else if (val)
-        this._paint = '_';
-    else
-        this._paint = true;
+    if (event.button) {
+        if (val == '_')
+            this._paint = false;
+        else
+            this._paint = '_';
+    } else {
+        if (val == true)
+            this._paint = false;
+        else
+            this._paint = true;
+    }
     this._set(x, y, this._paint);
     this._updateCell(x, y);
     this._checkVictory();
+    return false;
 };
 
-Nonogram.prototype._cellClick = function(x, y, event) {
-    if (this._done)
-        return;
+Nonogram.prototype._contextMenu = function(event) {
+    event.preventDefault();
+    return false;
 };
 
 Nonogram.prototype._render = function(html, cellsize) {
@@ -177,6 +184,7 @@ Nonogram.prototype._render = function(html, cellsize) {
     var tbody = html.clear().append('table')
         .classed('grid', true)
         .classed('nonogram-grid', true)
+        .on('contextmenu', this._contextMenu.bind(this))
         .append('tbody');
     for (var y = 0; y < this._maxdown; y ++) {
         var tr = tbody.append('tr');
@@ -219,8 +227,9 @@ Nonogram.prototype._render = function(html, cellsize) {
                 .on('mouseenter', this._cellEnter.bind(this, x, y))
                 .on('mouseleave', this._cellLeave.bind(this, x, y))
                 .on('mousedown', this._mouseDown.bind(this, x, y))
-                .on('click', this._cellClick.bind(this, x, y))
                 .classed('nonogram-cell', true)
+                .classed('nonogram-tick-left', x > 0 && (x % 5) == 0)
+                .classed('nonogram-tick-top', y > 0 && (y % 5) == 0)
                 .classed('nonogram-right', x == this._size - 1)
                 .classed('nonogram-bottom', y == this._size - 1);
             td.append('svg')

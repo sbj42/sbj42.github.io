@@ -92,7 +92,7 @@ Html.prototype.remove = function() {
     
 Html.prototype.on = function(type, callback, thisObj) {
     this._node.addEventListener(type, function(event) {
-        callback.call(thisObj, event);
+        return callback.call(thisObj, event);
     }); 
     return this;
 };

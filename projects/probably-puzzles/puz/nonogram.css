@@ -53,3 +53,9 @@ td.nonogram-given-hover {
 .nonogram-right {
   border-right: 1px solid black;
 }
+td.nonogram-tick-top {
+  border-top: 2px solid black;
+}
+td.nonogram-tick-left {
+  border-left: 2px solid black;
+}
