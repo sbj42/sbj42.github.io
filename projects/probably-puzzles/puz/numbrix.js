@@ -381,7 +381,7 @@ Numbrix.prototype._render = function(html, cellsize) {
     for (var y = 0; y < this._size; y ++) {
         var tr = tbody.append('tr');
         for (var x = 0; x < this._size; x ++) {
-            td = tr.append('td')
+            var td = tr.append('td')
                 .attr('id', this._id+'cell_'+x+'_'+y)
                 .attr('style', 'width: '+csize+'px; height: '+csize+'px; font-size: '+(csize*19/36)+'px')
                 .on('mouseenter', this._cellEnter.bind(this, x, y))

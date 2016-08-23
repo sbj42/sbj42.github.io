@@ -60,6 +60,7 @@ function top_go() {
 
     menu_item(Numbrix);
     menu_item(Hidato);
+    menu_item(Nonogram);
 }
 
 function progress_start() {

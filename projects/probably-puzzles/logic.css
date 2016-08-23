@@ -92,7 +92,9 @@ a {
   font-size: 19px;
   cursor: default;
   background: black;
-  border-spacing: 1px;
+  border-spacing: 0px;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
 }
 .grid td {
   font-family: 'Nunito';
@@ -103,6 +105,8 @@ a {
   position: relative;
   padding: 0px;
   background: white;
+  border-top: 1px solid black;
+  border-left: 1px solid black;
 }
 
 #progress {
