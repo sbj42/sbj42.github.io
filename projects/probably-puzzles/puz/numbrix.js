@@ -39,7 +39,7 @@ Numbrix.prototype._generateStep = function() {
             this._solve(state.maxChoices, remainafter, function(solve) {
                 var thisDifficulty = Math.floor(Math.log(solve.choices) / Math.log(2) - 4);
                 
-                if (self._multipleSolutions) {
+                if (solve.multipleSolutions) {
                     //console.info('    no, multiple solutions');
                     self._set(loc.x, loc.y, at);
                 } else if (!solve.solution || thisDifficulty > state.targetDifficulty) {
