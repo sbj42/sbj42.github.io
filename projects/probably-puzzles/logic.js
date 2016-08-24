@@ -61,6 +61,7 @@ function top_go() {
     menu_item(Numbrix);
     menu_item(Hidato);
     menu_item(Nonogram);
+    menu_item(Shikaku);
 }
 
 function progress_start() {
