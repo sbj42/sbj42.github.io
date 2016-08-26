@@ -70,7 +70,6 @@ Numbrix.prototype._generateStep = function() {
 };
 
 Numbrix.prototype.generate = function(size, difficulty, progress, finish) {
-    var self = this;
     this._size = size;
     this._last = size * size;
     var path = hampath2(size);
@@ -91,6 +90,7 @@ Numbrix.prototype.generate = function(size, difficulty, progress, finish) {
         count: remain.length,
         remain: remain
     };
+    var self = this;
     state.finish = function() {
         self._solution = state.solution;
         self._choices = state.choices;
@@ -225,13 +225,14 @@ Numbrix.prototype._solve = function(maxChoices, numbers, finish) {
     var nidx = state.numbers[0] == 2 ? 1 : 0;
     state.solveTodo = [[2, loc.x, loc.y, this._grid.slice(), nidx]];
     state.solveAt = 0;
+    var self = this;
     state.finish = function() {
         var ret = {
             choices: state.choices,
             solution: state.solution,
             multipleSolutions: state.multipleSolutions
         };
-        delete this._solveState;
+        delete self._solveState;
         finish(ret);
     };
     this._solveBatch();

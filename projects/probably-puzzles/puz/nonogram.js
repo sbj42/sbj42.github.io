@@ -64,24 +64,64 @@ Nonogram.prototype._getNumbers = function() {
 Nonogram.prototype.generate = function(size, difficulty) {
     this._size = size;
     this._difficulty = difficulty;
-    this._grid = Array(size * size);
-    if (difficulty == 10) {
-        for (var y = 0; y < size; y ++)
-            for (var x = 0; x < size; x ++)
-                this._set(x, y, Math.random() > 0.5);
-    } else {
-        var xoff = Math.random()*100000;
-        var yoff = Math.random()*100000;
-        var scale = (difficulty * 8 / 10) / size;
-        for (var y = 0; y < size; y ++)
-            for (var x = 0; x < size; x ++)
-                this._set(x, y, noise.simplex2(xoff+x*scale, yoff+y*scale) > 0);
+    while (true) {
+        this._grid = Array(size * size);
+        if (difficulty == 10) {
+            for (var y = 0; y < size; y ++)
+                for (var x = 0; x < size; x ++)
+                    this._set(x, y, Math.random() > 0.7);
+        } else {
+            var xoff = Math.random()*100000;
+            var yoff = Math.random()*100000;
+            var scale = 8 * (difficulty / 10) / size;
+            var thresh = -0.01 + 0.20 * (difficulty - 1) / 9;
+            for (var y = 0; y < size; y ++)
+                for (var x = 0; x < size; x ++)
+                    this._set(x, y, noise.simplex2(xoff+x*scale, yoff+y*scale) > thresh);
+        }
+        var numbers = this._getNumbers(this._grid, size);
+        this._maxacross = numbers.maxacross;
+        this._across = numbers.across;
+        this._maxdown = numbers.maxdown;
+        this._down = numbers.down;
+        var over = 0, trivial = 0, under = 0;
+        this._across.concat(this._down).forEach(function(arr) {
+            var sum = 0;
+            var max = 0;
+            for (var j = 0; j < arr.length; j ++) {
+                sum += arr[j] + (j != 0 ? 1 : 0);
+                max = Math.max(max, arr[j]);
+            }
+            if (sum == size || sum == 0)
+                trivial ++;
+            else if (max > (size - sum)/2 + 1)
+                over ++;
+            else if (max < (size - sum)/4)
+                under ++;
+        });
+        console.info('trivial='+trivial+', over='+over+', under='+under);
+        if (difficulty == 1) {
+            if (trivial < size / 4)
+                continue;
+        } else if (difficulty == 2) {
+            if (trivial < 1 || trivial > Math.max(1, size / 4))
+                continue;
+        } else {
+            if (trivial > 0)
+                continue;
+        }
+        if (difficulty == 9) {
+            if (under < over * 2)
+                continue;
+        } else if (difficulty == 10) {
+            if (over > 0)
+                continue;
+        } else if (difficulty > 6) {
+            if (under < over)
+                continue;
+        }
+        break;
     }
-    var numbers = this._getNumbers(this._grid, size);
-    this._maxacross = numbers.maxacross;
-    this._across = numbers.across;
-    this._maxdown = numbers.maxdown;
-    this._down = numbers.down;
     this._solution = this._grid;
 };
 
@@ -253,7 +293,7 @@ Nonogram.prototype._render = function(html, cellsize) {
 
 Nonogram.prototype.start = function(html, finish, cellsize) {
     this._done = false;
-    this._grid = Array(this._size * this._size);
+    //this._grid = Array(this._size * this._size);
     this._finish = finish;
     this._render(html, cellsize);
 };
