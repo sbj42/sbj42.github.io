@@ -1,0 +1,52 @@
+td.hidato-given {
+  background-color: hsl(183, 100%, 93%);
+}
+.hidato-cell:hover {
+  background-color: hsl(61, 100%, 83%);
+}
+.hidato-cell.hidato-given:hover {
+  background-color: hsl(183, 100%, 73%);
+}
+.hidato-start {
+  fill: hsl(14, 100%, 73%);
+}
+.hidato-number {
+  position: relative;
+}
+.hidato-line {
+  stroke: hsl(130, 77%, 51%);
+  stroke-width: 5px;
+  opacity: 0.2;
+  stroke-linecap: round;
+}
+.hidato-svg {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+.hidato-ui {
+  margin: 0px auto;
+  text-align: center;
+}
+.hidato-pointer {
+  cursor: pointer;
+}
+@media print {
+  .hidato-ui {
+    display: none;
+  }
+}
+.hidato-ui {
+  margin-top: 30px;
+  font-family: 'Nunito';
+  width: 200px;
+}
+.hidato-quit {
+  float: left;
+}
+.hidato-victory {
+  font-size: 25px;
+}
+.hidato-next {
+  float: right;
+}

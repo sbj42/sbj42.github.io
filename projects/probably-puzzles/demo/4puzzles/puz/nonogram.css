@@ -1,0 +1,61 @@
+.grid.nonogram-grid {
+  cursor: pointer;
+  border: none;
+}
+td.nonogram-filled {
+  background-color: #929292;
+}
+.nonogram-cell.nonogram-hover {
+  background-color: #ff8;
+}
+.nonogram-cell.nonogram-filled.nonogram-hover {
+  background-color: #aa6;
+}
+.nonogram-svg {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+.nonogram-dot {
+  fill: #888;
+}
+.nonogram-ui {
+  margin: 0px auto;
+  text-align: center;
+}
+@media print {
+  .nonogram-ui {
+    display: none;
+  }
+}
+.nonogram-ui {
+  margin-top: 20px;
+  font-family: 'Nunito';
+  width: 200px;
+}
+.nonogram-victory {
+  font-size: 25px;
+  float: left;
+}
+td.nonogram-given {
+  border: none;
+  font-family: monospace;
+}
+td.nonogram-given-hover {
+  background: #ff8;
+}
+.nonogram-number {
+  overflow: hidden;
+}
+.nonogram-bottom {
+  border-bottom: 1px solid black;
+}
+.nonogram-right {
+  border-right: 1px solid black;
+}
+td.nonogram-tick-top {
+  border-top: 2px solid black;
+}
+td.nonogram-tick-left {
+  border-left: 2px solid black;
+}
