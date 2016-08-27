@@ -567,7 +567,7 @@ Shikaku.prototype._mouseDown = function(x, y, event) {
 
 Shikaku.prototype._mouseUp = function(event) {
     document.removeEventListener('mouseup', this._draggingF, true);
-    if (this._mouseX != null) {
+    if (this._mouseX != null && (this._mouseX != this._draggingX || this._mouseY != this._draggingY)) {
         var x1 = Math.min(this._draggingX, this._mouseX);
         var x2 = Math.max(this._draggingX, this._mouseX);
         var y1 = Math.min(this._draggingY, this._mouseY);
