@@ -293,7 +293,7 @@ Nonogram.prototype._render = function(html, cellsize) {
 
 Nonogram.prototype.start = function(html, finish, cellsize) {
     this._done = false;
-    //this._grid = Array(this._size * this._size);
+    this._grid = Array(this._size * this._size);
     this._finish = finish;
     this._render(html, cellsize);
 };
