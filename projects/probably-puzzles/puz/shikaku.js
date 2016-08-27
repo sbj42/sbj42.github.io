@@ -3,7 +3,7 @@ function Shikaku() {
         return new Shikaku();
     this._id = 'shikaku'+(Shikaku._instance ++)+'_';
     this._defsize = 10;
-    this._defdifficulty = 5;
+    //this._defdifficulty = 5;
 }
 Shikaku.ID = 'shikaku';
 Shikaku.NAME = 'Shikaku-like';
@@ -427,7 +427,7 @@ Shikaku.prototype._generateNext = function() {
     });
 };
 
-Shikaku.prototype.generate = function(size, difficulty, progress, finish) {
+Shikaku.prototype.generate = function(size, /*difficulty, */progress, finish) {
     this._size = size;
     var state = this._generateState = {
         maxChoices: 100000,
@@ -683,23 +683,23 @@ Shikaku.prototype.menu = function(menu, finish) {
         if (i == this._defsize)
             opt.attr('selected', 'selected');
     }
-    var diffDiv = menu.append('div');
-    diffDiv.append('span')
-        .text('Difficulty: ');
-    var diff = diffDiv.append('select');
-    for (var i = 1; i <= 10; i ++) {
-        var opt = diff.append('option')
-            .attr('value', String(i))
-            .text(String(i));
-        if (i == this._defdifficulty)
-            opt.attr('selected', 'selected');
-    }
+    // var diffDiv = menu.append('div');
+    // diffDiv.append('span')
+    //     .text('Difficulty: ');
+    // var diff = diffDiv.append('select');
+    // for (var i = 1; i <= 10; i ++) {
+    //     var opt = diff.append('option')
+    //         .attr('value', String(i))
+    //         .text(String(i));
+    //     if (i == this._defdifficulty)
+    //         opt.attr('selected', 'selected');
+    // }
 
     function go() {
         var s = self._defsize = +size.node().value;
-        var d = self._defdifficulty = +diff.node().value;
+        //var d = self._defdifficulty = +diff.node().value;
         progress_start();
-        self.generate(s, d, progress_update, function() {
+        self.generate(s, /*d, */progress_update, function() {
             progress_finish();
             self.start(Html('#main'), finish);
         });
