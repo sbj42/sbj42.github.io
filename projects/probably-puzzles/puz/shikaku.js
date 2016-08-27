@@ -173,8 +173,10 @@ Shikaku.prototype._solveNext = function(i, grid) {
     }
     var g = state.givens[i];
     var poss = state.gposs[i];
-    //console.info('step '+i+' around '+g[0]+','+g[1]);
-    //this._printGrid(grid, this._size);
+    // if (i > 12) {
+    //     console.info('step '+(i+1)+' around '+g[0]+','+g[1]);
+    //     this._printGrid(grid, this._size);
+    // }
     var c = 0;
     for (var j = 0; j < poss.length; j ++) {
         var rx = poss[j][0];
@@ -233,16 +235,18 @@ Shikaku.prototype._solve = function(givens, maxChoices, finish) {
         var g = givens[i];
         tmp[g[1] * this._size + g[0]] = true;
     }
-    givens.sort(function(a, b) {
-        function count(x, y) {
-            if (x < 0 || y < 0 || x >= self._size || y >= self._size || tmp[y * self._size + x])
-                return 1;
-            return 0;
-        }
-        var ascore = count(a[0]-1, a[1]) + count(a[0]+1, a[1]) + count(a[0], a[1]-1) + count(a[0], a[1]+1);
-        var bscore = count(b[0]-1, b[1]) + count(b[0]+1, b[1]) + count(b[0], b[1]-1) + count(b[0], b[1]+1);
-        return bscore - ascore;
-    });
+    // givens.sort(function(a, b) {
+    //     function count(x, y) {
+    //         if (x < 0 || y < 0 || x >= self._size || y >= self._size || tmp[y * self._size + x])
+    //             return 1;
+    //         return 0;
+    //     }
+    //     var ascore = count(a[0]-1, a[1]) + count(a[0]+1, a[1]) + count(a[0], a[1]-1) + count(a[0], a[1]+1);
+    //     var bscore = count(b[0]-1, b[1]) + count(b[0]+1, b[1]) + count(b[0], b[1]-1) + count(b[0], b[1]+1);
+    //     if (ascore != bscore)
+    //         return bscore - ascore;
+    //     return b[2] - a[2];
+    // });
     var grid = Array(this._size * this._size);
     for (var i = 0; i < givens.length; i ++) {
         var g = givens[i];
@@ -280,7 +284,30 @@ Shikaku.prototype._solve = function(givens, maxChoices, finish) {
         }
         gposs.push(poss);
     }
-   this._printGrid(grid, this._size);
+    var indexes = [];
+    for (var i = 0; i < givens.length; i ++)
+        indexes.push(i);
+    indexes.sort(function(a, b) {
+        var i = gposs[a].length - gposs[b].length;
+        if (i)
+            return i;
+        return givens[b][2] - givens[a][2];
+    });
+    givens = indexes.map(function(i) {
+        return givens[i];
+    });
+    gposs = indexes.map(function(i) {
+        return gposs[i];
+    });
+    grid = Array(this._size * this._size);
+    for (var i = 0; i < givens.length; i ++) {
+        var g = givens[i];
+        grid[g[1] * this._size + g[0]] = i+1;
+    } 
+    //console.info(JSON.stringify(givens));
+    //console.info(gposs.map(function(p) { return p.length; }));
+    //console.info(JSON.stringify(gposs));
+    //this._printGrid(grid, this._size);
     var state = this._solveState = {
         solveAt: 0,
         solveTodo: [[0, grid]],
@@ -292,7 +319,7 @@ Shikaku.prototype._solve = function(givens, maxChoices, finish) {
         solutions: 0
     };
     state.finish = function() {
-        if (state.solutions == 0) throw new Error('bug');
+        if (state.solutions == 0 && state.choices <= state.maxChoices) throw new Error('bug');
         var ret = {
             choices: state.choices,
             //solutionsg: state.solugionsg
@@ -346,10 +373,10 @@ Shikaku.prototype._scatterNext = function() {
     state.givens = givens;
     var self = this;
     this._solve(state.givens, state.maxChoices, function(solve) {
-        if (solve.solutions > 1)
-            console.info('  too many solutions');
-        else if (solve.choices > state.maxChoices)
-            console.info('  too many choices');
+        // if (solve.solutions > 1)
+        //     console.info('  too many solutions');
+        // else if (solve.choices > state.maxChoices)
+        //     console.info('  too many choices');
         if (solve.solutions == 1 && solve.choices <= state.maxChoices) {
             state.choices = solve.choices;
             state.finish();
@@ -378,12 +405,13 @@ Shikaku.prototype._scatter = function(maxChoices, finish) {
 Shikaku.prototype._generateNext = function() {
     var state = this._generateState;
     this._generateGrid();
+    console.info('.');
     var self = this;
     this._scatter(state.maxChoices, function(scatter) {
         if (scatter) {
             self._givens = scatter.givens;
             self._choices = scatter.choices;
-            console.info('done, ' + self._regions.length + ' regions, ' + self._choices + ' choices');
+            //console.info('done, ' + self._regions.length + ' regions, ' + self._choices + ' choices');
             state.finish();
         } else
             self._generateNext();
@@ -393,7 +421,7 @@ Shikaku.prototype._generateNext = function() {
 Shikaku.prototype.generate = function(size, difficulty, finish) {
     this._size = size;
     var state = this._generateState = {
-        maxChoices: 300000,
+        maxChoices: 100000,
         finish: finish
     };
     this._generateNext();
