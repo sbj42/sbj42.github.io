@@ -216,6 +216,7 @@ Shikaku.prototype._solveBatch = function() {
         state.finish();
         return;
     }
+    state.progress(state.choices / state.maxChoices);
     for (; state.solveAt < 20000 && state.solveAt < state.solveTodo.length; state.solveAt ++) {
         var next = state.solveTodo[state.solveAt];
         var i = next[0];
@@ -228,7 +229,7 @@ Shikaku.prototype._solveBatch = function() {
     setTimeout(this._solveBatch.bind(this), 10);
 };
 
-Shikaku.prototype._solve = function(givens, maxChoices, finish) {
+Shikaku.prototype._solve = function(givens, maxChoices, progress, finish) {
     var self = this;
     var tmp = Array(this._size * this._size);
     for (var i = 0; i < givens.length; i ++) {
@@ -315,6 +316,7 @@ Shikaku.prototype._solve = function(givens, maxChoices, finish) {
         gposs: gposs,
         choices: 0,
         maxChoices: maxChoices,
+        progress: progress,
         //solutionsg: [],
         solutions: 0
     };
@@ -333,8 +335,7 @@ Shikaku.prototype._solve = function(givens, maxChoices, finish) {
 
 Shikaku.prototype._scatterNext = function() {
     var state = this._scatterState;
-    state.scatterAt++;
-    if (state.scatterAt > 5) {
+    if (state.scatterAt > state.scatterMax) {
         state.givens = null;
         state.finish();
         return;
@@ -372,7 +373,7 @@ Shikaku.prototype._scatterNext = function() {
     }
     state.givens = givens;
     var self = this;
-    this._solve(state.givens, state.maxChoices, function(solve) {
+    this._solve(state.givens, state.maxChoices, state.progress, function(solve) {
         // if (solve.solutions > 1)
         //     console.info('  too many solutions');
         // else if (solve.choices > state.maxChoices)
@@ -380,17 +381,23 @@ Shikaku.prototype._scatterNext = function() {
         if (solve.solutions == 1 && solve.choices <= state.maxChoices) {
             state.choices = solve.choices;
             state.finish();
-        } else
+        } else {
+            state.scatterAt++;
             self._scatterNext();
+        }
     });
 };
 
-Shikaku.prototype._scatter = function(maxChoices, finish) {
+Shikaku.prototype._scatter = function(maxChoices, progress, finish) {
     var state = this._scatterState = {
         maxChoices: maxChoices,
-        scatterAt: 0
+        scatterAt: 0,
+        scatterMax: 3
     };
     var self = this;
+    state.progress = function(pct) {
+        progress((state.scatterAt + pct) / (state.scatterMax + 1));
+    };
     state.finish = function() {
         var ret = state.givens && {
             givens: state.givens,
@@ -405,23 +412,26 @@ Shikaku.prototype._scatter = function(maxChoices, finish) {
 Shikaku.prototype._generateNext = function() {
     var state = this._generateState;
     this._generateGrid();
-    console.info('.');
+    //console.info('.');
     var self = this;
-    this._scatter(state.maxChoices, function(scatter) {
+    this._scatter(state.maxChoices, state.progress, function(scatter) {
         if (scatter) {
             self._givens = scatter.givens;
             self._choices = scatter.choices;
             //console.info('done, ' + self._regions.length + ' regions, ' + self._choices + ' choices');
+            self._solution = self._regions;
+            delete self._regions;
             state.finish();
         } else
             self._generateNext();
     });
 };
 
-Shikaku.prototype.generate = function(size, difficulty, finish) {
+Shikaku.prototype.generate = function(size, difficulty, progress, finish) {
     this._size = size;
     var state = this._generateState = {
         maxChoices: 100000,
+        progress: progress,
         finish: finish
     };
     this._generateNext();
@@ -438,14 +448,139 @@ Shikaku.prototype._set = function(x, y, v) {
 Shikaku.prototype._updateCell = function(x, y) {
     if (x < 0 || x >= this._size || y < 0 || y >= this._size)
         return;
-    var td = Html('#'+this._id+'cell_'+x+'_'+y);
+    var csize = this._cellsize;
+    var td = Html('#'+this._id+'cell_'+x+'_'+y)
+        .classed('shikaku-hover', x == this._mouseX && y == this._mouseY);
+    var svg = Html('#'+this._id+'svg_'+x+'_'+y)
+        .clear();
+    var x1 = Math.min(this._draggingX, this._mouseX);
+    var x2 = Math.max(this._draggingX, this._mouseX);
+    var y1 = Math.min(this._draggingY, this._mouseY);
+    var y2 = Math.max(this._draggingY, this._mouseY);
+    
+    function makerect(className) {
+        var dx1 = x == x1 ? 4 : 0;
+        var dy1 = y == y1 ? 4 : 0;
+        var dx2 = x == x2 ? 4 : 0;
+        var dy2 = y == y2 ? 4 : 0;
+        var rect = svg.append('rect')
+            .classed(className, true)
+            .attr('x', dx1)
+            .attr('y', dy1)
+            .attr('width', csize - dx2 - dx1)
+            .attr('height', csize - dy2 - dy1);
+
+        function makeline(x1, y1, x2, y2) {
+            svg.append('line')
+                .classed(className + '-border', true)
+                .attr('x1', x1)
+                .attr('y1', y1)
+                .attr('x2', x2)
+                .attr('y2', y2);
+        }
+
+        if (dx1)
+            makeline(dx1, dy1, dx1, csize - dy2);
+        if (dy1)
+            makeline(dx1, dy1, csize - dx2, dy1);
+        if (dx2)
+            makeline(csize - dx2, dy1, csize - dx2, csize - dy2);
+        if (dy2)
+            makeline(dx1, csize - dy2, csize - dx2, csize - dy2);
+    }
+
+    if (this._draggingX != null
+        && x >= x1 && x <= x2 && y >= y1 && y <= y2) {
+        makerect('shikaku-dragging');
+    } else {
+        for (var i = 0; i < this._regions.length; i ++) {
+            var r = this._regions[i];
+            var x1 = r[0];
+            var y1 = r[1];
+            var x2 = r[2];
+            var y2 = r[3];
+            if (x >= x1 && x <= x2 && y >= y1 && y <= y2) {
+                makerect('shikaku-rect');
+                break;
+            }
+        }
+    }
     var num = '';
     for (var i = 0; i < this._givens.length; i ++) {
         var g = this._givens[i];
         if (g[0] == x && g[1] == y)
             num = String(g[2]);
     }
-    td.text(String(num || ''));
+    Html('#'+this._id+'num_'+x+'_'+y).text(String(num || ''));
+};
+
+Shikaku.prototype._updateGrid = function() {
+    if (this._draggingX != null) {
+        this._regions = this._regionsCopy.slice();
+        var x1 = Math.min(this._draggingX, this._mouseX);
+        var x2 = Math.max(this._draggingX, this._mouseX);
+        var y1 = Math.min(this._draggingY, this._mouseY);
+        var y2 = Math.max(this._draggingY, this._mouseY);
+        for (var i = 0; i < this._regions.length; i ++) {
+            var r = this._regions[i];
+            if (r[0] <= x2 && r[2] >= x1 && r[1] <= y2 && r[3] >= y1) {
+                this._regions.splice(i, 1);
+                i --;
+            }
+        }
+    }
+    for (var xx = 0; xx < this._size; xx ++) {
+        for (var yy = 0; yy < this._size; yy ++) {
+            this._updateCell(xx, yy);
+        }
+    }
+};
+
+Shikaku.prototype._cellEnter = function(x, y, event) {
+    if (this._done)
+        return;
+    this._mouseX = x;
+    this._mouseY = y;
+    this._updateGrid();
+};
+
+Shikaku.prototype._cellLeave = function(x, y, event) {
+    delete this._mouseX;
+    delete this._mouseY;
+    this._updateGrid();
+};
+
+Shikaku.prototype._mouseDown = function(x, y, event) {
+    if (this._done)
+        return;
+    if (event.button)
+        return;
+    this._regionsCopy = this._regions.slice();
+    var td = Html('#'+this._id+'cell_'+x+'_'+y);
+    event.preventDefault();
+    this._draggingX = x;
+    this._draggingY = y;
+    this._draggingF = this._mouseUp.bind(this);
+    document.addEventListener('mouseup', this._draggingF, true);
+    this._updateGrid();
+};
+
+Shikaku.prototype._mouseUp = function(event) {
+    document.removeEventListener('mouseup', this._draggingF, true);
+    if (this._mouseX != null) {
+        var x1 = Math.min(this._draggingX, this._mouseX);
+        var x2 = Math.max(this._draggingX, this._mouseX);
+        var y1 = Math.min(this._draggingY, this._mouseY);
+        var y2 = Math.max(this._draggingY, this._mouseY);
+        this._regions.push([x1, y1, x2, y2]);
+    }
+    delete this._draggingX;
+    delete this._draggingY;
+    delete this._draggingF;
+    delete this._mouseX;
+    delete this._mouseY;
+    this._updateGrid();
+    this._checkVictory();
 };
 
 Shikaku.prototype._render = function(html, cellsize) {
@@ -461,8 +596,18 @@ Shikaku.prototype._render = function(html, cellsize) {
             var td = tr.append('td')
                 .attr('id', this._id+'cell_'+x+'_'+y)
                 .attr('style', 'width: '+csize+'px; height: '+csize+'px; font-size: '+(csize*19/36)+'px')
+                .on('mouseenter', this._cellEnter.bind(this, x, y))
+                .on('mouseleave', this._cellLeave.bind(this, x, y))
+                .on('mousedown', this._mouseDown.bind(this, x, y))
                 .classed('shikaku-cell', true);
-            
+            td.append('svg')
+                .attr('id', this._id+'svg_'+x+'_'+y)
+                .classed('shikaku-svg', true)
+                .attr('width', csize)
+                .attr('height', csize);
+            td.append('div')
+                .attr('id', this._id+'num_'+x+'_'+y)
+                .classed('shikaku-number', true);
             this._updateCell(x, y);
         }
     }
@@ -479,7 +624,36 @@ Shikaku.prototype._render = function(html, cellsize) {
 Shikaku.prototype.start = function(html, finish, cellsize) {
     this._done = false;
     this._finish = finish;
+    this._regions = [];
     this._render(html, cellsize);
+};
+
+Shikaku.prototype._checkVictory = function() {
+    var area = 0;
+    for (var i = 0; i < this._regions.length; i ++) {
+        var r = this._regions[i];
+        var x1 = r[0];
+        var y1 = r[1];
+        var x2 = r[2];
+        var y2 = r[3];
+        var count = 0;
+        var bad = 0;
+        for (var j = 0; j < this._givens.length; j ++) {
+            var g = this._givens[j];
+            var x = g[0];
+            var y = g[1];
+            if (x >= x1 && x <= x2 && y >= y1 && y <= y2) {
+                count ++;
+                area += g[2];
+                if (g[2] != (x2-x1+1)*(y2-y1+1))
+                    bad ++;
+            }
+        }
+        if (bad) return;
+        if (count != 1) return;
+    }
+    if (area == this._size * this._size)
+        this._victory();
 };
 
 Shikaku.prototype._victory = function() {
@@ -524,7 +698,9 @@ Shikaku.prototype.menu = function(menu, finish) {
     function go() {
         var s = self._defsize = +size.node().value;
         var d = self._defdifficulty = +diff.node().value;
-        self.generate(s, d, function() {
+        progress_start();
+        self.generate(s, d, progress_update, function() {
+            progress_finish();
             self.start(Html('#main'), finish);
         });
     }

@@ -1,6 +1,30 @@
 .grid.shikaku-grid {
   cursor: pointer;
 }
+.shikaku-cell.shikaku-hover {
+  background: #ffa;
+}
+.shikaku-dragging {
+  fill: #ffc;
+  stroke: none;
+}
+.shikaku-dragging-border {
+  stroke: #888;
+  stroke-width: 2px;
+  stroke-linecap: round;
+  stroke-dasharray: 2 4;
+  fill: none;
+}
+.shikaku-rect {
+  fill: #f8f8f8;
+  stroke: none;
+}
+.shikaku-rect-border {
+  stroke: #666;
+  stroke-width: 2px;
+  stroke-linecap: round;
+  fill: none;
+}
 .shikaku-ui {
   margin: 0px auto;
   text-align: center;
@@ -14,6 +38,14 @@
   margin-top: 30px;
   font-family: 'Nunito';
   width: 200px;
+}
+.shikaku-svg {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+.shikaku-number {
+  position: relative;
 }
 .shikaku-victory {
   font-size: 25px;

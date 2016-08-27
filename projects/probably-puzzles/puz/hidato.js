@@ -236,7 +236,7 @@ Hidato.prototype._solve = function(maxChoices, numbers, finish) {
     var nidx = state.numbers[0] == 2 ? 1 : 0;
     state.solveTodo = [[2, loc.x, loc.y, this._grid.slice(), nidx]];
     state.solveAt = 0;
-    var self;
+    var self = this;
     state.finish = function() {
         var ret = {
             choices: state.choices,
