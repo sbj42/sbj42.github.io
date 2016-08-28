@@ -1,7 +1,7 @@
 .grid.shikaku-grid {
   cursor: pointer;
 }
-.shikaku-cell.shikaku-hover {
+.shikaku-cell:hover {
   background: #ffa;
 }
 .shikaku-dragging {
@@ -19,11 +19,18 @@
   fill: #f8f8f8;
   stroke: none;
 }
+.shikaku-rect.shikaku-bad {
+  fill: #fbb;
+  stroke: none;
+}
 .shikaku-rect-border {
   stroke: #666;
   stroke-width: 2px;
   stroke-linecap: round;
   fill: none;
+}
+.shikaku-rect-border.shikaku-bad {
+    stroke: #844;
 }
 .shikaku-ui {
   margin: 0px auto;
@@ -43,9 +50,11 @@
   position: absolute;
   left: 0px;
   top: 0px;
+  pointer-events: none;
 }
 .shikaku-number {
   position: relative;
+  pointer-events: none;
 }
 .shikaku-victory {
   font-size: 25px;
