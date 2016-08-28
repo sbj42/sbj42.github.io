@@ -37,7 +37,7 @@ Shikaku.prototype._generateGrid = function() {
         //console.info('' + remain.length + ' cells left');
         var p = remain[Math.floor(Math.random()*remain.length)];
         //console.info('  picked '+p[0]+','+p[1]);
-        if (true/*Math.random() > 0.5*/) {
+        if (Math.random() > 0.5) {
             var x1 = p[0], x2 = p[0];
             while (x1 > 0 && !this._get(x1-1, p[1]))
                 x1 --;
@@ -75,12 +75,12 @@ Shikaku.prototype._generateGrid = function() {
             var y1 = p[1], y2 = p[1];
             while (y1 > 0 && !this._get(p[0], y1-1))
                 y1 --;
-            while (y2 < this._size - 1 && !this._get(p[1], y2+1))
+            while (y2 < this._size - 1 && !this._get(p[0], y2+1))
                 y2 ++;
             var rh = Math.min(8, 1 + Math.floor(Math.random() * (y2 - y1 + 1)));
             var ry = y1 + Math.floor(Math.random() * (y2 - y1 + 1 - rh));
             //console.info('  y1='+y1+', y2='+y2+', rh='+rh+', ry='+ry);
-            var x1 = p[1], x2 = p[1];
+            var x1 = p[0], x2 = p[0];
             while (x1 > 0) {
                 var ok = true;
                 for (var i = 0; i < rh; i ++) {
@@ -418,7 +418,7 @@ Shikaku.prototype._generateNext = function() {
         if (scatter) {
             self._givens = scatter.givens;
             self._choices = scatter.choices;
-            //console.info('done, ' + self._regions.length + ' regions, ' + self._choices + ' choices');
+            console.info('done, ' + self._regions.length + ' regions, ' + self._choices + ' choices');
             self._solution = self._regions;
             delete self._regions;
             state.finish();
