@@ -546,14 +546,14 @@ Shikaku.prototype._cellEnter = function(x, y, event) {
         return;
     this._mouseX = x;
     this._mouseY = y;
-    if (this._draggingX)
+    if (this._draggingX != null)
         this._updateGrid();
 };
 
 Shikaku.prototype._cellLeave = function(x, y, event) {
     delete this._mouseX;
     delete this._mouseY;
-    if (this._draggingX)
+    if (this._draggingX != null)
         this._updateGrid();
 };
 
@@ -563,7 +563,7 @@ Shikaku.prototype._mouseDown = function(x, y, event) {
     event.preventDefault();
     if (this._done)
         return;
-    if (this._draggingX) {
+    if (this._draggingX != null) {
         this._regions = this._regionsCopy;
         document.removeEventListener('mouseup', this._draggingF, true);
         delete this._draggingX;

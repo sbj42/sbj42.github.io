@@ -37,7 +37,7 @@ Shikaku.prototype._generateGrid = function() {
         //console.info('' + remain.length + ' cells left');
         var p = remain[Math.floor(Math.random()*remain.length)];
         //console.info('  picked '+p[0]+','+p[1]);
-        if (true/*Math.random() > 0.5*/) {
+        if (Math.random() > 0.5) {
             var x1 = p[0], x2 = p[0];
             while (x1 > 0 && !this._get(x1-1, p[1]))
                 x1 --;
@@ -75,12 +75,12 @@ Shikaku.prototype._generateGrid = function() {
             var y1 = p[1], y2 = p[1];
             while (y1 > 0 && !this._get(p[0], y1-1))
                 y1 --;
-            while (y2 < this._size - 1 && !this._get(p[1], y2+1))
+            while (y2 < this._size - 1 && !this._get(p[0], y2+1))
                 y2 ++;
             var rh = Math.min(8, 1 + Math.floor(Math.random() * (y2 - y1 + 1)));
             var ry = y1 + Math.floor(Math.random() * (y2 - y1 + 1 - rh));
             //console.info('  y1='+y1+', y2='+y2+', rh='+rh+', ry='+ry);
-            var x1 = p[1], x2 = p[1];
+            var x1 = p[0], x2 = p[0];
             while (x1 > 0) {
                 var ok = true;
                 for (var i = 0; i < rh; i ++) {
@@ -418,7 +418,7 @@ Shikaku.prototype._generateNext = function() {
         if (scatter) {
             self._givens = scatter.givens;
             self._choices = scatter.choices;
-            //console.info('done, ' + self._regions.length + ' regions, ' + self._choices + ' choices');
+            console.info('done, ' + self._regions.length + ' regions, ' + self._choices + ' choices');
             self._solution = self._regions;
             delete self._regions;
             state.finish();
@@ -449,22 +449,28 @@ Shikaku.prototype._updateCell = function(x, y) {
     if (x < 0 || x >= this._size || y < 0 || y >= this._size)
         return;
     var csize = this._cellsize;
-    var td = Html('#'+this._id+'cell_'+x+'_'+y)
-        .classed('shikaku-hover', x == this._mouseX && y == this._mouseY);
-    var svg = Html('#'+this._id+'svg_'+x+'_'+y)
-        .clear();
+    var cellstate = this._cellstate;
+    var size = this._size;
+    var td = Html('#'+this._id+'cell_'+x+'_'+y);
+    var svg = Html('#'+this._id+'svg_'+x+'_'+y);
     var x1 = Math.min(this._draggingX, this._mouseX);
     var x2 = Math.max(this._draggingX, this._mouseX);
     var y1 = Math.min(this._draggingY, this._mouseY);
     var y2 = Math.max(this._draggingY, this._mouseY);
     
-    function makerect(className) {
+    function makerect(className, bad) {
         var dx1 = x == x1 ? 4 : 0;
         var dy1 = y == y1 ? 4 : 0;
         var dx2 = x == x2 ? 4 : 0;
         var dy2 = y == y2 ? 4 : 0;
+        var st = className+'_'+dx1+'_'+dy1+'_'+dx2+'_'+dy2+'_'+bad;
+        if (cellstate[y * size + x] == st)
+            return;
+        svg.clear();
+        cellstate[y * size + x] = st;
         var rect = svg.append('rect')
             .classed(className, true)
+            .classed('shikaku-bad', bad)
             .attr('x', dx1)
             .attr('y', dy1)
             .attr('width', csize - dx2 - dx1)
@@ -473,6 +479,7 @@ Shikaku.prototype._updateCell = function(x, y) {
         function makeline(x1, y1, x2, y2) {
             svg.append('line')
                 .classed(className + '-border', true)
+                .classed('shikaku-bad', bad)
                 .attr('x1', x1)
                 .attr('y1', y1)
                 .attr('x2', x2)
@@ -500,18 +507,16 @@ Shikaku.prototype._updateCell = function(x, y) {
             var x2 = r[2];
             var y2 = r[3];
             if (x >= x1 && x <= x2 && y >= y1 && y <= y2) {
-                makerect('shikaku-rect');
+                makerect('shikaku-rect', r[4]);
                 break;
             }
         }
+        if (i == this._regions.length) {
+            if (cellstate[y * size + x])
+                svg.clear();
+            cellstate[y * size + x] = '';
+        }
     }
-    var num = '';
-    for (var i = 0; i < this._givens.length; i ++) {
-        var g = this._givens[i];
-        if (g[0] == x && g[1] == y)
-            num = String(g[2]);
-    }
-    Html('#'+this._id+'num_'+x+'_'+y).text(String(num || ''));
 };
 
 Shikaku.prototype._updateGrid = function() {
@@ -541,23 +546,34 @@ Shikaku.prototype._cellEnter = function(x, y, event) {
         return;
     this._mouseX = x;
     this._mouseY = y;
-    this._updateGrid();
+    if (this._draggingX != null)
+        this._updateGrid();
 };
 
 Shikaku.prototype._cellLeave = function(x, y, event) {
     delete this._mouseX;
     delete this._mouseY;
-    this._updateGrid();
+    if (this._draggingX != null)
+        this._updateGrid();
 };
 
 Shikaku.prototype._mouseDown = function(x, y, event) {
-    if (this._done)
-        return;
     if (event.button)
         return;
-    this._regionsCopy = this._regions.slice();
-    var td = Html('#'+this._id+'cell_'+x+'_'+y);
     event.preventDefault();
+    if (this._done)
+        return;
+    if (this._draggingX != null) {
+        this._regions = this._regionsCopy;
+        document.removeEventListener('mouseup', this._draggingF, true);
+        delete this._draggingX;
+        delete this._draggingY;
+        delete this._draggingF;
+        delete this._mouseX;
+        delete this._mouseY;
+        delete this._regionsCopy;
+    }
+    this._regionsCopy = this._regions.slice();
     this._draggingX = x;
     this._draggingY = y;
     this._draggingF = this._mouseUp.bind(this);
@@ -567,7 +583,7 @@ Shikaku.prototype._mouseDown = function(x, y, event) {
 
 Shikaku.prototype._mouseUp = function(event) {
     document.removeEventListener('mouseup', this._draggingF, true);
-    if (this._mouseX != null && (this._mouseX != this._draggingX || this._mouseY != this._draggingY)) {
+    if (this._mouseX != null && this._draggingX != null && (this._mouseX != this._draggingX || this._mouseY != this._draggingY)) {
         var x1 = Math.min(this._draggingX, this._mouseX);
         var x2 = Math.max(this._draggingX, this._mouseX);
         var y1 = Math.min(this._draggingY, this._mouseY);
@@ -579,13 +595,15 @@ Shikaku.prototype._mouseUp = function(event) {
     delete this._draggingF;
     delete this._mouseX;
     delete this._mouseY;
-    this._updateGrid();
+    delete this._regionsCopy;
     this._checkVictory();
+    this._updateGrid();
 };
 
 Shikaku.prototype._render = function(html, cellsize) {
     this._cellsize = cellsize || 36;
     var csize = this._cellsize;
+    this._cellstate = Array(this._size * this._size);
     var tbody = html.clear().append('table')
         .classed('grid', true)
         .classed('shikaku-grid', true)
@@ -605,9 +623,15 @@ Shikaku.prototype._render = function(html, cellsize) {
                 .classed('shikaku-svg', true)
                 .attr('width', csize)
                 .attr('height', csize);
+            var num = '';
+            for (var i = 0; i < this._givens.length; i ++) {
+                var g = this._givens[i];
+                if (g[0] == x && g[1] == y)
+                    num = String(g[2]);
+            }
             td.append('div')
-                .attr('id', this._id+'num_'+x+'_'+y)
-                .classed('shikaku-number', true);
+                .classed('shikaku-number', true)
+                .text(String(num || ''));
             this._updateCell(x, y);
         }
     }
@@ -630,6 +654,7 @@ Shikaku.prototype.start = function(html, finish, cellsize) {
 
 Shikaku.prototype._checkVictory = function() {
     var area = 0;
+    var nope = false;
     for (var i = 0; i < this._regions.length; i ++) {
         var r = this._regions[i];
         var x1 = r[0];
@@ -649,10 +674,10 @@ Shikaku.prototype._checkVictory = function() {
                     bad ++;
             }
         }
-        if (bad) return;
-        if (count != 1) return;
+        if (bad || count != 1)
+            r[4] = nope = true;
     }
-    if (area == this._size * this._size)
+    if (!nope && area == this._size * this._size)
         this._victory();
 };
 
