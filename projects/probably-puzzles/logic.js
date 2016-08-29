@@ -62,6 +62,7 @@ function top_go() {
     menu_item(Hidato);
     menu_item(Nonogram);
     menu_item(Shikaku);
+    menu_item(FourColor);
 }
 
 function progress_start() {

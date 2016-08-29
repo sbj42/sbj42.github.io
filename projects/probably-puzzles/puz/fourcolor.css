@@ -1,0 +1,35 @@
+.fourcolor-grid {
+  margin: 30px auto 0px;
+  font-size: 19px;
+  cursor:  pointer;
+  border-collapse: collapse;
+}
+.fourcolor-grid td {
+  width: 36px;
+  height: 36px;
+  padding: 0px;
+  background: white;
+  border: 2px solid black;
+  position: relative;
+}
+.fourcolor-cdiv {
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  top: 0px;
+  bottom: 0px;
+}
+.fourcolor-ui {
+  margin: 0px auto;
+  text-align: center;
+}
+@media print {
+  .fourcolor-ui {
+    display: none;
+  }
+}
+.fourcolor-ui {
+  margin-top: 30px;
+  font-family: 'Nunito';
+  width: 200px;
+}
