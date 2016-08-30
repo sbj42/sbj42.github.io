@@ -36,73 +36,103 @@ FourColor._add = function(arr, num) {
 
 FourColor.prototype.generate = function(size) {
     this._size = size;
-    this._grid = Array(this._size * this._size);
-    this._regions = []
-    this._cells = {};
-    var rn = 0;
-    for (var y = 0; y < this._size; y ++) {
-        for (var x = 0; x < this._size; x ++) {
-            rn ++;
-            this._grid[y * this._size + x] = rn;
-            this._cells[rn] = [[x, y]];
-            this._regions.push(rn);
-        }
-    }
-    var self = this;
-    this._neighbors = {};
-    for (var i = 0; i < this._regions.length; i ++) {
-        var rn = this._regions[i];
-        var cells = this._cells[rn];
-        var n = [];
-        for (var c = 0; c < cells.length; c ++) {
-            var x = cells[c][0];
-            var y = cells[c][1];
-            function check(dx, dy) {
-                if (x + dx < 0 || x + dx >= self._size || y + dy < 0 || y + dy >= self._size)
-                    return;
-                var o = self._grid[(y + dy) * self._size + x + dx];
-                if (self._grid[y * self._size + x] != o)
-                    FourColor._add(n, o);
+    do {
+        this._grid = Array(this._size * this._size);
+        this._regions = []
+        this._cells = {};
+        var rn = 0;
+        for (var y = 0; y < this._size; y ++) {
+            for (var x = 0; x < this._size; x ++) {
+                rn ++;
+                this._grid[y * this._size + x] = rn;
+                this._cells[rn] = [[x, y]];
+                this._regions.push(rn);
             }
-            check(0, -1);
-            check(0, 1);
-            check(-1, 0);
-            check(1, 0);
         }
-        this._neighbors[rn] = n;
-    }
-    console.info('generated ' + this._regions.length + ' regions');
-    var removecount = this._regions.length * 3 / 4;
-    for (var i = 0; i < removecount; i ++) {
-        var ri = Math.floor(Math.random()*this._regions.length);
-        var rn = this._regions[ri];
-        var n = this._neighbors[rn];
-        var ni = Math.floor(Math.random()*n.length);
-        var nn = n[ni];
-        var n2 = this._neighbors[nn];
-        //console.info('join ' + rn + ' with ' + nn);
-        for (var j = 0; j < n.length; j ++) {
-            if (n[j] == nn)
-                continue;
-            FourColor._replace(this._neighbors[n[j]], rn, nn);
-            FourColor._add(n2, n[j]);
+        var self = this;
+        this._neighbors = {};
+        for (var i = 0; i < this._regions.length; i ++) {
+            var rn = this._regions[i];
+            var cells = this._cells[rn];
+            var n = [];
+            for (var c = 0; c < cells.length; c ++) {
+                var x = cells[c][0];
+                var y = cells[c][1];
+                function check(dx, dy) {
+                    if (x + dx < 0 || x + dx >= self._size || y + dy < 0 || y + dy >= self._size)
+                        return;
+                    var o = self._grid[(y + dy) * self._size + x + dx];
+                    if (self._grid[y * self._size + x] != o)
+                        FourColor._add(n, o);
+                }
+                check(0, -1);
+                check(0, 1);
+                check(-1, 0);
+                check(1, 0);
+            }
+            this._neighbors[rn] = n;
         }
-        FourColor._remove(n2, rn);
-        this._cells[nn] = this._cells[nn].concat(this._cells[rn]);
-        this._regions.splice(ri, 1);
-        delete this._cells[rn];
-        delete this._neighbors[rn];
-    }
-    for (var i = 0; i < this._regions.length; i ++) {
-        var rn = this._regions[i];
-        var cells = this._cells[rn];
-        for (var j = 0; j < cells.length; j ++) {
-            var x = cells[j][0];
-            var y = cells[j][1];
-            this._grid[y * this._size + x] = rn;
+        console.info('generated ' + this._regions.length + ' regions');
+        var removecount = this._regions.length * 2 / 3;
+        for (var i = 0; i < removecount; i ++) {
+            var ri = Math.floor(Math.random()*this._regions.length);
+            var rn = this._regions[ri];
+            var n = this._neighbors[rn];
+            var ni = Math.floor(Math.random()*n.length);
+            var nn = n[ni];
+            var n2 = this._neighbors[nn];
+            //console.info('join ' + rn + ' with ' + nn);
+            for (var j = 0; j < n.length; j ++) {
+                if (n[j] == nn)
+                    continue;
+                FourColor._replace(this._neighbors[n[j]], rn, nn);
+                FourColor._add(n2, n[j]);
+            }
+            FourColor._remove(n2, rn);
+            this._cells[nn] = this._cells[nn].concat(this._cells[rn]);
+            this._regions.splice(ri, 1);
+            delete this._cells[rn];
+            delete this._neighbors[rn];
         }
+        for (var i = 0; i < this._regions.length; i ++) {
+            var rn = this._regions[i];
+            var cells = this._cells[rn];
+            for (var j = 0; j < cells.length; j ++) {
+                var x = cells[j][0];
+                var y = cells[j][1];
+                this._grid[y * this._size + x] = rn;
+            }
+        }
+        this._colors = {};
+        this._colors[this._regions[0]] = 1;
+        this.solve();
+    } while (this._maxColor < 4);
+    var colors = JSON.parse(JSON.stringify(this._solution));
+    var rand = this._regions.slice();
+    for (var i = 0; i < rand.length; i ++) {
+        var j = Math.floor(Math.random()*(rand.length - i));
+        var t = rand[j];
+        rand[j] = rand[i];
+        rand[i] = t;
     }
-    this.solve();
+    while (true) {
+        var change = false;
+        for (var i = 0; i < rand.length; i ++) {
+            this._colors = JSON.parse(JSON.stringify(colors));
+            delete this._colors[rand[i]];
+            this.solve();
+            if (this._solutions == 1) {
+                colors = this._colors;
+                change = true;
+                rand.splice(i, 1);
+                i --;
+            }
+        }
+        if (!change)
+            break;
+    }
+    this._initColors = colors;
+    delete this._colors;
 };
 
 FourColor.prototype._solveStep = function(i) {
@@ -115,6 +145,11 @@ FourColor.prototype._solveStep = function(i) {
         return;
     }
     var rn = this._regions[i];
+    if (this._colors[rn]) {
+        this._maxColor = Math.max(this._maxColor, this._colors[rn]);
+        this._solveStep(i+1);
+        return;
+    }
     var n = this._neighbors[rn];
     var maxColorSave = this._maxColor;
     for (var c = 1; c <= 4; c ++) {
@@ -133,18 +168,14 @@ FourColor.prototype._solveStep = function(i) {
         if (this._solutions >= 2)
             break;
     }
-    this._colors[rn] = null;
+    delete this._colors[rn];
 };
 
-FourColor.prototype.solve = function(maxSol) {
-    this._maxSol = maxSol
+FourColor.prototype.solve = function() {
     this._solutions = 0;
-    this._colors = {};
-    this._colors[this._regions[0]] = 1;
-    this._maxColor = 1;
-    this._solveStep(1);
+    this._maxColor = 0;
+    this._solveStep(0);
     this._maxColor = this._solutionMC;
-    return this.solutions <= this._maxSol;
 };
 
 FourColor.prototype._updateCell = function(x, y) {
@@ -214,7 +245,7 @@ FourColor.prototype._render = function(html, cellsize) {
 FourColor.prototype.start = function(html, finish, cellsize) {
     this._done = false;
     this._finish = finish;
-    this._colors = this._solution;
+    this._colors = this._initColors;
     this._render(html, cellsize);
 };
 
