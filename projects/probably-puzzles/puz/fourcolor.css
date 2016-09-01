@@ -9,7 +9,7 @@
   height: 36px;
   padding: 0px;
   background: white;
-  border: 2px solid black;
+  border: 2px solid #000;
   position: relative;
 }
 .fourcolor-cdiv {
@@ -29,7 +29,23 @@
   }
 }
 .fourcolor-ui {
-  margin-top: 30px;
+  margin-top: 15px;
   font-family: 'Nunito';
-  width: 200px;
+  width: 400px;
+}
+.fourcolor-swatch {
+  display: inline-block;
+  width: 42px;
+  height: 30px;
+  border-radius: 8px;
+  border: 3px solid transparent;
+  opacity: 0.7;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+.fourcolor-swatch-selected {
+  border: 3px solid black;
+  opacity: 1;
 }
