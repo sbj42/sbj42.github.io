@@ -165,6 +165,7 @@ FourColor.prototype.generate = function(size, difficulty) {
             best = {
                 choices: this._choices,
                 regions: this._regions,
+                neighbors: this._neighbors,
                 initColors: this._initColors,
                 grid: this._grid
             };
@@ -174,6 +175,7 @@ FourColor.prototype.generate = function(size, difficulty) {
     }
     this._choices = best.choices;
     this._regions = best.regions;
+    this._neighbors = best.neighbors;
     this._initColors = best.initColors;
     this._grid = best.grid;
     console.info('done, ' + this._regions.length + ' regions, ' + this._choices + ' choices');
@@ -264,6 +266,7 @@ FourColor.prototype._pickCell = function(x, y) {
     }
     this._colors[rn] = this._curColor;
     this._updateGrid();
+    this._checkVictory();
 };
 
 FourColor.prototype._updateSwatches = function() {
@@ -357,6 +360,21 @@ FourColor.prototype.start = function(html, finish, cellsize) {
     this._render(html, cellsize);
 };
 
+FourColor.prototype._checkVictory = function() {
+    for (var i = 0; i < this._regions.length; i ++) {
+        var rn = this._regions[i];
+        var c = this._colors[rn];
+        if (!c) return;
+        var n = this._neighbors[rn];
+        for (var j = 0; j < n.length; j ++) {
+            var nc = this._colors[n[j]];
+            if (!nc) return;
+            if (c == nc) return;
+        }
+    }
+    this._victory();
+};
+
 FourColor.prototype._victory = function() {
     this._done = true;
     var ui = Html('#'+this._id+'ui').clear();
@@ -377,7 +395,7 @@ FourColor.prototype.menu = function(menu, finish) {
     sizeDiv.append('span')
         .text('Size: ');
     var size = sizeDiv.append('select');
-    for (var i = 5; i <= 15; i ++) {
+    for (var i = 4; i <= 15; i ++) {
         var opt = size.append('option')
             .attr('value', String(i))
             .text(String(i));
