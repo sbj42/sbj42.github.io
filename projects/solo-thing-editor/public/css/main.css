@@ -1,0 +1,67 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+body {
+  background: #224;
+  box-sizing: border-box;
+  display: flex;
+  flex-flow: column wrap;
+}
+body, td, input, select {
+  color: #fff;
+  font-family: monospace;
+}
+input, select {
+  background: #32847c;
+  padding: 1px 3px;
+  margin: 1px;
+  border: none;
+}
+input[type="button"] {
+  border: 1px solid white;
+}
+input:focus, select:focus {
+  background: #843232;
+}
+input[type="button"]:hover, input[type="button"].selected {
+  background: #843232;
+}
+#title {
+  font-weight: bold;
+  margin: 3px auto;
+  flex: none;
+}
+.main {
+  flex: 1;
+  display: flex;
+  flex-flow: row;
+}
+.thingdb {
+  width: 300px;
+  flex: none;
+}
+.thingedit {
+  flex: 1;
+}
+.doubleup {
+  zoom: 2;
+  image-rendering: optimizeSpeed;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -o-crisp-edges;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: pixelated;
+  image-rendering: optimize-contrast;
+  -ms-interpolation-mode: nearest-neighbor;
+}
+.wait {
+  position: absolute;
+  top: 150px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  text-align: center;
+}
+.hide {
+  visibility: hidden;
+}

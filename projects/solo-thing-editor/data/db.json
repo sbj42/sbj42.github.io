@@ -1,0 +1,103 @@
+{
+  "things": {
+    "asdf": {
+      "name": "asdf",
+      "type": "decoration",
+      "category": "",
+      "tags": [
+        "one, two"
+      ],
+      "width": 1,
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAABe0lEQVQYV2OMibn+nwEKlizRZNzq5XVRkINDXIiTUxwmDqIZQQofP9635t2725cuX54wadq8aV1mdmbWq2atmqPM5pjY099SEmXSsovRwqJjzosPR/fa2DQusyg4dvXUq1MMvxl+MzDcZzjL//wS6w3r+sj3wfMjGKHG8/vO810i9V3gnT7jbbW/f///vski9ZtNXUJ81aJnS2xOmBkzMnAyyNmZ2qlwBTHkFGhwWn3+/PO9gACHyD82Fq61O97M2ffpzZc78+7MBJvo4O8Q/vLXQ/YpJdoT2NgY+f/+/fPt12/mH+ef/7n+6m+U2u1jaw6DFSobKFsV5dk2MDHe5+Bh+cMrryxqcOvp90tiyjEM03ZcY1Z89+o1zI0M13pbFx81/Gu46e3ply6yLiLnDp3bLSYpJvV8Z1Lkjp1mc8HBAzIVFIYgOjIyMvL9+/d3kpKS0tevX7/32TOboKtXq9UwFIIUV1dXV9y7d+/h8uXLl9vbT13twKAVAgCPV6fOumIahwAAAABJRU5ErkJggg=="
+    },
+    "player": {
+      "name": "player",
+      "type": "decoration",
+      "category": "misc",
+      "tags": [
+        ""
+      ],
+      "width": 1,
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAXUlEQVQYV2NkIBIwEqmOgTyF2vq+/5FtuHpxM9wgOMNXW/v/f35GhnmVUWC1Se3LGBg//mfYfPUqWA2GwuxQEbDCqavfYFcIs9LRhANs/f4zP1DcT55n8AUV0SYCABZbHAut/aH8AAAAAElFTkSuQmCC"
+    },
+    "stairs": {
+      "name": "stairs",
+      "type": "decoration",
+      "category": "buildings",
+      "tags": [
+        ""
+      ],
+      "width": 1,
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAb0lEQVQYV2NkIBIwgtTlxZtuwqd+0sLTfmCF+fGm/5kYGfywKf73n2HTxIWnGcEKCxNMffsXnN6MTSFMDq4Qn9UgQ+BW/2dgwGoiIwODL9xqkGdADsZmKsj9cIXEhBA8eEBWYNMAchJK8ICMx2c1APRuMwtMbb01AAAAAElFTkSuQmCC"
+    },
+    "rock": {
+      "name": "rock",
+      "type": "decoration",
+      "category": "nature",
+      "tags": [
+        ""
+      ],
+      "width": 1,
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAgklEQVQYV21QwRHAIAiTMXQNd9I1WEN3cg0do71whUMtD8EQEg4KX7TWHpRjDEFyzpJrrYQsTynlSSnpzJWZmS5ijFGIay0bmHMGgiVAfLyq/2/E00+JcMCepghA7XwNgU3RN9FA6CpCBMDMcpq/MGtt4kReBbVeQHY8VXQAeO/d+i9fhlPPXL+APgAAAABJRU5ErkJggg=="
+    },
+    "tree": {
+      "name": "tree",
+      "type": "tree",
+      "category": "nature",
+      "tags": [
+        ""
+      ],
+      "width": 5,
+      "height": 5,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAB+klEQVRoQ+2YsU0EMRBF9xJAIJERIECQLV1QBFXQASXQAVVQBF0QggBdQIYEAiLkwGhkbM98e8a7a7j0vN7//OePvV4NnfxWnXAM/yBzc9LckePL03MP/XB1d2O1ACYgVHxMuAVQEQgnFF11DbBZgGiUHgyi7UbOPcQpEUhL8aWZYkG0IL6eP/acyI2DrReLDGVBEAgvVCIShZGUWBLECoKCSoGagCBOpNzigBYDEgLGwDiY4tLScCKXp5xLMaiisFtDSLpbCAM70gKiGxAu/A60C0fEGcntIVOXVqp7/cqIJsTZ08417Uy3h28Xkp3fj0mVmMiRFAjqhId4ff8cdrc3f/QjMJODUCccyDiOw/rxHoapAnFvi7mCOOJAqBP7RydFILk2LOpaGiBORAjg4ZDyksJEN8TanPjSWjyIW0WaEwqEujGpIz7Vte2XO6rQnPzNsxbSuZCNLzYWab3ueciRViDot0j/IJrnLbTEStxIOiK9QbEqNTQf1SBuAguYppcPtGS0YdQc8SKlJebHo0BOcPiMakZiAUWgJECS7/JQR+5ui73EppMhMJxLk4KkvlW4FouUT2qu4pvGnLgSZzhY7v9FgXix4UJxENkjCrdCmq5IhHJ6oLBzk5W27dmCoJ1uESBcp9OAqMqItMxajTPJSCvx9D3dgHwDXB5uQprU054AAAAASUVORK5CYII="
+    },
+    "tiles": {
+      "name": "tiles",
+      "type": "floor",
+      "category": "buildings",
+      "tags": [
+        ""
+      ],
+      "width": 1,
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAABJUlEQVQYV02QzUsCURTFzwN9NTrN5ISpqJFQRIv2/Zn9BW1qG7QNiqiVEBVhWFOpUCNNSiNvmg8ahRf3huDd3a9zfhzRvznVKoxQa25hlqWIAw9UOXMdS1Lio99FpVaHuL841rZlYpr+oOg00HMf+HBnbx+J8nnuj78h/Je2Hr93IWWeB43WLh96gydUy2vIsikKTh3Ce7zUtJgr0WHRtDF4vsVy0Ua5UudH4V4f6WQqYJXKzJSliu3s6jYzE6NZMCA654d6JiR/5qQB5b8ib6xAGjZ+swwj7w3OqgXRuztj63AyZou5MimRNfVsTYwTf8ANKVNMVG6njebGJmIVoFRtQVydHGjHtnhJg0WlWTRijK/P4T9joELOLY4UkmDIUS0GTox/Y/GKxcNAsZoAAAAASUVORK5CYII="
+    },
+    "grass": {
+      "name": "grass",
+      "type": "floor",
+      "category": "buildings",
+      "tags": [
+        ""
+      ],
+      "width": 1,
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAA4UlEQVQYV01QTQsBURQ9L8VimgmNmiLTSJSNhSyVsvSPrOz8OCslxYKmfAwLimYxitG53MndvPveO/ecc48Zz8YpfhUnsXTv4xmp6yKXz8ndKlgwCiyVA+xPS7yeL7xPFxRbTQFxmG8CvD/u8P0uwnCh5HKSkaCq14EZTocizQctx3ZAhdt1h8dui3pv9AXSA1nJwJ5yLb+PTTjP/JrBZJCSgZN20BCQgqmiCwmQknacwHgV2FYN0XWdbUsllkh75TYO0QpkpnH2BPCuloRRP/9z0yS4EO1k0jr9HwsjY7asD0aVfqwbJfN/AAAAAElFTkSuQmCC"
+    },
+    "deer": {
+      "name": "deer",
+      "type": "decoration",
+      "category": "nature",
+      "tags": [
+        ""
+      ],
+      "width": 1,
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAnUlEQVQYV2NkIBIwYlPnoM4z/cDNL5nIcigKHx/quyBjW5h44/D6cxq2gUZPDvfPl7UrMgBpQFF4fUXcf5DgyZPPGMzNpcAGakYsAqvBsHpNpeclBkYGXYb/DJdD2rfrwazHUDivwPkCHxebPgMj48WQ1m1ga7GbWOUJtv7Tt18MSRP2wg2iyMRbDAwMqgTdCLL2ytbp/3W8M1FsAwAJBjgLxiK3CQAAAABJRU5ErkJggg=="
+    },
+    "pavement": {
+      "name": "pavement",
+      "type": "floor",
+      "category": "roads",
+      "tags": [
+        ""
+      ],
+      "width": 1,
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAwUlEQVQYV02QCwqEQAxDG//eTkRU0Psfwb92eV1cdmCYaZqmTTWOo7u7bdtmRVGYJLvv26qqMvDjOOx5HtM8z04A6bquACFALsvS9n23JElMwzA4KmmahiogZF6KIZJT0zRBpFW0kEKRlzjP82/cdZ3XdR2tqCb5xq9ylmWmtm3dzCL5zvavSHs8aJomxwQBldzzPKM1bZdlib/6vg8iIKR1XX9ksNdkzAgAOdxJv50yNxgnXOOYw0ooiL1Joc4foQ8Y7ZIGynx1/wAAAABJRU5ErkJggg=="
+    }
+  }
+}

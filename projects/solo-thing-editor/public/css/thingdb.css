@@ -1,0 +1,54 @@
+.thingdb {
+  display: flex;
+  flex-flow: column;
+}
+.thingdb > .search {
+  margin: 3px;
+  border: 1px dashed #668;
+  padding: 3px;
+  height: 200px;
+  flex: none;
+  display: flex;
+  flex-flow: column;
+}
+.thingdb > .search > .body {
+  flex: 1;
+}
+.thingdb > .search > .buttons {
+  margin-left: auto;
+  flex: none;
+}
+.thingdb .results {
+  margin: 3px;
+  border: 1px dashed #668;
+  padding: 3px;
+  flex: 1;
+  display: flex;
+  flex-flow: column;
+}
+.thingdb > .results > .body {
+  flex: 1;
+}
+.thingdb > .results .table {
+  border-collapse: collapse;
+  border-spacing: 0px;
+  width: 100%;
+}
+.thingdb > .results .result > td {
+  background: #32847c;
+  border-top: 1px solid #224;
+  padding: 2px 3px;
+}
+.thingdb > .results .result:first-child > td {
+  border-top: none;
+}
+.thingdb > .results .result:hover > td {
+  background: #843232;
+}
+.thingdb > .results .result.selected > td {
+  background: #843232;
+}
+.thingdb > .results > .buttons {
+  margin-left: auto;
+  flex: none;
+}
