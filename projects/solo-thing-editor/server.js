@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
+const stringify = require('json-stable-stringify');
 
 const app = express();
 
@@ -28,7 +29,7 @@ app.post('/save', function(req, res) {
       db.things[x] = req.body.things[x];
     }
   }
-  fs.writeFile('data/db.json', JSON.stringify(db, null, 2), 'utf8', function(err) {
+  fs.writeFile('data/db.json', stringify(db, {space: '  '}), 'utf8', function(err) {
     if (err)
       console.error(err);
     else

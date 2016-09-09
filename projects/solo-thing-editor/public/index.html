@@ -60,11 +60,14 @@
         <div class="title">Thing Info</div>
         <div class="ifthing">
           Name:<input type="text" name="name" value="test">
-          Type:<select name="type" value></select>
+          Type:<select name="type"></select>
           Category:<input type="text" name="category" value="test" size="11">
           Tags:<input type="text" name="tags" value="test">
           W:<input type="text" style="text-align: right;" size="2" name="width" value="test">
           H:<input type="text" style="text-align: right;" size="2" name="height" value="test">
+          <br/>
+          <label class="blocksvision"><input type="checkbox">block-vis</label>
+          <label class="blocksmovement"><input type="checkbox">block-mov</label>
         </div>
         <div class="ifnothing">
           No thing selected
@@ -72,9 +75,14 @@
       </div>
       <div class="imgarea">
         <div class="sample">
+          <div class="canonfloat ifthing">
+            <canvas class="canon doubleup"></canvas><br/>
+          </div>
           <div class="title">Sample</div>
           <div class="body ifthing">
-            <canvas class="canvas doubleup"></canvas>
+            <canvas class="demo doubleup"></canvas><br/>
+            <div class="ifnofloor">Floor:<select name="floor"></select></div>
+            <input type="button" name="rotate" value="rotate"><br/>
           </div>
         </div>
         <div class="image">

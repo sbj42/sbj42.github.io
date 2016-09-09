@@ -1,103 +1,686 @@
 {
   "things": {
     "asdf": {
-      "name": "asdf",
-      "type": "decoration",
       "category": "",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAABe0lEQVQYV2OMibn+nwEKlizRZNzq5XVRkINDXIiTUxwmDqIZQQofP9635t2725cuX54wadq8aV1mdmbWq2atmqPM5pho92Cp3orHyQyMFhYdc158OLrXxqZxmUXBsaunXp1i+M3wm4HhPsNZ/ueXWG9Y10e+D54fwQg1nt93nu8Sqe8C7/QZb6v9/fv/900Wqd9s6hLiqxY9W2JzwsyYkYGTQc7O1E6FK4ghp0CD0+rz55/vBQQ4RP6xsXCt3fFmzr5Pb77cmXdnJthEB3+H8Je/HrJPKdGewMbGyP/3759vv34z/zj//M/1V3+j1G4fW3MYrFDZQNmqKM+2gYnxPgcPyx9eeWVRg1tPv18SU45hmLbjGrPiu1evYW5kuNbbuvio4V/DTW9Pv3SRdRE5d+jcbjFJMannO5Mid+w0mwsOHpCpoDAE0ZGRkZHv37+/k5SUlL5+/fq9z57ZBF29Wq2GoRCkuLq6uuLevXsPly9fvtzefupqBwatEACQz6fOxZc5AAAAAABJRU5ErkJggg==",
+      "name": "asdf",
       "tags": [
         "one, two"
       ],
-      "width": 1,
-      "height": 1,
-      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAABe0lEQVQYV2OMibn+nwEKlizRZNzq5XVRkINDXIiTUxwmDqIZQQofP9635t2725cuX54wadq8aV1mdmbWq2atmqPM5pjY099SEmXSsovRwqJjzosPR/fa2DQusyg4dvXUq1MMvxl+MzDcZzjL//wS6w3r+sj3wfMjGKHG8/vO810i9V3gnT7jbbW/f///vski9ZtNXUJ81aJnS2xOmBkzMnAyyNmZ2qlwBTHkFGhwWn3+/PO9gACHyD82Fq61O97M2ffpzZc78+7MBJvo4O8Q/vLXQ/YpJdoT2NgY+f/+/fPt12/mH+ef/7n+6m+U2u1jaw6DFSobKFsV5dk2MDHe5+Bh+cMrryxqcOvp90tiyjEM03ZcY1Z89+o1zI0M13pbFx81/Gu46e3ply6yLiLnDp3bLSYpJvV8Z1Lkjp1mc8HBAzIVFIYgOjIyMvL9+/d3kpKS0tevX7/32TOboKtXq9UwFIIUV1dXV9y7d+/h8uXLl9vbT13twKAVAgCPV6fOumIahwAAAABJRU5ErkJggg=="
-    },
-    "player": {
-      "name": "player",
       "type": "decoration",
-      "category": "misc",
+      "width": 1
+    },
+    "ballpark base": {
+      "category": "places",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQ0lEQVQYV53QsQ4AMARFUW/n/z+UXcPQ1EAa5pMrgD4Hn4520N393QDghkpRVQsUkRkyc4bbYqw2s0SBWzh9YHf1VDzruxMLtfXZzwAAAABJRU5ErkJggg==",
+      "name": "ballpark base",
       "tags": [
         ""
       ],
-      "width": 1,
-      "height": 1,
-      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAXUlEQVQYV2NkIBIwEqmOgTyF2vq+/5FtuHpxM9wgOMNXW/v/f35GhnmVUWC1Se3LGBg//mfYfPUqWA2GwuxQEbDCqavfYFcIs9LRhANs/f4zP1DcT55n8AUV0SYCABZbHAut/aH8AAAAAElFTkSuQmCC"
-    },
-    "stairs": {
-      "name": "stairs",
       "type": "decoration",
-      "category": "buildings",
+      "width": 1
+    },
+    "ballpark bench": {
+      "category": "places",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAU0lEQVQYV2NkIBIwEqmOgTHRV/c/TPGXL1+w6uPh4WFgrEtzxKkQpAAGGIuiTP+DBNBNQ1YEksNrIrI7wCaCBAiZiuIZkAaQNcjWwt1IdPAQqxAAwUghBxviLYsAAAAASUVORK5CYII=",
+      "name": "ballpark bench",
       "tags": [
         ""
       ],
-      "width": 1,
-      "height": 1,
-      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAb0lEQVQYV2NkIBIwgtTlxZtuwqd+0sLTfmCF+fGm/5kYGfywKf73n2HTxIWnGcEKCxNMffsXnN6MTSFMDq4Qn9UgQ+BW/2dgwGoiIwODL9xqkGdADsZmKsj9cIXEhBA8eEBWYNMAchJK8ICMx2c1APRuMwtMbb01AAAAAElFTkSuQmCC"
+      "type": "furniture",
+      "width": 1
     },
-    "rock": {
-      "name": "rock",
+    "ballpark bleachers": {
+      "category": "places",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAcElEQVQYV2N0crBpt7MyrTh07HQHAxZgpKdZce7S9Q7GhqrC/yD5L1++wJXx8PBgaIErhMnANCArBokxluSlgk1ENwXZBpA8I8iNMHdgcyPM/WCFZHsGZjKyc8CeQfYAuttgmjCCB2QKNsUEPQPzKAAmqU4LG9Jp3AAAAABJRU5ErkJggg==",
+      "name": "ballpark bleachers",
+      "tags": [
+        ""
+      ],
+      "type": "furniture",
+      "width": 1
+    },
+    "ballpark foul line": {
+      "category": "places",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAJElEQVQYV2NkIBIwEqmOgQYK////34vL+levXsGlaGD1wPkaALlyBlOtaBGVAAAAAElFTkSuQmCC",
+      "name": "ballpark foul line",
+      "tags": [
+        ""
+      ],
       "type": "decoration",
+      "width": 1
+    },
+    "ballpark home plate": {
+      "category": "places",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAARklEQVQYV2NkIBIwEqmOAa7w8+fP/5E18fLyohiCUyEPDw8DIyMjXJ50hf///0exGtk0kJNQ3AFTjK4IQyG+ECA9eAiFJwBZdxQLB4pKkwAAAABJRU5ErkJggg==",
+      "name": "ballpark home plate",
+      "tags": [
+        ""
+      ],
+      "type": "decoration",
+      "width": 1
+    },
+    "ballpark pitcher's mound": {
+      "category": "places",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAARklEQVQYV2NkIBIwEqmOgTKF/////w+yiZGREW4QhomfP38GKwIBXl5e7AphJqGbBuYjewak8MuXLygmweQp8wy2ICPaRAC+WxMLWab8zgAAAABJRU5ErkJggg==",
+      "name": "ballpark pitcher's mound",
+      "tags": [
+        ""
+      ],
+      "type": "decoration",
+      "width": 1
+    },
+    "bear": {
+      "blocksMovement": true,
       "category": "nature",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAkklEQVQYV2NkwALkZKSOPXryzApZihFdnZetwX8zTVmGU9cfM2w7fAEuj6IwNNgv89vXb9MuX7kG1m9ubpK1eu2m6SA2ikKQlQwMDJZIthyHOQFd4X9dHS2GFy9eMbx+8was/tGTZ2A1GApFRUTgivAqBEkim4rTRJj7YIrPXriE1WriPAMyTU5G6j/MVJi1ID4ASKlGC2FOBLQAAAAASUVORK5CYII=",
+      "name": "bear",
       "tags": [
         ""
       ],
-      "width": 1,
-      "height": 1,
-      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAgklEQVQYV21QwRHAIAiTMXQNd9I1WEN3cg0do71whUMtD8EQEg4KX7TWHpRjDEFyzpJrrYQsTynlSSnpzJWZmS5ijFGIay0bmHMGgiVAfLyq/2/E00+JcMCepghA7XwNgU3RN9FA6CpCBMDMcpq/MGtt4kReBbVeQHY8VXQAeO/d+i9fhlPPXL+APgAAAABJRU5ErkJggg=="
+      "type": "creature",
+      "width": 1
     },
-    "tree": {
-      "name": "tree",
-      "type": "tree",
+    "beaver": {
       "category": "nature",
-      "tags": [
-        ""
-      ],
-      "width": 5,
-      "height": 5,
-      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAB+klEQVRoQ+2YsU0EMRBF9xJAIJERIECQLV1QBFXQASXQAVVQBF0QggBdQIYEAiLkwGhkbM98e8a7a7j0vN7//OePvV4NnfxWnXAM/yBzc9LckePL03MP/XB1d2O1ACYgVHxMuAVQEQgnFF11DbBZgGiUHgyi7UbOPcQpEUhL8aWZYkG0IL6eP/acyI2DrReLDGVBEAgvVCIShZGUWBLECoKCSoGagCBOpNzigBYDEgLGwDiY4tLScCKXp5xLMaiisFtDSLpbCAM70gKiGxAu/A60C0fEGcntIVOXVqp7/cqIJsTZ08417Uy3h28Xkp3fj0mVmMiRFAjqhId4ff8cdrc3f/QjMJODUCccyDiOw/rxHoapAnFvi7mCOOJAqBP7RydFILk2LOpaGiBORAjg4ZDyksJEN8TanPjSWjyIW0WaEwqEujGpIz7Vte2XO6rQnPzNsxbSuZCNLzYWab3ueciRViDot0j/IJrnLbTEStxIOiK9QbEqNTQf1SBuAguYppcPtGS0YdQc8SKlJebHo0BOcPiMakZiAUWgJECS7/JQR+5ui73EppMhMJxLk4KkvlW4FouUT2qu4pvGnLgSZzhY7v9FgXix4UJxENkjCrdCmq5IhHJ6oLBzk5W27dmCoJ1uESBcp9OAqMqItMxajTPJSCvx9D3dgHwDXB5uQprU054AAAAASUVORK5CYII="
-    },
-    "tiles": {
-      "name": "tiles",
-      "type": "floor",
-      "category": "buildings",
-      "tags": [
-        ""
-      ],
-      "width": 1,
       "height": 1,
-      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAABJUlEQVQYV02QzUsCURTFzwN9NTrN5ISpqJFQRIv2/Zn9BW1qG7QNiqiVEBVhWFOpUCNNSiNvmg8ahRf3huDd3a9zfhzRvznVKoxQa25hlqWIAw9UOXMdS1Lio99FpVaHuL841rZlYpr+oOg00HMf+HBnbx+J8nnuj78h/Je2Hr93IWWeB43WLh96gydUy2vIsikKTh3Ce7zUtJgr0WHRtDF4vsVy0Ua5UudH4V4f6WQqYJXKzJSliu3s6jYzE6NZMCA654d6JiR/5qQB5b8ib6xAGjZ+swwj7w3OqgXRuztj63AyZou5MimRNfVsTYwTf8ANKVNMVG6njebGJmIVoFRtQVydHGjHtnhJg0WlWTRijK/P4T9joELOLY4UkmDIUS0GTox/Y/GKxcNAsZoAAAAASUVORK5CYII="
-    },
-    "grass": {
-      "name": "grass",
-      "type": "floor",
-      "category": "buildings",
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAdElEQVQYV2NkIBIwEqmOAavCUjfJQ927ntshG4KhcFO2RuN/hv91jAyMTX5Tb9TDFGMo3JitfoSBgcGagYHhqP/UmzaUKwSZkOik+n/+vtsotmFYneikWs3AwNDCwMBQM3/f7VacVkMVBjMwMKzFqxBXuAIA76EjCx2rEg8AAAAASUVORK5CYII=",
+      "name": "beaver",
       "tags": [
         ""
       ],
-      "width": 1,
+      "type": "creature",
+      "width": 1
+    },
+    "chain link fence": {
+      "blocksMovement": true,
+      "category": "buildings",
       "height": 1,
-      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAA4UlEQVQYV01QTQsBURQ9L8VimgmNmiLTSJSNhSyVsvSPrOz8OCslxYKmfAwLimYxitG53MndvPveO/ecc48Zz8YpfhUnsXTv4xmp6yKXz8ndKlgwCiyVA+xPS7yeL7xPFxRbTQFxmG8CvD/u8P0uwnCh5HKSkaCq14EZTocizQctx3ZAhdt1h8dui3pv9AXSA1nJwJ5yLb+PTTjP/JrBZJCSgZN20BCQgqmiCwmQknacwHgV2FYN0XWdbUsllkh75TYO0QpkpnH2BPCuloRRP/9z0yS4EO1k0jr9HwsjY7asD0aVfqwbJfN/AAAAAElFTkSuQmCC"
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAL0lEQVQYV2MMDg6+VlBQwDBhwgQGfDTjsWPH3Ht7exmKi4sZ8NGMDESCUYV4AwoAVK4fams2VOUAAAAASUVORK5CYII=",
+      "name": "chain link fence",
+      "tags": [
+        ""
+      ],
+      "type": "wall",
+      "width": 1
+    },
+    "concrete": {
+      "category": "roads",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAA4UlEQVQYVyVQ2aqFQAxLj/vutwo+CKIv4u+K++5c0jswTNtJm6TStq0xxmCaJoRhiN/vh/u+kSQJWN+2Dc/zQPq+N0wIOs8T7/vi+z4Fx3GMZVlg2zakaRojInAcB/M8w7IsBfNl87qu+idFUSgwTVMFMCYlX+a+7//nVVWZLMuUijTUk+e55oxJ67oupCxLAwAEs5MAaqQpAklPD9J1nbmuS7V4nqf3OA6lDoIAwzBoLHVdG7plkRTjOCp433et0QhXpxopmGAWScmPKIpUBms86prL5aFwNnA1bOB0xpz8B/PSlm7z9qsDAAAAAElFTkSuQmCC",
+      "name": "concrete",
+      "tags": [
+        ""
+      ],
+      "type": "floor",
+      "width": 1
+    },
+    "crosswalk": {
+      "category": "roads",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAA0UlEQVQYV42PzQpFUBSF18lPoiglGUqmlIEoL+4BSMnAE5iYmFBSUurc9pFzB3dy9+Scvr72Xovhz2Hk9X3P6b2uC1VVCdZ1Hfd9X6wJw5BJ0bIsrOsqxWma+Hme0DQNcRw/IsF5nqGqKsqyFKxpGh4EARhj340kvlHpDP3HceSGYUDX9V9xWRYURSFF27ax7zvSNH1Ot23LPc/Dtm3I81ywuq55FEVCzLLsEemMaZqg8EmSSKYoCqikbD0MA3ddF/d9i4ZvGcdxcByHiCPgP/MBptlhC3mwkjUAAAAASUVORK5CYII=",
+      "name": "crosswalk",
+      "tags": [
+        ""
+      ],
+      "type": "decoration",
+      "width": 1
+    },
+    "deck": {
+      "category": "buildings",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAyUlEQVQYV12PsQrCMBBAL0LT0pZgEQT9cBdXFzeX7gUnF8HBD+hiUZBIaEuaIJU7vBS9JZe75N07cTxsRviGmi/AvJ504xxPDFGfyzFRS+g7A71u+A/EMgr54DyIS7UnIpJkNDWx5rwPdHGtdvQwVwUVW6MDKS1WkGYKrHmAYEd2Yfq/byDiAyTEUoK+1zTB2xbQD3NxKrc0mn3QM8kUjbedCXUi4oZpsYbBOZi97Y8r9qIkn4hMYUc8mY7kQMQG/uTN2bfXN6p9AOcgZ4E7Zc41AAAAAElFTkSuQmCC",
+      "name": "deck",
+      "tags": [
+        ""
+      ],
+      "type": "floor",
+      "width": 1
+    },
+    "deck railing": {
+      "blocksMovement": true,
+      "category": "buildings",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAMElEQVQYV2P8////NQYGBoZLxzaJgmg9K7/X2PiMHh4e7iAJQoCRkAKY/KhCvCEFAN71DP0/P9r1AAAAAElFTkSuQmCC",
+      "name": "deck railing",
+      "tags": [
+        ""
+      ],
+      "type": "wall",
+      "width": 1
     },
     "deer": {
-      "name": "deer",
-      "type": "decoration",
+      "blocksMovement": true,
       "category": "nature",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAnUlEQVQYV2NkIBIwYlPnoM4z/cDNL5nIcigKHx/quyBjW5h44/D6cxq2gUZPDvfPl7UrMgBpQFF4fUXcf5DgyZPPGMzNpcAGakYsAqvBsHpNpeclBkYGXYb/DJdD2rfrwazHUDivwPkCHxebPgMj48WQ1m1ga7GbWOUJtv7Tt18MSRP2wg2iyMRbDAwMqgTdCLL2ytbp/3W8M1FsAwAJBjgLxiK3CQAAAABJRU5ErkJggg==",
+      "name": "deer",
       "tags": [
         ""
       ],
-      "width": 1,
+      "type": "creature",
+      "width": 1
+    },
+    "dirt": {
+      "category": "nature",
       "height": 1,
-      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAnUlEQVQYV2NkIBIwYlPnoM4z/cDNL5nIcigKHx/quyBjW5h44/D6cxq2gUZPDvfPl7UrMgBpQFF4fUXcf5DgyZPPGMzNpcAGakYsAqvBsHpNpeclBkYGXYb/DJdD2rfrwazHUDivwPkCHxebPgMj48WQ1m1ga7GbWOUJtv7Tt18MSRP2wg2iyMRbDAwMqgTdCLL2ytbp/3W8M1FsAwAJBjgLxiK3CQAAAABJRU5ErkJggg=="
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAwklEQVQYV11QMQ7CMAx0UEEU2kYIkBA74gP8iIWViYmRryKWDjQU2iZK0BkcQb3Ysc9356jLcRfoG83LSEmd9TQaDvg9TnNSAGaThNrGkKkdAxBFoTljGT0GVtWd2s6TtZ6yaRJZwSiL6nzYsrQ0UK9Xc1awPmVGBAPhAaxgQI2hZNiBkjrtNwF+MLQhpeZpaLmYRW9yEANFDvl6K/+uhVKU7l+KAQDwaszn0MiI4e+/9T0z8FE7yrWm4GqWkW+RRfTe6B1+SJCHpygAAAAASUVORK5CYII=",
+      "name": "dirt",
+      "tags": [
+        ""
+      ],
+      "type": "floor",
+      "width": 1
+    },
+    "door closed": {
+      "blocksMovement": true,
+      "blocksVision": true,
+      "category": "buildings",
+      "height": 2,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAUCAYAAAC07qxWAAAAUklEQVQoU2NkIBIwEqmOYVQh3pACB0+otpDW1PXtV7MDK7WxqV599d01xh5jxcNnfn2xwWecCRvPEcYeY4WMkz8+HcJnojkHn91ozBCOGWJSOQBV1Rb/kgkqlAAAAABJRU5ErkJggg==",
+      "name": "door closed",
+      "tags": [
+        ""
+      ],
+      "type": "wall",
+      "width": 1
+    },
+    "door open": {
+      "category": "buildings",
+      "height": 2,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAUCAYAAAC07qxWAAAAZ0lEQVQoU2NkIBIwEqmOgXoKI3RF/6+4/JoRr4mvbs38nxdcwzBpbQthq4kyEeRRGisM1RbSwhWezEzMV8G+7jFWPHzyx8d0fApN2HiOMPYYK2Sc/PHpEL4YMufgs6NezMBsGpkmAgB3ESpbrzQ+XQAAAABJRU5ErkJggg==",
+      "name": "door open",
+      "tags": [
+        ""
+      ],
+      "type": "wall",
+      "width": 1
+    },
+    "fox": {
+      "blocksMovement": true,
+      "category": "nature",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAkUlEQVQYV2NkIBIwYlOXoys1a8rlZ2nIclgVHoyx/W+/5DCKHIbC250F/c8uny2Q0jWeoFo+oRBmKobCJmuVfntFyYKD959PqDt6B7fCg7G2/Qz/GQoYGBkm2C8+jFvhMj+jg9J83HZPP309FLXpnD1Wqy+3FQS9u3Y2WUjLeK5u1YR1OH1NtEKQCSDF6KaBxAFUjjoLhJ5jyQAAAABJRU5ErkJggg==",
+      "name": "fox",
+      "tags": [
+        ""
+      ],
+      "type": "creature",
+      "width": 1
+    },
+    "gas station column": {
+      "blocksMovement": true,
+      "blocksVision": true,
+      "category": "places",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAPklEQVQYV2NkIBIwEqmOAa7wypUr/7W1tcH6rl69ygBig2gdHR2wGsoUwpyD10SYtTAn4LSaegoJBRPR4QgAoog5C9i8QkQAAAAASUVORK5CYII=",
+      "name": "gas station column",
+      "tags": [
+        ""
+      ],
+      "type": "furniture",
+      "width": 1
+    },
+    "gas station pump": {
+      "blocksMovement": true,
+      "blocksVision": true,
+      "category": "places",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAf0lEQVQYV2NkIBIwgtS1mxj8rzxzAczGBRiDpnj9N13wjOH5JGOcip6ce87AmHcs+b9k3lm4wsCfMQwODg4omvKPp0AUTrKayxA0xYtBxkgSt9UghSCj1+VsAyvKO5rMwIDkWpAcyACwiXBjYCxsCkGewWclyBCwZ4gMRuIVAgB/qTLBXXmshAAAAABJRU5ErkJggg==",
+      "name": "gas station pump",
+      "tags": [
+        ""
+      ],
+      "type": "furniture",
+      "width": 1
+    },
+    "gas station tank access": {
+      "category": "places",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAdElEQVQYV42QsQ0AIQhFcQdaWnpnYAhndAhnsKe1dQcvmGDOy91FK4yP/4QAhyc413sfpRRgZiAiQMT1Zsy8PCFrEJENnmDOeXiSG1prEGNcqbOotQ7T3SFVhZTSDrradJZk0Kva//kFrWFONrSt4K/hGLwA3gQ5C0yAeLMAAAAASUVORK5CYII=",
+      "name": "gas station tank access",
+      "tags": [
+        ""
+      ],
+      "type": "furniture",
+      "width": 1
+    },
+    "gas station trash bin": {
+      "blocksMovement": true,
+      "category": "places",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAT0lEQVQYV2NkIBIwEqmOAUVhSEjI/zVr1jAoKyszGBoaMqxZswYuD2cgK7p79y6GYhSFQkJCKC559+4d3FQaKgTZCXInst1YPUMomIgORwAgYioLXiCpRAAAAABJRU5ErkJggg==",
+      "name": "gas station trash bin",
+      "tags": [
+        ""
+      ],
+      "type": "furniture",
+      "width": 1
+    },
+    "grass": {
+      "category": "nature",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAA4UlEQVQYV01QTQsBURQ9L8VimgmNmiLTSJSNhSyVsvSPrOz8OCslxYKmfAwLimYxitG53MndvPveO/ecc48Zz8YpfhUnsXTv4xmp6yKXz8ndKlgwCiyVA+xPS7yeL7xPFxRbTQFxmG8CvD/u8P0uwnCh5HKSkaCq14EZTocizQctx3ZAhdt1h8dui3pv9AXSA1nJwJ5yLb+PTTjP/JrBZJCSgZN20BCQgqmiCwmQknacwHgV2FYN0XWdbUsllkh75TYO0QpkpnH2BPCuloRRP/9z0yS4EO1k0jr9HwsjY7asD0aVfqwbJfN/AAAAAElFTkSuQmCC",
+      "name": "grass",
+      "tags": [
+        ""
+      ],
+      "type": "floor",
+      "width": 1
+    },
+    "hardwood": {
+      "category": "buildings",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAA0klEQVQYV2PcNj33PwMU8AtLMnx8+xzMg7FBNAgwXtnW/59XTInhy6d3DJ+e34TpYWBjZYGzf/3+w8B4dFUb2ESQSciSIDGQApjpjMeXVoAV8gqKgwU/v38JN4lPUp2Bh0+I4fOrewyMMDfC3AIzHd29cBNBCkAmsLOxMrx+eAVsw88vb8HWg9iMe+YUgq2GuQfkTk4+UbD13z+9houDTQRJ8ktpMPz89Zvh/48PKG4FybHzCCNMhJkCcyOIhpkOMhluIkgCpBPmc5h7Pz67ARYDAMUtZYW8Dq7SAAAAAElFTkSuQmCC",
+      "name": "hardwood",
+      "tags": [
+        ""
+      ],
+      "type": "floor",
+      "width": 1
+    },
+    "moose": {
+      "blocksMovement": true,
+      "category": "nature",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAA0UlEQVQYV2NkwAKMtZX/n716lxFZCs65viLu+n8GxrXVsy4yMP5nqP7PyNDamqbPwMjwP1gzYpEmWOG1FfEtjAz/qxkYGG4wMDBoVM+8xNCargeSAvP/MzC2wk0EKa6ZeekUA8P/XhF+LpU3H7/dYWBgLG5J1zPTilhYg+KOIEdDPwaG/xuhbgMrXLf//CYQH0UhSCDI0eA2AwODCgMDw511+y+owjyETyHDuv0X4PJYFcLciNNEqBt7YVbjd6ODwToGRoZAhv8M69cduBAEcyMAJRNObCQvHYIAAAAASUVORK5CYII=",
+      "name": "moose",
+      "tags": [
+        ""
+      ],
+      "type": "creature",
+      "width": 1
+    },
+    "mud": {
+      "category": "nature",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAx0lEQVQYV01QOw7CMAx96UdqAoSKARbECRA3YWBGLDCycmwoJVIpEmmK7OKoXhzZ7+eo63Hb41/t28kTXx+QZwl0kUKbGZQACdS0HbwPMDqFtSWTaE4kdbvseude8L7nwbhIUWbqfNiw9RhEavfHE2ZioULDXAZqY+FcPWQylu2ki4g67dc9KcgSoeHwVVXHg1iRgO+2g52XMEUalWkpTtFa8q2Wi+HST2ACOUkkVqQlqWZZgommfxsy22keY0SgsIkk30Jd6gfkMHYzMDvgUwAAAABJRU5ErkJggg==",
+      "name": "mud",
+      "tags": [
+        ""
+      ],
+      "type": "floor",
+      "width": 1
     },
     "pavement": {
-      "name": "pavement",
-      "type": "floor",
       "category": "roads",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAwUlEQVQYV02QCwqEQAxDG//eTkRU0Psfwb92eV1cdmCYaZqmTTWOo7u7bdtmRVGYJLvv26qqMvDjOOx5HtM8z04A6bquACFALsvS9n23JElMwzA4KmmahiogZF6KIZJT0zRBpFW0kEKRlzjP82/cdZ3XdR2tqCb5xq9ylmWmtm3dzCL5zvavSHs8aJomxwQBldzzPKM1bZdlib/6vg8iIKR1XX9ksNdkzAgAOdxJv50yNxgnXOOYw0ooiL1Joc4foQ8Y7ZIGynx1/wAAAABJRU5ErkJggg==",
+      "name": "pavement",
       "tags": [
         ""
       ],
-      "width": 1,
+      "type": "floor",
+      "width": 1
+    },
+    "player": {
+      "category": "misc",
       "height": 1,
-      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAwUlEQVQYV02QCwqEQAxDG//eTkRU0Psfwb92eV1cdmCYaZqmTTWOo7u7bdtmRVGYJLvv26qqMvDjOOx5HtM8z04A6bquACFALsvS9n23JElMwzA4KmmahiogZF6KIZJT0zRBpFW0kEKRlzjP82/cdZ3XdR2tqCb5xq9ylmWmtm3dzCL5zvavSHs8aJomxwQBldzzPKM1bZdlib/6vg8iIKR1XX9ksNdkzAgAOdxJv50yNxgnXOOYw0ooiL1Joc4foQ8Y7ZIGynx1/wAAAABJRU5ErkJggg=="
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAXUlEQVQYV2NkIBIwEqmOgTyF2vq+/5FtuHpxM9wgOMNXW/v/f35GhnmVUWC1Se3LGBg//mfYfPUqWA2GwuxQEbDCqavfYFcIs9LRhANs/f4zP1DcT55n8AUV0SYCABZbHAut/aH8AAAAAElFTkSuQmCC",
+      "name": "player",
+      "tags": [
+        ""
+      ],
+      "type": "creature",
+      "width": 1
+    },
+    "rabbit": {
+      "category": "nature",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAARklEQVQYV2NkIBIwEqmOgXyFYa4G2SBbVu2+MBXZNgwTDywomPmfgSHNMWECihz5Cs9umbgbZKWxT74rXqtxhQL5vsZlIgBeCxILDi5hagAAAABJRU5ErkJggg==",
+      "name": "rabbit",
+      "tags": [
+        ""
+      ],
+      "type": "creature",
+      "width": 1
+    },
+    "road line gray corner": {
+      "category": "roads",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAIElEQVQYV2Pctm3bfy8vL0YGAoCgApj+UYV4Q5Lo4AEAZUcECyoKZ7wAAAAASUVORK5CYII=",
+      "name": "road line gray corner",
+      "tags": [
+        ""
+      ],
+      "type": "decoration",
+      "width": 1
+    },
+    "road line gray dashed": {
+      "category": "roads",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAPklEQVQYV63QsQkAQAgDQB1NEBvntRHB0fIjxOJTXwhE5Rg9OrnD3YWZ0YJWFTKTw+5GRHA4M3B3Ds/T3+95zKoUC5C7VKcAAAAASUVORK5CYII=",
+      "name": "road line gray dashed",
+      "tags": [
+        ""
+      ],
+      "type": "decoration",
+      "width": 1
+    },
+    "road line gray solid": {
+      "category": "roads",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAVElEQVQYV43QsQ0AIQwDwGctKpBICpg3KSASVKzlH8G4PtmSk7uj954+knTOQSmFw7UWRITDvTdqrRyaGcYYHM45oaocRgRaaxw+T997kXPmja8//sRHKAvSwo+iAAAAAElFTkSuQmCC",
+      "name": "road line gray solid",
+      "tags": [
+        ""
+      ],
+      "type": "decoration",
+      "width": 1
+    },
+    "road line white corner": {
+      "category": "roads",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAIElEQVQYV2N8/fr1f1FRUUYGAoCgApj+UYV4Q5Lo4AEAZ8MEC8btGGQAAAAASUVORK5CYII=",
+      "name": "road line white corner",
+      "tags": [
+        ""
+      ],
+      "type": "decoration",
+      "width": 1
+    },
+    "road line white dashed": {
+      "category": "roads",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAP0lEQVQYV63PsQkAQAgDQANWgrX7j2ctWAn5EbT41BdCIMfg6AQzQ1VdC8hMRsQOq4ruvsPuppnt8Dx9fv0dPg4GFAshYL2JAAAAAElFTkSuQmCC",
+      "name": "road line white dashed",
+      "tags": [
+        ""
+      ],
+      "type": "decoration",
+      "width": 1
+    },
+    "road line white solid": {
+      "category": "roads",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAUUlEQVQYV43QMQpAIQwD0N/SqdhRvP/xxFHpVMw/Qsz8SCCy1kLvXT4SufdCVTk856C1xmFVwcw4nHNijMHh3hsRwWFmwt05fJ4GABHhja8//t8LKAvu1xXgAAAAAElFTkSuQmCC",
+      "name": "road line white solid",
+      "tags": [
+        ""
+      ],
+      "type": "decoration",
+      "width": 1
+    },
+    "road line yellow corner": {
+      "category": "roads",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAIElEQVQYV2P8f4bhP6MJAyMDAUBQAUz/qEK8IUl08AAA0M0DC/h6iesAAAAASUVORK5CYII=",
+      "name": "road line yellow corner",
+      "tags": [
+        ""
+      ],
+      "type": "decoration",
+      "width": 1
+    },
+    "road line yellow dashed": {
+      "category": "roads",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAOUlEQVQYV2NkIBIwEqmOgXiFX48w/Oe2IayB8flOhv+S7kQo/H+G4T+jCTUVPt3O8F/akwgTqR48AOUmDwvzVzYAAAAAAElFTkSuQmCC",
+      "name": "road line yellow dashed",
+      "tags": [
+        ""
+      ],
+      "type": "decoration",
+      "width": 1
+    },
+    "road line yellow double": {
+      "category": "roads",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAWElEQVQYV2NkQAP/zzD8ZzRhYITRMGlG2iv8eoThP7cNAyOMxmn1850M/yXdGRhhNB3d+HQ7w39pTwZGGI3T6i+HGf7z2DIwwmicCh9vY/gv68XACKNhCgGUujwLQ2sjzwAAAABJRU5ErkJggg==",
+      "name": "road line yellow double",
+      "tags": [
+        ""
+      ],
+      "type": "decoration",
+      "width": 1
+    },
+    "road line yellow solid": {
+      "category": "roads",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAARklEQVQYV2P8f4bhP6MJAyMDAcBIfYVfjzD857YhwurnOxn+S7oToZD6bny6neG/tCcRVn85zPCfx5YIhY+3MfyX9SKsEAAntx4L2b7eXQAAAABJRU5ErkJggg==",
+      "name": "road line yellow solid",
+      "tags": [
+        ""
+      ],
+      "type": "decoration",
+      "width": 1
+    },
+    "rock": {
+      "blocksMovement": true,
+      "blocksVision": true,
+      "category": "nature",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAgklEQVQYV21QwRHAIAiTMXQNd9I1WEN3cg0do71whUMtD8EQEg4KX7TWHpRjDEFyzpJrrYQsTynlSSnpzJWZmS5ijFGIay0bmHMGgiVAfLyq/2/E00+JcMCepghA7XwNgU3RN9FA6CpCBMDMcpq/MGtt4kReBbVeQHY8VXQAeO/d+i9fhlPPXL+APgAAAABJRU5ErkJggg==",
+      "name": "rock",
+      "tags": [
+        ""
+      ],
+      "type": "furniture",
+      "width": 1
+    },
+    "sand": {
+      "category": "nature",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAjUlEQVQYV12QsQqAMAxEW1Eoon/q4uhPOTr4E87iZygiKFbu8CQ2S5vk5a6pX8Yuujfu69DV7cfpylAwz/LgvEBBABBVVfNEHTWC27ZyWpBkbc3PQ0trC0ENSrCUE0EUpKqmhWg99U1MFQTZhQjax0tZ2yJH0DrdFA0AcNLgp4im/bf0zT9r2ehbNAiRB78xdLM6239OAAAAAElFTkSuQmCC",
+      "name": "sand",
+      "tags": [
+        ""
+      ],
+      "type": "floor",
+      "width": 1
+    },
+    "soda can": {
+      "category": "stuff",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAARUlEQVQYV2NkIBIwEqmOAa6wWVPzv7awMEPQkSNYNcMF19nY/N97/z7D1KdP8SvMlpb+L8HHx1B7/Tp+hYTcSrpn6G8iAAEhDwuuiUHIAAAAAElFTkSuQmCC",
+      "name": "soda can",
+      "tags": [
+        ""
+      ],
+      "type": "decoration",
+      "width": 1
+    },
+    "squirrel": {
+      "category": "nature",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAARklEQVQYV2NkIBIwEqmOgXyFbtYmhbuOnulHtwnDxAU9df/fvHxaVNI9F0UxeQpPnzic/ebx3SzP0ARtglbjUky+r3GFKwCwCiIL/hkT2wAAAABJRU5ErkJggg==",
+      "name": "squirrel",
+      "tags": [
+        ""
+      ],
+      "type": "creature",
+      "width": 1
+    },
+    "stairs": {
+      "category": "buildings",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAb0lEQVQYV2NkIBIwgtTlxZtuwqd+0sLTfmCF+fGm/5kYGfywKf73n2HTxIWnGcEKCxNMffsXnN6MTSFMDq4Qn9UgQ+BW/2dgwGoiIwODL9xqkGdADsZmKsj9cIXEhBA8eEBWYNMAchJK8ICMx2c1APRuMwtMbb01AAAAAElFTkSuQmCC",
+      "name": "stairs",
+      "tags": [
+        ""
+      ],
+      "type": "decoration",
+      "width": 1
+    },
+    "store double shelf empty": {
+      "blocksMovement": true,
+      "blocksVision": true,
+      "category": "buildings",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAABS0lEQVQYV2NkYGBg6ExT+W+oq85w4ux1Bm5OZoavP/4ysLMyMfg4GzGs3XGGoW7+PUZGkMKmRKX/Tta6DBcv32B4++k3AzMTIwMPJzODsYEmw9kL1xnyp9yCKGxNVv5vrK/OcOr8DQZuDoiJP379Y7A20WTYd+wqQ+/qRwgTHSx1GI6cvApWwMIC1s/gaqPHsPvIJYTVeUGy/91tdRjOXrrJwMbCxMDCzMjw7edfBpBzQJorZt+BmFgZpfDfxlST4eS5G2DTPn75wyAqwMZgY67NsG7neYY+mNXFoXL/A90NGfYdvcwgxMvK8OjVD7BnzA01GU6ev47qa1szbYbDp66C3QZSfOvJNwZXG22GPUeuMkxc9xjVMweOXwErBIHff/4z+DgZMOw8dBHVRDdbfYZdhy8yvPn4m0GEj5XhPwMDg7+rEcOmPefACgGsf4YL+N4IBgAAAABJRU5ErkJggg==",
+      "name": "store double shelf empty",
+      "tags": [
+        ""
+      ],
+      "type": "furniture",
+      "width": 1
+    },
+    "store double shelf nonempty": {
+      "blocksMovement": true,
+      "blocksVision": true,
+      "category": "buildings",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAABUUlEQVQYV2NkYGBg6ExT+W+oq85w4ux1Bm5OZoavP/4ysLMyMfg4GzGs3XGGoW7+PUZGkMKmRKX/r79yMmhI/mF4++k3AzMTIwMPJzODsYEmw9kL1xnyp9yCKGxNVv7/8B0bg4zATwZuDoiJP379Y7A20WTYd+wqQ+/qRwgTHSx1GI6cvApWwMIC1s/w5hsXgwjXN4TVeUGy/91tdRjOXrrJwMbCxMDCzMjw7edfBpBzpPl/MlTMvgMxsTJK4b+NqSbDyXM3wKZ9/PKHQVSAjcHGXJth3c7zDH0wq4tD5f4Huhsy7Dt6mUGIl5Xh0asfYM+YG2oynDx/HdXXtmbaDIdPXQW7DaT41pNvDK422gx7jlxlmLjuMcIzr75wMojxfAcrBIHff/4z+DgZMOw8dBHVRDdbfYZdhy8yvPn4m0GEj5XhPwMDg7+rEcOmPefACgHFo4YL10vOiQAAAABJRU5ErkJggg==",
+      "name": "store double shelf nonempty",
+      "tags": [
+        ""
+      ],
+      "type": "furniture",
+      "width": 1
+    },
+    "store fridge empty": {
+      "blocksMovement": true,
+      "blocksVision": true,
+      "category": "buildings",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAABTUlEQVQYVz2QTUsCYRSFzx1HR40ZVJQZmIULI41ahhCtQoKIaCf9Rn9CuQtsE+5MmpzQAWdM8aPGMXX8eON9gy7cxYVzz33OpXq9zpLJJIgIg8EAqqpClmWs12sYhgHbtlGtVolarRYrFotwXRfz+RylUgmj0QhhGML5URD437g9PyZqt9sskUhAURT4vo9MJiPceT9bQ0iS9CfsdrssEokgm81it9uh3++jUChgtVrh6dXFfr/H3cUJUafTYZvNRgi32y1ms5lgi8ViaFhDIbwpHxE5jsPi8Th4IL7geR5yuZxAeXh5B6/7qzKR53mMs5mmKc7xmkwm0HUdjbdPyNEors8OiSzLYvl8HuPxGKlUSoTg75lOp2j2vsSiCBOGIQuCQAg4An8NZ+TzY/MDB6qGy1OTqFarMU3ThEs6ncZyucRisfhn5o6VSoV+AWB/lgtuYZOhAAAAAElFTkSuQmCC",
+      "name": "store fridge empty",
+      "tags": [
+        ""
+      ],
+      "type": "furniture",
+      "width": 1
+    },
+    "store fridge nonempty": {
+      "blocksMovement": true,
+      "blocksVision": true,
+      "category": "buildings",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAABYElEQVQYVz2QTUsCYRSFz0Vx1JhBRVGYhQshjVpFCSEFZW4i2kn/oW37fkKbNrVoEUEg9AfKRSvbRK1EmpyQAR1L/KBxTB0/3nhfoQt3ceHcc59zqVgsMr/fDyJCs9mELMtwu90Yj8eIxWLQdR35fJ6oXC6zZDKJRqOBfr+PVCqFVqsFx3Fg/EqwrR8cbq0QVSoV5vP5IEkSLMtCKBQS7rwvru+wuZNbCGu1GnO5XAiHw5jNZqjX60gkEhiNRji/vMF6Zg9HmVWiarXKJpOJEE6nU/R6PcHm8XhQ0r4xn89xkF4mMgyDeb1e8EB8wTRNRCIRgfLw8gFex7k0kWmajLOpqirO8ep0OohGoyi9f+Ht+QlnpydEmqaxeDyOdruNQCAgQvD3dLtdXN3eY2N7fxHGcRxm27YQcAT+Gs7I58fXTyzJCnbXVKJCocAURREuwWAQw+EQg8Hgn5mjZLNZ+gPkBZYLk0DtiAAAAABJRU5ErkJggg==",
+      "name": "store fridge nonempty",
+      "tags": [
+        ""
+      ],
+      "type": "furniture",
+      "width": 1
+    },
+    "store shelf empty": {
+      "blocksMovement": true,
+      "blocksVision": true,
+      "category": "buildings",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAABRUlEQVQYV2NsSlT6z8fFwnD/+XcGbk5mBg42JgZtDXmGBw+eMFibqjHsOnydoW7+PUbG/CDZ/8L8rAwg8OHLHwYBHhYGZSUZhivXHzHYm6synLpwF1MhWDUDA4ORnhLD2Yv3GOzM1RgOn7oFUQiy+sv3vwx///5n4OdhYeBiZ2bQ0VRg2H3kJoOJviLDqxfPGfKn3IIoZGZiZPj77z8DCxMjw59//xnMDJTBVuppKTBcuvYAYmJHqsp/kCIQBgF2ViYGFWVZhqs3HjJ4OWozbNt/FaJwQrba/0/f/sCcB6YdLNUZDhy/yWBtqspw9PRthBtBktwczGBFX3/8hVutpCjD8OTxM4aK2XcYGRsTlP4zMjIwCPGyMrz7/Jvh95//DD5O2gw7D12Dmwy2uixC/r+UMDs4wGHhCfOMk5UGw75jN8BWAwCJ1YsLGLJL4wAAAABJRU5ErkJggg==",
+      "name": "store shelf empty",
+      "tags": [
+        ""
+      ],
+      "type": "furniture",
+      "width": 1
+    },
+    "store shelf nonempty": {
+      "blocksMovement": true,
+      "blocksVision": true,
+      "category": "buildings",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAABSUlEQVQYV2WQuUsDYRDF37dXYg6jBkRkQ+JuDNFIEGEtTGVKsbKy1MLKIp1YCVpZWthZ+F8IKih4FYqgYg6vGDUoETzQNZFkN5/st0QLB4Yp5sd7b4YsTCq02SXg9qkCdxMPp8QhFg2iUCgioUWwsZvF3GqekNRYgPp9Iqx61w20eASoiozz7D1eyhLkVuM/yGgAA3EFx6d5lHQJHd6qDVrWesWEaVL4PAJcDh59PSFs7l2gpIvQVB6p5Usb5DkCs04hcARGnWKwX8XhyQ3ivSGcZQq24uJUmFqQ1VY5RA5hNYB07g4jwzGsbadtcGk6Qj/KRiMem8+6hHZPFQmtG/tHV38ZraXbyTPo69tE8U1g1ypdMooPj5hduSZkfkKhhABtXhGvnzXUDIrRZAzrO5lfZWY9Mx6knX4He3jjn41jkkNRbB3kmPUPrO6KC9K3+ucAAAAASUVORK5CYII=",
+      "name": "store shelf nonempty",
+      "tags": [
+        ""
+      ],
+      "type": "furniture",
+      "width": 1
+    },
+    "tiles": {
+      "category": "buildings",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAABJUlEQVQYV02QzUsCURTFzwN9NTrN5ISpqJFQRIv2/Zn9BW1qG7QNiqiVEBVhWFOpUCNNSiNvmg8ahRf3huDd3a9zfhzRvznVKoxQa25hlqWIAw9UOXMdS1Lio99FpVaHuL841rZlYpr+oOg00HMf+HBnbx+J8nnuj78h/Je2Hr93IWWeB43WLh96gydUy2vIsikKTh3Ce7zUtJgr0WHRtDF4vsVy0Ua5UudH4V4f6WQqYJXKzJSliu3s6jYzE6NZMCA654d6JiR/5qQB5b8ib6xAGjZ+swwj7w3OqgXRuztj63AyZou5MimRNfVsTYwTf8ANKVNMVG6njebGJmIVoFRtQVydHGjHtnhJg0WlWTRijK/P4T9joELOLY4UkmDIUS0GTox/Y/GKxcNAsZoAAAAASUVORK5CYII=",
+      "name": "tiles",
+      "tags": [
+        ""
+      ],
+      "type": "floor",
+      "width": 1
+    },
+    "tree large": {
+      "blocksMovement": true,
+      "blocksVision": true,
+      "category": "nature",
+      "height": 5,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAB+klEQVRoQ+2YsU0EMRBF9xJAIJERIECQLV1QBFXQASXQAVVQBF0QggBdQIYEAiLkwGhkbM98e8a7a7j0vN7//OePvV4NnfxWnXAM/yBzc9LckePL03MP/XB1d2O1ACYgVHxMuAVQEQgnFF11DbBZgGiUHgyi7UbOPcQpEUhL8aWZYkG0IL6eP/acyI2DrReLDGVBEAgvVCIShZGUWBLECoKCSoGagCBOpNzigBYDEgLGwDiY4tLScCKXp5xLMaiisFtDSLpbCAM70gKiGxAu/A60C0fEGcntIVOXVqp7/cqIJsTZ08417Uy3h28Xkp3fj0mVmMiRFAjqhId4ff8cdrc3f/QjMJODUCccyDiOw/rxHoapAnFvi7mCOOJAqBP7RydFILk2LOpaGiBORAjg4ZDyksJEN8TanPjSWjyIW0WaEwqEujGpIz7Vte2XO6rQnPzNsxbSuZCNLzYWab3ueciRViDot0j/IJrnLbTEStxIOiK9QbEqNTQf1SBuAguYppcPtGS0YdQc8SKlJebHo0BOcPiMakZiAUWgJECS7/JQR+5ui73EppMhMJxLk4KkvlW4FouUT2qu4pvGnLgSZzhY7v9FgXix4UJxENkjCrdCmq5IhHJ6oLBzk5W27dmCoJ1uESBcp9OAqMqItMxajTPJSCvx9D3dgHwDXB5uQprU054AAAAASUVORK5CYII=",
+      "name": "tree large",
+      "tags": [
+        ""
+      ],
+      "type": "tree",
+      "width": 5
+    },
+    "tree small": {
+      "blocksMovement": true,
+      "category": "nature",
+      "height": 3,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAABN0lEQVRIS92WQQ4BQRBFezYIiZ2FICzdwiGcwg0cwQ2cwiHcwuwIYmEnIVhJSUpa6a6q7h6ZMGvq1ftV09OZKenJSuKa3wH3p8MxprSZrRaxiQUZ21AKDG1CBeaAkrGvIRGcAuVGwoKLgALcZf0BlmD3/bXFxVvp1I6a+b+BU6EItOGqGXNgydS2LAQcAnQZq2ZMjX3Q0a4xh4Kny80061Wz7J4ndK6SNbtcLjBC272ByfP8CYaHwumS0VmLW03hNviwXb9EJWsaeRQYI4ZiYA4N/C8YLDFuzDnUFv7nPDK12+07waSN/gpY2mZs9qvG3DdaBYYu4bUCG+kkSzIGkPTBkC4A0vVIvAikNBEctc9Gk4L27qUythtxwbUwu04wmEYfA/W+x9rFSfldlHEKkD1Aiigs1XgAFHXJHxooQt0AAAAASUVORK5CYII=",
+      "name": "tree small",
+      "tags": [
+        ""
+      ],
+      "type": "tree",
+      "width": 3
+    },
+    "wall": {
+      "blocksMovement": true,
+      "blocksVision": true,
+      "category": "buildings",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAIklEQVQYV2PsMVY8zEAEYOwxVsggQh0DIzGKQGpGFeINKQB5twL10y1vMAAAAABJRU5ErkJggg==",
+      "name": "wall",
+      "tags": [
+        ""
+      ],
+      "type": "wall",
+      "width": 1
+    },
+    "water bottle": {
+      "category": "stuff",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAS0lEQVQYV2NkIBIwEqmOgYYKz758+x/kDGNxYay2wAX////fuuLSDYZIfc1qbO6GK1x+8XprhJ4GAyMjI36FIBNBJhFUSCiYiA4eABP8EwvIzWnCAAAAAElFTkSuQmCC",
+      "name": "water bottle",
+      "tags": [
+        ""
+      ],
+      "type": "decoration",
+      "width": 1
+    },
+    "water jug": {
+      "category": "stuff",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAXUlEQVQYV2NkIBIwEqmOgXKF/////8/IyAg3CKuJ////bz336l2VkZhQGyMjYzXIeTgVgiRXXLrBEKmviV8hSBEI4FW4/OL1VpCiCD0NBrxWgxSCFIHdhs+N2MIWABNLIgvFJRJAAAAAAElFTkSuQmCC",
+      "name": "water jug",
+      "tags": [
+        ""
+      ],
+      "type": "decoration",
+      "width": 1
+    },
+    "window": {
+      "blocksMovement": true,
+      "category": "buildings",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAPUlEQVQYV2PsMVY8zFW+gElJ04QBG7h3/QzDt86Ef4w9xgoZXOUL/ylrYFd49wZIYTwTI1ZjsAiOKsQbUgBIExD1DWt8iQAAAABJRU5ErkJggg==",
+      "name": "window",
+      "tags": [
+        ""
+      ],
+      "type": "wall",
+      "width": 1
+    },
+    "window broken": {
+      "category": "buildings",
+      "height": 1,
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAf0lEQVQYV2PsMVY8zFW+gElJ04TBQ5fbmgENTFt18Oi3zoR/jD3GChlc5Qv/ZYXZz/r////mnVe+CcE0bL/wdeb9W2fOfuuMZ2JENgAk4WnAnQ4SA7E99LmkGBkZfUF8sMJ3796tCA4OXrR///5t6FbD+Cgm4lIENxGfgqFkIgBYxy31olTMfQAAAABJRU5ErkJggg==",
+      "name": "window broken",
+      "tags": [
+        ""
+      ],
+      "type": "wall",
+      "width": 1
     }
   }
 }

@@ -3,6 +3,10 @@ function ThingDB(elem) {
     return new ThingDB(elem);
   this._elem = $(elem);
   this._elem.find('.search .buttons input[name="reset"]').on('click', this._onReset.bind(this));
+  ['name', 'type', 'category', 'tags'].forEach(function(n) {
+    this._elem.find('.search input[name="' + n + '"]')
+      .on('input', this._onInput.bind(this));
+  }, this);
   this._things = {};
   this._changed = {};
   this.load();
@@ -10,23 +14,29 @@ function ThingDB(elem) {
 
 ThingDB.TILE_PIXELS = 10;
 
-ThingDB.TILE_TYPE_FLOOR = 'floor';
-ThingDB.TILE_TYPE_DECORATION = 'decoration';
-ThingDB.TILE_TYPE_TREE = 'tree';
+ThingDB.TYPE_FLOOR = 'floor';
 
 ThingDB.TYPE_INFO = {
   'floor': {
-    canRotate: false,
-		canBlockVision: false,
-		canBlockMovement: false
   },
   'decoration': {
-    canRotate: true,
-		canBlockVision: false,
-		canBlockMovement: false
+    canRotate: 4
+  },
+  'furniture': {
+    canRotate: 4,
+		canBlockVision: true,
+		canBlockMovement: true
   },
   'tree': {
-    canRotate: true,
+		canBlockVision: true,
+		canBlockMovement: true
+  },
+  'creature': {
+    canRotate: 8,
+		canBlockMovement: true
+  },
+  'wall': {
+    canRotate: 4,
 		canBlockVision: true,
 		canBlockMovement: true
   }
@@ -50,14 +60,15 @@ ThingDB.prototype.load = function () {
 ThingDB.prototype.save = function () {
   clearTimeout(this._saveTimeout);
   this._saveTimeout = setTimeout(function() {
-    $('.ifwait').removeClass('hide');
-    $('.ifnowait').addClass('hide');
+    //$('.ifwait').removeClass('hide');
+    //$('.ifnowait').addClass('hide');
     var changed = {};
     for (var id in this._changed) {
       if (this._changed.hasOwnProperty(id)) {
         changed[id] = this._things[id] || null;
       }
     }
+    this._changed = {};
     $.ajax({
       method: 'POST',
       url: '/save',
@@ -67,18 +78,28 @@ ThingDB.prototype.save = function () {
         things: changed
       })
     }).done(function(data) {
-      $('.ifwait').addClass('hide');
-      $('.ifnowait').removeClass('hide');
-      this._changed = {};
+      //$('.ifwait').addClass('hide');
+      //$('.ifnowait').removeClass('hide');
     }.bind(this));
   }.bind(this), 1000);
 };
 
 ThingDB.prototype._update = function () {
+  var name = this._elem.find('.search input[name="name"]').prop('value').trim();
+  var type = this._elem.find('.search input[name="type"]').prop('value').trim().toLowerCase();
+  var category = this._elem.find('.search input[name="category"]').prop('value').trim().toLowerCase();
+  var tags = this._elem.find('.search input[name="tags"]').prop('value').trim().split(/\s*,\s*/);
+
   var table = this._elem.find('.results .table tbody').empty();
   for (var x in this._things) {
     if (this._things.hasOwnProperty(x)) {
       var thing = this._things[x];
+      if (name && thing.name.indexOf(name) < 0)
+        continue;
+      if (type && thing.type.indexOf(type) < 0)
+        continue;
+      if (category && thing.category.indexOf(category) < 0)
+        continue;
       var tr = $('<tr>').addClass('result').appendTo(table);
       tr.toggleClass('selected', x == this._selected);
       var imgtd = $('<td>').appendTo(tr);
@@ -93,7 +114,7 @@ ThingDB.prototype._update = function () {
 };
 
 ThingDB.NEWTILE_TEMPLATE = {
-  type: ThingDB.TILE_TYPE_DECORATION,
+  type: 'decoration',
   category: '',
   tags: [],
   width: 1,
@@ -119,7 +140,7 @@ ThingDB.prototype.newThing = function() {
     c.width = ThingDB.TILE_PIXELS * thing.width;
     c.height = ThingDB.TILE_PIXELS * thing.height;
     var ctx = c.getContext('2d');
-    if (thing.type == ThingDB.TILE_TYPE_FLOOR) {
+    if (thing.type == ThingDB.TYPE_FLOOR) {
       ctx.fillStyle = '#000';
       ctx.fillRect(0, 0, c.width, c.height);
     } else {
@@ -167,6 +188,7 @@ ThingDB.prototype.changeThing = function(name, data) {
 
 ThingDB.prototype._onReset = function() {
   this._elem.find('.search input[type="text"]').prop('value', '');
+  this._update();
 };
 
 ThingDB.prototype._onSelect = function (thing) {
@@ -176,5 +198,9 @@ ThingDB.prototype._onSelect = function (thing) {
 
 ThingDB.prototype.select = function(name) {
   this._selected = name;
+  this._update();
+};
+
+ThingDB.prototype._onInput = function () {
   this._update();
 };

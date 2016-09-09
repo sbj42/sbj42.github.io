@@ -7,6 +7,10 @@ function ThingEdit(db, elem) {
     this._elem.find('.info input[name="' + n + '"]')
       .on('input', this._onInput.bind(this));
   }, this);
+  ['blocksvision', 'blocksmovement'].forEach(function(n) {
+    this._elem.find('.info .' + n + ' input')
+      .on('click', this._onInput.bind(this));
+  }, this);
   this._elem.find('.info select[name="type"]')
     .on('change', this._onInput.bind(this));
   for (var x in ThingDB.TYPE_INFO) {
@@ -29,7 +33,12 @@ function ThingEdit(db, elem) {
     }
   }.bind(this));
   this._canvas = this._elem.find('.image .canvas')[0];
-  this._sample = this._elem.find('.sample .canvas')[0];
+  this._canon = this._elem.find('.sample .canon')[0];
+  this._demo = this._elem.find('.sample .demo')[0];
+  this._elem.find('.sample select[name="floor"]')
+    .on('change', this._onFloor.bind(this));
+  this._elem.find('.sample input[name="rotate"]')
+    .on('click', this._onRotate.bind(this));
   this._elem.find('.image .canvas')
     .on('mousemove', this._onImageMouseMove.bind(this))
     .on('mouseout', this._onImageMouseOut.bind(this))
@@ -154,12 +163,15 @@ ThingEdit.prototype._onInput = function () {
   if (!name) name = this._thing.name;
   var type = this._elem.find('.info select[name="type"]').prop('value').trim().toLowerCase();
   var category = this._elem.find('.info input[name="category"]').prop('value').trim();
-  var tags = this._elem.find('.info input[name="tags"]').prop('value').trim().split(/\s+,\s+/);
+  var tags = this._elem.find('.info input[name="tags"]').prop('value').trim().split(/\s*,\s*/);
   var width = parseInt(this._elem.find('.info input[name="width"]').prop('value'), 10);
   if (isNaN(width) || width < 1 || width > 5) width = this._thing.width;
   var height = parseInt(this._elem.find('.info input[name="height"]').prop('value'), 10);
   if (isNaN(height) || height < 1 || height > 5) height = this._thing.height;
-  if (name == this._thing.name && type == this._thing.type && category == this._thing.category && tags.join(',') == this._thing.tags.join(',') && width == this._thing.width && height == this._thing.height)
+  var blocksVision = ThingDB.TYPE_INFO[type].canBlockVision && this._elem.find('.info .blocksvision input').prop('checked') || undefined;
+  var blocksMovement = ThingDB.TYPE_INFO[type].canBlockMovement && this._elem.find('.info .blocksmovement input').prop('checked') || undefined;
+  if (name == this._thing.name && type == this._thing.type && category == this._thing.category && tags.join(',') == this._thing.tags.join(',') && width == this._thing.width && height == this._thing.height
+      && blocksVision == this._thing.blocksVision && blocksMovement == this._thing.blocksMovement)
     return;
   this._thing = this._db.changeThing(this._thing.name, {
     name: name,
@@ -167,35 +179,76 @@ ThingEdit.prototype._onInput = function () {
     category: category,
     tags: tags,
     width: width,
-    height: height
+    height: height,
+    blocksVision: blocksVision,
+    blocksMovement: blocksMovement,
   });
   this._rerender();
 };
 
-ThingEdit.prototype._renderSample = function() {
+ThingEdit.prototype._renderCanon = function() {
   if (!this._thing)
     return;
   var thing = this._thing;
-  var ctx = this._sample.getContext('2d');
-  ctx.clearRect(0, 0, this._sample.width, this._sample.height);
-  if (this._thing.type == ThingDB.TILE_TYPE_FLOOR) {
+  var ctx = this._canon.getContext('2d');
+  ctx.clearRect(0, 0, this._canon.width, this._canon.height);
+  if (thing.type == ThingDB.TYPE_FLOOR) {
     ctx.fillStyle='#000';
-    ctx.fillRect(0, 0, this._sample.width, this._sample.height);
+    ctx.fillRect(0, 0, this._canon.width, this._canon.height);
   }
   var image = new Image;
   image.src = this._thing.img;
   ctx.drawImage(image, 0, 0);
 };
 
+ThingEdit.prototype._renderDemo = function() {
+  if (!this._thing)
+    return;
+  var thing = this._thing;
+  var ctx = this._demo.getContext('2d');
+  ctx.clearRect(0, 0, this._demo.width, this._demo.height);
+  var image = new Image;
+  image.src = this._thing.img;
+  if (thing.type == ThingDB.TYPE_FLOOR) {
+    for (var x = 0; x <= this._demo.width; x += this._st)
+      for (var y = 0; y <= this._demo.height; y += this._st)
+        ctx.drawImage(image, x, y);
+    this._elem.find('.sample .ifnofloor').hide();
+  } else {
+    if (this._curfloor) {
+      var floor = this._db._things[this._curfloor];
+      if (floor) {
+        var floorImage = new Image();
+        floorImage.src = floor.img;
+        for (var x = 0; x <= this._demo.width; x += this._st)
+          for (var y = 0; y <= this._demo.height; y += this._st)
+            ctx.drawImage(floorImage, x, y);
+      }
+    }
+    var cx = this._demo.width/2;
+    var cy = this._demo.height/2;
+    var x = Math.floor((this._demo.width/this._st - this._thing.width)/2) * this._st;
+    var y = Math.floor((this._demo.height/this._st - this._thing.height)/2) * this._st;
+    ctx.imageSmoothingEnabled = false;
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(this._curRotate * Math.PI / 180);
+    ctx.translate(-cx, -cy);
+    ctx.drawImage(image, x, y);
+    ctx.restore();
+    this._elem.find('.sample .ifnofloor').show();
+  }
+};
+
 ThingEdit.prototype._renderImage = function() {
   if (!this._thing)
     return;
   var thing = this._thing;
-  var sctx = this._sample.getContext('2d');
+  var sctx = this._canon.getContext('2d');
   var ctx = this._canvas.getContext('2d');
   ctx.fillStyle='#000';
   ctx.fillRect(0, 0, this._canvas.width, this._canvas.height);
-  if (this._thing.type != ThingDB.TILE_TYPE_FLOOR) {
+  if (thing.type != ThingDB.TYPE_FLOOR) {
     ctx.strokeStyle='#666';
     ctx.lineWidth=2;
     var d = this._p / 5;
@@ -228,17 +281,23 @@ ThingEdit.prototype._renderImage = function() {
 // };
 
 ThingEdit.prototype._rerender = function () {
+  var typeInfo = ThingDB.TYPE_INFO[this._thing.type];
+  this._elem.find('.info .blocksvision').toggle(!!typeInfo.canBlockVision);
+  this._elem.find('.info .blocksmovement').toggle(!!typeInfo.canBlockMovement);
   var body = this._elem.find('.imgarea .image .body')[0];
   this._p = Math.min(20, Math.floor((Math.min(body.clientWidth, body.clientHeight) - 20) / (Math.max(this._thing.width, this._thing.height) * ThingDB.TILE_PIXELS)));
   this._t = ThingDB.TILE_PIXELS * this._p;
   this._st = ThingDB.TILE_PIXELS;
   this._canvas.width = this._thing.width * this._t;
   this._canvas.height = this._thing.height * this._t;
-  this._sample.width = this._thing.width * this._st;
-  this._sample.height = this._thing.height * this._st;
-  this._renderSample();
+  this._canon.width = this._thing.width * this._st;
+  this._canon.height = this._thing.height * this._st;
+  this._demo.width = 5 * this._st;
+  this._demo.height = 5 * this._st;
+  this._renderCanon();
+  this._renderDemo();
   this._renderImage();
-  var img = this._sample.toDataURL('image/png');
+  var img = this._canon.toDataURL('image/png');
   if (img != this._thing.img) {
     this._thing = this._db.changeThing(this._thing.name, {
       img: img
@@ -247,7 +306,7 @@ ThingEdit.prototype._rerender = function () {
 };
 
 ThingEdit.prototype._activateTool = function () {
-  var ctx = this._sample.getContext('2d');
+  var ctx = this._canon.getContext('2d');
   if (this._tool == 'sample' && this._x != null) {
     var data = ctx.getImageData(this._x, this._y, 1, 1).data;
     var hsl = ThingEdit._rgbToHsl(data[0], data[1], data[2]);
@@ -302,7 +361,7 @@ ThingEdit.prototype._onImageMouseDown = function (event) {
 };
 
 ThingEdit.prototype._onImageMouseUp = function (event) {
-  var img = this._sample.toDataURL('image/png');
+  var img = this._canon.toDataURL('image/png');
   if (img != this._thing.img) {
     this._thing = this._db.changeThing(this._thing.name, {
       img: img
@@ -317,10 +376,12 @@ ThingEdit.prototype._onImageMouseUp = function (event) {
 
 ThingEdit.prototype.select = function (thing) {
   this._thing = thing;
+  this._curRotate = 0;
   this._elem.find('.ifthing').toggle(!!thing);
   this._elem.find('.ifnothing').toggle(!thing);
   this._onHSLA();
   if (thing) {
+    this._updateSampleFloors();
     this._elem.find('.info input[name="name"]').prop('value', thing.name)
         .focus()[0].select();
     this._elem.find('.info select[name="type"]').prop('value', thing.type);
@@ -328,6 +389,8 @@ ThingEdit.prototype.select = function (thing) {
     this._elem.find('.info input[name="tags"]').prop('value', thing.tags.join(', '));
     this._elem.find('.info input[name="width"]').prop('value', thing.width);
     this._elem.find('.info input[name="height"]').prop('value', thing.height);
+    this._elem.find('.info .blocksvision input').prop('checked', !!thing.blocksVision);
+    this._elem.find('.info .blocksmovement input').prop('checked', !!thing.blocksMovement);
     this._rerender();
     // for (var x = 0; x < ThingDB.TILE_PIXELS * thing.width; x ++) {
     //   for (var y = 0; y < ThingDB.TILE_PIXELS * thing.height; y ++) {
@@ -338,8 +401,27 @@ ThingEdit.prototype.select = function (thing) {
     this._p = this._t = 0;
     this._canvas.width = 0;
     this._canvas.height = 0;
-    this._sample.width = 0;
-    this._sample.height = 0;
+    this._canon.width = 0;
+    this._canon.height = 0;
+  }
+};
+
+ThingEdit.prototype._updateSampleFloors = function () {
+  var select = this._elem.find('.sample select[name="floor"]').empty();
+  var opt = $('<option>').attr('label', '').attr('value', '')
+    .appendTo(select);
+  if (!this._curfloor)
+    opt.attr('selected', 'selected');
+  for (var x in this._db._things) {
+    if (this._db._things.hasOwnProperty(x)) {
+      var thing = this._db._things[x];
+      if (thing.type == ThingDB.TYPE_FLOOR) {
+        opt = $('<option>').attr('label', x).attr('value', x)
+          .appendTo(select);
+        if (this._curfloor == x)
+          opt.attr('selected', 'selected');
+      }
+    }
   }
 };
 
@@ -477,4 +559,15 @@ ThingEdit.prototype._onImport = function (event) {
     }.bind(this);
     reader.readAsDataURL(file);
   }
+};
+
+ThingEdit.prototype._onFloor = function (event) {
+  this._curfloor = this._elem.find('.sample select[name="floor"]').prop('value');
+  this._renderDemo();
+};
+
+ThingEdit.prototype._onRotate = function (event) {
+  var canRotate = ThingDB.TYPE_INFO[this._thing.type].canRotate || 1;
+  this._curRotate = (this._curRotate + (360 / canRotate)) % 360;
+  this._renderDemo();
 };

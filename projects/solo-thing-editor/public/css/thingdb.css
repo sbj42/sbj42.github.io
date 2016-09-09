@@ -28,6 +28,8 @@
 }
 .thingdb > .results > .body {
   flex: 1;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 .thingdb > .results .table {
   border-collapse: collapse;
@@ -37,7 +39,10 @@
 .thingdb > .results .result > td {
   background: #32847c;
   border-top: 1px solid #224;
-  padding: 2px 3px;
+  padding: 0px 2px;
+}
+.thingdb > .results .result > td:first-child {
+  text-align: center;
 }
 .thingdb > .results .result:first-child > td {
   border-top: none;

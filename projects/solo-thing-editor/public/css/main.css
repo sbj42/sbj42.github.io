@@ -7,10 +7,22 @@ body {
   box-sizing: border-box;
   display: flex;
   flex-flow: column wrap;
+  overflow: hidden;
 }
 body, td, input, select {
   color: #fff;
   font-family: monospace;
+}
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+::-webkit-scrollbar-track {
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: #a0835f;
 }
 input, select {
   background: #32847c;
@@ -19,6 +31,10 @@ input, select {
   border: none;
 }
 input[type="button"] {
+  border: 1px solid white;
+}
+input[type="checkbox"] {
+  vertical-align: bottom;
   border: 1px solid white;
 }
 input:focus, select:focus {
