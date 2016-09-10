@@ -3,7 +3,6 @@ html, body {
   margin: 0;
 }
 body {
-  background: #224;
   box-sizing: border-box;
   display: flex;
   flex-flow: column wrap;
@@ -47,18 +46,6 @@ input[type="button"]:hover, input[type="button"].selected {
   font-weight: bold;
   margin: 3px auto;
   flex: none;
-}
-.main {
-  flex: 1;
-  display: flex;
-  flex-flow: row;
-}
-.thingdb {
-  width: 300px;
-  flex: none;
-}
-.thingedit {
-  flex: 1;
 }
 .doubleup {
   zoom: 2;

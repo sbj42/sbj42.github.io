@@ -1,0 +1,15 @@
+body {
+  background: #224;
+}
+.main {
+  flex: 1;
+  display: flex;
+  flex-flow: row;
+}
+.thingdb {
+  width: 300px;
+  flex: none;
+}
+.thingedit {
+  flex: 1;
+}

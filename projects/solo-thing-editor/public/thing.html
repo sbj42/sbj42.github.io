@@ -3,13 +3,14 @@
 <head>
   <meta charset="utf-8">
   <title>Solo Thing Editor</title>
-  <link rel="stylesheet" href="css/main.css" media="screen">
+  <link rel="stylesheet" href="css/common.css" media="screen">
+  <link rel="stylesheet" href="css/thing.css" media="screen">
   <link rel="stylesheet" href="css/thingdb.css" media="screen">
   <link rel="stylesheet" href="css/thingedit.css" media="screen">
   <script type="text/javascript" src="lib/jquery-3.1.0.min.js"></script>
+  <script type="text/javascript" src="js/db.js"></script>
   <script type="text/javascript" src="js/thingdb.js"></script>
   <script type="text/javascript" src="js/thingedit.js"></script>
-  <script type="text/javascript" src="js/client.js"></script>
 </head>
 <body>
   <div id="title">Solo Thing Editor</div>
@@ -17,7 +18,7 @@
   <div class="main ifnowait hide">
     <div class="thingdb">
       <div class="search">
-        <div class="title">DB Search</div>
+        <div class="title">Thing Search</div>
         <div class="body">
           <table><tbody><tr>
             <td>Name:</td>
@@ -38,10 +39,10 @@
         </div>
       </div>
       <div class="results">
-        <div class="title">DB Results</div>
+        <div class="title">Thing Results</div>
         <div class="body">
           <table class="table"><thead>
-            <th>Img</th><th>Name</th><th>Type</th><th>Category</th>
+            <th>Img</th><th class="namecol">Name</th><th class="typecol">Type</th><th class="categorycol">Category</th>
           </thead><tbody>
           </tbody></table>
         </div>
@@ -94,6 +95,7 @@
         <div class="tools">
           <div class="title">Tools</div>
           <div class="body ifthing">
+            <input type="button" name="lock" value="lock"><br/>
             <input type="button" name="draw" value="draw"><br/>
             <input type="button" name="mix" value="mix"><br/>
             <input type="button" name="sample" value="sample"><br/>
@@ -112,5 +114,13 @@
       </div>
     </div>
   </div>
+  <script type="text/javascript">
+    $(window).ready(function() {
+      var db = DB();
+      var thingdb = ThingDB(db, $('.thingdb'));
+      var edit = ThingEdit(thingdb, $('.thingedit'));
+      db.load();
+    });
+  </script>
 </body>
 </html>

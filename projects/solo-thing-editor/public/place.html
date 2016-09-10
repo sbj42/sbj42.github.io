@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Solo Place Editor</title>
+  <link rel="stylesheet" href="css/common.css" media="screen">
+  <link rel="stylesheet" href="css/place.css" media="screen">
+  <link rel="stylesheet" href="css/placedb.css" media="screen">
+  <link rel="stylesheet" href="css/thingdb.css" media="screen">
+  <link rel="stylesheet" href="css/placeedit.css" media="screen">
+  <script type="text/javascript" src="lib/jquery-3.1.0.min.js"></script>
+  <script type="text/javascript" src="js/db.js"></script>
+  <script type="text/javascript" src="js/placedb.js"></script>
+  <script type="text/javascript" src="js/thingdb.js"></script>
+  <script type="text/javascript" src="js/placeedit.js"></script>
+</head>
+<body>
+  <div id="title">Solo Place Editor</div>
+  <div class="wait ifwait">Please wait...</div>
+  <div class="main ifnowait hide">
+    <div class="placedb">
+      <div class="search">
+        <div class="title">Place Search</div>
+        <div class="body">
+          <table><tbody><tr>
+            <td>Name:</td>
+            <td><input type="text" name="name" value=""></td>
+          </tr><tr>
+            <td>Type:</td>
+            <td><input type="text" name="type" value=""></td>
+          </tr></tbody></table>
+        </div>
+        <div class="buttons">
+          <input type="button" name="reset" value="reset">
+        </div>
+      </div>
+      <div class="results">
+        <div class="title">Place Results</div>
+        <div class="body">
+          <table class="table"><thead>
+            <th class="namecol">Name</th><th class="typecol">Type</th>
+          </thead><tbody>
+          </tbody></table>
+        </div>
+        <div class="buttons">
+        </div>
+      </div>
+    </div>
+    <div class="placeedit">
+      <div class="info">
+        <div class="buttons">
+          <span class="ifplace">
+            <input type="button" name="remove" value="remove">
+          </span>
+          <input type="button" name="new" value="new">
+        </div>
+        <div class="place">Place Info</div>
+        <div class="ifplace">
+          Name:<input type="text" name="name" value="test">
+          Type:<select name="type"></select>
+          Category:<input type="text" name="category" value="test" size="11">
+          Tags:<input type="text" name="tags" value="test">
+          W:<input type="text" style="text-align: right;" size="2" name="width" value="test">
+          H:<input type="text" style="text-align: right;" size="2" name="height" value="test">
+        </div>
+        <div class="ifnoplace">
+          No place selected
+        </div>
+      </div>
+      <div class="imgarea">
+        <div class="view">
+          <div class="title">View</div>
+          <div class="body ifplace">
+            <canvas class="canvas"></canvas>
+          </div>
+        </div>
+        <div class="tools">
+          <div class="title">Tools</div>
+          <div class="body ifplace">
+            <input type="button" name="lock" value="lock"><br/>
+            <input type="button" name="thing" value="thing"><br/>
+          </div>
+        </div>
+        <div class="thingdb ifplace ifthingtool">
+          <div class="search">
+            <div class="title">Thing Search</div>
+            <div class="body">
+              <table><tbody><tr>
+                <td>Name:</td>
+                <td><input type="text" name="name" value=""></td>
+              </tr><tr>
+                <td>Type:</td>
+                <td><input type="text" name="type" value=""></td>
+              </tr><tr>
+                <td>Category:</td>
+                <td><input type="text" name="category" value=""></td>
+              </tr><tr>
+                <td>Tags:</td>
+                <td><input type="text" name="tags" value=""></td>
+              </tr></tbody></table>
+            </div>
+            <div class="buttons">
+              <input type="button" name="reset" value="reset">
+            </div>
+          </div>
+          <div class="results">
+            <div class="title">Thing Results</div>
+            <div class="body">
+              <table class="table"><thead>
+                <th>Img</th><th class="namecol">Name</th><th class="typecol">Type</th><th class="categorycol">Category</th>
+              </thead><tbody>
+              </tbody></table>
+            </div>
+            <div class="buttons">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript">
+    $(window).ready(function() {
+      var db = DB();
+      var placedb = PlaceDB(db, $('.placedb'));
+      var thingdb = ThingDB(db, $('.thingdb'));
+      var edit = PlaceEdit(placedb, thingdb, $('.placeedit'));
+      db.load();
+      $(thingdb).on('select', function(event, thing) {
+        edit.select(thing);
+      });
+    });
+  </script>
+</body>
+</html>

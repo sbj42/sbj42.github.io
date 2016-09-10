@@ -1,14 +1,30 @@
 {
-  "name": "solo-thing-editor",
-  "version": "0.0.0",
-  "description": "",
-  "main": "server.js",
-  "author": "James Clark <jameswclark@gmail.com>",
-  "license": "ISC",
-  "dependencies": {
-    "body-parser": "^1.15.2",
-    "express": "^4.14.0",
-    "json-stable-stringify": "^1.0.1"
-  },
-  "devDependencies": {}
+    "name": "solo-thing-editor",
+    "version": "0.0.0",
+    "description": "",
+    "main": "server.js",
+    "author": "James Clark <jameswclark@gmail.com>",
+    "license": "ISC",
+    "dependencies": {
+        "body-parser": "^1.15.2",
+        "express": "^4.14.0",
+        "json-stable-stringify": "^1.0.1"
+    },
+    "eslintConfig": {
+        "extends": "eslint:recommended",
+        "rules": {
+            "indent": ["error",4],
+            "no-tabs": "error",
+            "no-unused-vars": "warn",
+            "no-redeclare": "off",
+            "no-unused-vars": ["error", {
+                "args": "none"
+            }],
+            "semi": "error",
+            "no-trailing-spaces": "error"
+        }
+    },
+    "devDependencies": {
+        "eslint": "^3.5.0"
+    }
 }
