@@ -1,5 +1,4596 @@
 {
-  "places": {},
+  "places": {
+    "ballpark": {
+      "height": 62,
+      "name": "ballpark",
+      "tiles": {
+        "0,0": {
+          "floor": "concrete"
+        },
+        "0,1": {
+          "floor": "concrete"
+        },
+        "0,10": {
+          "floor": "concrete"
+        },
+        "0,11": {
+          "floor": "concrete"
+        },
+        "0,12": {
+          "floor": "concrete"
+        },
+        "0,13": {
+          "floor": "concrete"
+        },
+        "0,14": {
+          "floor": "concrete"
+        },
+        "0,15": {
+          "floor": "concrete"
+        },
+        "0,16": {
+          "floor": "concrete"
+        },
+        "0,17": {
+          "floor": "concrete"
+        },
+        "0,18": {
+          "floor": "concrete"
+        },
+        "0,19": {
+          "floor": "concrete"
+        },
+        "0,2": {
+          "floor": "concrete"
+        },
+        "0,20": {
+          "floor": "concrete"
+        },
+        "0,21": {
+          "floor": "concrete"
+        },
+        "0,22": {
+          "floor": "concrete"
+        },
+        "0,23": {
+          "floor": "concrete"
+        },
+        "0,24": {
+          "floor": "concrete"
+        },
+        "0,25": {
+          "floor": "concrete"
+        },
+        "0,26": {
+          "floor": "concrete"
+        },
+        "0,27": {
+          "floor": "concrete"
+        },
+        "0,28": {
+          "floor": "concrete"
+        },
+        "0,29": {
+          "floor": "concrete"
+        },
+        "0,3": {
+          "floor": "concrete"
+        },
+        "0,30": {
+          "floor": "concrete"
+        },
+        "0,31": {
+          "floor": "concrete"
+        },
+        "0,32": {
+          "floor": "concrete"
+        },
+        "0,33": {
+          "floor": "concrete"
+        },
+        "0,34": {
+          "floor": "concrete"
+        },
+        "0,35": {
+          "floor": "concrete"
+        },
+        "0,36": {
+          "floor": "concrete"
+        },
+        "0,37": {
+          "floor": "concrete"
+        },
+        "0,38": {
+          "floor": "concrete"
+        },
+        "0,39": {
+          "floor": "concrete"
+        },
+        "0,4": {
+          "floor": "concrete"
+        },
+        "0,40": {
+          "floor": "concrete"
+        },
+        "0,41": {
+          "floor": "concrete"
+        },
+        "0,42": {
+          "floor": "concrete"
+        },
+        "0,43": {
+          "floor": "concrete"
+        },
+        "0,44": {
+          "floor": "concrete"
+        },
+        "0,45": {
+          "floor": "concrete"
+        },
+        "0,46": {
+          "floor": "concrete"
+        },
+        "0,47": {
+          "floor": "concrete"
+        },
+        "0,48": {
+          "floor": "concrete"
+        },
+        "0,49": {
+          "floor": "concrete"
+        },
+        "0,5": {
+          "floor": "concrete"
+        },
+        "0,50": {
+          "floor": "concrete"
+        },
+        "0,51": {
+          "floor": "concrete"
+        },
+        "0,52": {
+          "floor": "concrete"
+        },
+        "0,53": {
+          "floor": "concrete"
+        },
+        "0,54": {
+          "floor": "concrete"
+        },
+        "0,55": {
+          "floor": "concrete"
+        },
+        "0,56": {
+          "floor": "concrete"
+        },
+        "0,57": {
+          "floor": "concrete"
+        },
+        "0,58": {
+          "floor": "concrete"
+        },
+        "0,59": {
+          "floor": "concrete"
+        },
+        "0,6": {
+          "floor": "concrete"
+        },
+        "0,7": {
+          "floor": "concrete"
+        },
+        "0,8": {
+          "floor": "concrete"
+        },
+        "0,9": {
+          "floor": "concrete"
+        },
+        "1,0": {
+          "floor": "concrete"
+        },
+        "1,1": {
+          "floor": "grass"
+        },
+        "1,2": {
+          "floor": "grass"
+        },
+        "1,3": {
+          "floor": "grass"
+        },
+        "1,4": {
+          "floor": "grass"
+        },
+        "1,5": {
+          "floor": "grass"
+        },
+        "1,50": {
+          "floor": "concrete"
+        },
+        "1,51": {
+          "floor": "concrete"
+        },
+        "1,59": {
+          "floor": "concrete"
+        },
+        "1,6": {
+          "floor": "grass"
+        },
+        "10,0": {
+          "floor": "concrete"
+        },
+        "10,3": {
+          "floor": "dirt",
+          "things": [
+            {
+              "type": "ballpark bench"
+            }
+          ]
+        },
+        "10,4": {
+          "floor": "dirt"
+        },
+        "10,5": {
+          "floor": "dirt",
+          "things": [
+            {
+              "type": "chain link fence"
+            }
+          ]
+        },
+        "10,59": {
+          "floor": "concrete"
+        },
+        "10,6": {
+          "floor": "dirt"
+        },
+        "10,7": {
+          "floor": "dirt"
+        },
+        "11,0": {
+          "floor": "concrete"
+        },
+        "11,3": {
+          "floor": "dirt",
+          "things": [
+            {
+              "type": "ballpark bench"
+            }
+          ]
+        },
+        "11,4": {
+          "floor": "dirt"
+        },
+        "11,5": {
+          "floor": "dirt",
+          "things": [
+            {
+              "type": "chain link fence"
+            }
+          ]
+        },
+        "11,59": {
+          "floor": "concrete"
+        },
+        "11,6": {
+          "floor": "dirt"
+        },
+        "11,7": {
+          "floor": "dirt"
+        },
+        "12,0": {
+          "floor": "concrete"
+        },
+        "12,3": {
+          "floor": "dirt",
+          "things": [
+            {
+              "type": "ballpark bench"
+            }
+          ]
+        },
+        "12,4": {
+          "floor": "dirt"
+        },
+        "12,5": {
+          "floor": "dirt",
+          "things": [
+            {
+              "type": "chain link fence"
+            }
+          ]
+        },
+        "12,59": {
+          "floor": "concrete"
+        },
+        "12,6": {
+          "floor": "dirt"
+        },
+        "12,7": {
+          "floor": "dirt"
+        },
+        "13,0": {
+          "floor": "concrete"
+        },
+        "13,3": {
+          "floor": "dirt"
+        },
+        "13,4": {
+          "floor": "dirt"
+        },
+        "13,5": {
+          "floor": "dirt"
+        },
+        "13,59": {
+          "floor": "concrete"
+        },
+        "13,6": {
+          "floor": "dirt"
+        },
+        "13,7": {
+          "floor": "dirt"
+        },
+        "14,0": {
+          "floor": "concrete"
+        },
+        "14,3": {
+          "floor": "dirt"
+        },
+        "14,4": {
+          "floor": "dirt"
+        },
+        "14,5": {
+          "floor": "dirt",
+          "things": [
+            {
+              "type": "chain link fence"
+            }
+          ]
+        },
+        "14,59": {
+          "floor": "concrete"
+        },
+        "14,6": {
+          "floor": "dirt"
+        },
+        "14,7": {
+          "floor": "dirt"
+        },
+        "15,0": {
+          "floor": "concrete"
+        },
+        "15,3": {
+          "floor": "dirt"
+        },
+        "15,4": {
+          "floor": "dirt"
+        },
+        "15,5": {
+          "floor": "dirt",
+          "things": [
+            {
+              "type": "chain link fence"
+            }
+          ]
+        },
+        "15,59": {
+          "floor": "concrete"
+        },
+        "15,6": {
+          "floor": "dirt"
+        },
+        "15,7": {
+          "floor": "dirt"
+        },
+        "16,0": {
+          "floor": "concrete"
+        },
+        "16,59": {
+          "floor": "concrete"
+        },
+        "17,0": {
+          "floor": "concrete"
+        },
+        "17,59": {
+          "floor": "concrete"
+        },
+        "18,0": {
+          "floor": "concrete"
+        },
+        "18,59": {
+          "floor": "concrete"
+        },
+        "19,0": {
+          "floor": "concrete"
+        },
+        "19,59": {
+          "floor": "concrete"
+        },
+        "2,0": {
+          "floor": "concrete"
+        },
+        "2,1": {
+          "floor": "grass"
+        },
+        "2,2": {
+          "floor": "grass"
+        },
+        "2,3": {
+          "floor": "grass"
+        },
+        "2,4": {
+          "floor": "grass"
+        },
+        "2,5": {
+          "floor": "grass"
+        },
+        "2,59": {
+          "floor": "concrete"
+        },
+        "2,6": {
+          "floor": "grass"
+        },
+        "20,0": {
+          "floor": "concrete"
+        },
+        "20,59": {
+          "floor": "concrete"
+        },
+        "21,0": {
+          "floor": "concrete"
+        },
+        "21,59": {
+          "floor": "concrete"
+        },
+        "22,0": {
+          "floor": "concrete"
+        },
+        "22,59": {
+          "floor": "concrete"
+        },
+        "23,0": {
+          "floor": "concrete"
+        },
+        "23,59": {
+          "floor": "concrete"
+        },
+        "24,0": {
+          "floor": "concrete"
+        },
+        "24,59": {
+          "floor": "concrete"
+        },
+        "25,0": {
+          "floor": "concrete"
+        },
+        "25,59": {
+          "floor": "concrete"
+        },
+        "26,0": {
+          "floor": "concrete"
+        },
+        "26,59": {
+          "floor": "concrete"
+        },
+        "27,0": {
+          "floor": "concrete"
+        },
+        "27,59": {
+          "floor": "concrete"
+        },
+        "28,0": {
+          "floor": "concrete"
+        },
+        "28,59": {
+          "floor": "concrete"
+        },
+        "29,0": {
+          "floor": "concrete"
+        },
+        "29,59": {
+          "floor": "concrete"
+        },
+        "3,0": {
+          "floor": "concrete"
+        },
+        "3,1": {
+          "floor": "grass"
+        },
+        "3,10": {
+          "floor": "dirt",
+          "things": [
+            {
+              "rotate": 90,
+              "type": "ballpark bench"
+            }
+          ]
+        },
+        "3,11": {
+          "floor": "dirt",
+          "things": [
+            {
+              "rotate": 90,
+              "type": "ballpark bench"
+            }
+          ]
+        },
+        "3,12": {
+          "floor": "dirt",
+          "things": [
+            {
+              "rotate": 90,
+              "type": "ballpark bench"
+            }
+          ]
+        },
+        "3,13": {
+          "floor": "dirt"
+        },
+        "3,14": {
+          "floor": "dirt"
+        },
+        "3,15": {
+          "floor": "dirt"
+        },
+        "3,2": {
+          "floor": "grass"
+        },
+        "3,3": {
+          "floor": "grass"
+        },
+        "3,4": {
+          "floor": "grass"
+        },
+        "3,5": {
+          "floor": "grass"
+        },
+        "3,59": {
+          "floor": "concrete"
+        },
+        "3,6": {
+          "floor": "grass"
+        },
+        "3,7": {
+          "floor": "dirt"
+        },
+        "3,8": {
+          "floor": "dirt",
+          "things": [
+            {
+              "rotate": 90,
+              "type": "ballpark bench"
+            }
+          ]
+        },
+        "3,9": {
+          "floor": "dirt",
+          "things": [
+            {
+              "rotate": 90,
+              "type": "ballpark bench"
+            }
+          ]
+        },
+        "30,0": {
+          "floor": "concrete"
+        },
+        "30,59": {
+          "floor": "concrete"
+        },
+        "31,0": {
+          "floor": "concrete"
+        },
+        "31,59": {
+          "floor": "concrete"
+        },
+        "32,0": {
+          "floor": "concrete"
+        },
+        "32,59": {
+          "floor": "concrete"
+        },
+        "33,0": {
+          "floor": "concrete"
+        },
+        "33,59": {
+          "floor": "concrete"
+        },
+        "34,0": {
+          "floor": "concrete"
+        },
+        "34,59": {
+          "floor": "concrete"
+        },
+        "35,0": {
+          "floor": "concrete"
+        },
+        "35,59": {
+          "floor": "concrete"
+        },
+        "36,0": {
+          "floor": "concrete"
+        },
+        "36,59": {
+          "floor": "concrete"
+        },
+        "37,0": {
+          "floor": "concrete"
+        },
+        "37,59": {
+          "floor": "concrete"
+        },
+        "38,0": {
+          "floor": "concrete"
+        },
+        "38,59": {
+          "floor": "concrete"
+        },
+        "39,0": {
+          "floor": "concrete"
+        },
+        "39,59": {
+          "floor": "concrete"
+        },
+        "4,0": {
+          "floor": "concrete"
+        },
+        "4,1": {
+          "floor": "grass"
+        },
+        "4,10": {
+          "floor": "dirt"
+        },
+        "4,11": {
+          "floor": "dirt"
+        },
+        "4,12": {
+          "floor": "dirt"
+        },
+        "4,13": {
+          "floor": "dirt"
+        },
+        "4,14": {
+          "floor": "dirt"
+        },
+        "4,15": {
+          "floor": "dirt"
+        },
+        "4,2": {
+          "floor": "grass"
+        },
+        "4,3": {
+          "floor": "grass"
+        },
+        "4,4": {
+          "floor": "grass"
+        },
+        "4,5": {
+          "floor": "grass"
+        },
+        "4,59": {
+          "floor": "concrete"
+        },
+        "4,6": {
+          "floor": "grass"
+        },
+        "4,7": {
+          "floor": "dirt"
+        },
+        "4,8": {
+          "floor": "dirt"
+        },
+        "4,9": {
+          "floor": "dirt"
+        },
+        "40,0": {
+          "floor": "concrete"
+        },
+        "40,59": {
+          "floor": "concrete"
+        },
+        "41,0": {
+          "floor": "concrete"
+        },
+        "41,59": {
+          "floor": "concrete"
+        },
+        "42,0": {
+          "floor": "concrete"
+        },
+        "42,59": {
+          "floor": "concrete"
+        },
+        "43,0": {
+          "floor": "concrete"
+        },
+        "43,59": {
+          "floor": "concrete"
+        },
+        "44,0": {
+          "floor": "concrete"
+        },
+        "44,59": {
+          "floor": "concrete"
+        },
+        "45,0": {
+          "floor": "concrete"
+        },
+        "45,59": {
+          "floor": "concrete"
+        },
+        "46,0": {
+          "floor": "concrete"
+        },
+        "46,59": {
+          "floor": "concrete"
+        },
+        "47,0": {
+          "floor": "concrete"
+        },
+        "47,59": {
+          "floor": "concrete"
+        },
+        "48,0": {
+          "floor": "concrete"
+        },
+        "48,59": {
+          "floor": "concrete"
+        },
+        "49,0": {
+          "floor": "concrete"
+        },
+        "49,59": {
+          "floor": "concrete"
+        },
+        "5,0": {
+          "floor": "concrete"
+        },
+        "5,1": {
+          "floor": "grass"
+        },
+        "5,10": {
+          "floor": "dirt",
+          "things": [
+            {
+              "rotate": 270,
+              "type": "chain link fence"
+            }
+          ]
+        },
+        "5,11": {
+          "floor": "dirt",
+          "things": [
+            {
+              "rotate": 270,
+              "type": "chain link fence"
+            }
+          ]
+        },
+        "5,12": {
+          "floor": "dirt",
+          "things": [
+            {
+              "rotate": 270,
+              "type": "chain link fence"
+            }
+          ]
+        },
+        "5,13": {
+          "floor": "dirt"
+        },
+        "5,14": {
+          "floor": "dirt",
+          "things": [
+            {
+              "rotate": 270,
+              "type": "chain link fence"
+            }
+          ]
+        },
+        "5,15": {
+          "floor": "dirt",
+          "things": [
+            {
+              "rotate": 270,
+              "type": "chain link fence"
+            }
+          ]
+        },
+        "5,2": {
+          "floor": "grass"
+        },
+        "5,3": {
+          "floor": "grass"
+        },
+        "5,4": {
+          "floor": "grass"
+        },
+        "5,5": {
+          "floor": "grass",
+          "things": [
+            {
+              "type": "chain link fence"
+            },
+            {
+              "rotate": 270,
+              "type": "chain link fence"
+            }
+          ]
+        },
+        "5,59": {
+          "floor": "concrete"
+        },
+        "5,6": {
+          "floor": "dirt",
+          "things": [
+            {
+              "rotate": 270,
+              "type": "chain link fence"
+            }
+          ]
+        },
+        "5,7": {
+          "floor": "dirt",
+          "things": [
+            {
+              "rotate": 270,
+              "type": "chain link fence"
+            }
+          ]
+        },
+        "5,8": {
+          "floor": "dirt",
+          "things": [
+            {
+              "rotate": 270,
+              "type": "chain link fence"
+            }
+          ]
+        },
+        "5,9": {
+          "floor": "dirt",
+          "things": [
+            {
+              "rotate": 270,
+              "type": "chain link fence"
+            }
+          ]
+        },
+        "50,0": {
+          "floor": "concrete"
+        },
+        "50,59": {
+          "floor": "concrete"
+        },
+        "51,0": {
+          "floor": "concrete"
+        },
+        "51,59": {
+          "floor": "concrete"
+        },
+        "52,0": {
+          "floor": "concrete"
+        },
+        "52,59": {
+          "floor": "concrete"
+        },
+        "53,0": {
+          "floor": "concrete"
+        },
+        "53,59": {
+          "floor": "concrete"
+        },
+        "54,0": {
+          "floor": "concrete"
+        },
+        "54,59": {
+          "floor": "concrete"
+        },
+        "55,0": {
+          "floor": "concrete"
+        },
+        "55,59": {
+          "floor": "concrete"
+        },
+        "56,0": {
+          "floor": "concrete"
+        },
+        "56,59": {
+          "floor": "concrete"
+        },
+        "57,0": {
+          "floor": "concrete"
+        },
+        "57,59": {
+          "floor": "concrete"
+        },
+        "58,0": {
+          "floor": "concrete"
+        },
+        "58,59": {
+          "floor": "concrete"
+        },
+        "59,0": {
+          "floor": "concrete"
+        },
+        "59,1": {
+          "floor": "concrete"
+        },
+        "59,10": {
+          "floor": "concrete"
+        },
+        "59,11": {
+          "floor": "concrete"
+        },
+        "59,12": {
+          "floor": "concrete"
+        },
+        "59,13": {
+          "floor": "concrete"
+        },
+        "59,14": {
+          "floor": "concrete"
+        },
+        "59,15": {
+          "floor": "concrete"
+        },
+        "59,16": {
+          "floor": "concrete"
+        },
+        "59,17": {
+          "floor": "concrete"
+        },
+        "59,18": {
+          "floor": "concrete"
+        },
+        "59,19": {
+          "floor": "concrete"
+        },
+        "59,2": {
+          "floor": "concrete"
+        },
+        "59,20": {
+          "floor": "concrete"
+        },
+        "59,21": {
+          "floor": "concrete"
+        },
+        "59,22": {
+          "floor": "concrete"
+        },
+        "59,23": {
+          "floor": "concrete"
+        },
+        "59,24": {
+          "floor": "concrete"
+        },
+        "59,25": {
+          "floor": "concrete"
+        },
+        "59,26": {
+          "floor": "concrete"
+        },
+        "59,27": {
+          "floor": "concrete"
+        },
+        "59,28": {
+          "floor": "concrete"
+        },
+        "59,29": {
+          "floor": "concrete"
+        },
+        "59,3": {
+          "floor": "concrete"
+        },
+        "59,30": {
+          "floor": "concrete"
+        },
+        "59,31": {
+          "floor": "concrete"
+        },
+        "59,32": {
+          "floor": "concrete"
+        },
+        "59,33": {
+          "floor": "concrete"
+        },
+        "59,34": {
+          "floor": "concrete"
+        },
+        "59,35": {
+          "floor": "concrete"
+        },
+        "59,36": {
+          "floor": "concrete"
+        },
+        "59,37": {
+          "floor": "concrete"
+        },
+        "59,38": {
+          "floor": "concrete"
+        },
+        "59,39": {
+          "floor": "concrete"
+        },
+        "59,4": {
+          "floor": "concrete"
+        },
+        "59,40": {
+          "floor": "concrete"
+        },
+        "59,41": {
+          "floor": "concrete"
+        },
+        "59,42": {
+          "floor": "concrete"
+        },
+        "59,43": {
+          "floor": "concrete"
+        },
+        "59,44": {
+          "floor": "concrete"
+        },
+        "59,45": {
+          "floor": "concrete"
+        },
+        "59,46": {
+          "floor": "concrete"
+        },
+        "59,47": {
+          "floor": "concrete"
+        },
+        "59,48": {
+          "floor": "concrete"
+        },
+        "59,49": {
+          "floor": "concrete"
+        },
+        "59,5": {
+          "floor": "concrete"
+        },
+        "59,50": {
+          "floor": "concrete"
+        },
+        "59,51": {
+          "floor": "concrete"
+        },
+        "59,52": {
+          "floor": "concrete"
+        },
+        "59,53": {
+          "floor": "concrete"
+        },
+        "59,54": {
+          "floor": "concrete"
+        },
+        "59,55": {
+          "floor": "concrete"
+        },
+        "59,56": {
+          "floor": "concrete"
+        },
+        "59,57": {
+          "floor": "concrete"
+        },
+        "59,58": {
+          "floor": "concrete"
+        },
+        "59,59": {
+          "floor": "concrete"
+        },
+        "59,6": {
+          "floor": "concrete"
+        },
+        "59,7": {
+          "floor": "concrete"
+        },
+        "59,8": {
+          "floor": "concrete"
+        },
+        "59,9": {
+          "floor": "concrete"
+        },
+        "6,0": {
+          "floor": "concrete"
+        },
+        "6,1": {
+          "floor": "grass"
+        },
+        "6,10": {
+          "floor": "dirt"
+        },
+        "6,11": {
+          "floor": "dirt"
+        },
+        "6,12": {
+          "floor": "dirt"
+        },
+        "6,13": {
+          "floor": "dirt"
+        },
+        "6,14": {
+          "floor": "dirt"
+        },
+        "6,15": {
+          "floor": "dirt"
+        },
+        "6,2": {
+          "floor": "grass"
+        },
+        "6,3": {
+          "floor": "grass"
+        },
+        "6,4": {
+          "floor": "grass"
+        },
+        "6,5": {
+          "floor": "dirt",
+          "things": [
+            {
+              "type": "chain link fence"
+            }
+          ]
+        },
+        "6,59": {
+          "floor": "concrete"
+        },
+        "6,6": {
+          "floor": "dirt"
+        },
+        "6,7": {
+          "floor": "dirt"
+        },
+        "6,8": {
+          "floor": "dirt"
+        },
+        "6,9": {
+          "floor": "dirt"
+        },
+        "7,0": {
+          "floor": "concrete"
+        },
+        "7,10": {
+          "floor": "dirt"
+        },
+        "7,11": {
+          "floor": "dirt"
+        },
+        "7,12": {
+          "floor": "dirt"
+        },
+        "7,13": {
+          "floor": "dirt"
+        },
+        "7,14": {
+          "floor": "dirt"
+        },
+        "7,15": {
+          "floor": "dirt"
+        },
+        "7,3": {
+          "floor": "dirt"
+        },
+        "7,4": {
+          "floor": "dirt"
+        },
+        "7,5": {
+          "floor": "dirt",
+          "things": [
+            {
+              "type": "chain link fence"
+            }
+          ]
+        },
+        "7,59": {
+          "floor": "concrete"
+        },
+        "7,6": {
+          "floor": "dirt"
+        },
+        "7,7": {
+          "floor": "dirt",
+          "things": [
+            {
+              "type": "ballpark home plate"
+            }
+          ]
+        },
+        "7,8": {
+          "floor": "dirt"
+        },
+        "7,9": {
+          "floor": "dirt"
+        },
+        "8,0": {
+          "floor": "concrete"
+        },
+        "8,3": {
+          "floor": "dirt",
+          "things": [
+            {
+              "type": "ballpark bench"
+            }
+          ]
+        },
+        "8,4": {
+          "floor": "dirt"
+        },
+        "8,5": {
+          "floor": "dirt",
+          "things": [
+            {
+              "type": "chain link fence"
+            }
+          ]
+        },
+        "8,59": {
+          "floor": "concrete"
+        },
+        "8,6": {
+          "floor": "dirt"
+        },
+        "8,7": {
+          "floor": "dirt"
+        },
+        "8,8": {
+          "floor": "dirt"
+        },
+        "9,0": {
+          "floor": "concrete"
+        },
+        "9,3": {
+          "floor": "dirt",
+          "things": [
+            {
+              "type": "ballpark bench"
+            }
+          ]
+        },
+        "9,4": {
+          "floor": "dirt"
+        },
+        "9,5": {
+          "floor": "dirt",
+          "things": [
+            {
+              "type": "chain link fence"
+            }
+          ]
+        },
+        "9,59": {
+          "floor": "concrete"
+        },
+        "9,6": {
+          "floor": "dirt"
+        },
+        "9,7": {
+          "floor": "dirt"
+        },
+        "null,null": {
+          "floor": "concrete"
+        }
+      },
+      "type": "city-block-full",
+      "width": 62
+    },
+    "gas station": {
+      "height": 31,
+      "name": "gas station",
+      "tiles": {
+        "0,0": {
+          "floor": "concrete"
+        },
+        "0,1": {
+          "floor": "concrete"
+        },
+        "0,10": {
+          "floor": "concrete"
+        },
+        "0,11": {
+          "floor": "concrete"
+        },
+        "0,12": {
+          "floor": "concrete"
+        },
+        "0,13": {
+          "floor": "concrete"
+        },
+        "0,14": {
+          "floor": "concrete"
+        },
+        "0,15": {
+          "floor": "concrete"
+        },
+        "0,16": {
+          "floor": "concrete"
+        },
+        "0,17": {
+          "floor": "concrete"
+        },
+        "0,18": {
+          "floor": "concrete"
+        },
+        "0,19": {
+          "floor": "concrete"
+        },
+        "0,2": {
+          "floor": "concrete"
+        },
+        "0,20": {
+          "floor": "concrete"
+        },
+        "0,21": {
+          "floor": "concrete"
+        },
+        "0,22": {
+          "floor": "concrete"
+        },
+        "0,23": {
+          "floor": "concrete"
+        },
+        "0,24": {
+          "floor": "concrete"
+        },
+        "0,25": {
+          "floor": "concrete"
+        },
+        "0,26": {
+          "floor": "concrete"
+        },
+        "0,27": {
+          "floor": "concrete"
+        },
+        "0,28": {
+          "floor": "concrete"
+        },
+        "0,29": {
+          "floor": "concrete"
+        },
+        "0,3": {
+          "floor": "concrete"
+        },
+        "0,30": {
+          "floor": "concrete"
+        },
+        "0,4": {
+          "floor": "concrete"
+        },
+        "0,5": {
+          "floor": "concrete"
+        },
+        "0,6": {
+          "floor": "concrete"
+        },
+        "0,7": {
+          "floor": "concrete"
+        },
+        "0,8": {
+          "floor": "concrete"
+        },
+        "0,9": {
+          "floor": "concrete"
+        },
+        "1,0": {
+          "floor": "concrete"
+        },
+        "1,1": {
+          "floor": "concrete"
+        },
+        "1,10": {
+          "floor": "concrete"
+        },
+        "1,11": {
+          "floor": "concrete"
+        },
+        "1,12": {
+          "floor": "concrete"
+        },
+        "1,13": {
+          "floor": "concrete"
+        },
+        "1,14": {
+          "floor": "concrete"
+        },
+        "1,15": {
+          "floor": "concrete"
+        },
+        "1,16": {
+          "floor": "concrete"
+        },
+        "1,17": {
+          "floor": "concrete"
+        },
+        "1,18": {
+          "floor": "concrete"
+        },
+        "1,19": {
+          "floor": "concrete"
+        },
+        "1,2": {
+          "floor": "concrete"
+        },
+        "1,20": {
+          "floor": "concrete"
+        },
+        "1,21": {
+          "floor": "concrete"
+        },
+        "1,22": {
+          "floor": "concrete"
+        },
+        "1,23": {
+          "floor": "concrete"
+        },
+        "1,24": {
+          "floor": "concrete"
+        },
+        "1,25": {
+          "floor": "concrete"
+        },
+        "1,26": {
+          "floor": "concrete"
+        },
+        "1,27": {
+          "floor": "concrete"
+        },
+        "1,28": {
+          "floor": "concrete"
+        },
+        "1,3": {
+          "floor": "concrete"
+        },
+        "1,4": {
+          "floor": "concrete"
+        },
+        "1,5": {
+          "floor": "concrete"
+        },
+        "1,6": {
+          "floor": "concrete"
+        },
+        "1,7": {
+          "floor": "concrete"
+        },
+        "1,8": {
+          "floor": "concrete"
+        },
+        "1,9": {
+          "floor": "concrete"
+        },
+        "10,0": {
+          "floor": "concrete"
+        },
+        "10,1": {
+          "floor": "concrete"
+        },
+        "10,10": {
+          "floor": "concrete"
+        },
+        "10,11": {
+          "floor": "concrete"
+        },
+        "10,12": {
+          "floor": "concrete"
+        },
+        "10,13": {
+          "floor": "concrete"
+        },
+        "10,14": {
+          "floor": "concrete"
+        },
+        "10,15": {
+          "floor": "concrete"
+        },
+        "10,16": {
+          "floor": "concrete"
+        },
+        "10,17": {
+          "floor": "concrete"
+        },
+        "10,18": {
+          "floor": "concrete"
+        },
+        "10,19": {
+          "floor": "concrete"
+        },
+        "10,2": {
+          "floor": "concrete"
+        },
+        "10,20": {
+          "floor": "concrete"
+        },
+        "10,21": {
+          "floor": "tiles"
+        },
+        "10,22": {
+          "floor": "tiles"
+        },
+        "10,23": {
+          "floor": "tiles"
+        },
+        "10,24": {
+          "floor": "tiles"
+        },
+        "10,25": {
+          "floor": "tiles"
+        },
+        "10,26": {
+          "floor": "tiles"
+        },
+        "10,27": {
+          "floor": "tiles",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "wall"
+            }
+          ]
+        },
+        "10,28": {
+          "floor": "concrete"
+        },
+        "10,3": {
+          "floor": "concrete"
+        },
+        "10,4": {
+          "floor": "concrete"
+        },
+        "10,5": {
+          "floor": "concrete"
+        },
+        "10,6": {
+          "floor": "concrete"
+        },
+        "10,7": {
+          "floor": "concrete"
+        },
+        "10,8": {
+          "floor": "concrete"
+        },
+        "10,9": {
+          "floor": "concrete"
+        },
+        "11,0": {
+          "floor": "concrete"
+        },
+        "11,1": {
+          "floor": "concrete"
+        },
+        "11,10": {
+          "floor": "concrete"
+        },
+        "11,11": {
+          "floor": "concrete"
+        },
+        "11,12": {
+          "floor": "concrete"
+        },
+        "11,13": {
+          "floor": "concrete"
+        },
+        "11,14": {
+          "floor": "concrete"
+        },
+        "11,15": {
+          "floor": "concrete"
+        },
+        "11,16": {
+          "floor": "concrete"
+        },
+        "11,17": {
+          "floor": "concrete"
+        },
+        "11,18": {
+          "floor": "concrete"
+        },
+        "11,19": {
+          "floor": "concrete"
+        },
+        "11,2": {
+          "floor": "concrete"
+        },
+        "11,20": {
+          "floor": "concrete"
+        },
+        "11,21": {
+          "floor": "tiles"
+        },
+        "11,22": {
+          "floor": "tiles"
+        },
+        "11,23": {
+          "floor": "tiles"
+        },
+        "11,24": {
+          "floor": "tiles"
+        },
+        "11,25": {
+          "floor": "tiles"
+        },
+        "11,26": {
+          "floor": "tiles"
+        },
+        "11,27": {
+          "floor": "tiles",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "wall"
+            }
+          ]
+        },
+        "11,28": {
+          "floor": "concrete"
+        },
+        "11,3": {
+          "floor": "concrete"
+        },
+        "11,4": {
+          "floor": "concrete"
+        },
+        "11,5": {
+          "floor": "concrete"
+        },
+        "11,6": {
+          "floor": "concrete"
+        },
+        "11,7": {
+          "floor": "concrete"
+        },
+        "11,8": {
+          "floor": "concrete"
+        },
+        "11,9": {
+          "floor": "concrete"
+        },
+        "12,0": {
+          "floor": "concrete"
+        },
+        "12,1": {
+          "floor": "concrete"
+        },
+        "12,10": {
+          "floor": "concrete"
+        },
+        "12,11": {
+          "floor": "concrete"
+        },
+        "12,12": {
+          "floor": "concrete"
+        },
+        "12,13": {
+          "floor": "concrete"
+        },
+        "12,14": {
+          "floor": "concrete"
+        },
+        "12,15": {
+          "floor": "concrete"
+        },
+        "12,16": {
+          "floor": "concrete"
+        },
+        "12,17": {
+          "floor": "concrete"
+        },
+        "12,18": {
+          "floor": "concrete"
+        },
+        "12,19": {
+          "floor": "concrete"
+        },
+        "12,2": {
+          "floor": "concrete"
+        },
+        "12,20": {
+          "floor": "concrete"
+        },
+        "12,21": {
+          "floor": "tiles",
+          "things": [
+            {
+              "type": "window"
+            }
+          ]
+        },
+        "12,22": {
+          "floor": "tiles"
+        },
+        "12,23": {
+          "floor": "tiles"
+        },
+        "12,24": {
+          "floor": "tiles"
+        },
+        "12,25": {
+          "floor": "tiles"
+        },
+        "12,26": {
+          "floor": "tiles"
+        },
+        "12,27": {
+          "floor": "tiles",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "wall"
+            }
+          ]
+        },
+        "12,28": {
+          "floor": "concrete"
+        },
+        "12,3": {
+          "floor": "concrete"
+        },
+        "12,4": {
+          "floor": "concrete"
+        },
+        "12,5": {
+          "floor": "concrete"
+        },
+        "12,6": {
+          "floor": "concrete"
+        },
+        "12,7": {
+          "floor": "concrete"
+        },
+        "12,8": {
+          "floor": "concrete"
+        },
+        "12,9": {
+          "floor": "concrete"
+        },
+        "13,0": {
+          "floor": "concrete"
+        },
+        "13,1": {
+          "floor": "concrete"
+        },
+        "13,10": {
+          "floor": "concrete"
+        },
+        "13,11": {
+          "floor": "concrete"
+        },
+        "13,12": {
+          "floor": "concrete"
+        },
+        "13,13": {
+          "floor": "concrete"
+        },
+        "13,14": {
+          "floor": "concrete"
+        },
+        "13,15": {
+          "floor": "concrete"
+        },
+        "13,16": {
+          "floor": "concrete"
+        },
+        "13,17": {
+          "floor": "concrete"
+        },
+        "13,18": {
+          "floor": "concrete"
+        },
+        "13,19": {
+          "floor": "concrete"
+        },
+        "13,2": {
+          "floor": "concrete"
+        },
+        "13,20": {
+          "floor": "concrete"
+        },
+        "13,21": {
+          "floor": "tiles",
+          "things": [
+            {
+              "type": "window"
+            }
+          ]
+        },
+        "13,22": {
+          "floor": "tiles"
+        },
+        "13,23": {
+          "floor": "tiles"
+        },
+        "13,24": {
+          "floor": "tiles"
+        },
+        "13,25": {
+          "floor": "tiles"
+        },
+        "13,26": {
+          "floor": "tiles"
+        },
+        "13,27": {
+          "floor": "tiles",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "wall"
+            }
+          ]
+        },
+        "13,28": {
+          "floor": "concrete"
+        },
+        "13,3": {
+          "floor": "concrete"
+        },
+        "13,4": {
+          "floor": "concrete"
+        },
+        "13,5": {
+          "floor": "concrete"
+        },
+        "13,6": {
+          "floor": "concrete"
+        },
+        "13,7": {
+          "floor": "concrete"
+        },
+        "13,8": {
+          "floor": "concrete"
+        },
+        "13,9": {
+          "floor": "concrete"
+        },
+        "14,0": {
+          "floor": "concrete"
+        },
+        "14,1": {
+          "floor": "concrete"
+        },
+        "14,10": {
+          "floor": "concrete"
+        },
+        "14,11": {
+          "floor": "concrete"
+        },
+        "14,12": {
+          "floor": "concrete"
+        },
+        "14,13": {
+          "floor": "concrete"
+        },
+        "14,14": {
+          "floor": "concrete"
+        },
+        "14,15": {
+          "floor": "concrete"
+        },
+        "14,16": {
+          "floor": "concrete"
+        },
+        "14,17": {
+          "floor": "concrete"
+        },
+        "14,18": {
+          "floor": "concrete"
+        },
+        "14,19": {
+          "floor": "concrete"
+        },
+        "14,2": {
+          "floor": "concrete"
+        },
+        "14,20": {
+          "floor": "concrete"
+        },
+        "14,21": {
+          "floor": "tiles",
+          "things": [
+            {
+              "type": "wall"
+            }
+          ]
+        },
+        "14,22": {
+          "floor": "tiles"
+        },
+        "14,23": {
+          "floor": "tiles"
+        },
+        "14,24": {
+          "floor": "tiles"
+        },
+        "14,25": {
+          "floor": "tiles"
+        },
+        "14,26": {
+          "floor": "tiles"
+        },
+        "14,27": {
+          "floor": "tiles",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "wall"
+            }
+          ]
+        },
+        "14,28": {
+          "floor": "concrete"
+        },
+        "14,3": {
+          "floor": "concrete"
+        },
+        "14,4": {
+          "floor": "concrete"
+        },
+        "14,5": {
+          "floor": "concrete"
+        },
+        "14,6": {
+          "floor": "concrete"
+        },
+        "14,7": {
+          "floor": "concrete"
+        },
+        "14,8": {
+          "floor": "concrete"
+        },
+        "14,9": {
+          "floor": "concrete"
+        },
+        "15,0": {
+          "floor": "concrete"
+        },
+        "15,1": {
+          "floor": "concrete"
+        },
+        "15,10": {
+          "floor": "concrete"
+        },
+        "15,11": {
+          "floor": "concrete"
+        },
+        "15,12": {
+          "floor": "concrete"
+        },
+        "15,13": {
+          "floor": "concrete"
+        },
+        "15,14": {
+          "floor": "concrete"
+        },
+        "15,15": {
+          "floor": "concrete"
+        },
+        "15,16": {
+          "floor": "concrete"
+        },
+        "15,17": {
+          "floor": "concrete"
+        },
+        "15,18": {
+          "floor": "concrete"
+        },
+        "15,19": {
+          "floor": "concrete"
+        },
+        "15,2": {
+          "floor": "concrete"
+        },
+        "15,20": {
+          "floor": "concrete"
+        },
+        "15,21": {
+          "floor": "tiles",
+          "things": [
+            {
+              "type": "window"
+            }
+          ]
+        },
+        "15,22": {
+          "floor": "tiles"
+        },
+        "15,23": {
+          "floor": "tiles"
+        },
+        "15,24": {
+          "floor": "tiles"
+        },
+        "15,25": {
+          "floor": "tiles"
+        },
+        "15,26": {
+          "floor": "tiles"
+        },
+        "15,27": {
+          "floor": "tiles",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "wall"
+            }
+          ]
+        },
+        "15,28": {
+          "floor": "concrete"
+        },
+        "15,3": {
+          "floor": "concrete"
+        },
+        "15,4": {
+          "floor": "concrete"
+        },
+        "15,5": {
+          "floor": "concrete"
+        },
+        "15,6": {
+          "floor": "concrete"
+        },
+        "15,7": {
+          "floor": "concrete"
+        },
+        "15,8": {
+          "floor": "concrete"
+        },
+        "15,9": {
+          "floor": "concrete"
+        },
+        "16,0": {
+          "floor": "concrete"
+        },
+        "16,1": {
+          "floor": "concrete"
+        },
+        "16,10": {
+          "floor": "concrete"
+        },
+        "16,11": {
+          "floor": "concrete"
+        },
+        "16,12": {
+          "floor": "concrete"
+        },
+        "16,13": {
+          "floor": "concrete"
+        },
+        "16,14": {
+          "floor": "concrete"
+        },
+        "16,15": {
+          "floor": "concrete"
+        },
+        "16,16": {
+          "floor": "concrete"
+        },
+        "16,17": {
+          "floor": "concrete"
+        },
+        "16,18": {
+          "floor": "concrete"
+        },
+        "16,19": {
+          "floor": "concrete"
+        },
+        "16,2": {
+          "floor": "concrete"
+        },
+        "16,20": {
+          "floor": "concrete"
+        },
+        "16,21": {
+          "floor": "tiles",
+          "things": [
+            {
+              "type": "window"
+            }
+          ]
+        },
+        "16,22": {
+          "floor": "tiles"
+        },
+        "16,23": {
+          "floor": "tiles"
+        },
+        "16,24": {
+          "floor": "tiles"
+        },
+        "16,25": {
+          "floor": "tiles"
+        },
+        "16,26": {
+          "floor": "tiles",
+          "things": [
+            {
+              "type": "wall"
+            }
+          ]
+        },
+        "16,27": {
+          "floor": "tiles",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "wall"
+            },
+            {
+              "rotate": 270,
+              "type": "wall"
+            }
+          ]
+        },
+        "16,28": {
+          "floor": "concrete"
+        },
+        "16,3": {
+          "floor": "concrete"
+        },
+        "16,4": {
+          "floor": "concrete"
+        },
+        "16,5": {
+          "floor": "concrete"
+        },
+        "16,6": {
+          "floor": "concrete"
+        },
+        "16,7": {
+          "floor": "concrete"
+        },
+        "16,8": {
+          "floor": "concrete"
+        },
+        "16,9": {
+          "floor": "concrete"
+        },
+        "17,0": {
+          "floor": "concrete"
+        },
+        "17,1": {
+          "floor": "concrete"
+        },
+        "17,10": {
+          "floor": "concrete"
+        },
+        "17,11": {
+          "floor": "concrete"
+        },
+        "17,12": {
+          "floor": "concrete"
+        },
+        "17,13": {
+          "floor": "concrete"
+        },
+        "17,14": {
+          "floor": "concrete"
+        },
+        "17,15": {
+          "floor": "concrete"
+        },
+        "17,16": {
+          "floor": "concrete"
+        },
+        "17,17": {
+          "floor": "concrete"
+        },
+        "17,18": {
+          "floor": "concrete"
+        },
+        "17,19": {
+          "floor": "concrete"
+        },
+        "17,2": {
+          "floor": "concrete"
+        },
+        "17,20": {
+          "floor": "concrete"
+        },
+        "17,21": {
+          "floor": "tiles",
+          "things": [
+            {
+              "type": "wall"
+            }
+          ]
+        },
+        "17,22": {
+          "floor": "tiles"
+        },
+        "17,23": {
+          "floor": "tiles"
+        },
+        "17,24": {
+          "floor": "tiles"
+        },
+        "17,25": {
+          "floor": "tiles"
+        },
+        "17,26": {
+          "floor": "tiles",
+          "things": [
+            {
+              "type": "wall"
+            }
+          ]
+        },
+        "17,27": {
+          "floor": "tiles",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "wall"
+            }
+          ]
+        },
+        "17,28": {
+          "floor": "concrete"
+        },
+        "17,3": {
+          "floor": "concrete"
+        },
+        "17,4": {
+          "floor": "concrete"
+        },
+        "17,5": {
+          "floor": "concrete"
+        },
+        "17,6": {
+          "floor": "concrete"
+        },
+        "17,7": {
+          "floor": "concrete"
+        },
+        "17,8": {
+          "floor": "concrete"
+        },
+        "17,9": {
+          "floor": "concrete"
+        },
+        "18,0": {
+          "floor": "concrete"
+        },
+        "18,1": {
+          "floor": "concrete"
+        },
+        "18,10": {
+          "floor": "concrete"
+        },
+        "18,11": {
+          "floor": "concrete"
+        },
+        "18,12": {
+          "floor": "concrete"
+        },
+        "18,13": {
+          "floor": "concrete"
+        },
+        "18,14": {
+          "floor": "concrete"
+        },
+        "18,15": {
+          "floor": "concrete"
+        },
+        "18,16": {
+          "floor": "concrete"
+        },
+        "18,17": {
+          "floor": "concrete"
+        },
+        "18,18": {
+          "floor": "concrete"
+        },
+        "18,19": {
+          "floor": "concrete"
+        },
+        "18,2": {
+          "floor": "concrete"
+        },
+        "18,20": {
+          "floor": "concrete"
+        },
+        "18,21": {
+          "floor": "tiles",
+          "things": [
+            {
+              "type": "wall"
+            }
+          ]
+        },
+        "18,22": {
+          "floor": "tiles"
+        },
+        "18,23": {
+          "floor": "tiles"
+        },
+        "18,24": {
+          "floor": "tiles"
+        },
+        "18,25": {
+          "floor": "tiles"
+        },
+        "18,26": {
+          "floor": "tiles",
+          "things": [
+            {
+              "rotate": 270,
+              "type": "wall"
+            }
+          ]
+        },
+        "18,27": {
+          "floor": "tiles",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "wall"
+            },
+            {
+              "rotate": 270,
+              "type": "wall"
+            }
+          ]
+        },
+        "18,28": {
+          "floor": "concrete"
+        },
+        "18,3": {
+          "floor": "concrete"
+        },
+        "18,4": {
+          "floor": "concrete"
+        },
+        "18,5": {
+          "floor": "concrete"
+        },
+        "18,6": {
+          "floor": "concrete"
+        },
+        "18,7": {
+          "floor": "concrete"
+        },
+        "18,8": {
+          "floor": "concrete"
+        },
+        "18,9": {
+          "floor": "concrete"
+        },
+        "19,0": {
+          "floor": "concrete"
+        },
+        "19,1": {
+          "floor": "concrete"
+        },
+        "19,10": {
+          "floor": "concrete"
+        },
+        "19,11": {
+          "floor": "concrete"
+        },
+        "19,12": {
+          "floor": "concrete"
+        },
+        "19,13": {
+          "floor": "concrete"
+        },
+        "19,14": {
+          "floor": "concrete"
+        },
+        "19,15": {
+          "floor": "concrete"
+        },
+        "19,16": {
+          "floor": "concrete"
+        },
+        "19,17": {
+          "floor": "concrete"
+        },
+        "19,18": {
+          "floor": "concrete"
+        },
+        "19,19": {
+          "floor": "concrete"
+        },
+        "19,2": {
+          "floor": "concrete"
+        },
+        "19,20": {
+          "floor": "concrete"
+        },
+        "19,21": {
+          "floor": "tiles",
+          "things": [
+            {
+              "type": "wall"
+            },
+            {
+              "rotate": 90,
+              "type": "wall"
+            }
+          ]
+        },
+        "19,22": {
+          "floor": "tiles",
+          "things": [
+            {
+              "rotate": 90,
+              "type": "wall"
+            }
+          ]
+        },
+        "19,23": {
+          "floor": "tiles",
+          "things": [
+            {
+              "rotate": 90,
+              "type": "wall"
+            }
+          ]
+        },
+        "19,24": {
+          "floor": "tiles",
+          "things": [
+            {
+              "rotate": 90,
+              "type": "wall"
+            }
+          ]
+        },
+        "19,25": {
+          "floor": "tiles",
+          "things": [
+            {
+              "rotate": 90,
+              "type": "wall"
+            }
+          ]
+        },
+        "19,26": {
+          "floor": "tiles",
+          "things": [
+            {
+              "type": "wall"
+            }
+          ]
+        },
+        "19,27": {
+          "floor": "tiles",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "wall"
+            }
+          ]
+        },
+        "19,28": {
+          "floor": "concrete"
+        },
+        "19,3": {
+          "floor": "concrete"
+        },
+        "19,4": {
+          "floor": "concrete"
+        },
+        "19,5": {
+          "floor": "concrete"
+        },
+        "19,6": {
+          "floor": "concrete"
+        },
+        "19,7": {
+          "floor": "concrete"
+        },
+        "19,8": {
+          "floor": "concrete"
+        },
+        "19,9": {
+          "floor": "concrete"
+        },
+        "2,0": {
+          "floor": "concrete"
+        },
+        "2,1": {
+          "floor": "concrete"
+        },
+        "2,10": {
+          "floor": "concrete"
+        },
+        "2,11": {
+          "floor": "concrete"
+        },
+        "2,12": {
+          "floor": "concrete"
+        },
+        "2,13": {
+          "floor": "concrete"
+        },
+        "2,14": {
+          "floor": "concrete"
+        },
+        "2,15": {
+          "floor": "concrete"
+        },
+        "2,16": {
+          "floor": "concrete"
+        },
+        "2,17": {
+          "floor": "concrete"
+        },
+        "2,18": {
+          "floor": "concrete"
+        },
+        "2,19": {
+          "floor": "concrete"
+        },
+        "2,2": {
+          "floor": "concrete"
+        },
+        "2,20": {
+          "floor": "concrete"
+        },
+        "2,21": {
+          "floor": "tiles",
+          "things": [
+            {
+              "type": "wall"
+            },
+            {
+              "rotate": 270,
+              "type": "wall"
+            }
+          ]
+        },
+        "2,22": {
+          "floor": "tiles",
+          "things": [
+            {
+              "rotate": 270,
+              "type": "wall"
+            }
+          ]
+        },
+        "2,23": {
+          "floor": "tiles",
+          "things": [
+            {
+              "rotate": 270,
+              "type": "wall"
+            }
+          ]
+        },
+        "2,24": {
+          "floor": "tiles",
+          "things": [
+            {
+              "rotate": 270,
+              "type": "wall"
+            }
+          ]
+        },
+        "2,25": {
+          "floor": "tiles",
+          "things": [
+            {
+              "rotate": 270,
+              "type": "wall"
+            }
+          ]
+        },
+        "2,26": {
+          "floor": "tiles",
+          "things": [
+            {
+              "rotate": 270,
+              "type": "wall"
+            }
+          ]
+        },
+        "2,27": {
+          "floor": "tiles",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "wall"
+            },
+            {
+              "rotate": 270,
+              "type": "wall"
+            }
+          ]
+        },
+        "2,28": {
+          "floor": "concrete"
+        },
+        "2,3": {
+          "floor": "concrete"
+        },
+        "2,4": {
+          "floor": "concrete"
+        },
+        "2,5": {
+          "floor": "concrete"
+        },
+        "2,6": {
+          "floor": "concrete"
+        },
+        "2,7": {
+          "floor": "concrete"
+        },
+        "2,8": {
+          "floor": "concrete"
+        },
+        "2,9": {
+          "floor": "concrete"
+        },
+        "20,0": {
+          "floor": "concrete"
+        },
+        "20,1": {
+          "floor": "concrete"
+        },
+        "20,10": {
+          "floor": "concrete"
+        },
+        "20,11": {
+          "floor": "concrete"
+        },
+        "20,12": {
+          "floor": "concrete"
+        },
+        "20,13": {
+          "floor": "concrete"
+        },
+        "20,14": {
+          "floor": "concrete"
+        },
+        "20,15": {
+          "floor": "concrete"
+        },
+        "20,16": {
+          "floor": "concrete"
+        },
+        "20,17": {
+          "floor": "concrete"
+        },
+        "20,18": {
+          "floor": "concrete"
+        },
+        "20,19": {
+          "floor": "concrete"
+        },
+        "20,2": {
+          "floor": "concrete"
+        },
+        "20,20": {
+          "floor": "concrete"
+        },
+        "20,21": {
+          "floor": "concrete"
+        },
+        "20,22": {
+          "floor": "concrete"
+        },
+        "20,23": {
+          "floor": "concrete"
+        },
+        "20,24": {
+          "floor": "concrete"
+        },
+        "20,25": {
+          "floor": "concrete"
+        },
+        "20,26": {
+          "floor": "concrete"
+        },
+        "20,27": {
+          "floor": "concrete"
+        },
+        "20,28": {
+          "floor": "concrete"
+        },
+        "20,3": {
+          "floor": "concrete"
+        },
+        "20,4": {
+          "floor": "concrete"
+        },
+        "20,5": {
+          "floor": "concrete"
+        },
+        "20,6": {
+          "floor": "concrete"
+        },
+        "20,7": {
+          "floor": "concrete"
+        },
+        "20,8": {
+          "floor": "concrete"
+        },
+        "20,9": {
+          "floor": "concrete"
+        },
+        "21,0": {
+          "floor": "concrete"
+        },
+        "21,1": {
+          "floor": "concrete"
+        },
+        "21,10": {
+          "floor": "concrete"
+        },
+        "21,11": {
+          "floor": "concrete"
+        },
+        "21,12": {
+          "floor": "concrete"
+        },
+        "21,13": {
+          "floor": "concrete"
+        },
+        "21,14": {
+          "floor": "concrete"
+        },
+        "21,15": {
+          "floor": "concrete"
+        },
+        "21,16": {
+          "floor": "concrete"
+        },
+        "21,17": {
+          "floor": "concrete"
+        },
+        "21,18": {
+          "floor": "concrete"
+        },
+        "21,19": {
+          "floor": "concrete"
+        },
+        "21,2": {
+          "floor": "concrete"
+        },
+        "21,20": {
+          "floor": "concrete"
+        },
+        "21,21": {
+          "floor": "concrete"
+        },
+        "21,22": {
+          "floor": "concrete"
+        },
+        "21,23": {
+          "floor": "concrete"
+        },
+        "21,24": {
+          "floor": "concrete"
+        },
+        "21,25": {
+          "floor": "concrete"
+        },
+        "21,26": {
+          "floor": "concrete"
+        },
+        "21,27": {
+          "floor": "concrete"
+        },
+        "21,28": {
+          "floor": "concrete"
+        },
+        "21,3": {
+          "floor": "concrete"
+        },
+        "21,4": {
+          "floor": "concrete"
+        },
+        "21,5": {
+          "floor": "concrete"
+        },
+        "21,6": {
+          "floor": "concrete"
+        },
+        "21,7": {
+          "floor": "concrete"
+        },
+        "21,8": {
+          "floor": "concrete"
+        },
+        "21,9": {
+          "floor": "concrete"
+        },
+        "22,0": {
+          "floor": "concrete"
+        },
+        "22,1": {
+          "floor": "concrete"
+        },
+        "22,10": {
+          "floor": "concrete"
+        },
+        "22,11": {
+          "floor": "concrete"
+        },
+        "22,12": {
+          "floor": "concrete"
+        },
+        "22,13": {
+          "floor": "concrete"
+        },
+        "22,14": {
+          "floor": "concrete"
+        },
+        "22,15": {
+          "floor": "concrete"
+        },
+        "22,16": {
+          "floor": "concrete"
+        },
+        "22,17": {
+          "floor": "concrete"
+        },
+        "22,18": {
+          "floor": "concrete"
+        },
+        "22,19": {
+          "floor": "concrete"
+        },
+        "22,2": {
+          "floor": "concrete"
+        },
+        "22,20": {
+          "floor": "concrete"
+        },
+        "22,21": {
+          "floor": "concrete"
+        },
+        "22,22": {
+          "floor": "concrete"
+        },
+        "22,23": {
+          "floor": "concrete"
+        },
+        "22,24": {
+          "floor": "concrete"
+        },
+        "22,25": {
+          "floor": "concrete"
+        },
+        "22,26": {
+          "floor": "concrete"
+        },
+        "22,27": {
+          "floor": "concrete"
+        },
+        "22,28": {
+          "floor": "concrete"
+        },
+        "22,3": {
+          "floor": "concrete"
+        },
+        "22,4": {
+          "floor": "concrete"
+        },
+        "22,5": {
+          "floor": "concrete"
+        },
+        "22,6": {
+          "floor": "concrete"
+        },
+        "22,7": {
+          "floor": "concrete"
+        },
+        "22,8": {
+          "floor": "concrete"
+        },
+        "22,9": {
+          "floor": "concrete",
+          "things": [
+            {
+              "type": "gas station tank access"
+            }
+          ]
+        },
+        "23,0": {
+          "floor": "concrete"
+        },
+        "23,1": {
+          "floor": "concrete"
+        },
+        "23,10": {
+          "floor": "concrete"
+        },
+        "23,11": {
+          "floor": "concrete"
+        },
+        "23,12": {
+          "floor": "concrete"
+        },
+        "23,13": {
+          "floor": "concrete"
+        },
+        "23,14": {
+          "floor": "concrete"
+        },
+        "23,15": {
+          "floor": "concrete"
+        },
+        "23,16": {
+          "floor": "concrete"
+        },
+        "23,17": {
+          "floor": "concrete"
+        },
+        "23,18": {
+          "floor": "concrete"
+        },
+        "23,19": {
+          "floor": "concrete"
+        },
+        "23,2": {
+          "floor": "concrete"
+        },
+        "23,20": {
+          "floor": "concrete"
+        },
+        "23,21": {
+          "floor": "concrete"
+        },
+        "23,22": {
+          "floor": "concrete"
+        },
+        "23,23": {
+          "floor": "concrete"
+        },
+        "23,24": {
+          "floor": "concrete"
+        },
+        "23,25": {
+          "floor": "concrete"
+        },
+        "23,26": {
+          "floor": "concrete"
+        },
+        "23,27": {
+          "floor": "concrete"
+        },
+        "23,28": {
+          "floor": "concrete"
+        },
+        "23,3": {
+          "floor": "concrete"
+        },
+        "23,4": {
+          "floor": "concrete"
+        },
+        "23,5": {
+          "floor": "concrete"
+        },
+        "23,6": {
+          "floor": "concrete"
+        },
+        "23,7": {
+          "floor": "concrete"
+        },
+        "23,8": {
+          "floor": "concrete"
+        },
+        "23,9": {
+          "floor": "concrete"
+        },
+        "24,0": {
+          "floor": "concrete"
+        },
+        "24,1": {
+          "floor": "concrete"
+        },
+        "24,10": {
+          "floor": "concrete"
+        },
+        "24,11": {
+          "floor": "concrete"
+        },
+        "24,12": {
+          "floor": "concrete"
+        },
+        "24,13": {
+          "floor": "concrete"
+        },
+        "24,14": {
+          "floor": "concrete"
+        },
+        "24,15": {
+          "floor": "concrete"
+        },
+        "24,16": {
+          "floor": "concrete"
+        },
+        "24,17": {
+          "floor": "concrete"
+        },
+        "24,18": {
+          "floor": "concrete"
+        },
+        "24,19": {
+          "floor": "concrete"
+        },
+        "24,2": {
+          "floor": "concrete"
+        },
+        "24,20": {
+          "floor": "concrete"
+        },
+        "24,21": {
+          "floor": "concrete"
+        },
+        "24,22": {
+          "floor": "concrete"
+        },
+        "24,23": {
+          "floor": "concrete"
+        },
+        "24,24": {
+          "floor": "concrete"
+        },
+        "24,25": {
+          "floor": "concrete"
+        },
+        "24,26": {
+          "floor": "concrete"
+        },
+        "24,27": {
+          "floor": "concrete"
+        },
+        "24,28": {
+          "floor": "concrete"
+        },
+        "24,3": {
+          "floor": "concrete"
+        },
+        "24,4": {
+          "floor": "concrete"
+        },
+        "24,5": {
+          "floor": "concrete"
+        },
+        "24,6": {
+          "floor": "concrete"
+        },
+        "24,7": {
+          "floor": "concrete"
+        },
+        "24,8": {
+          "floor": "concrete"
+        },
+        "24,9": {
+          "floor": "concrete"
+        },
+        "25,0": {
+          "floor": "concrete"
+        },
+        "26,0": {
+          "floor": "concrete"
+        },
+        "27,0": {
+          "floor": "concrete"
+        },
+        "28,0": {
+          "floor": "concrete"
+        },
+        "29,0": {
+          "floor": "concrete"
+        },
+        "3,0": {
+          "floor": "concrete"
+        },
+        "3,1": {
+          "floor": "concrete"
+        },
+        "3,10": {
+          "floor": "concrete"
+        },
+        "3,11": {
+          "floor": "concrete"
+        },
+        "3,12": {
+          "floor": "concrete"
+        },
+        "3,13": {
+          "floor": "concrete"
+        },
+        "3,14": {
+          "floor": "concrete"
+        },
+        "3,15": {
+          "floor": "concrete"
+        },
+        "3,16": {
+          "floor": "concrete"
+        },
+        "3,17": {
+          "floor": "concrete"
+        },
+        "3,18": {
+          "floor": "concrete"
+        },
+        "3,19": {
+          "floor": "concrete"
+        },
+        "3,2": {
+          "floor": "concrete"
+        },
+        "3,20": {
+          "floor": "concrete"
+        },
+        "3,21": {
+          "floor": "tiles",
+          "things": [
+            {
+              "type": "window"
+            }
+          ]
+        },
+        "3,22": {
+          "floor": "tiles"
+        },
+        "3,23": {
+          "floor": "tiles"
+        },
+        "3,24": {
+          "floor": "tiles"
+        },
+        "3,25": {
+          "floor": "tiles"
+        },
+        "3,26": {
+          "floor": "tiles"
+        },
+        "3,27": {
+          "floor": "tiles",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "wall"
+            }
+          ]
+        },
+        "3,28": {
+          "floor": "concrete"
+        },
+        "3,3": {
+          "floor": "concrete"
+        },
+        "3,4": {
+          "floor": "concrete"
+        },
+        "3,5": {
+          "floor": "concrete"
+        },
+        "3,6": {
+          "floor": "concrete"
+        },
+        "3,7": {
+          "floor": "concrete"
+        },
+        "3,8": {
+          "floor": "concrete"
+        },
+        "3,9": {
+          "floor": "concrete"
+        },
+        "4,0": {
+          "floor": "concrete"
+        },
+        "4,1": {
+          "floor": "concrete"
+        },
+        "4,10": {
+          "floor": "concrete"
+        },
+        "4,11": {
+          "floor": "concrete"
+        },
+        "4,12": {
+          "floor": "concrete"
+        },
+        "4,13": {
+          "floor": "concrete"
+        },
+        "4,14": {
+          "floor": "concrete"
+        },
+        "4,15": {
+          "floor": "concrete"
+        },
+        "4,16": {
+          "floor": "concrete"
+        },
+        "4,17": {
+          "floor": "concrete"
+        },
+        "4,18": {
+          "floor": "concrete"
+        },
+        "4,19": {
+          "floor": "concrete"
+        },
+        "4,2": {
+          "floor": "concrete"
+        },
+        "4,20": {
+          "floor": "concrete"
+        },
+        "4,21": {
+          "floor": "tiles",
+          "things": [
+            {
+              "type": "wall"
+            }
+          ]
+        },
+        "4,22": {
+          "floor": "tiles"
+        },
+        "4,23": {
+          "floor": "tiles"
+        },
+        "4,24": {
+          "floor": "tiles"
+        },
+        "4,25": {
+          "floor": "tiles"
+        },
+        "4,26": {
+          "floor": "tiles"
+        },
+        "4,27": {
+          "floor": "tiles",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "wall"
+            }
+          ]
+        },
+        "4,28": {
+          "floor": "concrete"
+        },
+        "4,3": {
+          "floor": "concrete"
+        },
+        "4,4": {
+          "floor": "concrete"
+        },
+        "4,5": {
+          "floor": "concrete"
+        },
+        "4,6": {
+          "floor": "concrete"
+        },
+        "4,7": {
+          "floor": "concrete"
+        },
+        "4,8": {
+          "floor": "concrete"
+        },
+        "4,9": {
+          "floor": "concrete"
+        },
+        "5,0": {
+          "floor": "concrete"
+        },
+        "5,1": {
+          "floor": "concrete"
+        },
+        "5,10": {
+          "floor": "concrete"
+        },
+        "5,11": {
+          "floor": "concrete"
+        },
+        "5,12": {
+          "floor": "concrete"
+        },
+        "5,13": {
+          "floor": "concrete"
+        },
+        "5,14": {
+          "floor": "concrete"
+        },
+        "5,15": {
+          "floor": "concrete"
+        },
+        "5,16": {
+          "floor": "concrete"
+        },
+        "5,17": {
+          "floor": "concrete"
+        },
+        "5,18": {
+          "floor": "concrete"
+        },
+        "5,19": {
+          "floor": "concrete"
+        },
+        "5,2": {
+          "floor": "concrete"
+        },
+        "5,20": {
+          "floor": "concrete"
+        },
+        "5,21": {
+          "floor": "tiles",
+          "things": [
+            {
+              "type": "window"
+            }
+          ]
+        },
+        "5,22": {
+          "floor": "tiles"
+        },
+        "5,23": {
+          "floor": "tiles"
+        },
+        "5,24": {
+          "floor": "tiles"
+        },
+        "5,25": {
+          "floor": "tiles"
+        },
+        "5,26": {
+          "floor": "tiles"
+        },
+        "5,27": {
+          "floor": "tiles",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "wall"
+            }
+          ]
+        },
+        "5,28": {
+          "floor": "concrete"
+        },
+        "5,3": {
+          "floor": "concrete"
+        },
+        "5,4": {
+          "floor": "concrete"
+        },
+        "5,5": {
+          "floor": "concrete"
+        },
+        "5,6": {
+          "floor": "concrete"
+        },
+        "5,7": {
+          "floor": "concrete"
+        },
+        "5,8": {
+          "floor": "concrete"
+        },
+        "5,9": {
+          "floor": "concrete"
+        },
+        "6,0": {
+          "floor": "concrete"
+        },
+        "6,1": {
+          "floor": "concrete"
+        },
+        "6,10": {
+          "floor": "concrete"
+        },
+        "6,11": {
+          "floor": "concrete"
+        },
+        "6,12": {
+          "floor": "concrete"
+        },
+        "6,13": {
+          "floor": "concrete"
+        },
+        "6,14": {
+          "floor": "concrete"
+        },
+        "6,15": {
+          "floor": "concrete"
+        },
+        "6,16": {
+          "floor": "concrete"
+        },
+        "6,17": {
+          "floor": "concrete"
+        },
+        "6,18": {
+          "floor": "concrete"
+        },
+        "6,19": {
+          "floor": "concrete"
+        },
+        "6,2": {
+          "floor": "concrete"
+        },
+        "6,20": {
+          "floor": "concrete"
+        },
+        "6,21": {
+          "floor": "tiles",
+          "things": [
+            {
+              "type": "window"
+            }
+          ]
+        },
+        "6,22": {
+          "floor": "tiles"
+        },
+        "6,23": {
+          "floor": "tiles"
+        },
+        "6,24": {
+          "floor": "tiles"
+        },
+        "6,25": {
+          "floor": "tiles"
+        },
+        "6,26": {
+          "floor": "tiles"
+        },
+        "6,27": {
+          "floor": "tiles",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "wall"
+            }
+          ]
+        },
+        "6,28": {
+          "floor": "concrete"
+        },
+        "6,3": {
+          "floor": "concrete"
+        },
+        "6,4": {
+          "floor": "concrete"
+        },
+        "6,5": {
+          "floor": "concrete"
+        },
+        "6,6": {
+          "floor": "concrete"
+        },
+        "6,7": {
+          "floor": "concrete"
+        },
+        "6,8": {
+          "floor": "concrete"
+        },
+        "6,9": {
+          "floor": "concrete"
+        },
+        "7,0": {
+          "floor": "concrete"
+        },
+        "7,1": {
+          "floor": "concrete"
+        },
+        "7,10": {
+          "floor": "concrete"
+        },
+        "7,11": {
+          "floor": "concrete"
+        },
+        "7,12": {
+          "floor": "concrete"
+        },
+        "7,13": {
+          "floor": "concrete"
+        },
+        "7,14": {
+          "floor": "concrete"
+        },
+        "7,15": {
+          "floor": "concrete"
+        },
+        "7,16": {
+          "floor": "concrete"
+        },
+        "7,17": {
+          "floor": "concrete"
+        },
+        "7,18": {
+          "floor": "concrete"
+        },
+        "7,19": {
+          "floor": "concrete"
+        },
+        "7,2": {
+          "floor": "concrete"
+        },
+        "7,20": {
+          "floor": "concrete"
+        },
+        "7,21": {
+          "floor": "tiles",
+          "things": [
+            {
+              "type": "wall"
+            }
+          ]
+        },
+        "7,22": {
+          "floor": "tiles"
+        },
+        "7,23": {
+          "floor": "tiles"
+        },
+        "7,24": {
+          "floor": "tiles"
+        },
+        "7,25": {
+          "floor": "tiles"
+        },
+        "7,26": {
+          "floor": "tiles"
+        },
+        "7,27": {
+          "floor": "tiles",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "wall"
+            }
+          ]
+        },
+        "7,28": {
+          "floor": "concrete"
+        },
+        "7,3": {
+          "floor": "concrete"
+        },
+        "7,4": {
+          "floor": "concrete"
+        },
+        "7,5": {
+          "floor": "concrete"
+        },
+        "7,6": {
+          "floor": "concrete"
+        },
+        "7,7": {
+          "floor": "concrete"
+        },
+        "7,8": {
+          "floor": "concrete"
+        },
+        "7,9": {
+          "floor": "concrete"
+        },
+        "8,0": {
+          "floor": "concrete"
+        },
+        "8,1": {
+          "floor": "concrete"
+        },
+        "8,10": {
+          "floor": "concrete"
+        },
+        "8,11": {
+          "floor": "concrete"
+        },
+        "8,12": {
+          "floor": "concrete"
+        },
+        "8,13": {
+          "floor": "concrete"
+        },
+        "8,14": {
+          "floor": "concrete"
+        },
+        "8,15": {
+          "floor": "concrete"
+        },
+        "8,16": {
+          "floor": "concrete"
+        },
+        "8,17": {
+          "floor": "concrete"
+        },
+        "8,18": {
+          "floor": "concrete"
+        },
+        "8,19": {
+          "floor": "concrete"
+        },
+        "8,2": {
+          "floor": "concrete"
+        },
+        "8,20": {
+          "floor": "concrete"
+        },
+        "8,21": {
+          "floor": "tiles",
+          "things": [
+            {
+              "type": "window"
+            }
+          ]
+        },
+        "8,22": {
+          "floor": "tiles"
+        },
+        "8,23": {
+          "floor": "tiles"
+        },
+        "8,24": {
+          "floor": "tiles"
+        },
+        "8,25": {
+          "floor": "tiles"
+        },
+        "8,26": {
+          "floor": "tiles"
+        },
+        "8,27": {
+          "floor": "tiles",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "wall"
+            }
+          ]
+        },
+        "8,28": {
+          "floor": "concrete"
+        },
+        "8,3": {
+          "floor": "concrete"
+        },
+        "8,4": {
+          "floor": "concrete"
+        },
+        "8,5": {
+          "floor": "concrete"
+        },
+        "8,6": {
+          "floor": "concrete"
+        },
+        "8,7": {
+          "floor": "concrete"
+        },
+        "8,8": {
+          "floor": "concrete"
+        },
+        "8,9": {
+          "floor": "concrete"
+        },
+        "9,0": {
+          "floor": "concrete"
+        },
+        "9,1": {
+          "floor": "concrete"
+        },
+        "9,10": {
+          "floor": "concrete"
+        },
+        "9,11": {
+          "floor": "concrete"
+        },
+        "9,12": {
+          "floor": "concrete"
+        },
+        "9,13": {
+          "floor": "concrete"
+        },
+        "9,14": {
+          "floor": "concrete"
+        },
+        "9,15": {
+          "floor": "concrete"
+        },
+        "9,16": {
+          "floor": "concrete"
+        },
+        "9,17": {
+          "floor": "concrete"
+        },
+        "9,18": {
+          "floor": "concrete"
+        },
+        "9,19": {
+          "floor": "concrete"
+        },
+        "9,2": {
+          "floor": "concrete"
+        },
+        "9,20": {
+          "floor": "concrete"
+        },
+        "9,21": {
+          "floor": "tiles",
+          "things": [
+            {
+              "type": "window"
+            }
+          ]
+        },
+        "9,22": {
+          "floor": "tiles"
+        },
+        "9,23": {
+          "floor": "tiles"
+        },
+        "9,24": {
+          "floor": "tiles"
+        },
+        "9,25": {
+          "floor": "tiles"
+        },
+        "9,26": {
+          "floor": "tiles"
+        },
+        "9,27": {
+          "floor": "tiles",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "wall"
+            }
+          ]
+        },
+        "9,28": {
+          "floor": "concrete"
+        },
+        "9,3": {
+          "floor": "concrete"
+        },
+        "9,4": {
+          "floor": "concrete"
+        },
+        "9,5": {
+          "floor": "concrete"
+        },
+        "9,6": {
+          "floor": "concrete"
+        },
+        "9,7": {
+          "floor": "concrete"
+        },
+        "9,8": {
+          "floor": "concrete"
+        },
+        "9,9": {
+          "floor": "concrete"
+        }
+      },
+      "type": "city-block-half-corner",
+      "width": 30
+    },
+    "house1": {
+      "height": 31,
+      "name": "house1",
+      "tiles": {
+        "0,0": {
+          "floor": "concrete"
+        },
+        "1,0": {
+          "floor": "concrete"
+        },
+        "1,1": {
+          "floor": "deck",
+          "things": [
+            {
+              "rotate": 270,
+              "type": "deck railing"
+            },
+            {
+              "rotate": 180,
+              "type": "stairs"
+            }
+          ]
+        },
+        "1,10": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 270,
+              "type": "wall"
+            }
+          ]
+        },
+        "1,11": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 270,
+              "type": "window"
+            }
+          ]
+        },
+        "1,12": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "wall"
+            },
+            {
+              "rotate": 270,
+              "type": "wall"
+            }
+          ]
+        },
+        "1,2": {
+          "floor": "deck",
+          "things": [
+            {
+              "rotate": 270,
+              "type": "deck railing"
+            }
+          ]
+        },
+        "1,3": {
+          "floor": "deck",
+          "things": [
+            {
+              "rotate": 270,
+              "type": "deck railing"
+            }
+          ]
+        },
+        "1,4": {
+          "floor": "deck",
+          "things": [
+            {
+              "rotate": 270,
+              "type": "deck railing"
+            }
+          ]
+        },
+        "1,5": {
+          "floor": "deck",
+          "things": [
+            {
+              "rotate": 270,
+              "type": "deck railing"
+            }
+          ]
+        },
+        "1,6": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "type": "wall"
+            },
+            {
+              "rotate": 270,
+              "type": "wall"
+            }
+          ]
+        },
+        "1,7": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 270,
+              "type": "window"
+            }
+          ]
+        },
+        "1,8": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 270,
+              "type": "window"
+            }
+          ]
+        },
+        "1,9": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 270,
+              "type": "wall"
+            },
+            {
+              "rotate": 180,
+              "type": "wall"
+            }
+          ]
+        },
+        "2,0": {
+          "floor": "concrete"
+        },
+        "2,1": {
+          "floor": "deck",
+          "things": [
+            {
+              "rotate": 90,
+              "type": "deck railing"
+            },
+            {
+              "rotate": 180,
+              "type": "stairs"
+            }
+          ]
+        },
+        "2,10": {
+          "floor": "hardwood"
+        },
+        "2,11": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 90,
+              "type": "wall"
+            }
+          ]
+        },
+        "2,12": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "wall"
+            },
+            {
+              "rotate": 90,
+              "type": "wall"
+            }
+          ]
+        },
+        "2,13": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 270,
+              "type": "wall"
+            }
+          ]
+        },
+        "2,14": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 270,
+              "type": "wall"
+            },
+            {
+              "rotate": 180,
+              "type": "wall"
+            }
+          ]
+        },
+        "2,15": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 270,
+              "type": "wall"
+            }
+          ]
+        },
+        "2,16": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "wall"
+            },
+            {
+              "rotate": 270,
+              "type": "wall"
+            }
+          ]
+        },
+        "2,2": {
+          "floor": "deck"
+        },
+        "2,3": {
+          "floor": "deck"
+        },
+        "2,4": {
+          "floor": "deck"
+        },
+        "2,5": {
+          "floor": "deck"
+        },
+        "2,6": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "type": "wall"
+            }
+          ]
+        },
+        "2,7": {
+          "floor": "hardwood"
+        },
+        "2,8": {
+          "floor": "hardwood"
+        },
+        "2,9": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "wall"
+            }
+          ]
+        },
+        "3,0": {
+          "floor": "concrete"
+        },
+        "3,10": {
+          "floor": "hardwood"
+        },
+        "3,11": {
+          "floor": "hardwood"
+        },
+        "3,12": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "wall"
+            }
+          ]
+        },
+        "3,13": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 90,
+              "type": "wall"
+            }
+          ]
+        },
+        "3,14": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "wall"
+            }
+          ]
+        },
+        "3,15": {
+          "floor": "hardwood"
+        },
+        "3,16": {
+          "floor": "hardwood"
+        },
+        "3,17": {
+          "floor": "deck",
+          "things": [
+            {
+              "rotate": 90,
+              "type": "deck railing"
+            },
+            {
+              "rotate": 270,
+              "type": "deck railing"
+            },
+            {
+              "type": "stairs"
+            }
+          ]
+        },
+        "3,2": {
+          "floor": "deck",
+          "things": [
+            {
+              "type": "deck railing"
+            }
+          ]
+        },
+        "3,3": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "type": "wall"
+            },
+            {
+              "rotate": 270,
+              "type": "wall"
+            }
+          ]
+        },
+        "3,4": {
+          "floor": "hardwood"
+        },
+        "3,5": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 270,
+              "type": "wall"
+            }
+          ]
+        },
+        "3,6": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "type": "wall"
+            },
+            {
+              "rotate": 90,
+              "type": "wall"
+            }
+          ]
+        },
+        "3,7": {
+          "floor": "hardwood"
+        },
+        "3,8": {
+          "floor": "hardwood"
+        },
+        "3,9": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 90,
+              "type": "wall"
+            },
+            {
+              "rotate": 180,
+              "type": "wall"
+            }
+          ]
+        },
+        "4,0": {
+          "floor": "concrete"
+        },
+        "4,10": {
+          "floor": "hardwood"
+        },
+        "4,11": {
+          "floor": "hardwood"
+        },
+        "4,12": {
+          "floor": "hardwood"
+        },
+        "4,13": {
+          "floor": "hardwood"
+        },
+        "4,14": {
+          "floor": "hardwood"
+        },
+        "4,15": {
+          "floor": "hardwood"
+        },
+        "4,16": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "wall"
+            }
+          ]
+        },
+        "4,2": {
+          "floor": "deck",
+          "things": [
+            {
+              "type": "deck railing"
+            }
+          ]
+        },
+        "4,3": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "type": "window"
+            }
+          ]
+        },
+        "4,4": {
+          "floor": "hardwood"
+        },
+        "4,5": {
+          "floor": "hardwood"
+        },
+        "4,6": {
+          "floor": "hardwood"
+        },
+        "4,7": {
+          "floor": "hardwood"
+        },
+        "4,8": {
+          "floor": "hardwood"
+        },
+        "4,9": {
+          "floor": "hardwood"
+        },
+        "5,0": {
+          "floor": "concrete"
+        },
+        "5,10": {
+          "floor": "hardwood"
+        },
+        "5,11": {
+          "floor": "hardwood"
+        },
+        "5,12": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "wall"
+            }
+          ]
+        },
+        "5,13": {
+          "floor": "hardwood"
+        },
+        "5,14": {
+          "floor": "hardwood"
+        },
+        "5,15": {
+          "floor": "hardwood"
+        },
+        "5,16": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "window"
+            }
+          ]
+        },
+        "5,2": {
+          "floor": "deck",
+          "things": [
+            {
+              "type": "deck railing"
+            }
+          ]
+        },
+        "5,3": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "type": "wall"
+            }
+          ]
+        },
+        "5,4": {
+          "floor": "hardwood"
+        },
+        "5,5": {
+          "floor": "hardwood"
+        },
+        "5,6": {
+          "floor": "hardwood"
+        },
+        "5,7": {
+          "floor": "hardwood"
+        },
+        "5,8": {
+          "floor": "hardwood"
+        },
+        "5,9": {
+          "floor": "hardwood"
+        },
+        "6,0": {
+          "floor": "concrete"
+        },
+        "6,10": {
+          "floor": "hardwood"
+        },
+        "6,11": {
+          "floor": "hardwood"
+        },
+        "6,12": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "wall"
+            }
+          ]
+        },
+        "6,13": {
+          "floor": "hardwood"
+        },
+        "6,14": {
+          "floor": "hardwood"
+        },
+        "6,15": {
+          "floor": "hardwood"
+        },
+        "6,16": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "wall"
+            }
+          ]
+        },
+        "6,2": {
+          "floor": "deck",
+          "things": [
+            {
+              "type": "deck railing"
+            }
+          ]
+        },
+        "6,3": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "type": "wall"
+            }
+          ]
+        },
+        "6,4": {
+          "floor": "hardwood"
+        },
+        "6,5": {
+          "floor": "hardwood"
+        },
+        "6,6": {
+          "floor": "hardwood"
+        },
+        "6,7": {
+          "floor": "hardwood"
+        },
+        "6,8": {
+          "floor": "hardwood"
+        },
+        "6,9": {
+          "floor": "hardwood"
+        },
+        "7,0": {
+          "floor": "concrete"
+        },
+        "7,10": {
+          "floor": "hardwood"
+        },
+        "7,11": {
+          "floor": "hardwood"
+        },
+        "7,12": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "wall"
+            }
+          ]
+        },
+        "7,13": {
+          "floor": "hardwood"
+        },
+        "7,14": {
+          "floor": "hardwood"
+        },
+        "7,15": {
+          "floor": "hardwood"
+        },
+        "7,16": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 180,
+              "type": "window"
+            }
+          ]
+        },
+        "7,2": {
+          "floor": "deck",
+          "things": [
+            {
+              "type": "deck railing"
+            }
+          ]
+        },
+        "7,3": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "type": "window"
+            }
+          ]
+        },
+        "7,4": {
+          "floor": "hardwood"
+        },
+        "7,5": {
+          "floor": "hardwood"
+        },
+        "7,6": {
+          "floor": "hardwood"
+        },
+        "7,7": {
+          "floor": "hardwood"
+        },
+        "7,8": {
+          "floor": "hardwood"
+        },
+        "7,9": {
+          "floor": "hardwood"
+        },
+        "8,0": {
+          "floor": "concrete"
+        },
+        "8,10": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 90,
+              "type": "wall"
+            }
+          ]
+        },
+        "8,11": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 90,
+              "type": "wall"
+            }
+          ]
+        },
+        "8,12": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 90,
+              "type": "wall"
+            },
+            {
+              "rotate": 180,
+              "type": "wall"
+            }
+          ]
+        },
+        "8,13": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 90,
+              "type": "wall"
+            }
+          ]
+        },
+        "8,14": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 90,
+              "type": "wall"
+            }
+          ]
+        },
+        "8,15": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 90,
+              "type": "wall"
+            }
+          ]
+        },
+        "8,16": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 90,
+              "type": "wall"
+            },
+            {
+              "rotate": 180,
+              "type": "wall"
+            }
+          ]
+        },
+        "8,2": {
+          "floor": "deck",
+          "things": [
+            {
+              "type": "deck railing"
+            },
+            {
+              "rotate": 90,
+              "type": "deck railing"
+            }
+          ]
+        },
+        "8,3": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "type": "wall"
+            },
+            {
+              "rotate": 90,
+              "type": "wall"
+            }
+          ]
+        },
+        "8,4": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 90,
+              "type": "wall"
+            }
+          ]
+        },
+        "8,5": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 90,
+              "type": "wall"
+            }
+          ]
+        },
+        "8,6": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 90,
+              "type": "window"
+            }
+          ]
+        },
+        "8,7": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 90,
+              "type": "wall"
+            }
+          ]
+        },
+        "8,8": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 90,
+              "type": "wall"
+            },
+            {
+              "rotate": 270,
+              "type": "wall"
+            },
+            {
+              "rotate": 180,
+              "type": "stairs"
+            }
+          ]
+        },
+        "8,9": {
+          "floor": "hardwood",
+          "things": [
+            {
+              "rotate": 90,
+              "type": "wall"
+            },
+            {
+              "rotate": 180,
+              "type": "wall"
+            },
+            {
+              "rotate": 270,
+              "type": "wall"
+            },
+            {
+              "rotate": 180,
+              "type": "stairs"
+            }
+          ]
+        },
+        "9,0": {
+          "floor": "concrete"
+        }
+      },
+      "type": "city-block-half-plot",
+      "width": 10
+    }
+  },
   "things": {
     "asdf": {
       "category": "",

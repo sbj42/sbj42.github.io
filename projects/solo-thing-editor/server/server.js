@@ -23,11 +23,24 @@ app.post('/save', function(req, res) {
     console.log('Saving...');
     for (var x in req.body.things) {
         if (!req.body.things[x]) {
-            console.log('  Deleting ' + x);
-            delete db.things[x];
+            if (db.things[x]) {
+                console.log('  Deleting thing ' + x);
+                delete db.things[x];
+            }
         } else {
-            console.log('  Updating ' + x);
+            console.log('  Updating thing ' + x);
             db.things[x] = req.body.things[x];
+        }
+    }
+    for (var x in req.body.places) {
+        if (!req.body.places[x]) {
+            if (db.places[x]) {
+                console.log('  Deleting place ' + x);
+                delete db.places[x];
+            }
+        } else {
+            console.log('  Updating place ' + x);
+            db.places[x] = req.body.places[x];
         }
     }
     fs.writeFile('data/db.json', stringify(db, {space: '  '}), 'utf8', function(err) {

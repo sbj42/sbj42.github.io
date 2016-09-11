@@ -118,16 +118,9 @@ ThingDB.prototype.newThing = function() {
     var things = this._db.things();
     while (('thing' + i) in things)
         i ++;
-    var thing = this._selected ? things[this._selected] : ThingDB.NEW_TEMPLATE;
-    thing = {
-        name: 'thing' + i,
-        type: thing.type,
-        category: thing.category,
-        tags: thing.tags.slice(),
-        width: thing.width,
-        height: thing.height,
-        img: thing.img
-    };
+    var template = this._selected ? things[this._selected] : ThingDB.NEW_TEMPLATE;
+    var thing = $.extend({}, template);
+    thing.name = 'place' + i;
     if (!this._selected) {
         var c = document.createElement('canvas');
         c.width = ThingDB.TILE_PIXELS * thing.width;
@@ -157,7 +150,7 @@ ThingDB.prototype.removeThing = function(name) {
     this._update();
     var changed = this._db._changed.things;
     changed[name] = true;
-    this.save();
+    this._save();
 };
 
 ThingDB.prototype.changeThing = function(name, data) {

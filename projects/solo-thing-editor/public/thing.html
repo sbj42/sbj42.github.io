@@ -1,126 +1,127 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>Solo Thing Editor</title>
-  <link rel="stylesheet" href="css/common.css" media="screen">
-  <link rel="stylesheet" href="css/thing.css" media="screen">
-  <link rel="stylesheet" href="css/thingdb.css" media="screen">
-  <link rel="stylesheet" href="css/thingedit.css" media="screen">
-  <script type="text/javascript" src="lib/jquery-3.1.0.min.js"></script>
-  <script type="text/javascript" src="js/db.js"></script>
-  <script type="text/javascript" src="js/thingdb.js"></script>
-  <script type="text/javascript" src="js/thingedit.js"></script>
+    <meta charset="utf-8">
+    <title>Solo Thing Editor</title>
+    <link rel="stylesheet" href="css/common.css" media="screen">
+    <link rel="stylesheet" href="css/thing.css" media="screen">
+    <link rel="stylesheet" href="css/thingdb.css" media="screen">
+    <link rel="stylesheet" href="css/thingedit.css" media="screen">
+    <script type="text/javascript" src="lib/jquery-3.1.0.min.js"></script>
+    <script type="text/javascript" src="js/util.js"></script>
+    <script type="text/javascript" src="js/db.js"></script>
+    <script type="text/javascript" src="js/thingdb.js"></script>
+    <script type="text/javascript" src="js/thingedit.js"></script>
 </head>
 <body>
-  <div id="title">Solo Thing Editor</div>
-  <div class="wait ifwait">Please wait...</div>
-  <div class="main ifnowait hide">
-    <div class="thingdb">
-      <div class="search">
-        <div class="title">Thing Search</div>
-        <div class="body">
-          <table><tbody><tr>
-            <td>Name:</td>
-            <td><input type="text" name="name" value=""></td>
-          </tr><tr>
-            <td>Type:</td>
-            <td><input type="text" name="type" value=""></td>
-          </tr><tr>
-            <td>Category:</td>
-            <td><input type="text" name="category" value=""></td>
-          </tr><tr>
-            <td>Tags:</td>
-            <td><input type="text" name="tags" value=""></td>
-          </tr></tbody></table>
+    <div id="title">Solo Thing Editor</div>
+    <div class="wait ifwait">Please wait...</div>
+    <div class="main ifnowait hide">
+        <div class="thingdb">
+            <div class="search box">
+                <div class="title">Thing Search</div>
+                <div class="body">
+                    <table><tbody><tr>
+                        <td>Name:</td>
+                        <td><input type="text" name="name" value=""></td>
+                    </tr><tr>
+                        <td>Type:</td>
+                        <td><input type="text" name="type" value=""></td>
+                    </tr><tr>
+                        <td>Category:</td>
+                        <td><input type="text" name="category" value=""></td>
+                    </tr><tr>
+                        <td>Tags:</td>
+                        <td><input type="text" name="tags" value=""></td>
+                    </tr></tbody></table>
+                </div>
+                <div class="buttons">
+                    <input type="button" name="reset" value="reset">
+                </div>
+            </div>
+            <div class="results box">
+                <div class="title">Thing Results</div>
+                <div class="body">
+                    <table class="table"><thead>
+                        <th>Img</th><th class="namecol">Name</th><th class="typecol">Type</th><th class="categorycol">Category</th>
+                    </thead><tbody>
+                    </tbody></table>
+                </div>
+                <div class="buttons">
+                </div>
+            </div>
         </div>
-        <div class="buttons">
-          <input type="button" name="reset" value="reset">
+        <div class="thingedit">
+            <div class="info box">
+                <div class="buttons">
+                    <span class="ifthing">
+                        <input type="button" name="remove" value="remove">
+                    </span>
+                    <input type="button" name="new" value="new">
+                </div>
+                <div class="title">Thing Info</div>
+                <div class="ifthing">
+                    Name:<input type="text" name="name" value="test">
+                    Type:<select name="type"></select>
+                    Category:<input type="text" name="category" value="test" size="11">
+                    Tags:<input type="text" name="tags" value="test">
+                    W:<input type="text" style="text-align: right;" size="2" name="width" value="test">
+                    H:<input type="text" style="text-align: right;" size="2" name="height" value="test">
+                    <br/>
+                    <label class="blocksvision"><input type="checkbox">block-vis</label>
+                    <label class="blocksmovement"><input type="checkbox">block-mov</label>
+                </div>
+                <div class="ifnothing">
+                    No thing selected
+                </div>
+            </div>
+            <div class="notinfo">
+                <div class="sample box">
+                    <div class="canonfloat ifthing">
+                        <canvas class="canon doubleup"></canvas><br/>
+                    </div>
+                    <div class="title">Sample</div>
+                    <div class="body ifthing">
+                        <canvas class="demo doubleup"></canvas><br/>
+                        <div class="ifnofloor">Floor:<select name="floor"></select></div>
+                        <input type="button" name="rotate" value="rotate"><br/>
+                    </div>
+                </div>
+                <div class="image box">
+                    <div class="title">Image</div>
+                    <div class="body ifthing">
+                        <canvas class="canvas"></canvas>
+                    </div>
+                </div>
+                <div class="tools box">
+                    <div class="title">Tools</div>
+                    <div class="body ifthing">
+                        <input type="button" name="lock" value="lock"><br/>
+                        <input type="button" name="draw" value="draw"><br/>
+                        <input type="button" name="mix" value="mix"><br/>
+                        <input type="button" name="sample" value="sample"><br/>
+                        <label class="importlabel">import</label>
+                        <input class="importfile" type="file" name="import">
+                        <input type="button" name="export" value="export"><br/>
+                        <canvas class="curcolor"></canvas>
+                        H:<input type="text" name="h" value="0" size="2"><br/>
+                        S:<input type="text" name="s" value="0" size="2"><br/>
+                        L:<input type="text" name="l" value="0" size="2"><br/>
+                        A:<input type="text" name="a" value="0" size="2"><br/>
+                        <div class="recent"></div>
+                        <div class="palette"></div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="results">
-        <div class="title">Thing Results</div>
-        <div class="body">
-          <table class="table"><thead>
-            <th>Img</th><th class="namecol">Name</th><th class="typecol">Type</th><th class="categorycol">Category</th>
-          </thead><tbody>
-          </tbody></table>
-        </div>
-        <div class="buttons">
-        </div>
-      </div>
     </div>
-    <div class="thingedit">
-      <div class="info">
-        <div class="buttons">
-          <span class="ifthing">
-            <input type="button" name="remove" value="remove">
-          </span>
-          <input type="button" name="new" value="new">
-        </div>
-        <div class="title">Thing Info</div>
-        <div class="ifthing">
-          Name:<input type="text" name="name" value="test">
-          Type:<select name="type"></select>
-          Category:<input type="text" name="category" value="test" size="11">
-          Tags:<input type="text" name="tags" value="test">
-          W:<input type="text" style="text-align: right;" size="2" name="width" value="test">
-          H:<input type="text" style="text-align: right;" size="2" name="height" value="test">
-          <br/>
-          <label class="blocksvision"><input type="checkbox">block-vis</label>
-          <label class="blocksmovement"><input type="checkbox">block-mov</label>
-        </div>
-        <div class="ifnothing">
-          No thing selected
-        </div>
-      </div>
-      <div class="imgarea">
-        <div class="sample">
-          <div class="canonfloat ifthing">
-            <canvas class="canon doubleup"></canvas><br/>
-          </div>
-          <div class="title">Sample</div>
-          <div class="body ifthing">
-            <canvas class="demo doubleup"></canvas><br/>
-            <div class="ifnofloor">Floor:<select name="floor"></select></div>
-            <input type="button" name="rotate" value="rotate"><br/>
-          </div>
-        </div>
-        <div class="image">
-          <div class="title">Image</div>
-          <div class="body ifthing">
-            <canvas class="canvas"></canvas>
-          </div>
-        </div>
-        <div class="tools">
-          <div class="title">Tools</div>
-          <div class="body ifthing">
-            <input type="button" name="lock" value="lock"><br/>
-            <input type="button" name="draw" value="draw"><br/>
-            <input type="button" name="mix" value="mix"><br/>
-            <input type="button" name="sample" value="sample"><br/>
-            <label class="importlabel">import</label>
-            <input class="importfile" type="file" name="import">
-            <input type="button" name="export" value="export"><br/>
-            <canvas class="curcolor"></canvas>
-            H:<input type="text" name="h" value="0" size="2"><br/>
-            S:<input type="text" name="s" value="0" size="2"><br/>
-            L:<input type="text" name="l" value="0" size="2"><br/>
-            A:<input type="text" name="a" value="0" size="2"><br/>
-            <div class="recent"></div>
-            <div class="palette"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <script type="text/javascript">
+    <script type="text/javascript">
     $(window).ready(function() {
-      var db = DB();
-      var thingdb = ThingDB(db, $('.thingdb'));
-      var edit = ThingEdit(thingdb, $('.thingedit'));
-      db.load();
+        var db = DB();
+        var thingdb = ThingDB(db, $('.thingdb'));
+        var edit = ThingEdit(thingdb, $('.thingedit'));
+        db.load();
     });
-  </script>
+    </script>
 </body>
 </html>

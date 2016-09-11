@@ -1,4 +1,4 @@
-/* global ThingDB */
+/* global ThingDB, util */
 function ThingEdit(db, elem) {
     if (!(this instanceof ThingEdit))
         return new ThingEdit(db, elem);
@@ -110,56 +110,6 @@ ThingEdit.PALETTE = [
     [330,  60,  60, 100]
 ];
 
-ThingEdit._hslToRgb = function(h, s, l) {
-  // based on https://stackoverflow.com/questions/2353211/hsl-to-rgb-color-conversion#9493060
-    function hue2rgb(p, q, t) {
-        if(t < 0) t += 1;
-        if(t > 1) t -= 1;
-        if(t < 1/6) return p + (q - p) * 6 * t;
-        if(t < 1/2) return q;
-        if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
-        return p;
-    }
-
-    h /= 360; s /= 100; l /= 100;
-    var r, g, b;
-
-    if (s == 0) {
-        r = g = b = l; // achromatic
-    } else {
-
-        var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-        var p = 2 * l - q;
-        r = hue2rgb(p, q, h + 1/3);
-        g = hue2rgb(p, q, h);
-        b = hue2rgb(p, q, h - 1/3);
-    }
-
-    return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
-};
-
-ThingEdit._rgbToHsl = function(r, g, b) {
-    // based on https://stackoverflow.com/questions/2353211/hsl-to-rgb-color-conversion#9493060
-    r /= 255, g /= 255, b /= 255;
-    var max = Math.max(r, g, b), min = Math.min(r, g, b);
-    var h, s, l = (max + min) / 2;
-
-    if (max == min) {
-        h = s = 0; // achromatic
-    } else {
-        var d = max - min;
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-        switch(max){
-        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-        case g: h = (b - r) / d + 2; break;
-        case b: h = (r - g) / d + 4; break;
-        }
-        h /= 6;
-    }
-
-    return [Math.round(h*360), Math.round(s*100), Math.round(l*100)];
-};
-
 ThingEdit.prototype._onInput = function () {
     var name = this._elem.find('.info input[name="name"]').prop('value').trim();
     if (!name) name = this._thing.name;
@@ -208,6 +158,7 @@ ThingEdit.prototype._renderDemo = function() {
         return;
     var thing = this._thing;
     var ctx = this._demo.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
     ctx.clearRect(0, 0, this._demo.width, this._demo.height);
     var image = new Image;
     image.src = this._thing.img;
@@ -235,7 +186,6 @@ ThingEdit.prototype._renderDemo = function() {
             var cy = this._demo.height/2;
             var x = Math.floor((this._demo.width/this._st - this._thing.width)/2) * this._st;
             var y = Math.floor((this._demo.height/this._st - this._thing.height)/2) * this._st;
-            ctx.imageSmoothingEnabled = false;
             ctx.save();
             ctx.translate(cx, cy);
             ctx.rotate(this._curRotate * Math.PI / 180);
@@ -255,27 +205,27 @@ ThingEdit.prototype._renderImage = function() {
     var ctx = this._canvas.getContext('2d');
     ctx.fillStyle='#000';
     ctx.fillRect(0, 0, this._canvas.width, this._canvas.height);
-    ctx.strokeStyle = '#999';
+    ctx.strokeStyle = '#777';
     ctx.lineWidth = 1;
     for (var y = 1; y < thing.height; y ++) {
         ctx.beginPath();
-        ctx.moveTo(0, y * this._t);
-        ctx.lineTo(this._canvas.width, y * this._t);
+        ctx.moveTo(0, y * this._t + 0.5);
+        ctx.lineTo(this._canvas.width, y * this._t + 0.5);
         ctx.stroke();
     }
     for (var x = 1; x < thing.width; x ++) {
         ctx.beginPath();
-        ctx.moveTo(x * this._t, 0);
-        ctx.lineTo(x * this._t, this._canvas.height);
+        ctx.moveTo(x * this._t + 0.5, 0);
+        ctx.lineTo(x * this._t + 0.5, this._canvas.height);
         ctx.stroke();
     }
     if (thing.type != ThingDB.TYPE_FLOOR) {
         ctx.strokeStyle='#666';
         ctx.lineWidth=2;
-        var d = this._p / 5;
+        var d = Math.floor(this._p / 5);
         for (var x = 0; x < ThingDB.TILE_PIXELS * thing.width; x ++) {
             for (var y = 0; y < ThingDB.TILE_PIXELS * thing.height; y ++) {
-                ctx.strokeRect(x * this._p + d, y * this._p + d, this._p - d * 2, this._p - d * 2);
+                ctx.strokeRect(x * this._p + 0.5 + d, y * this._p + 0.5 + d, this._p - 1 - d * 2, this._p - 1 - d * 2);
             }
         }
     }
@@ -287,11 +237,10 @@ ThingEdit.prototype._renderImage = function() {
         }
     }
     if (this._x != null && this._tool != 'lock') {
-        var ctx = this._canvas.getContext('2d');
         ctx.strokeStyle = 'rgba(0,0,0,0.8)';
-        ctx.strokeRect(this._x * this._p, this._y * this._p, this._p, this._p);
+        ctx.strokeRect(this._x * this._p + 0.5, this._y * this._p + 0.5, this._p - 1, this._p - 1);
         ctx.strokeStyle = 'rgba(255,255,255,0.8)';
-        ctx.strokeRect(this._x * this._p + 1, this._y * this._p + 1, this._p - 2, this._p - 2);
+        ctx.strokeRect(this._x * this._p + 1.5, this._y * this._p + 1.5, this._p - 3, this._p - 3);
     }
 };
 
@@ -300,7 +249,7 @@ ThingEdit.prototype._rerender = function () {
     this._elem.find('.info .blocksvision').toggle(!!typeInfo.canBlockVision);
     this._elem.find('.info .blocksmovement').toggle(!!typeInfo.canBlockMovement);
     this._elem.find('.sample input[name="rotate"]').toggle(!!typeInfo.canRotate);
-    var body = this._elem.find('.imgarea .image .body')[0];
+    var body = this._elem.find('.notinfo .image .body')[0];
     var pw = Math.floor((body.clientWidth - 20) / (this._thing.width * ThingDB.TILE_PIXELS));
     var ph = Math.floor((body.clientHeight - 20) / (this._thing.height * ThingDB.TILE_PIXELS));
     this._p = Math.min(pw, ph, 20);
@@ -333,12 +282,12 @@ ThingEdit.prototype._activateTool = function () {
         return ret;
     }
 
-    if (this._tool == 'lock')
+    if (this._tool == 'lock' || this._x == null)
         return;
     var ctx = this._canon.getContext('2d');
-    if (this._tool == 'sample' && this._x != null) {
+    if (this._tool == 'sample') {
         var data = ctx.getImageData(this._x, this._y, 1, 1).data;
-        var hsl = ThingEdit._rgbToHsl(data[0], data[1], data[2]);
+        var hsl = util.rgbToHsl(data[0], data[1], data[2]);
         this._setColor(hsl[0], hsl[1], hsl[2], Math.round(data[3]*100/255));
     } else {
         var hsla = this._getColor();
@@ -347,7 +296,7 @@ ThingEdit.prototype._activateTool = function () {
             ctx.fillStyle = 'hsla(' + hsla[0] + ',' + hsla[1] + '%,' + hsla[2] + '%,' + (hsla[3]/100) + ')';
         } else if (this._tool == 'mix') {
             var cur = ctx.getImageData(this._x, this._y, 1, 1).data;
-            var tgt = ThingEdit._hslToRgb(hsla[0], hsla[1], hsla[2]);
+            var tgt = util.hslToRgb(hsla[0], hsla[1], hsla[2]);
             var nxt = [mix(cur[0], tgt[0]), mix(cur[1], tgt[1]), mix(cur[2], tgt[2]), mix(cur[3]*100/255, hsla[3])];
             ctx.fillStyle = 'rgba(' + nxt[0] + ',' + nxt[1] + ',' + nxt[2] + ',' + (nxt[3]/100) + ')';
         }

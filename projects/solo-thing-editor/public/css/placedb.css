@@ -1,59 +1,50 @@
-.thingdb {
-  display: flex;
-  flex-flow: column;
+.placedb {
+    display: flex;
+    flex-flow: column;
 }
-.thingdb > .search {
-  margin: 3px;
-  border: 1px dashed #668;
-  padding: 3px;
-  height: 140px;
-  flex: none;
-  display: flex;
-  flex-flow: column;
+.placedb > .search {
+    height: 140px;
+    flex: none;
+    display: flex;
+    flex-flow: column;
 }
-.thingdb > .search > .body {
-  flex: 1;
+.placedb > .search > .body {
+    flex: 1;
 }
-.thingdb > .search > .buttons {
-  margin-left: auto;
-  flex: none;
+.placedb > .search > .buttons {
+    margin-left: auto;
+    flex: none;
 }
-.thingdb .results {
-  margin: 3px;
-  border: 1px dashed #668;
-  padding: 3px;
-  flex: 1;
-  display: flex;
-  flex-flow: column;
+.placedb > .results {
+    flex: 1;
+    display: flex;
+    flex-flow: column;
 }
-.thingdb > .results > .body {
-  flex: 1;
-  overflow-x: hidden;
-  overflow-y: auto;
+.placedb > .results > .body {
+    flex: 1;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
-.thingdb > .results .table {
-  border-collapse: collapse;
-  border-spacing: 0px;
-  width: 100%;
+.placedb > .results .table {
+    border-collapse: collapse;
+    border-spacing: 0px;
+    width: 100%;
 }
-.thingdb > .results .result > td {
-  background: #32847c;
-  border-top: 1px solid #224;
-  padding: 0px 2px;
+.placedb > .results .result > td {
+    background: #32847c;
+    border-top: 1px solid #224;
+    padding: 0px 2px;
 }
-.thingdb > .results .result > td:first-child {
-  text-align: center;
+.placedb > .results .result:first-child > td {
+    border-top: none;
 }
-.thingdb > .results .result:first-child > td {
-  border-top: none;
+.placedb > .results .result:hover > td {
+    background: #843232;
 }
-.thingdb > .results .result:hover > td {
-  background: #843232;
+.placedb > .results .result.selected > td {
+    background: #843232;
 }
-.thingdb > .results .result.selected > td {
-  background: #843232;
-}
-.thingdb > .results > .buttons {
-  margin-left: auto;
-  flex: none;
+.placedb > .results > .buttons {
+    margin-left: auto;
+    flex: none;
 }

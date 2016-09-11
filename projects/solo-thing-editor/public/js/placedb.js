@@ -16,16 +16,26 @@ function PlaceDB(db, elem) {
     this._sort = 'name';
 }
 
+PlaceDB.TYPE_CITY_BLOCK_FULL = 'city-block-full';
+PlaceDB.TYPE_CITY_BLOCK_HALF_PLOT = 'city-block-half-plot';
+PlaceDB.TYPE_CITY_BLOCK_HALF_CORNER = 'city-block-half-corner';
+
 PlaceDB.TYPE_INFO = {
     'city-block-full': {
-        width: 60,
-        height: 60
+        width: 62,
+        height: 62
     },
-    'city-half-block-plot': {
+    'city-block-half-plot': {
         minWidth: 8,
         maxWidth: 60,
         defWidth: 10,
-        height: 30
+        height: 31
+    },
+    'city-block-half-corner': {
+        minWidth: 8,
+        maxWidth: 60,
+        defWidth: 10,
+        height: 31
     }
 };
 
@@ -70,9 +80,10 @@ PlaceDB.prototype._update = function () {
 };
 
 PlaceDB.NEW_TEMPLATE = {
-    type: 'city-block',
+    type: 'city-block-full',
     width: 60,
-    height: 60
+    height: 60,
+    tiles: {}
 };
 
 PlaceDB.prototype.newPlace = function() {
@@ -80,13 +91,9 @@ PlaceDB.prototype.newPlace = function() {
     var places = this._db.places();
     while (('place' + i) in places)
         i ++;
-    var place = this._selected ? places[this._selected] : PlaceDB.NEW_TEMPLATE;
-    place = {
-        name: 'place' + i,
-        type: place.type,
-        width: place.width,
-        height: place.height
-    };
+    var template = this._selected ? places[this._selected] : PlaceDB.NEW_TEMPLATE;
+    var place = $.extend({}, template);
+    place.name = 'place' + i;
     places[place.name] = place;
     var changed = this._db._changed.places;
     changed[place.name] = true;
@@ -103,7 +110,7 @@ PlaceDB.prototype.removePlace = function(name) {
     this._update();
     var changed = this._db._changed.places;
     changed[name] = true;
-    this.save();
+    this._save();
 };
 
 PlaceDB.prototype.changePlace = function(name, data) {

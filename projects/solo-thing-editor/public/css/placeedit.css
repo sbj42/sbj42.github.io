@@ -1,86 +1,60 @@
-.thingedit {
-  display: flex;
-  flex-flow: column;
+.placeedit {
+    display: flex;
+    flex-flow: column;
 }
-.thingedit > .info {
-  margin: 3px;
-  border: 1px dashed #668;
-  padding: 3px;
-  flex: none;
+.placeedit > .info {
+    flex: none;
 }
-.thingedit > .info > .buttons {
-  float: right;
+.placeedit > .info > .buttons {
+    float: right;
 }
-.thingedit > .imgarea {
-  flex: 1;
-  display: flex;
-  flex-flow: row;
+.placeedit > .notinfo {
+    flex: 1;
+    display: flex;
+    flex-flow: row;
 }
-.thingedit > .imgarea > .sample {
-  margin: 3px;
-  border: 1px dashed #668;
-  padding: 3px;
-  width: 100px;
-  flex: none;
+.placeedit > .notinfo > .view {
+    flex: 1;
+    display: flex;
+    flex-flow: column;
 }
-.thingedit .sample .canonfloat {
-  float: right;
+.placeedit .view > .body {
+    flex: 1 auto;
+    margin: 10px;
+    position: relative;
+    overflow: auto;
 }
-.thingedit > .imgarea > .image {
-  margin: 3px;
-  border: 1px dashed #668;
-  padding: 3px;
-  flex: 1;
-  display: flex;
-  flex-flow: column;
+.placeedit .view canvas {
+    cursor: crosshair;
+    position: absolute;
 }
-.thingedit .image > .body {
-  flex: 1 auto;
-  margin: 10px;
+.placeedit .view canvas.lock-tool {
+    cursor: move;
+    cursor: grab;
 }
-.thingedit .image canvas {
-  cursor: crosshair;
+.placeedit > .notinfo > .toolbar {
+    width: 300px;
+    flex: none;
+    display: flex;
+    flex-flow: column;
 }
-.thingedit .image canvas.sample-tool {
-  cursor: pointer;
+.placeedit > .notinfo > .toolbar > .tools {
+    height: 100px;
+    flex: none;
 }
-.thingedit .image canvas.lock-tool {
-  cursor: not-allowed;
+.placeedit .tools input[type="button"] {
+    width: 100%;
 }
-.thingedit > .imgarea > .tools {
-  margin: 3px;
-  border: 1px dashed #668;
-  padding: 3px;
-  width: 100px;
-  flex: none;
+.placeedit > .notinfo > .toolbar > .thing {
+    height: 100px;
+    flex: none;
 }
-.thingedit .tools input[type="button"] {
-  width: 100%;
+.placeedit > .notinfo > .toolbar > .thing .canvasfloat {
+    float: right;
 }
-.thingedit .tools .importlabel {
-  display: block;
-  text-align: center;
-  background: #32847c;
-  padding: 1px 3px;
-  margin: 1px -1px 1px 1px;
-  border: 1px solid white;
+.placeedit > .notinfo > .toolbar > .thingdb {
+    flex: 1;
 }
-.thingedit .tools .importlabel.selected, .thingedit .tools .importlabel:hover {
-  background: #843232;
-}
-.thingedit .tools .importfile {
-   opacity: 0;
-   position: absolute;
-   z-index: -1;
-}
-.thingedit .tools .curcolor {
-  width: 100%;
-  height: 20px;
-}
-.thingedit .tools .palettecolor {
-  width: 18px;
-  height: 22px;
-  margin-right: 2px;
-  margin-bottom: 2px;
-  float: left;
+.placeedit > .notinfo > .toolbar > .tile {
+    flex: 1;
 }
