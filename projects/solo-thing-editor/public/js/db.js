@@ -24,12 +24,13 @@ DB.prototype.load = function () {
 };
 
 DB.prototype.save = function () {
-  // TODO detect failure
-  // TODO what if a save takes a while and another save comes in
+    // TODO detect failure
+    // TODO what if a save takes a while and another save comes in
     clearTimeout(this._saveTimeout);
     this._saveTimeout = setTimeout(function() {
-    //$('.ifwait').removeClass('hide');
-    //$('.ifnowait').addClass('hide');
+        $('#status').show().text('Saving...');
+        //$('.ifwait').removeClass('hide');
+        //$('.ifnowait').addClass('hide');
         var changed = {
             things: {},
             places: {}
@@ -53,8 +54,11 @@ DB.prototype.save = function () {
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify(changed)
         }).done(function() {
-      //$('.ifwait').addClass('hide');
-      //$('.ifnowait').removeClass('hide');
+            $('#status').hide();
+            //$('.ifwait').addClass('hide');
+            //$('.ifnowait').removeClass('hide');
+        }.bind(this)).fail(function(req, status) {
+            $('#status').text('Save Failed: ' + status);
         }.bind(this));
     }.bind(this), 1000);
 };

@@ -19,7 +19,9 @@ function ThingDB(db, elem) {
 ThingDB.TILE_PIXELS = 10;
 
 ThingDB.TYPE_FLOOR = 'floor';
+ThingDB.TYPE_DECORATION = 'decoration';
 ThingDB.TYPE_WATER = 'water';
+ThingDB.TYPE_WALL = 'wall';
 
 ThingDB.TYPE_INFO = {
     'creature': {
@@ -33,11 +35,19 @@ ThingDB.TYPE_INFO = {
         canRotate: 4
     },
     'floor': {
+        width: 1,
+        height: 1
     },
-    'furniture': {
+    'matter': {
         canRotate: 4,
         canBlockVision: true,
         canBlockMovement: true
+    },
+    'container': {
+        canRotate: 4,
+        canBlockVision: true,
+        canBlockMovement: true,
+        container: true
     },
     'tree': {
         canBlockVision: true,
@@ -50,10 +60,24 @@ ThingDB.TYPE_INFO = {
     'wall': {
         canRotate: 4,
         canBlockVision: true,
-        canBlockMovement: true
+        canBlockMovement: true,
+        width: 1,
+        height: 1
+    },
+    'door': {
+        canRotate: 4,
+        canFlip: true,
+        canBlockVision: true,
+        canBlockMovement: true,
+        width: 1,
+        height: 2,
+        anchorX: 0,
+        anchorY: 1
     },
     'water': {
-        canBlockMovement: true
+        canBlockMovement: true,
+        width: 6,
+        height: 3
     }
 };
 
@@ -166,9 +190,8 @@ ThingDB.prototype.changeThing = function(name, data) {
         if (this._selected == name)
             this._selected = data.name;
     }
-    data.forEach(function(value, key) {
-        thing[key] = value;
-    });
+    for (var key in data)
+        thing[key] = data[key];
     changed[thing.name] = true;
     this.select(thing.name);
     this._update();

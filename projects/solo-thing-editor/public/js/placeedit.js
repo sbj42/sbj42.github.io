@@ -35,7 +35,7 @@ function PlaceEdit(placedb, thingdb, elem) {
         .on('mouseout', this._onImageMouseOut.bind(this))
         .on('mousedown', this._onImageMouseDown.bind(this))
         .on('mouseup', this._onImageMouseUp.bind(this));
-    ['lock', 'tile', 'thing'].forEach(function(n) {
+    ['lock', 'clear', 'tile', 'thing'].forEach(function(n) {
         this._elem.find('.tools input[name="' + n + '"]')
             .on('click', this._onTool.bind(this, n));
     }, this);
@@ -47,6 +47,8 @@ function PlaceEdit(placedb, thingdb, elem) {
     $(this._thingdb).on('select', function(event, thing) {
         this._onThing(thing);
     }.bind(this));
+    this._elem.find('.thing input[name="flip"]')
+        .on('click', this._onThingFlip.bind(this));
     this._elem.find('.thing input[name="rotate"]')
         .on('click', this._onThingRotate.bind(this));
 }
@@ -204,15 +206,40 @@ PlaceEdit.prototype._renderView = function() {
         for (var y = 0; y < place.height; y ++) {
             var ay = this._margins.top + y;
             var tile = this._place.tiles[x + ',' + y];
+            if (tile && tile.decorations) {
+                tile.decorations.forEach(function(athing) {
+                    var img = getThingImg(athing.type);
+                    var thing = this._thingdb.things()[athing.type];
+                    var typeInfo = ThingDB.TYPE_INFO[thing.type];
+                    ctx.save();
+                    ctx.translate((ax + 0.5) * this._t, (ay + 0.5) * this._t);
+                    ctx.rotate((athing.rotate || 0) * Math.PI / 180);
+                    if (athing.flip)
+                        ctx.scale(-1, 1);
+                    ctx.translate(-(ax + 0.5) * this._t, -(ay + 0.5) * this._t);
+                    ctx.drawImage(img, (ax - (typeInfo.anchorX || 0)) * this._t, (ay - (typeInfo.anchorY || 0)) * this._t, thing.width * this._t, thing.height * this._t);
+                    ctx.restore();
+                }.bind(this));
+            }
+        }
+    }
+    for (var x = 0; x < place.width; x ++) {
+        var ax = this._margins.left + x;
+        for (var y = 0; y < place.height; y ++) {
+            var ay = this._margins.top + y;
+            var tile = this._place.tiles[x + ',' + y];
             if (tile && tile.things) {
                 tile.things.forEach(function(athing) {
                     var img = getThingImg(athing.type);
                     var thing = this._thingdb.things()[athing.type];
+                    var typeInfo = ThingDB.TYPE_INFO[thing.type];
                     ctx.save();
                     ctx.translate((ax + 0.5) * this._t, (ay + 0.5) * this._t);
                     ctx.rotate((athing.rotate || 0) * Math.PI / 180);
+                    if (athing.flip)
+                        ctx.scale(-1, 1);
                     ctx.translate(-(ax + 0.5) * this._t, -(ay + 0.5) * this._t);
-                    ctx.drawImage(img, ax * this._t, ay * this._t, thing.width * this._t, thing.height * this._t);
+                    ctx.drawImage(img, (ax - (typeInfo.anchorX || 0)) * this._t, (ay - (typeInfo.anchorY || 0)) * this._t, thing.width * this._t, thing.height * this._t);
                     ctx.restore();
                 }.bind(this));
             }
@@ -251,6 +278,8 @@ PlaceEdit.prototype._renderThingSample = function () {
     ctx.save();
     ctx.translate(cx, cy);
     ctx.rotate(this._thingRotate * Math.PI / 180);
+    if (this._thingFlip)
+        ctx.scale(-1, 1);
     ctx.translate(-cx, -cy);
     ctx.drawImage(image, x, y);
     ctx.restore();
@@ -282,14 +311,31 @@ PlaceEdit.prototype._rerender = function () {
 PlaceEdit.prototype._activateTool = function () {
     if (this._tool == 'lock' || this._x == null)
         return;
+    var coord = this._x + ',' + this._y;
     if (this._tool == 'thing') {
         var thing = this._thing;
         if (!thing)
             return;
-        var coord = this._x + ',' + this._y;
         this._place.tiles[coord] = this._place.tiles[coord] || {};
         if (thing.type == ThingDB.TYPE_FLOOR) {
             this._place.tiles[coord].floor = thing.name;
+        } else if (thing.type == ThingDB.TYPE_DECORATION) {
+            this._place.tiles[coord].decorations = this._place.tiles[coord].decorations || [];
+            var found = false;
+            this._place.tiles[coord].decorations.forEach(function(deco) {
+                if (deco.type == thing.name && (deco.rotate || 0) == this._thingRotate && (deco.flip || false) == this._thingFlip)
+                    found = true;
+            }.bind(this));
+            if (found)
+                return;
+            var athing = {
+                type: thing.name
+            };
+            if (this._thingRotate)
+                athing.rotate = this._thingRotate;
+            if (this._thingFlip)
+                athing.flip = this._thingFlip;
+            this._place.tiles[coord].decorations.push(athing);
         } else {
             if (coord in this._tcoords)
                 return;
@@ -300,11 +346,18 @@ PlaceEdit.prototype._activateTool = function () {
             };
             if (this._thingRotate)
                 athing.rotate = this._thingRotate;
+            if (this._thingFlip)
+                athing.flip = this._thingFlip;
             this._place.tiles[coord].things.push(athing);
         }
     } else if (this._tool == 'tile') {
         this._sx = this._x;
         this._sy = this._y;
+    } else if (this._tool == 'clear') {
+        if (coord in this._tcoords)
+            return;
+        this._tcoords[coord] = true;
+        delete this._place.tiles[coord];
     }
 };
 
@@ -392,8 +445,23 @@ PlaceEdit.prototype._onTool = function (tool, event) {
 PlaceEdit.prototype._onThing = function (thing) {
     this._thing = thing;
     this._thingRotate = 0;
+    this._thingFlip = false;
+    this._elem.find('.ifthing').toggle(!!thing);
+    this._elem.find('.ifnothing').toggle(!thing);
+    if (thing) {
+        var typeInfo = ThingDB.TYPE_INFO[this._thing.type];
+        this._elem.find('.thing .ifflip').toggle(!!typeInfo.canFlip);
+        this._elem.find('.thing .ifrotate').toggle(!!typeInfo.canRotate);
+    }
     this._onTool('thing');
     this._rerender();
+};
+
+PlaceEdit.prototype._onThingFlip = function () {
+    if (ThingDB.TYPE_INFO[this._thing.type].canFlip) {
+        this._thingFlip = !this._thingFlip;
+        this._renderThingSample();
+    }
 };
 
 PlaceEdit.prototype._onThingRotate = function () {

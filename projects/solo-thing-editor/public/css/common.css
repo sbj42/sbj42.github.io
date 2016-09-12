@@ -47,6 +47,14 @@ input:focus, select:focus {
 input[type="button"]:hover, input[type="button"].selected {
     background: #843232;
 }
+#status {
+    position: absolute;
+    right: 0px;
+    padding: 2px 15px;
+    background: #fd5252;
+    color: black;
+    display: none;
+}
 #title {
     font-weight: bold;
     margin: 3px auto;

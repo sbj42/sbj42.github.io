@@ -36,6 +36,8 @@ function ThingEdit(db, elem) {
     this._demo = this._elem.find('.sample .demo')[0];
     this._elem.find('.sample select[name="floor"]')
         .on('change', this._onFloor.bind(this));
+    this._elem.find('.sample input[name="flip"]')
+        .on('click', this._onFlip.bind(this));
     this._elem.find('.sample input[name="rotate"]')
         .on('click', this._onRotate.bind(this));
     this._elem.find('.image .canvas')
@@ -114,14 +116,17 @@ ThingEdit.prototype._onInput = function () {
     var name = this._elem.find('.info input[name="name"]').prop('value').trim();
     if (!name) name = this._thing.name;
     var type = this._elem.find('.info select[name="type"]').prop('value').trim().toLowerCase();
+    var typeInfo = ThingDB.TYPE_INFO[type];
     var category = this._elem.find('.info input[name="category"]').prop('value').trim();
     var tags = this._elem.find('.info input[name="tags"]').prop('value').trim().split(/\s*,\s*/);
     var width = parseInt(this._elem.find('.info input[name="width"]').prop('value'), 10);
     if (isNaN(width) || width < 1 || width > 7) width = this._thing.width;
+    if (typeInfo.width) width = typeInfo.width;
     var height = parseInt(this._elem.find('.info input[name="height"]').prop('value'), 10);
     if (isNaN(height) || height < 1 || height > 7) height = this._thing.height;
-    var blocksVision = ThingDB.TYPE_INFO[type].canBlockVision && this._elem.find('.info .blocksvision input').prop('checked') || undefined;
-    var blocksMovement = ThingDB.TYPE_INFO[type].canBlockMovement && this._elem.find('.info .blocksmovement input').prop('checked') || undefined;
+    if (typeInfo.height) height = typeInfo.height;
+    var blocksVision = typeInfo.canBlockVision && this._elem.find('.info .blocksvision input').prop('checked') || undefined;
+    var blocksMovement = typeInfo.canBlockMovement && this._elem.find('.info .blocksmovement input').prop('checked') || undefined;
     if (name == this._thing.name && type == this._thing.type && category == this._thing.category && tags.join(',') == this._thing.tags.join(',') && width == this._thing.width && height == this._thing.height
         && blocksVision == this._thing.blocksVision && blocksMovement == this._thing.blocksMovement)
         return;
@@ -133,7 +138,7 @@ ThingEdit.prototype._onInput = function () {
         width: width,
         height: height,
         blocksVision: blocksVision,
-        blocksMovement: blocksMovement,
+        blocksMovement: blocksMovement
     });
     this._rerender();
 };
@@ -189,6 +194,8 @@ ThingEdit.prototype._renderDemo = function() {
             ctx.save();
             ctx.translate(cx, cy);
             ctx.rotate(this._curRotate * Math.PI / 180);
+            if (this._curFlip)
+                ctx.scale(-1, 1);
             ctx.translate(-cx, -cy);
             ctx.drawImage(image, x, y);
             ctx.restore();
@@ -246,9 +253,12 @@ ThingEdit.prototype._renderImage = function() {
 
 ThingEdit.prototype._rerender = function () {
     var typeInfo = ThingDB.TYPE_INFO[this._thing.type];
+    this._elem.find('.ifwidth').toggle(!typeInfo.width);
+    this._elem.find('.ifheight').toggle(!typeInfo.height);
     this._elem.find('.info .blocksvision').toggle(!!typeInfo.canBlockVision);
     this._elem.find('.info .blocksmovement').toggle(!!typeInfo.canBlockMovement);
-    this._elem.find('.sample input[name="rotate"]').toggle(!!typeInfo.canRotate);
+    this._elem.find('.sample .ifflip').toggle(!!typeInfo.canFlip);
+    this._elem.find('.sample .ifrotate').toggle(!!typeInfo.canRotate);
     var body = this._elem.find('.notinfo .image .body')[0];
     var pw = Math.floor((body.clientWidth - 20) / (this._thing.width * ThingDB.TILE_PIXELS));
     var ph = Math.floor((body.clientHeight - 20) / (this._thing.height * ThingDB.TILE_PIXELS));
@@ -349,6 +359,7 @@ ThingEdit.prototype._onImageMouseUp = function (event) {
 ThingEdit.prototype.select = function (thing) {
     this._thing = thing;
     this._curRotate = 0;
+    this._curFlip = false;
     this._elem.find('.ifthing').toggle(!!thing);
     this._elem.find('.ifnothing').toggle(!thing);
     this._onHSLA();
@@ -377,19 +388,17 @@ ThingEdit.prototype.select = function (thing) {
 ThingEdit.prototype._updateSampleFloors = function () {
     var select = this._elem.find('.sample select[name="floor"]').empty();
     var opt = $('<option>').attr('label', '').attr('value', '')
-    .appendTo(select);
+        .appendTo(select);
     if (!this._curfloor)
         opt.attr('selected', 'selected');
     var things = this._db.things();
     for (var x in things) {
-        if (things.hasOwnProperty(x)) {
-            var thing = things[x];
-            if (thing.type == ThingDB.TYPE_FLOOR) {
-                opt = $('<option>').attr('label', x).attr('value', x)
-                    .appendTo(select);
-                if (this._curfloor == x)
-                    opt.attr('selected', 'selected');
-            }
+        var thing = things[x];
+        if (thing.type == ThingDB.TYPE_FLOOR) {
+            opt = $('<option>').attr('label', x).attr('value', x)
+                .appendTo(select);
+            if (this._curfloor == x)
+                opt.attr('selected', 'selected');
         }
     }
 };
@@ -532,6 +541,12 @@ ThingEdit.prototype._onImport = function (event) {
 
 ThingEdit.prototype._onFloor = function (event) {
     this._curfloor = this._elem.find('.sample select[name="floor"]').prop('value');
+    this._renderDemo();
+};
+
+ThingEdit.prototype._onFlip = function (event) {
+    if (ThingDB.TYPE_INFO[this._thing.type].canFlip)
+        this._curFlip = !this._curFlip;
     this._renderDemo();
 };
 

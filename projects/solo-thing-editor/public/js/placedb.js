@@ -126,9 +126,8 @@ PlaceDB.prototype.changePlace = function(name, data) {
         if (this._selected == name)
             this._selected = data.name;
     }
-    for (var key in data) {
+    for (var key in data)
         place[key] = data[key];
-    }
     changed[place.name] = true;
     this.select(place.name);
     this._update();

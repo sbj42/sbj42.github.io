@@ -16,6 +16,7 @@
     <script type="text/javascript" src="js/placeedit.js"></script>
 </head>
 <body>
+    <div id="status">Saving...</div>
     <div id="title">Solo Place Editor</div>
     <div class="wait ifwait">Please wait...</div>
     <div class="main ifnowait hide">
@@ -78,6 +79,7 @@
                         <div class="title">Tools</div>
                         <div class="body ifplace">
                             <input type="button" name="lock" value="lock"><br/>
+                            <input type="button" name="clear" value="clear"><br/>
                             <input type="button" name="tile" value="tile"><br/>
                             <input type="button" name="thing" value="thing"><br/>
                         </div>
@@ -87,8 +89,9 @@
                             <canvas class="canvas doubleup"></canvas>
                         </div>
                         <div class="title">Thing</div>
-                        <div class="body">
-                          <input type="button" name="rotate" value="rotate"><br/>
+                        <div class="body ifthing">
+                            <div class="ifflip"><input type="button" name="flip" value="flip"></div>
+                            <div class="ifrotate"><input type="button" name="rotate" value="rotate"></div>
                         </div>
                     </div>
                     <div class="thingdb">

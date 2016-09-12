@@ -14,6 +14,7 @@
     <script type="text/javascript" src="js/thingedit.js"></script>
 </head>
 <body>
+    <div id="status"></div>
     <div id="title">Solo Thing Editor</div>
     <div class="wait ifwait">Please wait...</div>
     <div class="main ifnowait hide">
@@ -65,8 +66,8 @@
                     Type:<select name="type"></select>
                     Category:<input type="text" name="category" value="test" size="11">
                     Tags:<input type="text" name="tags" value="test">
-                    W:<input type="text" style="text-align: right;" size="2" name="width" value="test">
-                    H:<input type="text" style="text-align: right;" size="2" name="height" value="test">
+                    <span class="ifwidth">W:<input type="text" style="text-align: right;" size="2" name="width" value="test"></span>
+                    <span class="ifheight">H:<input type="text" style="text-align: right;" size="2" name="height" value="test"></span>
                     <br/>
                     <label class="blocksvision"><input type="checkbox">block-vis</label>
                     <label class="blocksmovement"><input type="checkbox">block-mov</label>
@@ -84,7 +85,8 @@
                     <div class="body ifthing">
                         <canvas class="demo doubleup"></canvas><br/>
                         <div class="ifnofloor">Floor:<select name="floor"></select></div>
-                        <input type="button" name="rotate" value="rotate"><br/>
+                        <div class="ifflip"><input type="button" name="flip" value="flip"></div>
+                        <div class="ifrotate"><input type="button" name="rotate" value="rotate"></div>
                     </div>
                 </div>
                 <div class="image box">
