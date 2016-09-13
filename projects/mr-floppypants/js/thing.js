@@ -1,8 +1,9 @@
-function Thing(body, image, offx, offy) {
+function Thing(body, image, offx, offy, flip) {
     this._body = body;
     this._image = image;
     this._offx = offx;
     this._offy = offy;
+    this._flip = flip;
 }
 
 Thing.prototype.x = function () {
@@ -18,6 +19,7 @@ Thing.prototype.a = function () {
 };
 
 Thing.prototype._render = function(ctx) {
+    if (this._flip) ctx.scale(-1, 1);
     ctx.drawImage(this._image, -this._offx, -this._offy);
 };
 

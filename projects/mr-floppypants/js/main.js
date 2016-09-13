@@ -61,14 +61,14 @@ var myShirtMid = new thing.Thing(myShirtMidBody, shirtMidImage, 30, 31);
 var neckJoint = new p2.RevoluteConstraint(myHeadBody, myShirtMidBody, {
     worldPivot: [0, -172]
 });
-neckJoint.setLimits(-Math.PI / 8, Math.PI / 8);
+neckJoint.setLimits(-Math.PI / 6, Math.PI / 6);
 world.addConstraint(neckJoint);
 
 var myArmLeftUpperBody = new p2.Body({
     mass: 5,
-    position: [-22, -145]
+    position: [-37, -156]
 });
-myArmLeftUpperBody.fromPolygon([[6, -11], [11, -7], [12, 0], [-10, 14], [-16, 5]], {skipSimpleCheck: true});
+myArmLeftUpperBody.fromPolygon([[9, -12], [15, -3], [-9, 12], [-15, 3]], {skipSimpleCheck: true});
 myArmLeftUpperBody.shapes.forEach(function(s) {
     s.collisionGroup = ME;
     s.collisionMask = OTHER|GROUND;
@@ -76,13 +76,71 @@ myArmLeftUpperBody.shapes.forEach(function(s) {
 world.addBody(myArmLeftUpperBody);
 var armLeftUpperImage = new Image();
 armLeftUpperImage.src = require('../png/arm-left-upper.png');
-var myArmLeftUpper = new thing.Thing(myArmLeftUpperBody, armLeftUpperImage, 30, 31);
+var myArmLeftUpper = new thing.Thing(myArmLeftUpperBody, armLeftUpperImage, 16, 18);
 
 var shoulderLeftJoin = new p2.RevoluteConstraint(myShirtMidBody, myArmLeftUpperBody, {
     worldPivot: [-22, -165]
 });
-shoulderLeftJoin.setLimits(-Math.PI / 3, Math.PI / 3);
+shoulderLeftJoin.setLimits(-Math.PI / 4, Math.PI / 2.5);
 world.addConstraint(shoulderLeftJoin);
+
+var myArmRightUpperBody = new p2.Body({
+    mass: 3,
+    position: [37, -156]
+});
+myArmRightUpperBody.fromPolygon([[-9, -12], [-15, -3], [9, 12], [15, 3]], {skipSimpleCheck: true});
+myArmRightUpperBody.shapes.forEach(function(s) {
+    s.collisionGroup = ME;
+    s.collisionMask = OTHER|GROUND;
+});
+world.addBody(myArmRightUpperBody);
+var myArmRightUpper = new thing.Thing(myArmRightUpperBody, armLeftUpperImage, 16, 18, true);
+
+var shoulderRightJoin = new p2.RevoluteConstraint(myShirtMidBody, myArmRightUpperBody, {
+    worldPivot: [22, -165]
+});
+shoulderRightJoin.setLimits(-Math.PI / 2.5, Math.PI / 5);
+world.addConstraint(shoulderRightJoin);
+
+var myArmLeftLowerBody = new p2.Body({
+    mass: 3,
+    position: [-59, -140]
+});
+myArmLeftLowerBody.fromPolygon([[8, -13], [13, -5], [-8, 13], [-13, 5]], {skipSimpleCheck: true});
+myArmLeftLowerBody.shapes.forEach(function(s) {
+    s.collisionGroup = ME;
+    s.collisionMask = OTHER|GROUND;
+});
+world.addBody(myArmLeftLowerBody);
+var armLeftLowerImage = new Image();
+armLeftLowerImage.src = require('../png/arm-left-lower.png');
+var myArmLeftLower = new thing.Thing(myArmLeftLowerBody, armLeftLowerImage, 16, 16);
+
+var elbowLeftJoin = new p2.RevoluteConstraint(myArmLeftUpperBody, myArmLeftLowerBody, {
+    worldPivot: [-48, -148]
+});
+elbowLeftJoin.setLimits(-Math.PI / 16, Math.PI / 8);
+world.addConstraint(elbowLeftJoin);
+
+var myArmRightLowerBody = new p2.Body({
+    mass: 3,
+    position: [59, -140]
+});
+myArmRightLowerBody.fromPolygon([[-8, -13], [-13, -5], [8, 13], [13, 5]], {skipSimpleCheck: true});
+myArmRightLowerBody.shapes.forEach(function(s) {
+    s.collisionGroup = ME;
+    s.collisionMask = OTHER|GROUND;
+});
+world.addBody(myArmRightLowerBody);
+var armRightLowerImage = new Image();
+armRightLowerImage.src = require('../png/arm-left-lower.png');
+var myArmRightLower = new thing.Thing(myArmRightLowerBody, armRightLowerImage, 16, 16, true);
+
+var elbowRightJoin = new p2.RevoluteConstraint(myArmRightUpperBody, myArmRightLowerBody, {
+    worldPivot: [48, -148]
+});
+elbowRightJoin.setLimits(-Math.PI / 16, Math.PI / 8);
+world.addConstraint(elbowRightJoin);
 
 var myPantsTopBody = new p2.Body({
     mass: 5,
@@ -101,12 +159,15 @@ var myPantsTop = new thing.Thing(myPantsTopBody, PantsTopImage, 26, 18);
 var spineJoint = new p2.RevoluteConstraint(myShirtMidBody, myPantsTopBody, {
     worldPivot: [0, -110]
 });
-spineJoint.setLimits(-Math.PI / 6, Math.PI / 6);
+spineJoint.setLimits(-Math.PI / 8, Math.PI / 8);
 world.addConstraint(spineJoint);
 
 things.push(myPantsTop);
 things.push(myShirtMid);
 things.push(myArmLeftUpper);
+things.push(myArmRightUpper);
+things.push(myArmLeftLower);
+things.push(myArmRightLower);
 things.push(myHead);
 
 // To animate the bodies, we must step the world forward in time, using a fixed time step size.
