@@ -1,0 +1,44 @@
+{
+  "name": "mr-floppypants",
+  "version": "0.0.0",
+  "description": "",
+  "author": "James Clark <jameswclark@gmail.com>",
+  "license": "ISC",
+  "dependencies": {},
+  "eslintConfig": {
+    "extends": "eslint:recommended",
+    "env": {
+      "browser": true,
+      "commonjs": true
+    },
+    "rules": {
+      "indent": [
+        "error",
+        4
+      ],
+      "no-tabs": "error",
+      "no-unused-vars": [
+        "error",
+        {
+          "args": "none"
+        }
+      ],
+      "no-redeclare": "off",
+      "semi": "error",
+      "no-trailing-spaces": "error"
+    }
+  },
+  "devDependencies": {
+    "css-loader": "^0.25.0",
+    "eslint": "^3.5.0",
+    "file-loader": "^0.9.0",
+    "json-loader": "^0.5.4",
+    "style-loader": "^0.13.1",
+    "url-loader": "^0.5.7",
+    "webpack": "^1.13.2"
+  },
+  "scripts": {
+    "build": "webpack",
+    "watch": "webpack --watch"
+  }
+}
