@@ -48,16 +48,14 @@
 	var p2 = __webpack_require__(5);
 	var view = __webpack_require__(66);
 	var thing = __webpack_require__(67);
+	var constants = __webpack_require__(81);
+	var me = __webpack_require__(78);
 	
 	var theView = new view.View();
 	
 	var world = new p2.World({
 	    gravity:[0, 200]
 	});
-	
-	var ME = 1;
-	var OTHER = 2;
-	var GROUND = 4;
 	
 	var things = [];
 	var redblockImage = new Image();
@@ -69,152 +67,14 @@
 	    });
 	    redblockBody.fromPolygon([[-25, -25], [25, -25], [25, 25], [-25, 25]]);
 	    redblockBody.shapes.forEach(function(s) {
-	        s.collisionGroup = GROUND;
-	        s.collisionMask = ME|OTHER;
+	        s.collisionGroup = constants.GROUP_GROUND;
+	        s.collisionMask = constants.GROUP_OTHER | constants.GROUP_ME;
 	    });
 	    world.addBody(redblockBody);
 	    things.push(new thing.Thing(redblockBody, redblockImage, 25, 25));
 	}
 	
-	var myHeadBody = new p2.Body({
-	    mass: 5,
-	    position: [0, -200]
-	});
-	myHeadBody.fromPolygon([[0, -28], [18, -22], [21, 0], [8, 28], [-7, 28], [-20, 0], [-13, -22]], {skipSimpleCheck: true});
-	myHeadBody.shapes.forEach(function(s) {
-	    s.collisionGroup = ME;
-	    s.collisionMask = OTHER|GROUND;
-	});
-	world.addBody(myHeadBody);
-	var headImage = new Image();
-	headImage.src = __webpack_require__(69);
-	var myHead = new thing.Thing(myHeadBody, headImage, 24, 32);
-	
-	var myShirtMidBody = new p2.Body({
-	    mass: 15,
-	    position: [0, -141]
-	});
-	myShirtMidBody.fromPolygon([[-22, -29], [23, -29], [23, 23], [-22, 23]], {skipSimpleCheck: true});
-	myShirtMidBody.shapes.forEach(function(s) {
-	    s.collisionGroup = ME;
-	    s.collisionMask = OTHER|GROUND;
-	});
-	world.addBody(myShirtMidBody);
-	var shirtMidImage = new Image();
-	shirtMidImage.src = __webpack_require__(70);
-	var myShirtMid = new thing.Thing(myShirtMidBody, shirtMidImage, 30, 31);
-	
-	var neckJoint = new p2.RevoluteConstraint(myHeadBody, myShirtMidBody, {
-	    worldPivot: [0, -172]
-	});
-	neckJoint.setLimits(-Math.PI / 6, Math.PI / 6);
-	world.addConstraint(neckJoint);
-	
-	var myArmLeftUpperBody = new p2.Body({
-	    mass: 5,
-	    position: [-37, -156]
-	});
-	myArmLeftUpperBody.fromPolygon([[9, -12], [15, -3], [-9, 12], [-15, 3]], {skipSimpleCheck: true});
-	myArmLeftUpperBody.shapes.forEach(function(s) {
-	    s.collisionGroup = ME;
-	    s.collisionMask = OTHER|GROUND;
-	});
-	world.addBody(myArmLeftUpperBody);
-	var armLeftUpperImage = new Image();
-	armLeftUpperImage.src = __webpack_require__(71);
-	var myArmLeftUpper = new thing.Thing(myArmLeftUpperBody, armLeftUpperImage, 16, 18);
-	
-	var shoulderLeftJoin = new p2.RevoluteConstraint(myShirtMidBody, myArmLeftUpperBody, {
-	    worldPivot: [-22, -165]
-	});
-	shoulderLeftJoin.setLimits(-Math.PI / 4, Math.PI / 2.5);
-	world.addConstraint(shoulderLeftJoin);
-	
-	var myArmRightUpperBody = new p2.Body({
-	    mass: 3,
-	    position: [37, -156]
-	});
-	myArmRightUpperBody.fromPolygon([[-9, -12], [-15, -3], [9, 12], [15, 3]], {skipSimpleCheck: true});
-	myArmRightUpperBody.shapes.forEach(function(s) {
-	    s.collisionGroup = ME;
-	    s.collisionMask = OTHER|GROUND;
-	});
-	world.addBody(myArmRightUpperBody);
-	var myArmRightUpper = new thing.Thing(myArmRightUpperBody, armLeftUpperImage, 16, 18, true);
-	
-	var shoulderRightJoin = new p2.RevoluteConstraint(myShirtMidBody, myArmRightUpperBody, {
-	    worldPivot: [22, -165]
-	});
-	shoulderRightJoin.setLimits(-Math.PI / 2.5, Math.PI / 5);
-	world.addConstraint(shoulderRightJoin);
-	
-	var myArmLeftLowerBody = new p2.Body({
-	    mass: 3,
-	    position: [-59, -140]
-	});
-	myArmLeftLowerBody.fromPolygon([[8, -13], [13, -5], [-8, 13], [-13, 5]], {skipSimpleCheck: true});
-	myArmLeftLowerBody.shapes.forEach(function(s) {
-	    s.collisionGroup = ME;
-	    s.collisionMask = OTHER|GROUND;
-	});
-	world.addBody(myArmLeftLowerBody);
-	var armLeftLowerImage = new Image();
-	armLeftLowerImage.src = __webpack_require__(74);
-	var myArmLeftLower = new thing.Thing(myArmLeftLowerBody, armLeftLowerImage, 16, 16);
-	
-	var elbowLeftJoin = new p2.RevoluteConstraint(myArmLeftUpperBody, myArmLeftLowerBody, {
-	    worldPivot: [-48, -148]
-	});
-	elbowLeftJoin.setLimits(-Math.PI / 16, Math.PI / 8);
-	world.addConstraint(elbowLeftJoin);
-	
-	var myArmRightLowerBody = new p2.Body({
-	    mass: 3,
-	    position: [59, -140]
-	});
-	myArmRightLowerBody.fromPolygon([[-8, -13], [-13, -5], [8, 13], [13, 5]], {skipSimpleCheck: true});
-	myArmRightLowerBody.shapes.forEach(function(s) {
-	    s.collisionGroup = ME;
-	    s.collisionMask = OTHER|GROUND;
-	});
-	world.addBody(myArmRightLowerBody);
-	var armRightLowerImage = new Image();
-	armRightLowerImage.src = __webpack_require__(74);
-	var myArmRightLower = new thing.Thing(myArmRightLowerBody, armRightLowerImage, 16, 16, true);
-	
-	var elbowRightJoin = new p2.RevoluteConstraint(myArmRightUpperBody, myArmRightLowerBody, {
-	    worldPivot: [48, -148]
-	});
-	elbowRightJoin.setLimits(-Math.PI / 16, Math.PI / 8);
-	world.addConstraint(elbowRightJoin);
-	
-	var myPantsTopBody = new p2.Body({
-	    mass: 5,
-	    position: [0, -104]
-	});
-	myPantsTopBody.fromPolygon([[-21, -14], [21, -14], [21, 14], [-21, 14]], {skipSimpleCheck: true});
-	myPantsTopBody.shapes.forEach(function(s) {
-	    s.collisionGroup = ME;
-	    s.collisionMask = OTHER|GROUND;
-	});
-	world.addBody(myPantsTopBody);
-	var PantsTopImage = new Image();
-	PantsTopImage.src = __webpack_require__(72);
-	var myPantsTop = new thing.Thing(myPantsTopBody, PantsTopImage, 26, 18);
-	
-	var spineJoint = new p2.RevoluteConstraint(myShirtMidBody, myPantsTopBody, {
-	    worldPivot: [0, -110]
-	});
-	spineJoint.setLimits(-Math.PI / 8, Math.PI / 8);
-	world.addConstraint(spineJoint);
-	
-	things.push(myPantsTop);
-	things.push(myShirtMid);
-	things.push(myArmLeftUpper);
-	things.push(myArmRightUpper);
-	things.push(myArmLeftLower);
-	things.push(myArmRightLower);
-	things.push(myHead);
+	things = things.concat(me.createMe(world, 0, 0));
 	
 	// To animate the bodies, we must step the world forward in time, using a fixed time step size.
 	// The World will run substeps and interpolate automatically for us, to get smooth animation.
@@ -14550,6 +14410,10 @@
 	    this._flip = flip;
 	}
 	
+	Thing.prototype.body = function () {
+	    return this._body;
+	};
+	
 	Thing.prototype.x = function () {
 	    return this._body.position[0];
 	};
@@ -14600,14 +14464,330 @@
 /* 72 */
 /***/ function(module, exports) {
 
+	module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACEAAAAgCAYAAACcuBHKAAAEBUlEQVRYw+WXb0hddRjHP8/vnPtPr1dx17W0LaZWE3Su2QvXTBCk3oSrEWO2qFg2cQQx6E30okFvVsSiRBjWaIutrRgU1AYukqAFbZVaEq05+iNFpq55z7xer55zfr241z9XvaJTZ9Dz5sA93N/zeb7P8/ue3w/+A2Gs8PoKOAgUAZ2rUaAP+ADQOXebp1cDIAxcAtyNDwd01aHcSPXrazbOJ9dyxwbgAoqKTXuCUlAVQBkSEsWxh46tlVsBsQXhG+WhuHRvlgpv9qIMQUwQU6rHht3n5/qTLCNANfCJJyiZpc+EjGCBiRggigSIAWIwokyp+Kxh4PJKQOwCTvjXKFXWEDL8YQOVBBBTEk9DJn7rECWVbU/3jy9nO/YC72esM9TmpmwjEDZQZiKpmInEKvlMKCNbgReWU4mXgFdyikxKnsoST6aaKT+iJAGlUlLZdsyt/rxp8CLgyhJM7i1gf7jco+/ZnSWGd6JamWyDUlMg0yPaZ9NxODIy0u+cBPaZNwHgB04COwse8FFYlymJyhPVp4AYIJIK0N8Z54cjluOMawtoBVgsRB5wDqgofiyT/G3+VPmTA5iASU3u2pqfTtzgjy9GQWhHUw9cW+xMFAPnMbizZE+Wyiv3zqp6CiZ12fiQQ1eLpYd6xgFeBF4D9MT7hSpxL0Kb4SO3rCGksgs9U31PJp0cxBnyX+8Zo6vZcsZuuFHgceDszMUXAvEg8JE3KN6yxgkTkmQb0ssP8MvZKD1nolqEK2jqgKs345i7gfcyblOqrDFkBHKNqarnmX4nrvnxXYu/vo6DcBxNExBLl2Q+iGeBI8ECg9J9IeXPVpPul+IDM+SPXXPoao441m+2JH3k1en9nyvSteNl4GC41OuWPBlUhk+lbr808v/9XZzuVst1bX0deBS4sJCBkzlMqAVoXFvhY1N9JsqrJr8DyhRQswG01vx6boSeM1ENdKDZCfQudNtNVyIAnAJ2rK/xU1iXgfIoRKbvgtn9t2Mu3W9bbn/HmAKOAs8B8cWYzwRELvApUFn0SAbrazKmPsNmevcb/tOm482IHRtwXGB/EmLRMQFxGNh2165MCqoCC9p+fZdG6X7HcrVNP5odwLdLPW0PAvXxiKvW3edTZkASn19zDvt1NFc+HObnU1G0Szua2nT7f7EQvcCX45au/+fymLq90q/MgMy2X8ul842I03cxLsCh5FkiutQDicxxRGvLK/f6th7ISXk3dHWcruaIE7fcUTRPAB+v1OXndyAUG3C2b6gNiOFNcPS2j/B9i+XaY7oHTQ3w1UrfGe4HdFljSNe25un87X436XingeCturgoFIO5JR4dvMOwARs4sBo3qKOAFsVAck5WJbYAx4F8/i/xLyFTJ8+zOjI/AAAAAElFTkSuQmCC"
+
+/***/ },
+/* 73 */
+/***/ function(module, exports) {
+
 	module.exports = "data:image/png;base64,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"
 
 /***/ },
-/* 73 */,
 /* 74 */
 /***/ function(module, exports) {
 
-	module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACEAAAAgCAYAAACcuBHKAAAEBUlEQVRYw+WXb0hddRjHP8/vnPtPr1dx17W0LaZWE3Su2QvXTBCk3oSrEWO2qFg2cQQx6E30okFvVsSiRBjWaIutrRgU1AYukqAFbZVaEq05+iNFpq55z7xer55zfr241z9XvaJTZ9Dz5sA93N/zeb7P8/ue3w/+A2Gs8PoKOAgUAZ2rUaAP+ADQOXebp1cDIAxcAtyNDwd01aHcSPXrazbOJ9dyxwbgAoqKTXuCUlAVQBkSEsWxh46tlVsBsQXhG+WhuHRvlgpv9qIMQUwQU6rHht3n5/qTLCNANfCJJyiZpc+EjGCBiRggigSIAWIwokyp+Kxh4PJKQOwCTvjXKFXWEDL8YQOVBBBTEk9DJn7rECWVbU/3jy9nO/YC72esM9TmpmwjEDZQZiKpmInEKvlMKCNbgReWU4mXgFdyikxKnsoST6aaKT+iJAGlUlLZdsyt/rxp8CLgyhJM7i1gf7jco+/ZnSWGd6JamWyDUlMg0yPaZ9NxODIy0u+cBPaZNwHgB04COwse8FFYlymJyhPVp4AYIJIK0N8Z54cjluOMawtoBVgsRB5wDqgofiyT/G3+VPmTA5iASU3u2pqfTtzgjy9GQWhHUw9cW+xMFAPnMbizZE+Wyiv3zqp6CiZ12fiQQ1eLpYd6xgFeBF4D9MT7hSpxL0Kb4SO3rCGksgs9U31PJp0cxBnyX+8Zo6vZcsZuuFHgceDszMUXAvEg8JE3KN6yxgkTkmQb0ssP8MvZKD1nolqEK2jqgKs345i7gfcyblOqrDFkBHKNqarnmX4nrvnxXYu/vo6DcBxNExBLl2Q+iGeBI8ECg9J9IeXPVpPul+IDM+SPXXPoao441m+2JH3k1en9nyvSteNl4GC41OuWPBlUhk+lbr808v/9XZzuVst1bX0deBS4sJCBkzlMqAVoXFvhY1N9JsqrJr8DyhRQswG01vx6boSeM1ENdKDZCfQudNtNVyIAnAJ2rK/xU1iXgfIoRKbvgtn9t2Mu3W9bbn/HmAKOAs8B8cWYzwRELvApUFn0SAbrazKmPsNmevcb/tOm482IHRtwXGB/EmLRMQFxGNh2165MCqoCC9p+fZdG6X7HcrVNP5odwLdLPW0PAvXxiKvW3edTZkASn19zDvt1NFc+HObnU1G0Szua2nT7f7EQvcCX45au/+fymLq90q/MgMy2X8ul842I03cxLsCh5FkiutQDicxxRGvLK/f6th7ISXk3dHWcruaIE7fcUTRPAB+v1OXndyAUG3C2b6gNiOFNcPS2j/B9i+XaY7oHTQ3w1UrfGe4HdFljSNe25un87X436XingeCturgoFIO5JR4dvMOwARs4sBo3qKOAFsVAck5WJbYAx4F8/i/xLyFTJ8+zOjI/AAAAAElFTkSuQmCC"
+	module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABcAAAAbCAYAAACX6BTbAAAEdklEQVRIx82Wa2wUVRTH//fOY2dnd3baXVpooZRSKFq0Fk0BBYtSUENE/CCB+KBgDDGxEoUIxkQ/+EgMUcSg0ZiQYIRoRA0+EhLTiBhAC7TYUizvIq+yCwtpuzvbmbkPP7RsKRFaCCbeT3fm5vzOuf9zzz0X+A+HMsi6EQnpG4KGslJT6Z2eLxIAOm6V8+dqpozOrH9jtqxbWCmKhltdlqkdATBnKMbqIOvnXY+744tzjZJRNnlsRql14NgF69PNzV+eSaQPpzL+UwAO36ws7Rc7e56vKMuL5EdNQErE7CBmTSkODI+aBa3Hk4sUSmI+EzsAsBuFc4+J+l3NZxfOuHtUMGzqkEICAEbmW+The4uNVMavPB3vftZnoh5A4kbgAJDwmNjzy55T86ZVFhqRkA4pJSQASggqxg/TCvPCdvPhxEyfiY9vFA4p0e56LL51Z/uc+bPLFEII0OdAACiIhdDYlghc6nLbJHDwsh0dClzX6JNhU1+7cnGVGtAVEAIQSkAIQPvmtXPLLTOorruSOVjkViiobSwabr24btWDORXj84iU2d1AZOcStmWgrT1JE0mnXQKtg8Grw6a2fcFDZZWvL50atkKBK2Xq1V3KvjkghIQd1vWmg4kKzxfrrnXOiyMhfWN+1Jy4anFV7m0l0QGLlBJQQUAJAaUEREgQAvhMYEyBjbCpj0g5/hQADQMiNw315VBQ+6puwaRxK565x8zLNf89wehNppQAFxKuz+H6HJ7PIYXUT3R0wmfix2zklql9MXZUzry3X5hm5Vj9EgghsWPfGUyfNBKUkt7oCQFBr+CMCzAuwYUAFxKjCyyiKPT+rCxGQFk2YUx03nvLqy2F9h+gprY4PtjU5MRsQ7/vrkL1MpwQkgVzLsEYB2MCjAscOnGJQ6IlC1cVuvLVJVVZcMuR8/hkc3Nn69GkPbE0xle/VK2qKh2wG8YFfCbgMQG/L/qmtrisbzh5KeOyuixcoeTYZ9/tz9VUKhv2dwjO5dGutPd3SWGkZs3yGZau9afG8zg8xnsdMAHOBTxf4PeWs/Lb+iMXejw+FcB5ACB9NjaA2X2XTwOAkphtbP38rUcidrhf//hFByvWbHdrHy0PTJqQj1TGR2fKxdc/H3Ib2xIn0xl/JoDTV1+5nQC+uVyQYVPb/U7dtAHgxr/ieO2jHemApqB8bDTQ7Xhwenys3dTkJC6mf0pn/EUA3Ove55Rg/uQ7RtgTS4dlk7Z+S6u7ZdvRc4yLjtq55ZN7PA6nh+G3xlMynkw3dTv+giE1CzsceLxm8mgLAPYdTGD1ht1d3Y7/fcrx37TDgb2VZfk07fjoSKbxw/bjKaeHPT3kvqartDZmG11R2+jMsQKNAKb2Fpjy/hOzxvkfvvKAfHfZdDmuyE6pCll6PRa5xv8RALoBpK+o3uSqJVVRVaHYtueUv6vl7B9OhlXfTA89d9X37dGIoRIQ7D0Qlzv/PJPMuHzurXoF1JQW2emZVUUsGFDjAEpu5fsmJxzUfo2E9I0AcvF/GP8A+yv0jSEPByoAAAAASUVORK5CYII="
+
+/***/ },
+/* 75 */
+/***/ function(module, exports) {
+
+	module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAAtCAYAAABbAsDYAAAFWklEQVRYw82Xv28cRRTHPzN7tu/OPjtB/pVESmILCBI9KUIPEhIUiAJEgUARgn8goqAChFIlSDR0KWhAkShpACFA/BDBKBGBJDgOdn6YxPY58TnJ+W7nPYqd2du72zU/ggQrjWY1Nzefee/73ptZ+I+eGvDYv7lgKWfsReDY4y9/9FZlZPyzqDT0zcmjjzTvBWJyxt6NBquvPH74pC0NVigNlF1psDpvo8E5Y6NTpYHyFzYamDtxZJfciyUz1doUJuBNFIE5ABwwNnpWVQEaLxxdPgN8JeK+tjb6+sSRXat/HWKiB6qj0xZjMMYmQ8aAMRgIYzXgkKoeQhUXb/H8Gxcvqco3Km7u7Jfv1U9/evwQ6GFAS33uU7e3MjqVejJYZHI923kUZlR1RlWfc/EWoAq8CrRsz9xpYKg6OoUxBmNtAjOh2Q6VsA54F6bP5tplMNE1oAXQC5kFGB6dzlhifTO+Zf5iTGIDmgBVURUa64uKyoUwrRcyA1AZ2+UXM5mdm75gVJU+KwAa9SUBnd8OotXaZGpFCkgtMYWqKErcuk3r7s0IuFgIGazulKg01BVZxtjgvJ51tbsHGutXwutCEWS2WpuyWT26hTf5cRXEV2VzfSn8UGCJiR6sjk4nHkktsR1rMqJrJrI0tUbZrF/eFjKAuslKbdL7n0zIFuvQ7T1lc/0KYG4Bt/Ige4GoOjrZlYjGvwSLspGVgjQRHWCzvgTwaxZue3OkOrbLl5GOHoV2pIJ3+kZ90YEWQvYDVLtKSlb4Hj00k4ReE3GOOxu/22xk9UJmMJGWhye6i6LXZLvapR54++ZVUDHAfBFkX3l4pxjbEdtk+77w1U5kpaIv9eVIH6RSm7Kh4qbh2gWkL/m6ala9P0e6ISaardQmjMlW2rQ42kIXpQVFhc31y/jKu5wHGUDdVGVk0u/a+qgyBRpIV0SpOFChsbYI2HlA8iB7AFupjWOs6TqkiiwJrlIR8DnTWLvkQH7pnRb+vQ+gXMtaYnNrVXBTEF1RRAXXbrF585oFLmwLqdYmUoFNeqaHE7JIdEkK462roM70ZnsfJGjSEb47CYPInSxXRFwSWWu/hSmFluwdLI9KVBrKnCHFhTFkvLjY6+LYXFv8U8i+8siEyeZFyI0+0dMSL6i6NNKSRDQbwEo+xET3V2oThowebGuJIOKSd3GoKo36kgLn8+Zbf9faUwmRhcmpXX5x8fnhxQ56JJosCui5IsgkMFgZmei4xzeTe0PRdOGknCSXh+btVZsXWQGyF6A8Mp45P7w11ua6SkV877weV8MtoxCShG9t0kuSBXVX31CjghWhpGyspJX9pyJIDaA0UM7kRP7tRCUGD8m2jdUFgDgvfAPkNMDq1TOIa/tFXGe3IWQluS12apWmgXBrdQGwC+HumweZAzt/5dwnKq6Nc1tI3Eqaa+HiLVzcwsXNdExUEBcnmxHHxsqCgPxYdHJ6/8jbGysXzcrSHOJixLURiXGunUDaTeJ2kzhuJsB2Exc3cXGbOxs3uNu47je7LYT3wS5f/OFDVYkRSUCuvYW4drJ4u9lZvH2X2L/fWPw+rPVlESTyvQO927y99sTw2G5q9+33OUOa1eJaCThOenExNxa/58xn74i4+Dzo672HVd6HaQnM3EC59vCjzxy3wzt2Y6MBrI3AWMS1UYkR56gvn2X+1Ae6snTKgP0Z5Mnec327r9+HwPw4Oj47dPCpN81QZQxjI1rNBvVrP7F65TTXF751dzaWIzA3QY8Cx4Ctv/vZ/TTQLg2OuB2TB3R4bLfzblDgDpiPgZdCfv3T73iAg8BrwDCw5jP5c+A7oM3/8fkDPNL/4zGdiZIAAAAASUVORK5CYII="
+
+/***/ },
+/* 76 */
+/***/ function(module, exports) {
+
+	module.exports = "data:image/png;base64,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"
+
+/***/ },
+/* 77 */
+/***/ function(module, exports) {
+
+	module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAATCAYAAAATSBSOAAAC6UlEQVRIx+WWv4sUSRTHP6+q5/fsrO64u6z4A/ZkFVnl4NTjQEQRNBAzUQw0MRAuMBEM/UcMjU0EE/NdAzU48TgOVITjOI4LbnTdHzNdVc+gu2bbcVZXHBGxoajX1VD96fd931cN39k1BpwexUbJF4C7LnDz7I+Nh87zZ8/pb2nQBed5tPBs1X3KRjJisGmB33dOJO2LP7feeeC8srQWum+6vrPS1X9WnT7rOX2ael3spiw+fLm2nGd8EVgaNdxegbvGMHf5lxZTreGi+KD4AEHjDL000Fn17s7jZatwC7gKYEYAVQJuCDwpJzJ37qexDcFUFVVQyGbN1xDqFZvsmSoJcAXYBmA/A8oCZ4xwT+H83HTJnjs0xnRr4zJWBZ8DhRwyKHhVnIeSFV78lxrgKfBkM4aoA3OFsU/gALBPodysGE7N1/lhsvzBTSJQhCyuhZDFW+oGa1AfOALcHgY3C5wAjgscVdhdrM1KIky1LDPjCTu2JsxOlrDm46WrceTShlzWELJsxvuxqpHOSpgfbCUngZvAMYBGRXSyaWWqldBuWCaahnbDUit/epmqap6dImSM12GDQr0sdFaYLcIdAe43K5iDO6rs316m3UxG3Wb6JsjqLZPUhyhvBlm2QjREhLtkBblwuEWtbEis4INuSq7NXGEASAuSrpskM4aI9Lki3EyjKoIIzsdqFWBjQI1VXagpcqneKfpCb4v9zQUIQUk99LzivJL6zLGhsG+Ee760qqx0A5WSkASwRkmCkBjFiPRfGil0QK5hgDFrg403G4oLSs+By2Pns2eDcA8U+Ot/x/bxhMRmGbMmmyPghlD6vjPjevEkCEEzZ+ZwaQ7kfBb7QFSuVzy+KsDfW2rS3jVRQgwYEYyAEaiWTD+OL7aGTPKBTBVBtdjLdB02GiHty5lJ7ILy7yvHmuMPYH/xg38FQrElfaXxCrg27OCfAWoDawYYH+KJGlD9TCN3gWWgA7wG3gBr38Rf61szUdrcfhAs5gAAAABJRU5ErkJggg=="
+
+/***/ },
+/* 78 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var p2 = __webpack_require__(5);
+	var thing = __webpack_require__(67);
+	var constants = __webpack_require__(81);
+	
+	function createThing(world, param) {
+	    var bod = new p2.Body({
+	        mass: param.mass,
+	        position: param.position
+	    });
+	    bod.fromPolygon(param.polygon, {skipSimpleCheck: true});
+	    bod.shapes.forEach(function(s) {
+	        s.collisionGroup = constants.GROUP_ME;
+	        s.collisionMask = constants.GROUP_OTHER | constants.GROUP_GROUND;
+	    });
+	    world.addBody(bod);
+	    var img = new Image();
+	    img.src = __webpack_require__(80)("./" + param.image + '.png');
+	    return new thing.Thing(bod, img, param.offset[0], param.offset[1], param.flip);
+	}
+	
+	function join(world, bodyA, bodyB, param) {
+	    var joi = new p2.RevoluteConstraint(bodyA, bodyB, {
+	        worldPivot: param.pivot
+	    });
+	    joi.setLimits(param.limits[0], param.limits[1]);
+	    world.addConstraint(joi);
+	}
+	
+	module.exports = {
+	    createMe: function(world, offx, offy) {
+	        var myHead = createThing(world, {
+	            mass: 5,
+	            position: [offx + 0, offy + -200],
+	            polygon: [[0, -28], [18, -22], [21, 0], [8, 28], [-7, 28], [-20, 0], [-13, -22]],
+	            image: 'head',
+	            offset: [24, 32]
+	        });
+	
+	        var myShirtMid = createThing(world, {
+	            mass: 15,
+	            position: [offx + 0, offy + -141],
+	            polygon: [[-22, -29], [23, -29], [23, 23], [-22, 23]],
+	            image: 'shirt-middle',
+	            offset: [30, 31]
+	        });
+	
+	        join(world, myHead.body(), myShirtMid.body(), {
+	            pivot: [offx + 0, offy + -172],
+	            limits: [-Math.PI / 6, Math.PI / 6]
+	        });
+	
+	        var myArmLeftUpper = createThing(world, {
+	            mass: 4,
+	            position: [offx + -37, offy + -156],
+	            polygon: [[9, -12], [15, -3], [-9, 12], [-15, 3]],
+	            image: 'arm-left-upper',
+	            offset: [16, 18]
+	        });
+	
+	        join(world, myShirtMid.body(), myArmLeftUpper.body(), {
+	            pivot: [offx + -22, offy + -165],
+	            limits: [-Math.PI / 4, Math.PI / 2.5]
+	        });
+	
+	        var myArmRightUpper = createThing(world, {
+	            mass: 4,
+	            position: [offx + 37, offy + -156],
+	            polygon: [[-9, -12], [-15, -3], [9, 12], [15, 3]],
+	            image: 'arm-left-upper',
+	            offset: [16, 18],
+	            flip: true
+	        });
+	
+	        join(world, myShirtMid.body(), myArmRightUpper.body(), {
+	            pivot: [offx + 22, offy + -165],
+	            limits: [-Math.PI / 2.5, Math.PI / 4]
+	        });
+	
+	        var myArmLeftLower = createThing(world, {
+	            mass: 3,
+	            position: [offx + -59, offy + -140],
+	            polygon: [[8, -13], [13, -5], [-8, 13], [-13, 5]],
+	            image: 'arm-left-lower',
+	            offset: [16, 16]
+	        });
+	
+	        join(world, myArmLeftUpper.body(), myArmLeftLower.body(), {
+	            pivot: [offx + -48, offy + -148],
+	            limits: [-Math.PI / 16, Math.PI / 8]
+	        });
+	
+	        var myArmRightLower = createThing(world, {
+	            mass: 3,
+	            position: [offx + 59, offy + -140],
+	            polygon: [[-8, -13], [-13, -5], [8, 13], [13, 5]],
+	            image: 'arm-left-lower',
+	            offset: [16, 16],
+	            flip: true
+	        });
+	
+	        join(world, myArmRightUpper.body(), myArmRightLower.body(), {
+	            pivot: [offx + 48, offy + -148],
+	            limits: [-Math.PI / 8, Math.PI / 16]
+	        });
+	
+	        var myHandLeft = createThing(world, {
+	            mass: 1,
+	            position: [offx + -77, offy + -128],
+	            polygon: [[-1, -8], [8, 2], [1, 9], [-8, 0]],
+	            image: 'hand-left',
+	            offset: [13, 12]
+	        });
+	
+	        join(world, myArmLeftLower.body(), myHandLeft.body(), {
+	            pivot: [offx + -71, offy + -131],
+	            limits: [-Math.PI / 6, Math.PI / 6]
+	        });
+	
+	        var myHandRight = createThing(world, {
+	            mass: 1,
+	            position: [offx + 77, offy + -128],
+	            polygon: [[1, -8], [-8, 2], [-1, 9], [8, 0]],
+	            image: 'hand-left',
+	            offset: [13, 12],
+	            flip: true
+	        });
+	
+	        join(world, myArmRightLower.body(), myHandRight.body(), {
+	            pivot: [offx + 71, offy + -131],
+	            limits: [-Math.PI / 6, Math.PI / 6]
+	        });
+	
+	        var myPantsTop = createThing(world, {
+	            mass: 10,
+	            position: [offx + 0, offy + -104],
+	            polygon: [[-21, -14], [21, -14], [21, 14], [-21, 14]],
+	            image: 'pants-top',
+	            offset: [26, 18]
+	        });
+	
+	        join(world, myShirtMid.body(), myPantsTop.body(), {
+	            pivot: [offx + 0, offy + -110],
+	            limits: [-Math.PI / 8, Math.PI / 8]
+	        });
+	
+	        var myPantsLeftUpper = createThing(world, {
+	            mass: 4,
+	            position: [offx + -18, offy + -75],
+	            polygon: [[-6, -18], [10, -15], [5, 20], [-9, 17]],
+	            image: 'pants-left-upper',
+	            offset: [11, 21]
+	        });
+	
+	        join(world, myPantsTop.body(), myPantsLeftUpper.body(), {
+	            pivot: [offx + -15, offy + -92],
+	            limits: [-Math.PI / 8, Math.PI / 6]
+	        });
+	
+	        var myPantsRightUpper = createThing(world, {
+	            mass: 4,
+	            position: [offx + 18, offy + -75],
+	            polygon: [[6, -18], [-10, -15], [-5, 20], [9, 17]],
+	            image: 'pants-left-upper',
+	            offset: [11, 21],
+	            flip: true
+	        });
+	
+	        join(world, myPantsTop.body(), myPantsRightUpper.body(), {
+	            pivot: [offx + 15, offy + -92],
+	            limits: [-Math.PI / 6, Math.PI / 8]
+	        });
+	
+	        var myPantsLeftLower = createThing(world, {
+	            mass: 3,
+	            position: [offx + -21, offy + -35],
+	            polygon: [[-6, -22], [8, -20], [8, 19], [-9, 18]],
+	            image: 'pants-left-lower',
+	            offset: [16, 24]
+	        });
+	
+	        join(world, myPantsLeftUpper.body(), myPantsLeftLower.body(), {
+	            pivot: [offx + -20, offy + -56],
+	            limits: [-Math.PI / 8, Math.PI / 8]
+	        });
+	
+	        var myPantsRightLower = createThing(world, {
+	            mass: 3,
+	            position: [offx + 21, offy + -35],
+	            polygon: [[6, -22], [-8, -20], [-8, 19], [9, 18]],
+	            image: 'pants-left-lower',
+	            offset: [16, 24],
+	            flip: true
+	        });
+	
+	        join(world, myPantsRightUpper.body(), myPantsRightLower.body(), {
+	            pivot: [offx + 20, offy + -56],
+	            limits: [-Math.PI / 8, Math.PI / 8]
+	        });
+	
+	        var myShoeLeft = createThing(world, {
+	            mass: 1,
+	            position: [offx + -31, offy + -12],
+	            polygon: [[0, -7], [15, -6], [15, 6], [-18, 6], [-14, 0]],
+	            image: 'shoe-left',
+	            offset: [21, 10]
+	        });
+	
+	        join(world, myPantsLeftLower.body(), myShoeLeft.body(), {
+	            pivot: [offx + -23, offy + -18],
+	            limits: [-Math.PI / 8, Math.PI / 8]
+	        });
+	
+	        var myShoeRight = createThing(world, {
+	            mass: 1,
+	            position: [offx + 31, offy + -12],
+	            polygon: [[0, -7], [-15, -6], [-15, 6], [18, 6], [14, 0]],
+	            image: 'shoe-left',
+	            offset: [21, 10],
+	            flip: true
+	        });
+	
+	        join(world, myPantsRightLower.body(), myShoeRight.body(), {
+	            pivot: [offx + 23, offy + -18],
+	            limits: [-Math.PI / 8, Math.PI / 8]
+	        });
+	
+	        return [
+	            myPantsTop,
+	            myShoeLeft,
+	            myShoeRight,
+	            myPantsLeftUpper,
+	            myPantsRightUpper,
+	            myPantsLeftLower,
+	            myPantsRightLower,
+	            myShirtMid,
+	            myHandLeft,
+	            myHandRight,
+	            myArmLeftUpper,
+	            myArmRightUpper,
+	            myArmLeftLower,
+	            myArmRightLower,
+	            myHead
+	        ];
+	    }
+	};
+
+
+/***/ },
+/* 79 */,
+/* 80 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var map = {
+		"./arm-left-lower.png": 72,
+		"./arm-left-upper.png": 71,
+		"./hand-left.png": 74,
+		"./head.png": 69,
+		"./pants-left-lower.png": 76,
+		"./pants-left-upper.png": 75,
+		"./pants-top.png": 73,
+		"./redblock.png": 68,
+		"./shirt-middle.png": 70,
+		"./shoe-left.png": 77
+	};
+	function webpackContext(req) {
+		return __webpack_require__(webpackContextResolve(req));
+	};
+	function webpackContextResolve(req) {
+		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
+	};
+	webpackContext.keys = function webpackContextKeys() {
+		return Object.keys(map);
+	};
+	webpackContext.resolve = webpackContextResolve;
+	module.exports = webpackContext;
+	webpackContext.id = 80;
+
+
+/***/ },
+/* 81 */
+/***/ function(module, exports) {
+
+	module.exports = {
+	    GROUP_ME: 1,
+	    GROUP_GROUND: 2,
+	    GROUP_OTHER: 4
+	};
+
 
 /***/ }
 /******/ ]);

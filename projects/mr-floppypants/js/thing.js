@@ -6,6 +6,10 @@ function Thing(body, image, offx, offy, flip) {
     this._flip = flip;
 }
 
+Thing.prototype.body = function () {
+    return this._body;
+};
+
 Thing.prototype.x = function () {
     return this._body.position[0];
 };
