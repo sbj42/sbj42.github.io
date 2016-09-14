@@ -1,34 +1,65 @@
 require('../css/main.css');
 var p2 = require('p2');
 var view = require('./view');
-var thing = require('./thing');
 var constants = require('./constants');
 var me = require('./me');
+var world = require('./world');
 
-var theView = new view.View();
+var theWorld = new p2.World({
+    gravity:[0, constants.GRAVITY]
+});
 
-var world = new p2.World({
-    gravity:[0, 200]
+var dragBody = new p2.Body();
+var dragConstraint = null;
+//var dragPan = null;
+
+var theView = new view.View({
+    onMouseDown: function(position) {
+        var result = theWorld.hitTest(position, theWorld.bodies, 3);
+        var body = null;
+        for (var i = 0; i < result.length; i ++) {
+            if (result[i].type != p2.Body.STATIC)
+                body = result[i];
+        }
+        if (body) {
+            body.wakeUp();
+            theWorld.addBody(dragBody);
+            dragConstraint = new p2.RevoluteConstraint(dragBody, body, {
+                worldPivot: position
+            });
+            theWorld.addConstraint(dragConstraint);
+        } else {
+            //dragPan = {last: position};
+        }
+    },
+    onMouseMove: function(position) {
+        if (dragConstraint) {
+            p2.vec2.copy(dragConstraint.pivotA, position);
+            dragConstraint.bodyA.wakeUp();
+            dragConstraint.bodyB.wakeUp();
+        }
+        // if (dragPan) {
+        //     var dx = position[0] - dragPan.last[0];
+        //     var dy = position[1] - dragPan.last[1];
+        // }
+    },
+    onMouseUp: function(position) {
+        theWorld.removeConstraint(dragConstraint);
+        dragConstraint = null;
+        theWorld.removeBody(dragBody);
+    }
 });
 
 var things = [];
-var redblockImage = new Image();
-redblockImage.src = require('../png/redblock.png');
 for (var x = -250; x <= 250; x += 50) {
-    var redblockBody = new p2.Body({
-        mass: 0,
-        position: [x, 100]
-    });
-    redblockBody.fromPolygon([[-25, -25], [25, -25], [25, 25], [-25, 25]]);
-    redblockBody.shapes.forEach(function(s) {
-        s.collisionGroup = constants.GROUP_GROUND;
-        s.collisionMask = constants.GROUP_OTHER | constants.GROUP_ME;
-    });
-    world.addBody(redblockBody);
-    things.push(new thing.Thing(redblockBody, redblockImage, 25, 25));
+    things = things.concat(world.createRedBlock(theWorld, x, 100));
 }
 
-things = things.concat(me.createMe(world, 0, 0));
+var stThings = world.createStairs(theWorld, 300, 100);
+things = things.concat(stThings);
+
+var myThings = me.createMe(theWorld, 0, 0);
+things = things.concat(myThings);
 
 // To animate the bodies, we must step the world forward in time, using a fixed time step size.
 // The World will run substeps and interpolate automatically for us, to get smooth animation.
@@ -44,8 +75,13 @@ function animate(time){
     var deltaTime = lastTime ? (time - lastTime) / 1000 : 0;
 
     // Move bodies forward in time
-    world.step(fixedTimeStep, deltaTime, maxSubSteps);
+    theWorld.step(fixedTimeStep, deltaTime, maxSubSteps);
 
+    if (!dragConstraint) {
+        var position = myThings[0].body().position;
+        theView.cx((theView.cx() * (constants.CATCH_UP - 1) + position[0]) / constants.CATCH_UP);
+        theView.cy((theView.cy() * (constants.CATCH_UP - 1) + position[1]) / constants.CATCH_UP);
+    }
     // Render the circle at the current interpolated position
     //console.info(circleBody.position[0], circleBody.position[1]);
     theView.clear('#eee');

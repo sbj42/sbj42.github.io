@@ -1,4 +1,4 @@
-function View() {
+function View(param) {
     this._elem = document.createElement('canvas');
     this._ctx = this._elem.getContext('2d', {alpha: false});
     this._elem.width = document.body.clientWidth;
@@ -8,6 +8,10 @@ function View() {
     window.addEventListener('resize', this._onResize.bind(this));
     this._cx = 0;
     this._cy = 0;
+    this._elem.addEventListener('mousedown', this._onMouseDown.bind(this));
+    this._elem.addEventListener('mousemove', this._onMouseMove.bind(this));
+    this._elem.addEventListener('mouseup', this._onMouseUp.bind(this));
+    this._param = param;
 }
 
 View.prototype.width = function () {
@@ -46,10 +50,26 @@ View.prototype.clear = function(color) {
 View.prototype.render = function(thing) {
     var ctx = this._ctx;
     ctx.save();
-    ctx.translate(this.width()/2 - this._cx + thing.x(), this.height()/2 - this._cy + thing.y());
+    ctx.translate(this.width() / 2 - this._cx + thing.x(), this.height() / 2 - this._cy + thing.y());
     ctx.rotate(thing.a());
     thing._render(ctx);
     ctx.restore();
+};
+
+View.prototype._onMouseDown = function (event) {
+    var x = event.clientX + this._cx - this.width() / 2;
+    var y = event.clientY + this._cy - this.height() / 2;
+    this._param.onMouseDown([x, y]);
+};
+
+View.prototype._onMouseMove = function (event) {
+    var x = event.clientX + this._cx - this.width() / 2;
+    var y = event.clientY + this._cy - this.height() / 2;
+    this._param.onMouseMove([x, y]);
+};
+
+View.prototype._onMouseUp = function (event) {
+    this._param.onMouseUp();
 };
 
 module.exports = {
