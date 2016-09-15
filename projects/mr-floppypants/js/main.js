@@ -8,57 +8,98 @@ var world = require('./world');
 var theWorld = new p2.World({
     gravity:[0, constants.GRAVITY]
 });
+require('./thing').setup(theWorld);
 
-var dragBody = new p2.Body();
+var nullBody = new p2.Body();
 var dragConstraint = null;
-//var dragPan = null;
 
-var theView = new view.View({
-    onMouseDown: function(position) {
-        var result = theWorld.hitTest(position, theWorld.bodies, 3);
-        var body = null;
-        for (var i = 0; i < result.length; i ++) {
-            if (result[i].type != p2.Body.STATIC)
-                body = result[i];
-        }
-        if (body) {
-            body.wakeUp();
-            theWorld.addBody(dragBody);
-            dragConstraint = new p2.RevoluteConstraint(dragBody, body, {
-                worldPivot: position
-            });
-            theWorld.addConstraint(dragConstraint);
-        } else {
-            //dragPan = {last: position};
-        }
-    },
-    onMouseMove: function(position) {
-        if (dragConstraint) {
-            p2.vec2.copy(dragConstraint.pivotA, position);
-            dragConstraint.bodyA.wakeUp();
-            dragConstraint.bodyB.wakeUp();
-        }
-        // if (dragPan) {
-        //     var dx = position[0] - dragPan.last[0];
-        //     var dy = position[1] - dragPan.last[1];
-        // }
-    },
-    onMouseUp: function(position) {
+var myBodies;
+
+function onMouseDown(position) {
+    var result = theWorld.hitTest(position, myBodies, 3);
+    var body = null;
+    for (var i = 0; i < result.length; i ++) {
+        if (result[i].type != p2.Body.STATIC)
+            body = result[i];
+    }
+    if (body) {
+        theWorld.addBody(nullBody);
+        dragConstraint = new p2.RevoluteConstraint(nullBody, body, {
+            worldPivot: position
+        });
+        dragConstraint.setStiffness(10000);
+        theWorld.addConstraint(dragConstraint);
+    }
+}
+
+function onMouseMove(position) {
+    if (dragConstraint) {
+        // setDragSpring(position);
+        // p2.vec2.copy(dragBody.position, position);
+        p2.vec2.copy(dragConstraint.pivotA, position);
+        dragConstraint.bodyA.wakeUp();
+        dragConstraint.bodyB.wakeUp();
+    }
+}
+
+function onMouseUp() {
+    if (dragConstraint) {
         theWorld.removeConstraint(dragConstraint);
         dragConstraint = null;
-        theWorld.removeBody(dragBody);
+        theWorld.removeBody(nullBody);
     }
+}
+
+var theView = new view.View({
+    onMouseDown: onMouseDown,
+    onMouseMove: onMouseMove,
+    onMouseUp: onMouseUp
 });
 
 var things = [];
-for (var x = -250; x <= 250; x += 50) {
-    things = things.concat(world.createRedBlock(theWorld, x, 100));
-}
 
-var stThings = world.createStairs(theWorld, 300, 100);
-things = things.concat(stThings);
+things = things.concat(world.createFloor1(theWorld, -1300, -475));
+things = things.concat(world.createWall5(theWorld, -1300, -425));
+things = things.concat(world.createFloor15(theWorld, -1250, -475));
+things = things.concat(world.createFloor1(theWorld, -500, -475));
+things = things.concat(world.createWall5(theWorld, -500, -425));
+things = things.concat(world.createFloor15(theWorld, -450, -475));
+things = things.concat(world.createFloor1(theWorld, 300, -475));
+things = things.concat(world.createWall5(theWorld, 300, -425));
+things = things.concat(world.createFloor15(theWorld, 350, -475));
+things = things.concat(world.createFloor1(theWorld, 1100, -475));
+things = things.concat(world.createWall5(theWorld, 1100, -425));
+
+things = things.concat(world.createFloor1(theWorld, -1300, 75));
+things = things.concat(world.createWall5(theWorld, -1300, 125));
+things = things.concat(world.createWall3(theWorld, -1300, -75));
+things = things.concat(world.createFloor15(theWorld, -1250, 75));
+things = things.concat(world.createFloor1(theWorld, -500, 75));
+things = things.concat(world.createWall5(theWorld, -500, 125));
+things = things.concat(world.createFloor15(theWorld, -450, 75));
+things = things.concat(world.createFloor1(theWorld, 300, 75));
+things = things.concat(world.createWall5(theWorld, 300, 125));
+things = things.concat(world.createFloor9(theWorld, 350, 75));
+things = things.concat(world.createFloor1(theWorld, 1100, 75));
+things = things.concat(world.createWall5(theWorld, 1100, 125));
+things = things.concat(world.createWall3(theWorld, 1100, -75));
+things = things.concat(world.createBed(theWorld, -150, 75));
+things = things.concat(world.createPillow(theWorld, -135, 1));
+things = things.concat(world.createBall(theWorld, -200, 50));
+
+things = things.concat(world.createFloor1(theWorld, -1300, 625));
+things = things.concat(world.createWall3(theWorld, -1300, 475));
+things = things.concat(world.createFloor9(theWorld, -900, 625));
+things = things.concat(world.createFloor15(theWorld, -450, 625));
+things = things.concat(world.createFloor1(theWorld, 300, 625));
+things = things.concat(world.createFloor4(theWorld, 350, 625));
+things = things.concat(world.createStairs(theWorld, 550, 625));
+
+things = things.concat(world.createStairs(theWorld, -700, 1175, true));
+
 
 var myThings = me.createMe(theWorld, 0, 0);
+myBodies = myThings.map(function(thing) { return thing.body(); });
 things = things.concat(myThings);
 
 // To animate the bodies, we must step the world forward in time, using a fixed time step size.

@@ -30,25 +30,49 @@ Thing.prototype._render = function(ctx) {
     ctx.drawImage(this._image, -this._offx, -this._offy);
 };
 
+var standardMaterial = new p2.Material();
+var bouncyMaterial = new p2.Material();
+
+function setup(world) {
+    world.addContactMaterial(new p2.ContactMaterial(standardMaterial, standardMaterial, {
+        friction: 1,
+        restitution: 0.1
+    }));
+    world.addContactMaterial(new p2.ContactMaterial(standardMaterial, bouncyMaterial, {
+        friction: 10,
+        restitution: 0.75
+    }));
+    world.addContactMaterial(new p2.ContactMaterial(bouncyMaterial, bouncyMaterial, {
+        friction: 10,
+        restitution: 0.85
+    }));
+}
+
 function createThing(world, param) {
     param.mass = param.mass || 0;
     var bod = new p2.Body({
         mass: param.mass,
         position: param.position
     });
-    var polygon = param.polygon.map(function(coord) {
-        if (param.flip)
-            return [-coord[0], coord[1]];
-        return coord;
-    });
-    bod.fromPolygon(polygon);
+    if (param.polygon) {
+        var polygon = param.polygon.map(function(coord) {
+            if (param.flip)
+                return [-coord[0], coord[1]];
+            return coord;
+        });
+        bod.fromPolygon(polygon);
+    } else if (param.circle) {
+        bod.addShape(new p2.Circle({radius: param.circle[0]}));
+    }
     if (param.mass == 0) {
         bod.shapes.forEach(function(s) {
+            s.material = param.material || standardMaterial;
             s.collisionGroup = constants.GROUP_GROUND;
             s.collisionMask = constants.GROUP_OTHER | constants.GROUP_ME;
         });
     } else {
         bod.shapes.forEach(function(s) {
+            s.material = param.material || standardMaterial;
             s.collisionGroup = constants.GROUP_OTHER;
             s.collisionMask = constants.GROUP_OTHER | constants.GROUP_ME | constants.GROUP_GROUND;
         });
@@ -65,10 +89,14 @@ function join(world, thingA, thingB, param) {
     });
     joi.setLimits(param.limits[0], param.limits[1]);
     world.addConstraint(joi);
+    return joi;
 }
 
 module.exports = {
     Thing: Thing,
+    setup: setup,
+    standardMaterial: standardMaterial,
+    bouncyMaterial: bouncyMaterial,
     createThing: createThing,
     join: join
 };

@@ -11,18 +11,11 @@ function createThing(world, param) {
 }
 
 function join(world, thingA, thingB, param) {
-    thing.join(world, thingA, thingB, param);
+    return thing.join(world, thingA, thingB, param);
 }
 
 module.exports = {
     createMe: function(world, offx, offy) {
-        var myHead = createThing(world, {
-            mass: 5,
-            position: [offx + 0, offy + -200],
-            polygon: [[0, -28], [18, -22], [21, 0], [8, 28], [-7, 28], [-20, 0], [-13, -22]],
-            image: 'head',
-            offset: [24, 32]
-        });
 
         var myShirtMid = createThing(world, {
             mass: 15,
@@ -30,11 +23,6 @@ module.exports = {
             polygon: [[-22, -29], [23, -29], [23, 23], [-22, 23]],
             image: 'shirt-middle',
             offset: [30, 31]
-        });
-
-        join(world, myHead, myShirtMid, {
-            pivot: [offx + 0, offy + -172],
-            limits: [-Math.PI / 6, Math.PI / 6]
         });
 
         var myArmLeftUpper = createThing(world, {
@@ -186,7 +174,7 @@ module.exports = {
         });
 
         var myHandLeft = createThing(world, {
-            mass: 1,
+            mass: 3,
             position: [offx + -77, offy + -128],
             polygon: [[-1, -8], [8, 2], [1, 9], [-8, 0]],
             image: 'hand-left',
@@ -199,7 +187,7 @@ module.exports = {
         });
 
         var myHandRight = createThing(world, {
-            mass: 1,
+            mass: 3,
             position: [offx + 77, offy + -128],
             polygon: [[-1, -8], [8, 2], [1, 9], [-8, 0]],
             image: 'hand-left',
@@ -209,6 +197,19 @@ module.exports = {
 
         join(world, myArmRightLower, myHandRight, {
             pivot: [offx + 71, offy + -131],
+            limits: [-Math.PI / 6, Math.PI / 6]
+        });
+
+        var myHead = createThing(world, {
+            mass: 4,
+            position: [offx + 0, offy + -200],
+            polygon: [[0, -28], [18, -22], [21, 0], [8, 28], [-7, 28], [-20, 0], [-13, -22]],
+            image: 'head',
+            offset: [24, 32]
+        });
+
+        join(world, myHead, myShirtMid, {
+            pivot: [offx + 0, offy + -172],
             limits: [-Math.PI / 6, Math.PI / 6]
         });
 

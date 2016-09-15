@@ -11,6 +11,7 @@ function View(param) {
     this._elem.addEventListener('mousedown', this._onMouseDown.bind(this));
     this._elem.addEventListener('mousemove', this._onMouseMove.bind(this));
     this._elem.addEventListener('mouseup', this._onMouseUp.bind(this));
+    this._elem.addEventListener('mouseout', this._onMouseOut.bind(this));
     this._param = param;
 }
 
@@ -50,26 +51,38 @@ View.prototype.clear = function(color) {
 View.prototype.render = function(thing) {
     var ctx = this._ctx;
     ctx.save();
-    ctx.translate(this.width() / 2 - this._cx + thing.x(), this.height() / 2 - this._cy + thing.y());
+    ctx.translate(this.width() / 2 - this._cx + thing.x(), this.height() * 2 / 3 - this._cy + thing.y());
     ctx.rotate(thing.a());
     thing._render(ctx);
     ctx.restore();
 };
 
+View.prototype.mousePosition = function () {
+    if (this._mx == null)
+        return null;
+    var x = this._mx + this._cx - this.width() / 2;
+    var y = this._my + this._cy - this.height() * 2 / 3;
+    return [x, y];
+};
+
 View.prototype._onMouseDown = function (event) {
-    var x = event.clientX + this._cx - this.width() / 2;
-    var y = event.clientY + this._cy - this.height() / 2;
-    this._param.onMouseDown([x, y]);
+    this._mx = event.clientX;
+    this._my = event.clientY;
+    this._param.onMouseDown(this.mousePosition());
 };
 
 View.prototype._onMouseMove = function (event) {
-    var x = event.clientX + this._cx - this.width() / 2;
-    var y = event.clientY + this._cy - this.height() / 2;
-    this._param.onMouseMove([x, y]);
+    this._mx = event.clientX;
+    this._my = event.clientY;
+    this._param.onMouseMove(this.mousePosition());
 };
 
 View.prototype._onMouseUp = function (event) {
     this._param.onMouseUp();
+};
+
+View.prototype._onMouseOut = function (event) {
+    this._mx = this._my = null;
 };
 
 module.exports = {
