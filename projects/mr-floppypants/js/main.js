@@ -7,6 +7,7 @@ var world = require('./world');
 
 var theWorld = new p2.World({
     gravity:[0, constants.GRAVITY]
+    //gravity:[0, 3]
 });
 require('./thing').setup(theWorld);
 
@@ -15,8 +16,8 @@ var dragConstraint = null;
 
 var myBodies;
 
-function onMouseDown(position) {
-    var result = theWorld.hitTest(position, myBodies, 3);
+function tryHit(position) {
+    var result = theWorld.hitTest(position, myBodies, 5);
     var body = null;
     for (var i = 0; i < result.length; i ++) {
         if (result[i].type != p2.Body.STATIC)
@@ -27,22 +28,30 @@ function onMouseDown(position) {
         dragConstraint = new p2.RevoluteConstraint(nullBody, body, {
             worldPivot: position
         });
-        dragConstraint.setStiffness(10000);
+        dragConstraint.setStiffness(1000);
         theWorld.addConstraint(dragConstraint);
     }
 }
 
-function onMouseMove(position) {
+function onMouseDown(event, position) {
+    if (event.button == 0) {
+        tryHit(position);
+    }
+}
+
+function onMouseMove(event, position) {
     if (dragConstraint) {
         // setDragSpring(position);
         // p2.vec2.copy(dragBody.position, position);
         p2.vec2.copy(dragConstraint.pivotA, position);
         dragConstraint.bodyA.wakeUp();
         dragConstraint.bodyB.wakeUp();
+    } else if (event.buttons == 1) {
+        tryHit(position);
     }
 }
 
-function onMouseUp() {
+function onMouseUp(event) {
     if (dragConstraint) {
         theWorld.removeConstraint(dragConstraint);
         dragConstraint = null;
@@ -58,6 +67,7 @@ var theView = new view.View({
 
 var things = [];
 
+var houseRect = {x: -1275, y: -450, w: 1300+1100, h: 475+1175};
 things = things.concat(world.createFloor1(theWorld, -1300, -475));
 things = things.concat(world.createWall5(theWorld, -1300, -425));
 things = things.concat(world.createFloor15(theWorld, -1250, -475));
@@ -86,6 +96,7 @@ things = things.concat(world.createWall3(theWorld, 1100, -75));
 things = things.concat(world.createBed(theWorld, -150, 75));
 things = things.concat(world.createPillow(theWorld, -135, 1));
 things = things.concat(world.createBall(theWorld, -200, 50));
+things = things.concat(world.createBathtub(theWorld, -1000, 75));
 
 things = things.concat(world.createFloor1(theWorld, -1300, 625));
 things = things.concat(world.createWall3(theWorld, -1300, 475));
@@ -94,11 +105,19 @@ things = things.concat(world.createFloor15(theWorld, -450, 625));
 things = things.concat(world.createFloor1(theWorld, 300, 625));
 things = things.concat(world.createFloor4(theWorld, 350, 625));
 things = things.concat(world.createStairs(theWorld, 550, 625));
+things = things.concat(world.createTable(theWorld, -150, 617));
+things = things.concat(world.createPlate(theWorld, -150, 520));
+things = things.concat(world.createGlass(theWorld, -100, 520));
+things = things.concat(world.createPlate(theWorld, 0, 520));
+things = things.concat(world.createGlass(theWorld, -10, 520));
+things = things.concat(world.createChair(theWorld, -140, 625, true));
+things = things.concat(world.createChair(theWorld, 40, 625));
 
 things = things.concat(world.createStairs(theWorld, -700, 1175, true));
 
 
 var myThings = me.createMe(theWorld, 0, 0);
+//theView.cy(500);
 myBodies = myThings.map(function(thing) { return thing.body(); });
 things = things.concat(myThings);
 
@@ -107,6 +126,10 @@ things = things.concat(myThings);
 var fixedTimeStep = 1 / 60; // seconds
 var maxSubSteps = 10; // Max sub steps to catch up with the wall clock
 var lastTime;
+
+var houseBg = theView.context().createLinearGradient(houseRect.x, houseRect.y, houseRect.x + houseRect.w, houseRect.y + houseRect.h);
+houseBg.addColorStop(0, '#e0f4ca');
+houseBg.addColorStop(1, '#cceaac');
 
 // Animation loop
 function animate(time){
@@ -126,7 +149,9 @@ function animate(time){
     // Render the circle at the current interpolated position
     //console.info(circleBody.position[0], circleBody.position[1]);
     theView.clear('#eee');
+    theView.clear(houseBg, houseRect);
     things.forEach(function(t) { theView.render(t); });
+    things.forEach(function(t) { theView.render2(t); });
 
     lastTime = time;
 }

@@ -3,7 +3,12 @@ var constants = require('./constants');
 
 function Thing(body, image, offx, offy, flip) {
     this._body = body;
-    this._image = image;
+    if (image.nodeType == 1)
+        this._image = image;
+    else {
+        this._image = image[0];
+        this._image2 = image[1];
+    }
     this._offx = offx;
     this._offy = offy;
     this._flip = flip;
@@ -21,13 +26,28 @@ Thing.prototype.y = function () {
     return this._body.position[1];
 };
 
+Thing.prototype.offx = function () {
+    return this._offx;
+};
+
+Thing.prototype.offy = function () {
+    return this._offy;
+};
+
 Thing.prototype.a = function () {
     return this._body.angle;
 };
 
-Thing.prototype._render = function(ctx) {
-    if (this._flip) ctx.scale(-1, 1);
-    ctx.drawImage(this._image, -this._offx, -this._offy);
+Thing.prototype.flip = function () {
+    return this._flip;
+};
+
+Thing.prototype.image = function () {
+    return this._image;
+};
+
+Thing.prototype.image2 = function () {
+    return this._image2;
 };
 
 var standardMaterial = new p2.Material();
@@ -79,7 +99,13 @@ function createThing(world, param) {
     }
     world.addBody(bod);
     var img = new Image();
-    img.src = require('../png/' + param.image + '.png');
+    if (typeof param.image == 'string')
+        img.src = require('../png/' + param.image + '.png');
+    else {
+        img = [img, new Image()];
+        img[0].src = require('../png/' + param.image[0] + '.png');
+        img[1].src = require('../png/' + param.image[1] + '.png');
+    }
     return new Thing(bod, img, param.offset[0], param.offset[1], param.flip);
 }
 

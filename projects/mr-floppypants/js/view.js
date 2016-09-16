@@ -9,8 +9,8 @@ function View(param) {
     this._cx = 0;
     this._cy = 0;
     this._elem.addEventListener('mousedown', this._onMouseDown.bind(this));
-    this._elem.addEventListener('mousemove', this._onMouseMove.bind(this));
-    this._elem.addEventListener('mouseup', this._onMouseUp.bind(this));
+    document.addEventListener('mousemove', this._onMouseMove.bind(this), true);
+    document.addEventListener('mouseup', this._onMouseUp.bind(this), true);
     this._elem.addEventListener('mouseout', this._onMouseOut.bind(this));
     this._param = param;
 }
@@ -21,6 +21,10 @@ View.prototype.width = function () {
 
 View.prototype.height = function () {
     return this._elem.height;
+};
+
+View.prototype.context = function () {
+    return this._ctx;
 };
 
 View.prototype.cx = function (v) {
@@ -42,18 +46,34 @@ View.prototype._onResize = function () {
     this._elem.height = document.body.clientHeight;
 };
 
-View.prototype.clear = function(color) {
-    var ctx = this._ctx;
+View.prototype.clear = function(color, rect) {
+    var ctx = this.context();
     ctx.fillStyle = color;
-    ctx.fillRect(0, 0, this.width(), this.height());
+    if (!rect)
+        ctx.fillRect(0, 0, this.width(), this.height());
+    else
+        ctx.fillRect(this.width() / 2 - this._cx + rect.x, this.height() * 2 / 3 - this._cy + rect.y, rect.w, rect.h);
 };
 
 View.prototype.render = function(thing) {
-    var ctx = this._ctx;
+    var ctx = this.context();
     ctx.save();
     ctx.translate(this.width() / 2 - this._cx + thing.x(), this.height() * 2 / 3 - this._cy + thing.y());
     ctx.rotate(thing.a());
-    thing._render(ctx);
+    if (thing.flip()) ctx.scale(-1, 1);
+    ctx.drawImage(thing.image(), -thing.offx(), -thing.offy());
+    ctx.restore();
+};
+
+View.prototype.render2 = function(thing) {
+    if (!thing.image2())
+        return;
+    var ctx = this.context();
+    ctx.save();
+    ctx.translate(this.width() / 2 - this._cx + thing.x(), this.height() * 2 / 3 - this._cy + thing.y());
+    ctx.rotate(thing.a());
+    if (thing.flip()) ctx.scale(-1, 1);
+    ctx.drawImage(thing.image2(), -thing.offx(), -thing.offy());
     ctx.restore();
 };
 
@@ -66,23 +86,28 @@ View.prototype.mousePosition = function () {
 };
 
 View.prototype._onMouseDown = function (event) {
-    this._mx = event.clientX;
-    this._my = event.clientY;
-    this._param.onMouseDown(this.mousePosition());
+    this._mouseDown = true;
+    this._mx = Math.max(0, Math.min(this.width(), event.clientX));
+    this._my = Math.max(0, Math.min(this.height(), event.clientY));
+    //event.target.setCapture();
+    this._param.onMouseDown(event, this.mousePosition());
 };
 
 View.prototype._onMouseMove = function (event) {
-    this._mx = event.clientX;
-    this._my = event.clientY;
-    this._param.onMouseMove(this.mousePosition());
+    this._mx = Math.max(0, Math.min(this.width(), event.clientX));
+    this._my = Math.max(0, Math.min(this.height(), event.clientY));
+    this._param.onMouseMove(event, this.mousePosition());
 };
 
 View.prototype._onMouseUp = function (event) {
-    this._param.onMouseUp();
+    if (this._mouseDown) {
+        this._param.onMouseUp(event);
+        this._mouseDown = false;
+    }
 };
 
 View.prototype._onMouseOut = function (event) {
-    this._mx = this._my = null;
+    //this._mx = this._my = null;
 };
 
 module.exports = {
