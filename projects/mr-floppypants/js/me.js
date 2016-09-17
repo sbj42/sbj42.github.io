@@ -212,8 +212,20 @@ module.exports = {
             pivot: [offx + 0, offy + -172],
             limits: [-Math.PI / 6, Math.PI / 6]
         });
+        var myHeadImage = new Image();
+        myHeadImage.src = require('../png/head.png');
+        var myHeadOuchImage = new Image();
+        myHeadOuchImage.src = require('../png/head-ouch.png');
+        var ouchTimer = null;
+        function ouch() {
+            clearTimeout(ouchTimer);
+            myHead._image = myHeadOuchImage;
+            ouchTimer = setTimeout(function() {
+                myHead._image = myHeadImage;
+            }, 1500);
+        }
 
-        return [
+        var myThings = [
             myPantsTop,
             myShoeLeft,
             myShoeRight,
@@ -230,5 +242,21 @@ module.exports = {
             myArmRightLower,
             myHead
         ];
+
+        world.on('beginContact', function(event) {
+            var found = false;
+            myThings.forEach(function(t) {
+                if (event.bodyA == t.body() || event.bodyB == t.body())
+                    found = true;
+            });
+            if (found) {
+                var rx = Math.abs(event.bodyA.velocity[0] - event.bodyB.velocity[0]);
+                var ry = Math.abs(event.bodyA.velocity[1] - event.bodyB.velocity[1]);
+                if (rx*rx + ry*ry > 700*700)
+                    ouch();
+            }
+        });
+
+        return myThings;
     }
 };

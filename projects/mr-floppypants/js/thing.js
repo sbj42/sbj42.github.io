@@ -55,7 +55,7 @@ var bouncyMaterial = new p2.Material();
 
 function setup(world) {
     world.addContactMaterial(new p2.ContactMaterial(standardMaterial, standardMaterial, {
-        friction: 1,
+        friction: 7,
         restitution: 0.1
     }));
     world.addContactMaterial(new p2.ContactMaterial(standardMaterial, bouncyMaterial, {

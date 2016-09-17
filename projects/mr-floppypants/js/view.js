@@ -8,6 +8,7 @@ function View(param) {
     window.addEventListener('resize', this._onResize.bind(this));
     this._cx = 0;
     this._cy = 0;
+    this._zoom = 1;
     this._elem.addEventListener('mousedown', this._onMouseDown.bind(this));
     document.addEventListener('mousemove', this._onMouseMove.bind(this), true);
     document.addEventListener('mouseup', this._onMouseUp.bind(this), true);
@@ -41,6 +42,29 @@ View.prototype.cy = function (v) {
         return this._cy;
 };
 
+View.prototype.zoom = function (v) {
+    if (v != null)
+        this._zoom = v;
+    else
+        return this._zoom;
+};
+
+View.prototype.vxToCx = function(x) {
+    return this.width() / 2 + (x - this.cx()) * this.zoom();
+};
+
+View.prototype.vyToCy = function(y) {
+    return this.height() * 2 / 3 + (y -this.cy()) * this.zoom();
+};
+
+View.prototype.cxToVx = function(x) {
+    return (x - this.width() / 2) / this.zoom() + this.cx();
+};
+
+View.prototype.cyToVy = function(y) {
+    return (y - this.height() * 2 / 3) / this.zoom() + this.cy();
+};
+
 View.prototype._onResize = function () {
     this._elem.width = document.body.clientWidth;
     this._elem.height = document.body.clientHeight;
@@ -49,17 +73,26 @@ View.prototype._onResize = function () {
 View.prototype.clear = function(color, rect) {
     var ctx = this.context();
     ctx.fillStyle = color;
-    if (!rect)
-        ctx.fillRect(0, 0, this.width(), this.height());
-    else
-        ctx.fillRect(this.width() / 2 - this._cx + rect.x, this.height() * 2 / 3 - this._cy + rect.y, rect.w, rect.h);
+    ctx.fillRect(0, 0, this.width(), this.height());
+};
+
+View.prototype.renderImage = function(image, x, y, flip, a) {
+    var ctx = this.context();
+    ctx.save();
+    ctx.translate(this.vxToCx(x), this.vyToCy(y));
+    ctx.rotate(a);
+    ctx.scale(this.zoom(), this.zoom());
+    if (flip) ctx.scale(-1, 1);
+    ctx.drawImage(image, 0, 0);
+    ctx.restore();
 };
 
 View.prototype.render = function(thing) {
     var ctx = this.context();
     ctx.save();
-    ctx.translate(this.width() / 2 - this._cx + thing.x(), this.height() * 2 / 3 - this._cy + thing.y());
+    ctx.translate(this.vxToCx(thing.x()), this.vyToCy(thing.y()));
     ctx.rotate(thing.a());
+    ctx.scale(this.zoom(), this.zoom());
     if (thing.flip()) ctx.scale(-1, 1);
     ctx.drawImage(thing.image(), -thing.offx(), -thing.offy());
     ctx.restore();
@@ -70,8 +103,9 @@ View.prototype.render2 = function(thing) {
         return;
     var ctx = this.context();
     ctx.save();
-    ctx.translate(this.width() / 2 - this._cx + thing.x(), this.height() * 2 / 3 - this._cy + thing.y());
+    ctx.translate(this.vxToCx(thing.x()), this.vyToCy(thing.y()));
     ctx.rotate(thing.a());
+    ctx.scale(this.zoom(), this.zoom());
     if (thing.flip()) ctx.scale(-1, 1);
     ctx.drawImage(thing.image2(), -thing.offx(), -thing.offy());
     ctx.restore();
@@ -80,9 +114,7 @@ View.prototype.render2 = function(thing) {
 View.prototype.mousePosition = function () {
     if (this._mx == null)
         return null;
-    var x = this._mx + this._cx - this.width() / 2;
-    var y = this._my + this._cy - this.height() * 2 / 3;
-    return [x, y];
+    return [this.cxToVx(this._mx), this.cyToVy(this._my)];
 };
 
 View.prototype._onMouseDown = function (event) {

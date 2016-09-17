@@ -147,6 +147,25 @@ module.exports = {
             flip: flip
         })];
     },
+    createSink: function(world, offx, offy, flip) {
+        return [createThing(world, {
+            mass: 350,
+            position: [offx, offy],
+            polygon: [[0, 0], [2, -109], [12, -109], [26, -85], [62, -85], [82, -109], [90, -106], [76, -78],
+                [48, -71], [79, 0]],
+            image: ['sink1', 'sink2'],
+            offset: [40, 93],
+            flip: flip
+        })];
+    },
+    createGrass: function(world, offx, offy) {
+        return [createThing(world, {
+            position: [offx, offy],
+            polygon: [[0, 75], [0, 0], [500, 0], [500, 75]],
+            image: ['grass1', 'grass2'],
+            offset: [250, 65]
+        })];
+    },
     createRedBlock: function(world, offx, offy) {
         return [createThing(world, {
             position: [offx + 25, offy + 25],
