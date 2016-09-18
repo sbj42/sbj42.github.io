@@ -12,20 +12,38 @@ var theWorld = new p2.World({
 require('./thing').setup(theWorld);
 
 var nullBody = new p2.Body();
+theWorld.addBody(nullBody);
+var dragBody = null;
 var dragConstraint = null;
+
+var grabConstraint;
+theWorld.on('beginContact', function(event) {
+    var other = null;
+    myThings.hands.forEach(function(t) {
+        if (event.bodyA == dragBody && event.bodyA == t.body())
+            other = event.bodyB;
+        else if (event.bodyB == dragBody && event.bodyB == t.body())
+            other = event.bodyA;
+    });
+    if (!grabConstraint && other && other.type != p2.Body.STATIC) {
+        grabConstraint = new p2.LockConstraint(event.bodyA, event.bodyB);
+        theWorld.addConstraint(grabConstraint);
+    }
+});
 
 var myBodies;
 
 function tryHit(position) {
     var result = theWorld.hitTest(position, myBodies, 5);
-    var body = null;
-    for (var i = 0; i < result.length; i ++) {
-        if (result[i].type != p2.Body.STATIC)
-            body = result[i];
-    }
-    if (body) {
-        theWorld.addBody(nullBody);
-        dragConstraint = new p2.RevoluteConstraint(nullBody, body, {
+    if (result.length) {
+        dragBody = result[result.length - 1];
+        myThings.hands.forEach(function(t) {
+            if (t.body() == dragBody && grabConstraint) {
+                theWorld.removeConstraint(grabConstraint);
+                grabConstraint = null;
+            }
+        });
+        dragConstraint = new p2.RevoluteConstraint(nullBody, dragBody, {
             worldPivot: position
         });
         dragConstraint.setStiffness(1000);
@@ -55,7 +73,7 @@ function onMouseUp(event) {
     if (dragConstraint) {
         theWorld.removeConstraint(dragConstraint);
         dragConstraint = null;
-        theWorld.removeBody(nullBody);
+        dragBody = null;
     }
 }
 
@@ -84,10 +102,35 @@ function housePath() {
         ctx.lineTo(theView.vxToCx(w.x1), theView.vyToCy(w.y1));
     });
 }
+function atticPath() {
+    var ctx = theView.context();
+    ctx.beginPath();
+    var dx = (200 + houseRect.x2 - houseRect.x1)/2;
+    ctx.moveTo(theView.vxToCx(houseRect.x1 - 100), theView.vyToCy(houseRect.y1));
+    ctx.lineTo(theView.vxToCx(houseRect.x1 - 100 + dx), theView.vyToCy(houseRect.y1 - dx/2));
+    ctx.lineTo(theView.vxToCx(houseRect.x2 + 100), theView.vyToCy(houseRect.y1));
+    ctx.lineTo(theView.vxToCx(houseRect.x1), theView.vyToCy(houseRect.y1));
+}
+
+for (var i = 0; i < 13; i ++) {
+    things = things.concat(world.createRoof(theWorld, -1375 + i * 100, -450 - i * 50));
+    things = things.concat(world.createRoof(theWorld, 1225 - i * 100, -450 - i * 50, true));
+}
 
 things = things.concat(world.createFloor1(theWorld, -1300, -475));
 things = things.concat(world.createWall5(theWorld, -1300, -425));
-things = things.concat(world.createFloor15(theWorld, -1250, -475));
+things = things.concat(world.createFloor4(theWorld, -1250, -475));
+things = things.concat(world.createFloor1(theWorld, -1050, -475));
+var hatch = world.createHatch(theWorld, -989, -450);
+hatch[0].body().gravityScale = 0;
+var joi = new p2.RevoluteConstraint(nullBody, hatch[0].body(), {
+    worldPivot: [-989, -450]
+});
+joi.setLimits(0, Math.PI / 4);
+theWorld.addConstraint(joi);
+things = things.concat(hatch);
+things = things.concat(world.createFloor1(theWorld, -750, -475));
+things = things.concat(world.createFloor4(theWorld, -700, -475));
 things = things.concat(world.createFloor1(theWorld, -500, -475));
 things = things.concat(world.createWall5(theWorld, -500, -425));
 things = things.concat(world.createFloor15(theWorld, -450, -475));
@@ -122,9 +165,12 @@ houseWindows.push({x1: 550, y1: -300, x2: 650, y2: -100});
 
 things = things.concat(world.createFloor1(theWorld, -1300, 625));
 things = things.concat(world.createWall3(theWorld, -1300, 475));
-things = things.concat(world.createFloor9(theWorld, -900, 625));
+things = things.concat(world.createFloor9(theWorld, -950, 625));
+things = things.concat(world.createFloor1(theWorld, -500, 625));
+things = things.concat(world.createWall5(theWorld, -500, 675));
 things = things.concat(world.createFloor15(theWorld, -450, 625));
 things = things.concat(world.createFloor1(theWorld, 300, 625));
+things = things.concat(world.createWall5(theWorld, 300, 675));
 things = things.concat(world.createFloor4(theWorld, 350, 625));
 things = things.concat(world.createStairs(theWorld, 550, 625));
 things = things.concat(world.createTable(theWorld, -150, 617));
@@ -150,6 +196,9 @@ things = things.concat(world.createFloor15(theWorld, 350, 1175));
 things = things.concat(world.createFloor1(theWorld, 1100, 1175));
 things = things.concat(world.createFloor1(theWorld, 1100, 625));
 things = things.concat(world.createWall5(theWorld, 1100, 675));
+houseWindows.push({x1: -350, y1: 800, x2: -250, y2: 1000});
+houseWindows.push({x1: 150, y1: 800, x2: 250, y2: 1000});
+houseWindows.push({x1: 550, y1: 800, x2: 650, y2: 1000});
 
 things = things.concat(world.createGrass(theWorld, -3300, 1200));
 things = things.concat(world.createGrass(theWorld, -2800, 1200));
@@ -164,9 +213,9 @@ things = things.concat(world.createGrass(theWorld, 2650, 1200));
 things = things.concat(world.createStairs(theWorld, -698, 1675, true));
 
 
-var myThings = me.createMe(theWorld, -1400, 1000);
-theView.cy(1000);
-theView.cx(-1400);
+var myThings = me.createMe(theWorld, -800, 0);
+//theView.cy(1000);
+theView.cx(-800);
 myBodies = myThings.map(function(thing) { return thing.body(); });
 things = things.concat(myThings);
 
@@ -179,6 +228,9 @@ var lastTime;
 var skyBg = theView.context().createLinearGradient(0, 0, 0, theView.height());
 skyBg.addColorStop(0, '#abd1f9');
 skyBg.addColorStop(1, '#71ace8');
+var atticBg = theView.context().createLinearGradient(theView.width() / 3, 0, theView.width() * 2 / 3, theView.height());
+atticBg.addColorStop(0, '#835323');
+atticBg.addColorStop(1, '#5c3611');
 var houseBg = theView.context().createLinearGradient(theView.width() / 3, 0, theView.width() * 2 / 3, theView.height());
 houseBg.addColorStop(0, '#e0f4ca');
 houseBg.addColorStop(1, '#a9cb84');
@@ -207,9 +259,12 @@ function animate(time){
     var ctx = theView.context();
     theView.clear(skyBg);
     ctx.drawImage(sunImage, theView.width() / 5, theView.height() / 5);
+    ctx.fillStyle = atticBg;
+    atticPath(ctx);
+    ctx.fill('evenodd');
     ctx.fillStyle = houseBg;
     housePath(ctx);
-    ctx.fill("evenodd");
+    ctx.fill('evenodd');
     houseWindows.forEach(function(w) {
         theView.renderImage(windowImage, w.x1 - 10, w.y1 - 10);
     });

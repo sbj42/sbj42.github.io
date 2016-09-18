@@ -225,6 +225,16 @@ module.exports = {
             }, 1500);
         }
 
+        var myContactThings = [
+            myPantsTop,
+            myShoeLeft,
+            myShoeRight,
+            myShirtMid,
+            myHandLeft,
+            myHandRight,
+            myHead
+        ];
+
         var myThings = [
             myPantsTop,
             myShoeLeft,
@@ -242,10 +252,14 @@ module.exports = {
             myArmRightLower,
             myHead
         ];
+        myThings.hands = [
+            myHandLeft,
+            myHandRight
+        ];
 
         world.on('beginContact', function(event) {
             var found = false;
-            myThings.forEach(function(t) {
+            myContactThings.forEach(function(t) {
                 if (event.bodyA == t.body() || event.bodyB == t.body())
                     found = true;
             });

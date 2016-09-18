@@ -158,6 +158,26 @@ module.exports = {
             flip: flip
         })];
     },
+    createHatch: function(world, offx, offy, flip) {
+        return [createThing(world, {
+            mass: 100,
+            position: [offx, offy],
+            polygon: [[-10, -8], [189, -8], [193, -15], [213, -15], [218, -8], [234, -8],
+                [234, 10], [218, 10], [213, 19], [193, 19], [189, 10], [-10, 10]],
+            image: 'hatch',
+            offset: [130, 20],
+            flip: flip
+        })];
+    },
+    createRoof: function(world, offx, offy, flip) {
+        return [createThing(world, {
+            position: [offx, offy],
+            polygon: [[-10, -6], [89, -55], [110, -39], [13, 11]],
+            image: 'roof',
+            offset: [58, 30],
+            flip: flip
+        })];
+    },
     createGrass: function(world, offx, offy) {
         return [createThing(world, {
             position: [offx, offy],
