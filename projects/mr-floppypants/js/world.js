@@ -178,12 +178,28 @@ module.exports = {
             flip: flip
         })];
     },
-    createGrass: function(world, offx, offy) {
+    createChimney: function(world, offx, offy, flip) {
+        return [createThing(world, {
+            position: [offx, offy],
+            polygon: [[-3, 9], [14, -1], [14, -185], [-3, -185]],
+            image: [null, 'chimney'],
+            offset: [15, 94],
+            flip: flip
+        }), createThing(world, {
+            position: [offx, offy],
+            polygon: [[96, -42], [110, -51], [110, -185], [96, -185]],
+            image: null,
+            offset: [0, 0],
+            flip: flip
+        })];
+    },
+    createGrass: function(world, offx, offy, angle) {
         return [createThing(world, {
             position: [offx, offy],
             polygon: [[0, 75], [0, 0], [500, 0], [500, 75]],
             image: ['grass1', 'grass2'],
-            offset: [250, 65]
+            offset: [250, 65],
+            angle: angle
         })];
     },
     createRedBlock: function(world, offx, offy) {

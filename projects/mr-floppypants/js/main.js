@@ -14,20 +14,23 @@ require('./thing').setup(theWorld);
 var nullBody = new p2.Body();
 theWorld.addBody(nullBody);
 var dragBody = null;
+var dragReleasing = false;
 var dragConstraint = null;
 
 var grabConstraint;
 theWorld.on('beginContact', function(event) {
-    var other = null;
-    myThings.hands.forEach(function(t) {
-        if (event.bodyA == dragBody && event.bodyA == t.body())
-            other = event.bodyB;
-        else if (event.bodyB == dragBody && event.bodyB == t.body())
-            other = event.bodyA;
-    });
-    if (!grabConstraint && other && other.type != p2.Body.STATIC) {
-        grabConstraint = new p2.LockConstraint(event.bodyA, event.bodyB);
-        theWorld.addConstraint(grabConstraint);
+    if (!grabConstraint) {
+        var other = null;
+        myThings.hands.forEach(function(t) {
+            if (event.bodyA == dragBody && event.bodyA == t.body())
+                other = event.bodyB;
+            else if (event.bodyB == dragBody && event.bodyB == t.body())
+                other = event.bodyA;
+        });
+        if (!grabConstraint && other && other.type != p2.Body.STATIC) {
+            grabConstraint = new p2.LockConstraint(event.bodyA, event.bodyB);
+            theWorld.addConstraint(grabConstraint);
+        }
     }
 });
 
@@ -38,10 +41,8 @@ function tryHit(position) {
     if (result.length) {
         dragBody = result[result.length - 1];
         myThings.hands.forEach(function(t) {
-            if (t.body() == dragBody && grabConstraint) {
-                theWorld.removeConstraint(grabConstraint);
-                grabConstraint = null;
-            }
+            if (t.body() == dragBody && grabConstraint)
+                dragReleasing = true;
         });
         dragConstraint = new p2.RevoluteConstraint(nullBody, dragBody, {
             worldPivot: position
@@ -71,6 +72,11 @@ function onMouseMove(event, position) {
 
 function onMouseUp(event) {
     if (dragConstraint) {
+        if (dragReleasing) {
+            theWorld.removeConstraint(grabConstraint);
+            grabConstraint = null;
+            dragReleasing = false;
+        }
         theWorld.removeConstraint(dragConstraint);
         dragConstraint = null;
         dragBody = null;
@@ -114,7 +120,10 @@ function atticPath() {
 
 for (var i = 0; i < 13; i ++) {
     things = things.concat(world.createRoof(theWorld, -1375 + i * 100, -450 - i * 50));
-    things = things.concat(world.createRoof(theWorld, 1225 - i * 100, -450 - i * 50, true));
+    if (i != 6)
+        things = things.concat(world.createRoof(theWorld, 1225 - i * 100, -450 - i * 50, true));
+    else
+        things = things.concat(world.createChimney(theWorld, 1225 - i * 100, -450 - i * 50, true));
 }
 
 things = things.concat(world.createFloor1(theWorld, -1300, -475));
@@ -213,9 +222,9 @@ things = things.concat(world.createGrass(theWorld, 2650, 1200));
 things = things.concat(world.createStairs(theWorld, -698, 1675, true));
 
 
-var myThings = me.createMe(theWorld, -800, 0);
+var myThings = me.createMe(theWorld, 0, 0);
 //theView.cy(1000);
-theView.cx(-800);
+//theView.cx(3000);
 myBodies = myThings.map(function(thing) { return thing.body(); });
 things = things.concat(myThings);
 

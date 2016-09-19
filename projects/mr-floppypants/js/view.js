@@ -88,6 +88,8 @@ View.prototype.renderImage = function(image, x, y, flip, a) {
 };
 
 View.prototype.render = function(thing) {
+    if (!thing.image())
+        return;
     var ctx = this.context();
     ctx.save();
     ctx.translate(this.vxToCx(thing.x()), this.vyToCy(thing.y()));

@@ -3,7 +3,9 @@ var constants = require('./constants');
 
 function Thing(body, image, offx, offy, flip) {
     this._body = body;
-    if (image.nodeType == 1)
+    if (image == null)
+        this._image = this._image2 = null;
+    else if (image.nodeType == 1)
         this._image = image;
     else {
         this._image = image[0];
@@ -55,7 +57,7 @@ var bouncyMaterial = new p2.Material();
 
 function setup(world) {
     world.addContactMaterial(new p2.ContactMaterial(standardMaterial, standardMaterial, {
-        friction: 7,
+        friction: 5,
         restitution: 0.1
     }));
     world.addContactMaterial(new p2.ContactMaterial(standardMaterial, bouncyMaterial, {
@@ -72,7 +74,8 @@ function createThing(world, param) {
     param.mass = param.mass || 0;
     var bod = new p2.Body({
         mass: param.mass,
-        position: param.position
+        position: param.position,
+        angle: param.angle
     });
     if (param.polygon) {
         var polygon = param.polygon.map(function(coord) {
@@ -99,11 +102,16 @@ function createThing(world, param) {
     }
     world.addBody(bod);
     var img = new Image();
-    if (typeof param.image == 'string')
+    if (!param.image)
+        img = null;
+    else if (typeof param.image == 'string')
         img.src = require('../png/' + param.image + '.png');
     else {
         img = [img, new Image()];
-        img[0].src = require('../png/' + param.image[0] + '.png');
+        if (param.image[0])
+            img[0].src = require('../png/' + param.image[0] + '.png');
+        else
+            img[0] = null;
         img[1].src = require('../png/' + param.image[1] + '.png');
     }
     return new Thing(bod, img, param.offset[0], param.offset[1], param.flip);
