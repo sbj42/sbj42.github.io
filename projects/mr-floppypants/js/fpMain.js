@@ -9,9 +9,7 @@ var p2 = require('p2');
 
 
 var dragBody = null;
-// var dragReleasing = false;
 var dragConstraint = null;
-// var grabConstraint = null;
 
 function tryHit(position) {
     fpWorld.actors().forEach(function(actor) {
@@ -21,6 +19,7 @@ function tryHit(position) {
         fpWorld.currentActor(actor);
     });
     if (dragBody) {
+        fpWorld.currentActor().startDrag(dragBody);
         dragConstraint = new p2.RevoluteConstraint(fpWorld.NULL_BODY, dragBody.body(), {
             worldPivot: position
         });
@@ -52,6 +51,7 @@ fpUtil.addEventListener(fpView, 'mouseup', function(event) {
         fpWorld.world().removeConstraint(dragConstraint);
         dragConstraint = null;
         dragBody = null;
+        fpWorld.currentActor().endDrag();
     }
 });
 
@@ -70,6 +70,8 @@ require('./setup/fpWorldSetup');
 function animate(time) {
     requestAnimationFrame(animate);
 
+    if (time - lastTime > 500)
+        lastTime = time - 500;
     var deltaTime = lastTime ? (time - lastTime) / 1000 : 0;
     fpWorld.world().step(fixedTimeStep, deltaTime, maxSubSteps);
 

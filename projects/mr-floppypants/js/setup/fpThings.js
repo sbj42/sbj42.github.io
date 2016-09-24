@@ -69,35 +69,37 @@ fpThings.stairs = addBody({
     offset: [0, 0],
     position: [-1, -1]
 });
-// createBed: function(world, offx, offy, flip) {
-//     return [createThing(world, {
-//         mass: 300,
-//         position: [offx, offy],
-//         polygon: [[0, 0], [0, -105], [13, -105], [13, -76], [283, -76], [283, -79], [292, -79], [292, 0], [283, 0], [283, -31], [9, -31], [9, 0]],
-//         image: 'bed',
-//         offset: [145, 50],
-//         flip: flip
-//     })];
-// },
-// createPillow: function(world, offx, offy, flip) {
-//     return [createThing(world, {
-//         mass: 1,
-//         position: [offx, offy],
-//         polygon: [[3, -15], [46, -15], [47, -8], [46, -4], [3, -4], [2, -8]],
-//         image: 'pillow',
-//         offset: [25, 8],
-//         flip: flip
-//     })];
-// },
-// createTable: function(world, offx, offy) {
-//     return [createThing(world, {
-//         mass: 300,
-//         position: [offx, offy+2],
-//         polygon: [[46, -1], [46, -90], [2, -90], [2, -98], [198, -98], [198, -90], [154, -90], [154, -1], [146, -1], [146, -80], [54, -80], [54, -1]],
-//         image: 'table',
-//         offset: [100, 26]
-//     })];
-// },
+fpThings.ball = addBody({
+    circle: [25, -25, 24],
+    image: 'ball',
+    offset: [0, 50],
+    mass: 0.3,
+    material: fpWorld.BOUNCY_MATERIAL
+});
+fpThings.bed = addBody({
+    polygon: [
+        [0, 0], [0, -105], [13, -105], [13, -76], [283, -76], [283, -79],
+        [292, -79], [292, 0], [283, 0], [283, -31], [9, -31], [9, 0]
+    ],
+    image: 'bed',
+    offset: [0, 104],
+    mass: 120
+});
+fpThings.pillow = addBody({
+    polygon: [[2, -6], [25, -2], [48, -6], [48, -14], [25, -18], [2, -14]],
+    image: 'pillow',
+    offset: [0, 20],
+    mass: 0.1
+});
+fpThings.table = addBody({
+    polygon: [
+        [3, -97], [197, -97], [197, -90], [153, -90], [153, -1], [144, -1], [144, -76],
+        [55, -76], [55, -1], [46, -1], [46, -90], [3, -90]
+    ],
+    image: 'table',
+    offset: [0, 100],
+    mass: 100
+});
 // createGlass: function(world, offx, offy) {
 //     return [createThing(world, {
 //         mass: 2,

@@ -29,6 +29,7 @@ var GRAVITY = 600;
 var world = new p2.World({
     gravity: [0, GRAVITY]
 });
+world.solver.iterations = 50;
 
 world.addBody(fpWorld.NULL_BODY);
 

@@ -39,7 +39,7 @@ fpActors.MrFloppyPants = function(position) {
     var collisionGroup = fpWorld.newCollisionGroup();
     var getBody = getBodyFunc(position, collisionGroup);
     var join = joinFunc(position);
-    var mass = 0.2;
+    var mass = 0.5;
 
     var head = getBody({
         position: [0, 0],
@@ -197,7 +197,7 @@ fpActors.MrFloppyPants = function(position) {
     var painTimer = null;
 
     var actor = new fpActor({
-        bodies: [seat, chest, legL1, legR1, footL, footR, legL2, legR2, head, armL1, armR1, armL2, armR2, handL, handR],
+        bodies: [seat, legL1, legR1, footL, footR, legL2, legR2, chest, head, armL1, armR1, armL2, armR2, handL, handR],
         head: head,
         hands: [handL, handR],
         painPoints: [head, handL, handR, footL, footR]

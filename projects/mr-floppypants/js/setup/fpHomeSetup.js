@@ -60,7 +60,12 @@ function fpHomeSetup(position) {
     addThing('floor15', [33, 0]);
     addThing('floor1',  [48, 0]);
 
-    fpWorld.currentActor(addActor('MrFloppyPants', [13, -5]));
+    addThing('ball', [17, -5]);
+    addThing('bed', [18, -5]);
+    addThing('pillow', [18, -7]);
+    addThing('table', [22, -3]);
+
+    fpWorld.currentActor(addActor('MrFloppyPants', [14, -5]));
     fpView.position(pos([13, -5]));
 }
 

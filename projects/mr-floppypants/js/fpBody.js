@@ -19,7 +19,11 @@ function fpBody(param) {
         offset[0] += this._body.position[0] - param.position[0];
         offset[1] += this._body.position[1] - param.position[1];
     } else if (param.circle) {
-        this._body.addShape(new p2.Circle({radius: param.circle[0]}));
+        this._body.position[0] += param.circle[0];
+        this._body.position[1] += param.circle[1];
+        offset[0] += param.circle[0];
+        offset[1] += param.circle[1];
+        this._body.addShape(new p2.Circle({radius: param.circle[2]}));
     }
     var collisionGroup = param.collisionGroup || (mass == 0 ? fpWorld.GROUP_GROUND : fpWorld.GROUP_OTHER);
     var collisionMask;
@@ -32,7 +36,6 @@ function fpBody(param) {
         s.collisionGroup = collisionGroup;
         s.collisionMask = collisionMask;
     });
-    //fpWorld.world().addBody(this._body);
     this._images = [null, null, null];
     if (param.image)
         this._images[mass == 0 ? 0 : 1] = param.image;
@@ -49,11 +52,11 @@ fpBody.prototype.body = function () {
 };
 
 fpBody.prototype.position = function () {
-    return this._body.position.slice();
+    return this._body.interpolatedPosition.slice();
 };
 
 fpBody.prototype.angle = function () {
-    return this._body.angle;
+    return this._body.interpolatedAngle;
 };
 
 fpBody.prototype.flip = function () {

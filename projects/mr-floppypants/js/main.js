@@ -283,8 +283,8 @@ things = things.concat(myThings);
 //     groundBg.addColorStop(1, '#421a09');
 //     ctx.fillStyle = groundBg;
 //     ctx.fillRect(0, theView.vyToCy(1200), theView.width(), theView.vyToCy(11200));
-    things.forEach(function(t) { theView.render(t); });
-    things.forEach(function(t) { theView.render2(t); });
+    // things.forEach(function(t) { theView.render(t); });
+    // things.forEach(function(t) { theView.render2(t); });
 //
 //     lastTime = time;
 // }
