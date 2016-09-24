@@ -5,19 +5,21 @@ var constants = require('./constants');
 var me = require('./me');
 var world = require('./world');
 
-var theWorld = new p2.World({
-    gravity:[0, constants.GRAVITY]
-    //gravity:[0, 3]
-});
-require('./thing').setup(theWorld);
+var fpWorld = require('./fpWorld');
 
-var nullBody = new p2.Body();
-theWorld.addBody(nullBody);
 var dragBody = null;
 var dragReleasing = false;
 var dragConstraint = null;
+var grabConstraint = null;
 
-var grabConstraint;
+function onGrab(other) {
+    if (dragConstraint && !grabConstraint && other && other.type != p2.Body.STATIC) {
+        grabConstraint = new p2.LockConstraint(event.bodyA, event.bodyB);
+        fpWorld.theWorld.addConstraint(grabConstraint);
+    }
+}
+
+fpWorld.addCotactListener()
 theWorld.on('beginContact', function(event) {
     if (!grabConstraint) {
         var other = null;
@@ -37,14 +39,13 @@ theWorld.on('beginContact', function(event) {
 var myBodies;
 
 function tryHit(position) {
-    var result = theWorld.hitTest(position, myBodies, 5);
-    if (result.length) {
-        dragBody = result[result.length - 1];
+    dragBody = fpWorld.theWorld.simpleHitTest(position, myBodies);
+    if (dragBody) {
         myThings.hands.forEach(function(t) {
             if (t.body() == dragBody && grabConstraint)
                 dragReleasing = true;
         });
-        dragConstraint = new p2.RevoluteConstraint(nullBody, dragBody, {
+        dragConstraint = new p2.RevoluteConstraint(fpWorld.nullBody, dragBody, {
             worldPivot: position
         });
         dragConstraint.setStiffness(1000);
@@ -91,32 +92,32 @@ var theView = new view.View({
 
 var things = [];
 var houseWindows = [];
-var houseRect = {x1: -1275, y1: -450, x2: 1125, y2: 1200};
-function housePath() {
-    var ctx = theView.context();
-    ctx.beginPath();
-    ctx.moveTo(theView.vxToCx(houseRect.x1), theView.vyToCy(houseRect.y1));
-    ctx.lineTo(theView.vxToCx(houseRect.x2), theView.vyToCy(houseRect.y1));
-    ctx.lineTo(theView.vxToCx(houseRect.x2), theView.vyToCy(houseRect.y2));
-    ctx.lineTo(theView.vxToCx(houseRect.x1), theView.vyToCy(houseRect.y2));
-    ctx.lineTo(theView.vxToCx(houseRect.x1), theView.vyToCy(houseRect.y1));
-    houseWindows.forEach(function(w) {
-        ctx.moveTo(theView.vxToCx(w.x1), theView.vyToCy(w.y1));
-        ctx.lineTo(theView.vxToCx(w.x2), theView.vyToCy(w.y1));
-        ctx.lineTo(theView.vxToCx(w.x2), theView.vyToCy(w.y2));
-        ctx.lineTo(theView.vxToCx(w.x1), theView.vyToCy(w.y2));
-        ctx.lineTo(theView.vxToCx(w.x1), theView.vyToCy(w.y1));
-    });
-}
-function atticPath() {
-    var ctx = theView.context();
-    ctx.beginPath();
-    var dx = (200 + houseRect.x2 - houseRect.x1)/2;
-    ctx.moveTo(theView.vxToCx(houseRect.x1 - 100), theView.vyToCy(houseRect.y1));
-    ctx.lineTo(theView.vxToCx(houseRect.x1 - 100 + dx), theView.vyToCy(houseRect.y1 - dx/2));
-    ctx.lineTo(theView.vxToCx(houseRect.x2 + 100), theView.vyToCy(houseRect.y1));
-    ctx.lineTo(theView.vxToCx(houseRect.x1), theView.vyToCy(houseRect.y1));
-}
+// var houseRect = {x1: -1275, y1: -450, x2: 1125, y2: 1200};
+// function housePath() {
+//     var ctx = theView.context();
+//     ctx.beginPath();
+//     ctx.moveTo(theView.vxToCx(houseRect.x1), theView.vyToCy(houseRect.y1));
+//     ctx.lineTo(theView.vxToCx(houseRect.x2), theView.vyToCy(houseRect.y1));
+//     ctx.lineTo(theView.vxToCx(houseRect.x2), theView.vyToCy(houseRect.y2));
+//     ctx.lineTo(theView.vxToCx(houseRect.x1), theView.vyToCy(houseRect.y2));
+//     ctx.lineTo(theView.vxToCx(houseRect.x1), theView.vyToCy(houseRect.y1));
+//     houseWindows.forEach(function(w) {
+//         ctx.moveTo(theView.vxToCx(w.x1), theView.vyToCy(w.y1));
+//         ctx.lineTo(theView.vxToCx(w.x2), theView.vyToCy(w.y1));
+//         ctx.lineTo(theView.vxToCx(w.x2), theView.vyToCy(w.y2));
+//         ctx.lineTo(theView.vxToCx(w.x1), theView.vyToCy(w.y2));
+//         ctx.lineTo(theView.vxToCx(w.x1), theView.vyToCy(w.y1));
+//     });
+// }
+// function atticPath() {
+//     var ctx = theView.context();
+//     ctx.beginPath();
+//     var dx = (200 + houseRect.x2 - houseRect.x1)/2;
+//     ctx.moveTo(theView.vxToCx(houseRect.x1 - 100), theView.vyToCy(houseRect.y1));
+//     ctx.lineTo(theView.vxToCx(houseRect.x1 - 100 + dx), theView.vyToCy(houseRect.y1 - dx/2));
+//     ctx.lineTo(theView.vxToCx(houseRect.x2 + 100), theView.vyToCy(houseRect.y1));
+//     ctx.lineTo(theView.vxToCx(houseRect.x1), theView.vyToCy(houseRect.y1));
+// }
 
 for (var i = 0; i < 13; i ++) {
     things = things.concat(world.createRoof(theWorld, -1375 + i * 100, -450 - i * 50));
@@ -195,14 +196,14 @@ houseWindows.push({x1: 150, y1: 250, x2: 250, y2: 450});
 
 things = things.concat(world.createWall5(theWorld, -1300, 675));
 things = things.concat(world.createWall3(theWorld, -1300, 925));
-things = things.concat(world.createFloor1(theWorld, -1300, 1175));
-things = things.concat(world.createStairs(theWorld, -698, 1175, true));
-things = things.concat(world.createFloor4(theWorld, -700, 1175));
-things = things.concat(world.createFloor1(theWorld, -500, 1175));
-things = things.concat(world.createFloor15(theWorld, -450, 1175));
-things = things.concat(world.createFloor1(theWorld, 300, 1175));
-things = things.concat(world.createFloor15(theWorld, 350, 1175));
-things = things.concat(world.createFloor1(theWorld, 1100, 1175));
+// things = things.concat(world.createFloor1(theWorld, -1300, 1175));
+// things = things.concat(world.createStairs(theWorld, -698, 1175, true));
+// things = things.concat(world.createFloor4(theWorld, -700, 1175));
+// things = things.concat(world.createFloor1(theWorld, -500, 1175));
+// things = things.concat(world.createFloor15(theWorld, -450, 1175));
+// things = things.concat(world.createFloor1(theWorld, 300, 1175));
+// things = things.concat(world.createFloor15(theWorld, 350, 1175));
+// things = things.concat(world.createFloor1(theWorld, 1100, 1175));
 things = things.concat(world.createFloor1(theWorld, 1100, 625));
 things = things.concat(world.createWall5(theWorld, 1100, 675));
 houseWindows.push({x1: -350, y1: 800, x2: -250, y2: 1000});
@@ -228,65 +229,65 @@ var myThings = me.createMe(theWorld, 0, 0);
 myBodies = myThings.map(function(thing) { return thing.body(); });
 things = things.concat(myThings);
 
-// To animate the bodies, we must step the world forward in time, using a fixed time step size.
-// The World will run substeps and interpolate automatically for us, to get smooth animation.
-var fixedTimeStep = 1 / 60; // seconds
-var maxSubSteps = 10; // Max sub steps to catch up with the wall clock
-var lastTime;
+// // To animate the bodies, we must step the world forward in time, using a fixed time step size.
+// // The World will run substeps and interpolate automatically for us, to get smooth animation.
+// var fixedTimeStep = 1 / 60; // seconds
+// var maxSubSteps = 10; // Max sub steps to catch up with the wall clock
+// var lastTime;
 
-var skyBg = theView.context().createLinearGradient(0, 0, 0, theView.height());
-skyBg.addColorStop(0, '#abd1f9');
-skyBg.addColorStop(1, '#71ace8');
-var atticBg = theView.context().createLinearGradient(theView.width() / 3, 0, theView.width() * 2 / 3, theView.height());
-atticBg.addColorStop(0, '#835323');
-atticBg.addColorStop(1, '#5c3611');
-var houseBg = theView.context().createLinearGradient(theView.width() / 3, 0, theView.width() * 2 / 3, theView.height());
-houseBg.addColorStop(0, '#e0f4ca');
-houseBg.addColorStop(1, '#a9cb84');
-var sunImage = new Image();
-sunImage.src = require('../png/sun.png');
-var windowImage = new Image();
-windowImage.src = require('../png/window.png');
-
-// Animation loop
-function animate(time){
-    requestAnimationFrame(animate);
-
-    // Compute elapsed time since last render frame
-    var deltaTime = lastTime ? (time - lastTime) / 1000 : 0;
-
-    // Move bodies forward in time
-    theWorld.step(fixedTimeStep, deltaTime, maxSubSteps);
-
-    if (!dragConstraint) {
-        var position = myThings[0].body().position;
-        theView.cx((theView.cx() * (constants.CATCH_UP - 1) + position[0]) / constants.CATCH_UP);
-        theView.cy((theView.cy() * (constants.CATCH_UP - 1) + position[1]) / constants.CATCH_UP);
-    }
-    // Render the circle at the current interpolated position
-    //console.info(circleBody.position[0], circleBody.position[1]);
-    var ctx = theView.context();
-    theView.clear(skyBg);
-    ctx.drawImage(sunImage, theView.width() / 5, theView.height() / 5);
-    ctx.fillStyle = atticBg;
-    atticPath(ctx);
-    ctx.fill('evenodd');
-    ctx.fillStyle = houseBg;
-    housePath(ctx);
-    ctx.fill('evenodd');
-    houseWindows.forEach(function(w) {
-        theView.renderImage(windowImage, w.x1 - 10, w.y1 - 10);
-    });
-    var groundBg = theView.context().createLinearGradient(0, theView.vyToCy(1200), 0, theView.vyToCy(6200));
-    groundBg.addColorStop(0, '#8a4425');
-    groundBg.addColorStop(1, '#421a09');
-    ctx.fillStyle = groundBg;
-    ctx.fillRect(0, theView.vyToCy(1200), theView.width(), theView.vyToCy(11200));
+// var skyBg = theView.context().createLinearGradient(0, 0, 0, theView.height());
+// skyBg.addColorStop(0, '#abd1f9');
+// skyBg.addColorStop(1, '#71ace8');
+// var atticBg = theView.context().createLinearGradient(theView.width() / 3, 0, theView.width() * 2 / 3, theView.height());
+// atticBg.addColorStop(0, '#835323');
+// atticBg.addColorStop(1, '#5c3611');
+// var houseBg = theView.context().createLinearGradient(theView.width() / 3, 0, theView.width() * 2 / 3, theView.height());
+// houseBg.addColorStop(0, '#e0f4ca');
+// houseBg.addColorStop(1, '#a9cb84');
+// var sunImage = new Image();
+// sunImage.src = require('../png/sun.png');
+// var windowImage = new Image();
+// windowImage.src = require('../png/window.png');
+//
+// // Animation loop
+// function animate(time){
+//     requestAnimationFrame(animate);
+//
+//     // Compute elapsed time since last render frame
+//     var deltaTime = lastTime ? (time - lastTime) / 1000 : 0;
+//
+//     // Move bodies forward in time
+//     theWorld.step(fixedTimeStep, deltaTime, maxSubSteps);
+//
+//     if (!dragConstraint) {
+//         var position = myThings[0].body().position;
+//         theView.cx((theView.cx() * (constants.CATCH_UP - 1) + position[0]) / constants.CATCH_UP);
+//         theView.cy((theView.cy() * (constants.CATCH_UP - 1) + position[1]) / constants.CATCH_UP);
+//     }
+//     // Render the circle at the current interpolated position
+//     //console.info(circleBody.position[0], circleBody.position[1]);
+//     var ctx = theView.context();
+//     theView.clear(skyBg);
+//     ctx.drawImage(sunImage, theView.width() / 5, theView.height() / 5);
+//     ctx.fillStyle = atticBg;
+//     atticPath(ctx);
+//     ctx.fill('evenodd');
+//     ctx.fillStyle = houseBg;
+//     housePath(ctx);
+//     ctx.fill('evenodd');
+//     houseWindows.forEach(function(w) {
+//         theView.renderImage(windowImage, w.x1 - 10, w.y1 - 10);
+//     });
+//     var groundBg = theView.context().createLinearGradient(0, theView.vyToCy(1200), 0, theView.vyToCy(6200));
+//     groundBg.addColorStop(0, '#8a4425');
+//     groundBg.addColorStop(1, '#421a09');
+//     ctx.fillStyle = groundBg;
+//     ctx.fillRect(0, theView.vyToCy(1200), theView.width(), theView.vyToCy(11200));
     things.forEach(function(t) { theView.render(t); });
     things.forEach(function(t) { theView.render2(t); });
-
-    lastTime = time;
-}
-
-// Start the animation loop
-requestAnimationFrame(animate);
+//
+//     lastTime = time;
+// }
+//
+// // Start the animation loop
+// requestAnimationFrame(animate);

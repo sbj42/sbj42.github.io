@@ -52,24 +52,6 @@ Thing.prototype.image2 = function () {
     return this._image2;
 };
 
-var standardMaterial = new p2.Material();
-var bouncyMaterial = new p2.Material();
-
-function setup(world) {
-    world.addContactMaterial(new p2.ContactMaterial(standardMaterial, standardMaterial, {
-        friction: 5,
-        restitution: 0.1
-    }));
-    world.addContactMaterial(new p2.ContactMaterial(standardMaterial, bouncyMaterial, {
-        friction: 10,
-        restitution: 0.75
-    }));
-    world.addContactMaterial(new p2.ContactMaterial(bouncyMaterial, bouncyMaterial, {
-        friction: 10,
-        restitution: 0.85
-    }));
-}
-
 function createThing(world, param) {
     param.mass = param.mass || 0;
     var bod = new p2.Body({

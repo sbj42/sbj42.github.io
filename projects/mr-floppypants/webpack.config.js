@@ -1,11 +1,11 @@
 /* eslint-env node */
 
 module.exports = {
-    entry: "./js/main.js",
+    entry: "./js/fpMain.js",
     devtool: 'source-map',
     output: {
         path: __dirname,
-        filename: "dist/dist.js"
+        filename: "dist/fp.js"
     },
     module: {
         loaders: [
