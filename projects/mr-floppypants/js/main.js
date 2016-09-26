@@ -194,8 +194,8 @@ houseWindows.push({x1: -750, y1: 250, x2: -650, y2: 450});
 houseWindows.push({x1: -350, y1: 250, x2: -250, y2: 450});
 houseWindows.push({x1: 150, y1: 250, x2: 250, y2: 450});
 
-things = things.concat(world.createWall5(theWorld, -1300, 675));
-things = things.concat(world.createWall3(theWorld, -1300, 925));
+// things = things.concat(world.createWall5(theWorld, -1300, 675));
+// things = things.concat(world.createWall3(theWorld, -1300, 925));
 // things = things.concat(world.createFloor1(theWorld, -1300, 1175));
 // things = things.concat(world.createStairs(theWorld, -698, 1175, true));
 // things = things.concat(world.createFloor4(theWorld, -700, 1175));

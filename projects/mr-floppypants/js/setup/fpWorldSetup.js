@@ -28,3 +28,8 @@ fpWorld.addBackdrop(new fpBackdrop({
 // ---
 
 fpHomeSetup([0, 0]);
+
+// ---
+
+if (fpWorld.currentActor())
+    fpView.position(fpWorld.currentActor().head().body().position);

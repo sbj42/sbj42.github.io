@@ -41,7 +41,7 @@ function fpBody(param) {
         this._images[mass == 0 ? 0 : 1] = param.image;
     else if (param.images) {
         this._images[1] = param.images[0];
-        this._images[1] = param.images[1];
+        this._images[2] = param.images[1];
     }
     this._offset = offset;
     this._flip = param.flip;

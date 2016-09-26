@@ -29,7 +29,7 @@ var GRAVITY = 600;
 var world = new p2.World({
     gravity: [0, GRAVITY]
 });
-world.solver.iterations = 50;
+world.solver.iterations = 1000;
 
 world.addBody(fpWorld.NULL_BODY);
 
@@ -40,8 +40,8 @@ var acm = function(m1, m2, f, r) {
     }));
 };
 acm(fpWorld.STANDARD_MATERIAL, fpWorld.STANDARD_MATERIAL,  5, 0.1 );
-acm(fpWorld.BOUNCY_MATERIAL,   fpWorld.STANDARD_MATERIAL, 10, 0.75);
-acm(fpWorld.BOUNCY_MATERIAL,   fpWorld.BOUNCY_MATERIAL,   10, 0.85);
+acm(fpWorld.BOUNCY_MATERIAL,   fpWorld.STANDARD_MATERIAL,  7, 0.65);
+acm(fpWorld.BOUNCY_MATERIAL,   fpWorld.BOUNCY_MATERIAL,    7, 0.75);
 
 world.on('beginContact', function(event) {
     if (fpUtil.hasEvent(event.bodyA, 'contact'))

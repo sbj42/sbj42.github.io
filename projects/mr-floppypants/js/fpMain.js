@@ -23,7 +23,7 @@ function tryHit(position) {
         dragConstraint = new p2.RevoluteConstraint(fpWorld.NULL_BODY, dragBody.body(), {
             worldPivot: position
         });
-        dragConstraint.setStiffness(1000);
+        dragConstraint.setStiffness(10000);
         fpWorld.world().addConstraint(dragConstraint);
     }
 }
@@ -75,8 +75,9 @@ function animate(time) {
     var deltaTime = lastTime ? (time - lastTime) / 1000 : 0;
     fpWorld.world().step(fixedTimeStep, deltaTime, maxSubSteps);
 
-    if (!dragConstraint && fpWorld.currentActor())
+    if (!dragConstraint && fpWorld.currentActor()) {
         fpView.moveToward(fpWorld.currentActor().head().body().position.slice());
+    }
 
     fpWorldRender();
 

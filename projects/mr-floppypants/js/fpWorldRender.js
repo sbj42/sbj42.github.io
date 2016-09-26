@@ -40,7 +40,7 @@ function fpWorldRender(time) {
         });
     }
 
-    for (var layer = 0; layer < 2; layer ++) {
+    for (var layer = 0; layer <= 2; layer ++) {
         fpWorld.bodies().forEach(function(body) {
             renderBody(body, layer);
         });

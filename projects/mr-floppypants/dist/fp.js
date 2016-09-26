@@ -69,7 +69,7 @@
 	        dragConstraint = new p2.RevoluteConstraint(fpWorld.NULL_BODY, dragBody.body(), {
 	            worldPivot: position
 	        });
-	        dragConstraint.setStiffness(1000);
+	        dragConstraint.setStiffness(10000);
 	        fpWorld.world().addConstraint(dragConstraint);
 	    }
 	}
@@ -121,8 +121,9 @@
 	    var deltaTime = lastTime ? (time - lastTime) / 1000 : 0;
 	    fpWorld.world().step(fixedTimeStep, deltaTime, maxSubSteps);
 	
-	    if (!dragConstraint && fpWorld.currentActor())
+	    if (!dragConstraint && fpWorld.currentActor()) {
 	        fpView.moveToward(fpWorld.currentActor().head().body().position.slice());
+	    }
 	
 	    fpWorldRender();
 	
@@ -524,7 +525,7 @@
 	var world = new p2.World({
 	    gravity: [0, GRAVITY]
 	});
-	world.solver.iterations = 50;
+	world.solver.iterations = 1000;
 	
 	world.addBody(fpWorld.NULL_BODY);
 	
@@ -535,8 +536,8 @@
 	    }));
 	};
 	acm(fpWorld.STANDARD_MATERIAL, fpWorld.STANDARD_MATERIAL,  5, 0.1 );
-	acm(fpWorld.BOUNCY_MATERIAL,   fpWorld.STANDARD_MATERIAL, 10, 0.75);
-	acm(fpWorld.BOUNCY_MATERIAL,   fpWorld.BOUNCY_MATERIAL,   10, 0.85);
+	acm(fpWorld.BOUNCY_MATERIAL,   fpWorld.STANDARD_MATERIAL,  7, 0.65);
+	acm(fpWorld.BOUNCY_MATERIAL,   fpWorld.BOUNCY_MATERIAL,    7, 0.75);
 	
 	world.on('beginContact', function(event) {
 	    if (fpUtil.hasEvent(event.bodyA, 'contact'))
@@ -14961,7 +14962,7 @@
 /* 77 */
 /***/ function(module, exports) {
 
-	module.exports = "data:image/png;base64,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"
+	module.exports = "data:image/png;base64,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"
 
 /***/ },
 /* 78 */
@@ -15213,7 +15214,7 @@
 	        });
 	    }
 	
-	    for (var layer = 0; layer < 2; layer ++) {
+	    for (var layer = 0; layer <= 2; layer ++) {
 	        fpWorld.bodies().forEach(function(body) {
 	            renderBody(body, layer);
 	        });
@@ -15262,6 +15263,11 @@
 	// ---
 	
 	fpHomeSetup([0, 0]);
+	
+	// ---
+	
+	if (fpWorld.currentActor())
+	    fpView.position(fpWorld.currentActor().head().body().position);
 
 
 /***/ },
@@ -15339,13 +15345,19 @@
 	        return [position[0] - 25 + 50 * blockOffset[0], position[1] - 25 + 50 * blockOffset[1]];
 	    }
 	
-	    function addThing(thing, blockOffset) {
-	        return fpThings[thing](pos(blockOffset));
+	    function addThing(thing, blockOffset, flip, angle) {
+	        return fpThings[thing](pos(blockOffset), flip, angle);
 	    }
 	
 	    function addActor(actor, blockOffset) {
 	        return fpActors[actor](pos(blockOffset));
 	    }
+	
+	    // underneath
+	
+	    addThing('stairs',  [ 1, 11]);
+	
+	    // first floor
 	
 	    addThing('floor1',  [ 0, 0]);
 	    addThing('stairs',  [ 1, 0]);
@@ -15356,13 +15368,75 @@
 	    addThing('floor15', [33, 0]);
 	    addThing('floor1',  [48, 0]);
 	
-	    addThing('ball', [17, -5]);
-	    addThing('bed', [18, -5]);
-	    addThing('pillow', [18, -7]);
-	    addThing('table', [22, -3]);
+	    addThing('wall3',  [ 0, -5]);
+	    addThing('wall5',  [ 0, -10]);
+	    addThing('wall5',  [16, -10]);
+	    addThing('wall5',  [32, -10]);
+	    addThing('wall5',  [48, -10]);
 	
-	    fpWorld.currentActor(addActor('MrFloppyPants', [14, -5]));
-	    fpView.position(pos([13, -5]));
+	    // second floor
+	
+	    addThing('floor1',  [ 0, -11]);
+	    addThing('floor4',  [12, -11]);
+	    addThing('floor1',  [16, -11]);
+	    addThing('floor15', [17, -11]);
+	    addThing('floor1',  [32, -11]);
+	    addThing('floor4',  [33, -11]);
+	    addThing('stairs',  [48, -11], true);
+	    addThing('floor1',  [48, -11]);
+	
+	    addThing('wall3',  [ 0, -14]);
+	    addThing('wall5',  [ 0, -21]);
+	    addThing('wall5',  [16, -21]);
+	    addThing('wall5',  [32, -21]);
+	    addThing('wall5',  [48, -21]);
+	    addThing('wall5',  [48, -16]);
+	
+	    addThing('table',  [23, -11]);
+	    addThing('plate',  [23, -12.95]);
+	    addThing('glass',  [24, -12.95]);
+	    addThing('glass',  [25.7, -12.95]);
+	    addThing('plate',  [26, -12.95]);
+	    addThing('chair',  [22.5, -11]);
+	    addThing('chair',  [27.5, -11], true);
+	
+	    // third floor
+	
+	    addThing('floor1',  [ 0, -22]);
+	    addThing('floor15', [ 1, -22]);
+	    addThing('floor1',  [16, -22]);
+	    addThing('floor15', [17, -22]);
+	    addThing('floor1',  [32, -22]);
+	    addThing('floor4',  [33, -22]);
+	    addThing('floor1',  [48, -22]);
+	
+	    addThing('wall3',  [ 0, -25]);
+	    addThing('wall5',  [ 0, -32]);
+	    addThing('wall5',  [16, -32]);
+	    addThing('wall5',  [32, -32]);
+	    addThing('wall5',  [48, -32]);
+	    addThing('wall3',  [48, -25]);
+	
+	    addThing('bathtub', [6, -22]);
+	
+	    addThing('ball', [21, -22]);
+	    addThing('bed', [22, -22]);
+	    addThing('pillow', [22.25, -23.5]);
+	
+	    // attic
+	
+	    addThing('floor1',  [ 0, -33]);
+	    addThing('floor4',  [ 1, -33]);
+	    addThing('floor1',  [ 5, -33]);
+	    addThing('floor1',  [11, -33]);
+	    addThing('floor4',  [12, -33]);
+	    addThing('floor1',  [16, -33]);
+	    addThing('floor15', [17, -33]);
+	    addThing('floor1',  [32, -33]);
+	    addThing('floor15', [33, -33]);
+	    addThing('floor1',  [48, -33]);
+	
+	    fpWorld.currentActor(addActor('MrFloppyPants', [20, -27]));
 	}
 	
 	module.exports = fpHomeSetup;
@@ -15441,7 +15515,7 @@
 	    ],
 	    image: 'stairs',
 	    offset: [0, 0],
-	    position: [-1, -1]
+	    position: [-1, -501]
 	});
 	fpThings.ball = addBody({
 	    circle: [25, -25, 24],
@@ -15474,56 +15548,33 @@
 	    offset: [0, 100],
 	    mass: 100
 	});
-	// createGlass: function(world, offx, offy) {
-	//     return [createThing(world, {
-	//         mass: 2,
-	//         position: [offx, offy-24],
-	//         polygon: [[0, 0], [12, 0], [12, 24], [0, 24]],
-	//         image: 'glass',
-	//         offset: [7, 13]
-	//     })];
-	// },
-	// createPlate: function(world, offx, offy) {
-	//     return [createThing(world, {
-	//         mass: 2,
-	//         position: [offx, offy-10],
-	//         polygon: [[0, 0], [46, 0], [31, 10], [15, 10]],
-	//         image: 'plate',
-	//         offset: [24, 6]
-	//     })];
-	// },
-	// createChair: function(world, offx, offy, flip) {
-	//     return [createThing(world, {
-	//         mass: 100,
-	//         position: [offx, offy+2],
-	//         polygon: [[2, -2], [2, -63], [46, -63], [46, -138], [55, -138], [55, -2], [46, -2], [46, -28], [10, -28], [10, -2]],
-	//         image: 'chair',
-	//         offset: [33, 85],
-	//         flip: flip
-	//     })];
-	// },
-	// createBall: function(world, offx, offy, flip) {
-	//     return [createThing(world, {
-	//         mass: 1,
-	//         material: thing.bouncyMaterial,
-	//         position: [offx, offy],
-	//         circle: [22],
-	//         image: 'ball',
-	//         offset: [25, 25],
-	//         flip: flip
-	//     })];
-	// },
-	// createBathtub: function(world, offx, offy, flip) {
-	//     return [createThing(world, {
-	//         mass: 400,
-	//         position: [offx, offy],
-	//         polygon: [[3, -92], [15, -92], [52, -32], [198, -32], [239, -92], [248, -92],
-	//             [201, -3], [185, -3], [185, -16], [62, -16], [62, -3], [44, -3]],
-	//         image: ['bathtub1', 'bathtub2'],
-	//         offset: [125, 67],
-	//         flip: flip
-	//     })];
-	// },
+	fpThings.glass = addBody({
+	    polygon: [[2, -22], [11, -22], [11, -1], [2, -1]],
+	    image: 'glass',
+	    offset: [0, 24],
+	    mass: 1
+	});
+	fpThings.plate = addBody({
+	    polygon: [[3, -10], [44, -10], [29, -1], [17, -1]],
+	    image: 'plate',
+	    offset: [0, 13],
+	    mass: 1
+	});
+	fpThings.chair = addBody({
+	    polygon: [[1, -1], [1, -137], [8, -137], [8, -61], [52, -61], [52, -1], [45, -1], [45, -27], [8, -27], [8, -1]],
+	    image: 'chair',
+	    offset: [1, 138],
+	    mass: 30
+	});
+	fpThings.bathtub = addBody({
+	    polygon: [
+	        [5, -97], [20, -98], [45, -24], [199, -24], [237, -91], [250, -91],
+	        [205, -2], [182, -2], [182, -14], [61, -14], [61, -2], [41, -2], [0, -84]
+	    ],
+	    images: ['bathtub1', 'bathtub2'],
+	    offset: [1, 102],
+	    mass: 300
+	});
 	// createSink: function(world, offx, offy, flip) {
 	//     return [createThing(world, {
 	//         mass: 350,
@@ -15638,7 +15689,7 @@
 	        this._images[mass == 0 ? 0 : 1] = param.image;
 	    else if (param.images) {
 	        this._images[1] = param.images[0];
-	        this._images[1] = param.images[1];
+	        this._images[2] = param.images[1];
 	    }
 	    this._offset = offset;
 	    this._flip = param.flip;
@@ -15880,7 +15931,7 @@
 	        painPoints: [head, handL, handR, footL, footR]
 	    });
 	    fpUtil.addEventListener(actor, 'pain', function(pain) {
-	        if (pain > 700*700) {
+	        if (pain > 900*900) {
 	            clearTimeout(painTimer);
 	            head.images()[1] = 'head-ouch';
 	            painTimer = setTimeout(function() {

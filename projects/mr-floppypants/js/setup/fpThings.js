@@ -67,7 +67,7 @@ fpThings.stairs = addBody({
     ],
     image: 'stairs',
     offset: [0, 0],
-    position: [-1, -1]
+    position: [-1, -501]
 });
 fpThings.ball = addBody({
     circle: [25, -25, 24],
@@ -100,56 +100,33 @@ fpThings.table = addBody({
     offset: [0, 100],
     mass: 100
 });
-// createGlass: function(world, offx, offy) {
-//     return [createThing(world, {
-//         mass: 2,
-//         position: [offx, offy-24],
-//         polygon: [[0, 0], [12, 0], [12, 24], [0, 24]],
-//         image: 'glass',
-//         offset: [7, 13]
-//     })];
-// },
-// createPlate: function(world, offx, offy) {
-//     return [createThing(world, {
-//         mass: 2,
-//         position: [offx, offy-10],
-//         polygon: [[0, 0], [46, 0], [31, 10], [15, 10]],
-//         image: 'plate',
-//         offset: [24, 6]
-//     })];
-// },
-// createChair: function(world, offx, offy, flip) {
-//     return [createThing(world, {
-//         mass: 100,
-//         position: [offx, offy+2],
-//         polygon: [[2, -2], [2, -63], [46, -63], [46, -138], [55, -138], [55, -2], [46, -2], [46, -28], [10, -28], [10, -2]],
-//         image: 'chair',
-//         offset: [33, 85],
-//         flip: flip
-//     })];
-// },
-// createBall: function(world, offx, offy, flip) {
-//     return [createThing(world, {
-//         mass: 1,
-//         material: thing.bouncyMaterial,
-//         position: [offx, offy],
-//         circle: [22],
-//         image: 'ball',
-//         offset: [25, 25],
-//         flip: flip
-//     })];
-// },
-// createBathtub: function(world, offx, offy, flip) {
-//     return [createThing(world, {
-//         mass: 400,
-//         position: [offx, offy],
-//         polygon: [[3, -92], [15, -92], [52, -32], [198, -32], [239, -92], [248, -92],
-//             [201, -3], [185, -3], [185, -16], [62, -16], [62, -3], [44, -3]],
-//         image: ['bathtub1', 'bathtub2'],
-//         offset: [125, 67],
-//         flip: flip
-//     })];
-// },
+fpThings.glass = addBody({
+    polygon: [[2, -22], [11, -22], [11, -1], [2, -1]],
+    image: 'glass',
+    offset: [0, 24],
+    mass: 1
+});
+fpThings.plate = addBody({
+    polygon: [[3, -10], [44, -10], [29, -1], [17, -1]],
+    image: 'plate',
+    offset: [0, 13],
+    mass: 1
+});
+fpThings.chair = addBody({
+    polygon: [[1, -1], [1, -137], [8, -137], [8, -61], [52, -61], [52, -1], [45, -1], [45, -27], [8, -27], [8, -1]],
+    image: 'chair',
+    offset: [1, 138],
+    mass: 30
+});
+fpThings.bathtub = addBody({
+    polygon: [
+        [5, -97], [20, -98], [45, -24], [199, -24], [237, -91], [250, -91],
+        [205, -2], [182, -2], [182, -14], [61, -14], [61, -2], [41, -2], [0, -84]
+    ],
+    images: ['bathtub1', 'bathtub2'],
+    offset: [1, 102],
+    mass: 300
+});
 // createSink: function(world, offx, offy, flip) {
 //     return [createThing(world, {
 //         mass: 350,

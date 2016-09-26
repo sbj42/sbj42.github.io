@@ -203,7 +203,7 @@ fpActors.MrFloppyPants = function(position) {
         painPoints: [head, handL, handR, footL, footR]
     });
     fpUtil.addEventListener(actor, 'pain', function(pain) {
-        if (pain > 700*700) {
+        if (pain > 900*900) {
             clearTimeout(painTimer);
             head.images()[1] = 'head-ouch';
             painTimer = setTimeout(function() {
