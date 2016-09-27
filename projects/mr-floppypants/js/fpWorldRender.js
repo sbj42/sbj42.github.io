@@ -1,6 +1,7 @@
 var fpWorld = require('./fpWorld');
 var fpView = require('./fpView');
 var fpContext = require('./fpContext');
+var p2 = require('p2');
 
 var SUN_POSITION = [1 / 4, 1 / 4];
 var SUN_IMAGE_OFFSET = [98, 108];
@@ -40,6 +41,35 @@ function fpWorldRender(time) {
         });
     }
 
+    function renderBodyFrame(body) {
+        context.beginPath();
+        body.body().shapes.forEach(function(shape) {
+            if (shape.vertices) {
+                var start;
+                shape.vertices.forEach(function(vertex, index) {
+                    var bpos = [];
+                    p2.vec2.toGlobalFrame(bpos, vertex, shape.position, shape.angle);
+                    var wpos = [];
+                    p2.vec2.toGlobalFrame(wpos, bpos, body.body().interpolatedPosition, body.body().interpolatedAngle);
+                    if (index == 0) {
+                        context.moveTo(wpos[0], wpos[1]);
+                        start = wpos;
+                    } else
+                        context.lineTo(wpos[0], wpos[1]);
+                });
+                context.lineTo(start[0], start[1]);
+            } else if (shape.radius) {
+                var wpos = [];
+                p2.vec2.toGlobalFrame(wpos, shape.position, body.body().interpolatedPosition, body.body().interpolatedAngle);
+                context.moveTo(wpos[0], wpos[1]);
+                context.arc(wpos[0], wpos[1], shape.radius, body.body().interpolatedAngle, body.body().interpolatedAngle + Math.PI * 2);
+            }
+        });
+        context.strokeStyle = 'red';
+        context.lineWidth = 1;
+        context.stroke();
+    }
+
     for (var layer = 0; layer <= 2; layer ++) {
         fpWorld.bodies().forEach(function(body) {
             renderBody(body, layer);
@@ -50,6 +80,14 @@ function fpWorldRender(time) {
             });
         });
     }
+    fpWorld.bodies().forEach(function(body) {
+        renderBodyFrame(body);
+    });
+    fpWorld.actors().forEach(function(actor) {
+        actor.bodies().forEach(function(body) {
+            renderBodyFrame(body);
+        });
+    });
 }
 
 module.exports = fpWorldRender;

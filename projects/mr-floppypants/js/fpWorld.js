@@ -33,15 +33,16 @@ world.solver.iterations = 1000;
 
 world.addBody(fpWorld.NULL_BODY);
 
-var acm = function(m1, m2, f, r) {
+var acm = function(m1, m2, f, r, rx) {
     world.addContactMaterial(new p2.ContactMaterial(m1, m2, {
         friction: f,
-        restitution: r
+        restitution: r,
+        relaxation: rx
     }));
 };
 acm(fpWorld.STANDARD_MATERIAL, fpWorld.STANDARD_MATERIAL,  5, 0.1 );
-acm(fpWorld.BOUNCY_MATERIAL,   fpWorld.STANDARD_MATERIAL,  7, 0.65);
-acm(fpWorld.BOUNCY_MATERIAL,   fpWorld.BOUNCY_MATERIAL,    7, 0.75);
+acm(fpWorld.BOUNCY_MATERIAL,   fpWorld.STANDARD_MATERIAL,  7, 0.65, 8);
+acm(fpWorld.BOUNCY_MATERIAL,   fpWorld.BOUNCY_MATERIAL,    7, 0.75, 8);
 
 world.on('beginContact', function(event) {
     if (fpUtil.hasEvent(event.bodyA, 'contact'))

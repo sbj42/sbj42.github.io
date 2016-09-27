@@ -45,6 +45,8 @@ function fpBody(param) {
     }
     this._offset = offset;
     this._flip = param.flip;
+    if (param.more)
+        param.more(this, param.position);
 }
 
 fpBody.prototype.body = function () {

@@ -104,7 +104,7 @@
 	// To animate the bodies, we must step the world forward in time, using a fixed time step size.
 	// The World will run substeps and interpolate automatically for us, to get smooth animation.
 	var fixedTimeStep = 1 / 60; // seconds
-	var maxSubSteps = 10; // Max sub steps to catch up with the wall clock
+	var maxSubSteps = 20; // Max sub steps to catch up with the wall clock
 	var lastTime;
 	
 	var context = fpView.context();
@@ -529,15 +529,16 @@
 	
 	world.addBody(fpWorld.NULL_BODY);
 	
-	var acm = function(m1, m2, f, r) {
+	var acm = function(m1, m2, f, r, rx) {
 	    world.addContactMaterial(new p2.ContactMaterial(m1, m2, {
 	        friction: f,
-	        restitution: r
+	        restitution: r,
+	        relaxation: rx
 	    }));
 	};
 	acm(fpWorld.STANDARD_MATERIAL, fpWorld.STANDARD_MATERIAL,  5, 0.1 );
-	acm(fpWorld.BOUNCY_MATERIAL,   fpWorld.STANDARD_MATERIAL,  7, 0.65);
-	acm(fpWorld.BOUNCY_MATERIAL,   fpWorld.BOUNCY_MATERIAL,    7, 0.75);
+	acm(fpWorld.BOUNCY_MATERIAL,   fpWorld.STANDARD_MATERIAL,  7, 0.65, 8);
+	acm(fpWorld.BOUNCY_MATERIAL,   fpWorld.BOUNCY_MATERIAL,    7, 0.75, 8);
 	
 	world.on('beginContact', function(event) {
 	    if (fpUtil.hasEvent(event.bodyA, 'contact'))
@@ -15175,6 +15176,7 @@
 	var fpWorld = __webpack_require__(5);
 	var fpView = __webpack_require__(68);
 	var fpContext = __webpack_require__(69);
+	var p2 = __webpack_require__(6);
 	
 	var SUN_POSITION = [1 / 4, 1 / 4];
 	var SUN_IMAGE_OFFSET = [98, 108];
@@ -15214,6 +15216,35 @@
 	        });
 	    }
 	
+	    function renderBodyFrame(body) {
+	        context.beginPath();
+	        body.body().shapes.forEach(function(shape) {
+	            if (shape.vertices) {
+	                var start;
+	                shape.vertices.forEach(function(vertex, index) {
+	                    var bpos = [];
+	                    p2.vec2.toGlobalFrame(bpos, vertex, shape.position, shape.angle);
+	                    var wpos = [];
+	                    p2.vec2.toGlobalFrame(wpos, bpos, body.body().interpolatedPosition, body.body().interpolatedAngle);
+	                    if (index == 0) {
+	                        context.moveTo(wpos[0], wpos[1]);
+	                        start = wpos;
+	                    } else
+	                        context.lineTo(wpos[0], wpos[1]);
+	                });
+	                context.lineTo(start[0], start[1]);
+	            } else if (shape.radius) {
+	                var wpos = [];
+	                p2.vec2.toGlobalFrame(wpos, shape.position, body.body().interpolatedPosition, body.body().interpolatedAngle);
+	                context.moveTo(wpos[0], wpos[1]);
+	                context.arc(wpos[0], wpos[1], shape.radius, body.body().interpolatedAngle, body.body().interpolatedAngle + Math.PI * 2);
+	            }
+	        });
+	        context.strokeStyle = 'red';
+	        context.lineWidth = 1;
+	        context.stroke();
+	    }
+	
 	    for (var layer = 0; layer <= 2; layer ++) {
 	        fpWorld.bodies().forEach(function(body) {
 	            renderBody(body, layer);
@@ -15224,6 +15255,14 @@
 	            });
 	        });
 	    }
+	    fpWorld.bodies().forEach(function(body) {
+	        renderBodyFrame(body);
+	    });
+	    fpWorld.actors().forEach(function(actor) {
+	        actor.bodies().forEach(function(body) {
+	            renderBodyFrame(body);
+	        });
+	    });
 	}
 	
 	module.exports = fpWorldRender;
@@ -15326,7 +15365,7 @@
 	    });
 	    fpWorld.addBackdrop(homeBackdrop);
 	
-	    var atticPeak = [position[0] + 1250, position[1] - 1650 - 1350/2];
+	    var atticPeak = [position[0] + 1200, position[1] - 1650 - 1300/2];
 	    var atticBg = context.createLinearGradient(atticPeak[0], atticPeak[1], atticPeak[0], position[1] - 1650);
 	    atticBg.addColorStop(0, '#5c3611');
 	    atticBg.addColorStop(1, '#835323');
@@ -15417,6 +15456,7 @@
 	    addThing('wall5',  [48, -32]);
 	    addThing('wall3',  [48, -25]);
 	
+	    addThing('sink', [0.9, -22]);
 	    addThing('bathtub', [6, -22]);
 	
 	    addThing('ball', [21, -22]);
@@ -15436,7 +15476,21 @@
 	    addThing('floor15', [33, -33]);
 	    addThing('floor1',  [48, -33]);
 	
-	    fpWorld.currentActor(addActor('MrFloppyPants', [20, -27]));
+	    addThing('hatch', [6.25, -32.5]);
+	
+	    // roof
+	
+	    for (var i = 0; i < 13; i ++) {
+	        addThing('roof', [-1.5 + i * 2, -33 - i]);
+	        if (i != 6)
+	            addThing('roof', [50.5 - i * 2, -33 - i], true);
+	        else {
+	            addThing('chimney', [50.5 - i * 2, -33 - i], true);
+	            addThing('chimney2', [50.5 - i * 2, -33 - i], true);
+	        }
+	    }
+	
+	    fpWorld.currentActor(addActor('MrFloppyPants', [30, -37]));
 	}
 	
 	module.exports = fpHomeSetup;
@@ -15450,6 +15504,7 @@
 	
 	var fpWorld = __webpack_require__(5);
 	var fpBody = __webpack_require__(117);
+	var p2 = __webpack_require__(6);
 	
 	var fpThings = {
 	};
@@ -15464,10 +15519,14 @@
 	        nparam.position = position;
 	        nparam.flip = flip;
 	        nparam.angle = angle;
-	        if (param.position)
-	            nparam.position = [position[0] + param.position[0], position[1] + param.position[1]];
+	        if (param.more) {
+	            nparam.more = function(thing, position) {
+	                param.more(thing, position);
+	            };
+	        }
 	        var body = new fpBody(nparam);
 	        fpWorld.addBody(body);
+	        body.body().sleep();
 	        return body;
 	    };
 	}
@@ -15568,59 +15627,58 @@
 	});
 	fpThings.bathtub = addBody({
 	    polygon: [
-	        [5, -97], [20, -98], [45, -24], [199, -24], [237, -91], [250, -91],
+	        [5, -97], [20, -98], [45, -30], [199, -30], [237, -91], [250, -91],
 	        [205, -2], [182, -2], [182, -14], [61, -14], [61, -2], [41, -2], [0, -84]
 	    ],
 	    images: ['bathtub1', 'bathtub2'],
 	    offset: [1, 102],
 	    mass: 300
 	});
-	// createSink: function(world, offx, offy, flip) {
-	//     return [createThing(world, {
-	//         mass: 350,
-	//         position: [offx, offy],
-	//         polygon: [[0, 0], [2, -109], [12, -109], [26, -85], [62, -85], [82, -109], [90, -106], [76, -78],
-	//             [48, -71], [79, 0]],
-	//         image: ['sink1', 'sink2'],
-	//         offset: [40, 93],
-	//         flip: flip
-	//     })];
-	// },
-	// createHatch: function(world, offx, offy, flip) {
-	//     return [createThing(world, {
-	//         mass: 100,
-	//         position: [offx, offy],
-	//         polygon: [[-10, -8], [189, -8], [193, -15], [213, -15], [218, -8], [234, -8],
-	//             [234, 10], [218, 10], [213, 19], [193, 19], [189, 10], [-10, 10]],
-	//         image: 'hatch',
-	//         offset: [130, 20],
-	//         flip: flip
-	//     })];
-	// },
-	// createRoof: function(world, offx, offy, flip) {
-	//     return [createThing(world, {
-	//         position: [offx, offy],
-	//         polygon: [[-10, -6], [89, -55], [110, -39], [13, 11]],
-	//         image: 'roof',
-	//         offset: [58, 30],
-	//         flip: flip
-	//     })];
-	// },
-	// createChimney: function(world, offx, offy, flip) {
-	//     return [createThing(world, {
-	//         position: [offx, offy],
-	//         polygon: [[-3, 9], [14, -1], [14, -185], [-3, -185]],
-	//         image: [null, 'chimney'],
-	//         offset: [15, 94],
-	//         flip: flip
-	//     }), createThing(world, {
-	//         position: [offx, offy],
-	//         polygon: [[96, -42], [110, -51], [110, -185], [96, -185]],
-	//         image: null,
-	//         offset: [0, 0],
-	//         flip: flip
-	//     })];
-	// },
+	fpThings.sink = addBody({
+	    polygon: [
+	        [2, -111], [10, -139], [26, -137], [17, -112], [20, -84], [59, -84], [83, -111], [91, -109],
+	        [77, -81], [50, -72], [79, -2], [0, -2]
+	    ],
+	    images: ['sink1', 'sink2'],
+	    offset: [1, 142],
+	    mass: 250
+	});
+	fpThings.hatch = addBody({
+	    polygon: [
+	        [-8, -10], [190, -10], [195, -16], [213, -16], [218, -10], [234, -10],
+	        [234, 10], [218, 10], [213, 16], [195, 16], [190, 10], [-8, 10]
+	    ],
+	    image: 'hatch',
+	    offset: [12, 20],
+	    mass: 50,
+	    more: function(hatch, position) {
+	        hatch.body().gravityScale = 0;
+	        var joi = new p2.RevoluteConstraint(fpWorld.NULL_BODY, hatch.body(), {
+	            worldPivot: position
+	        });
+	        joi.setLimits(0, 0);
+	        fpWorld.world().addConstraint(joi);
+	    }
+	});
+	fpThings.roof = addBody({
+	    polygon: [[0, 21], [99, -30], [115, -17], [17, 33]],
+	    image: 'roof',
+	    offset: [0, 30]
+	});
+	fpThings.chimney = addBody({
+	    polygon: [
+	        [4, -159], [24, -159], [24, 27], [4, 39],
+	    ],
+	    images: [null, 'chimney'],
+	    offset: [0, 164]
+	});
+	fpThings.chimney2 = addBody({
+	    polygon: [
+	        [97, -159], [117, -159], [117, -17], [97, -12]
+	    ],
+	    image: null,
+	    offset: [0, 164]
+	});
 	// createGrass: function(world, offx, offy, angle) {
 	//     return [createThing(world, {
 	//         position: [offx, offy],
@@ -15693,6 +15751,8 @@
 	    }
 	    this._offset = offset;
 	    this._flip = param.flip;
+	    if (param.more)
+	        param.more(this, param.position);
 	}
 	
 	fpBody.prototype.body = function () {

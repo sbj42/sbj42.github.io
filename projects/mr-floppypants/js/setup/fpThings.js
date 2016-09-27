@@ -2,6 +2,7 @@
 
 var fpWorld = require('../fpWorld');
 var fpBody = require('../fpBody');
+var p2 = require('p2');
 
 var fpThings = {
 };
@@ -16,10 +17,14 @@ function addBody(param) {
         nparam.position = position;
         nparam.flip = flip;
         nparam.angle = angle;
-        if (param.position)
-            nparam.position = [position[0] + param.position[0], position[1] + param.position[1]];
+        if (param.more) {
+            nparam.more = function(thing, position) {
+                param.more(thing, position);
+            };
+        }
         var body = new fpBody(nparam);
         fpWorld.addBody(body);
+        body.body().sleep();
         return body;
     };
 }
@@ -120,59 +125,58 @@ fpThings.chair = addBody({
 });
 fpThings.bathtub = addBody({
     polygon: [
-        [5, -97], [20, -98], [45, -24], [199, -24], [237, -91], [250, -91],
+        [5, -97], [20, -98], [45, -30], [199, -30], [237, -91], [250, -91],
         [205, -2], [182, -2], [182, -14], [61, -14], [61, -2], [41, -2], [0, -84]
     ],
     images: ['bathtub1', 'bathtub2'],
     offset: [1, 102],
     mass: 300
 });
-// createSink: function(world, offx, offy, flip) {
-//     return [createThing(world, {
-//         mass: 350,
-//         position: [offx, offy],
-//         polygon: [[0, 0], [2, -109], [12, -109], [26, -85], [62, -85], [82, -109], [90, -106], [76, -78],
-//             [48, -71], [79, 0]],
-//         image: ['sink1', 'sink2'],
-//         offset: [40, 93],
-//         flip: flip
-//     })];
-// },
-// createHatch: function(world, offx, offy, flip) {
-//     return [createThing(world, {
-//         mass: 100,
-//         position: [offx, offy],
-//         polygon: [[-10, -8], [189, -8], [193, -15], [213, -15], [218, -8], [234, -8],
-//             [234, 10], [218, 10], [213, 19], [193, 19], [189, 10], [-10, 10]],
-//         image: 'hatch',
-//         offset: [130, 20],
-//         flip: flip
-//     })];
-// },
-// createRoof: function(world, offx, offy, flip) {
-//     return [createThing(world, {
-//         position: [offx, offy],
-//         polygon: [[-10, -6], [89, -55], [110, -39], [13, 11]],
-//         image: 'roof',
-//         offset: [58, 30],
-//         flip: flip
-//     })];
-// },
-// createChimney: function(world, offx, offy, flip) {
-//     return [createThing(world, {
-//         position: [offx, offy],
-//         polygon: [[-3, 9], [14, -1], [14, -185], [-3, -185]],
-//         image: [null, 'chimney'],
-//         offset: [15, 94],
-//         flip: flip
-//     }), createThing(world, {
-//         position: [offx, offy],
-//         polygon: [[96, -42], [110, -51], [110, -185], [96, -185]],
-//         image: null,
-//         offset: [0, 0],
-//         flip: flip
-//     })];
-// },
+fpThings.sink = addBody({
+    polygon: [
+        [2, -111], [10, -139], [26, -137], [17, -112], [20, -84], [59, -84], [83, -111], [91, -109],
+        [77, -81], [50, -72], [79, -2], [0, -2]
+    ],
+    images: ['sink1', 'sink2'],
+    offset: [1, 142],
+    mass: 250
+});
+fpThings.hatch = addBody({
+    polygon: [
+        [-8, -10], [190, -10], [195, -16], [213, -16], [218, -10], [234, -10],
+        [234, 10], [218, 10], [213, 16], [195, 16], [190, 10], [-8, 10]
+    ],
+    image: 'hatch',
+    offset: [12, 20],
+    mass: 50,
+    more: function(hatch, position) {
+        hatch.body().gravityScale = 0;
+        var joi = new p2.RevoluteConstraint(fpWorld.NULL_BODY, hatch.body(), {
+            worldPivot: position
+        });
+        joi.setLimits(0, 0);
+        fpWorld.world().addConstraint(joi);
+    }
+});
+fpThings.roof = addBody({
+    polygon: [[0, 21], [99, -30], [115, -17], [17, 33]],
+    image: 'roof',
+    offset: [0, 30]
+});
+fpThings.chimney = addBody({
+    polygon: [
+        [4, -159], [24, -159], [24, 27], [4, 39],
+    ],
+    images: [null, 'chimney'],
+    offset: [0, 164]
+});
+fpThings.chimney2 = addBody({
+    polygon: [
+        [97, -159], [117, -159], [117, -17], [97, -12]
+    ],
+    image: null,
+    offset: [0, 164]
+});
 // createGrass: function(world, offx, offy, angle) {
 //     return [createThing(world, {
 //         position: [offx, offy],

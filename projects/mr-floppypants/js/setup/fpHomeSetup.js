@@ -24,7 +24,7 @@ function fpHomeSetup(position) {
     });
     fpWorld.addBackdrop(homeBackdrop);
 
-    var atticPeak = [position[0] + 1250, position[1] - 1650 - 1350/2];
+    var atticPeak = [position[0] + 1200, position[1] - 1650 - 1300/2];
     var atticBg = context.createLinearGradient(atticPeak[0], atticPeak[1], atticPeak[0], position[1] - 1650);
     atticBg.addColorStop(0, '#5c3611');
     atticBg.addColorStop(1, '#835323');
@@ -115,6 +115,7 @@ function fpHomeSetup(position) {
     addThing('wall5',  [48, -32]);
     addThing('wall3',  [48, -25]);
 
+    addThing('sink', [0.9, -22]);
     addThing('bathtub', [6, -22]);
 
     addThing('ball', [21, -22]);
@@ -134,7 +135,21 @@ function fpHomeSetup(position) {
     addThing('floor15', [33, -33]);
     addThing('floor1',  [48, -33]);
 
-    fpWorld.currentActor(addActor('MrFloppyPants', [20, -27]));
+    addThing('hatch', [6.25, -32.5]);
+
+    // roof
+
+    for (var i = 0; i < 13; i ++) {
+        addThing('roof', [-1.5 + i * 2, -33 - i]);
+        if (i != 6)
+            addThing('roof', [50.5 - i * 2, -33 - i], true);
+        else {
+            addThing('chimney', [50.5 - i * 2, -33 - i], true);
+            addThing('chimney2', [50.5 - i * 2, -33 - i], true);
+        }
+    }
+
+    fpWorld.currentActor(addActor('MrFloppyPants', [30, -37]));
 }
 
 module.exports = fpHomeSetup;

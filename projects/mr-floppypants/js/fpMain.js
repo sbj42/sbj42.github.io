@@ -58,7 +58,7 @@ fpUtil.addEventListener(fpView, 'mouseup', function(event) {
 // To animate the bodies, we must step the world forward in time, using a fixed time step size.
 // The World will run substeps and interpolate automatically for us, to get smooth animation.
 var fixedTimeStep = 1 / 60; // seconds
-var maxSubSteps = 10; // Max sub steps to catch up with the wall clock
+var maxSubSteps = 20; // Max sub steps to catch up with the wall clock
 var lastTime;
 
 var context = fpView.context();
