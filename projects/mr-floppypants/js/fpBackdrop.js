@@ -1,5 +1,3 @@
-// Mr. Floppypants Backdrop
-
 function fpBackdrop(param) {
     this._polypolygon = param.polypolygon || [param.polygon];
     this._fill = param.fill;

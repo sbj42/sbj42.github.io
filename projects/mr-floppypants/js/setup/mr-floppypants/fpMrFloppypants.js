@@ -1,57 +1,30 @@
-// Mr. Floppypants Actors
+var fpWorld = require('../../fpWorld');
+var fpActor = require('../../fpActor');
+var fpUtil = require('../../fpUtil');
+var fpActorSetup = require('../fpActorSetup');
 
-var fpWorld = require('../fpWorld');
-var fpBody = require('../fpBody');
-var fpActor = require('../fpActor');
-var fpUtil = require('../fpUtil');
-var p2 = require('p2');
+var getBodyFunc = fpActorSetup.getBodyFunc;
+var joinFunc = fpActorSetup.joinFunc;
 
-var fpActors = {
-};
-
-function getBodyFunc(position0, collisionGroup) {
-    return function(param) {
-        var nparam = {};
-        for (var x in param)
-            nparam[x] = param[x];
-        nparam.offset = param.offset || [0, 0];
-        nparam.position[0] += position0[0];
-        nparam.position[1] += position0[1];
-        nparam.collisionGroup = collisionGroup;
-        return new fpBody(nparam);
-    };
-}
-
-function joinFunc(position0) {
-    return function(body1, body2, position, param) {
-        var constraint = new p2.RevoluteConstraint(body1.body(), body2.body(), {
-            worldPivot: [position0[0] + position[0], position0[1] + position[1]]
-        });
-        if (param.limits)
-            constraint.setLimits(param.limits[0] * Math.PI / 180, param.limits[1] * Math.PI / 180);
-        fpWorld.world().addConstraint(constraint);
-        return constraint;
-    };
-}
-
-fpActors.MrFloppyPants = function(position) {
+var fpMrFloppypants = function(position) {
     position = [position[0] - 24, position[1] - 33];
     var collisionGroup = fpWorld.newCollisionGroup();
     var getBody = getBodyFunc(position, collisionGroup);
     var join = joinFunc(position);
     var mass = 0.5;
+    var imagedir = 'mr-floppypants/';
 
     var head = getBody({
         position: [0, 0],
         polygon: [[2, 33], [10, 12], [24, 5], [40, 12], [46, 33], [34, 57], [15, 57]],
-        image: 'head',
+        image: imagedir + 'head',
         mass: 4 * mass
     });
 
     var chest = getBody({
         position: [-5, 59],
         polygon: [[8, 2], [53, 2], [53, 58], [8, 58]],
-        image: 'shirt-middle',
+        image: imagedir + 'shirt-middle',
         mass: 15 * mass
     });
     join(head, chest, [24, 55], {
@@ -61,7 +34,7 @@ fpActors.MrFloppyPants = function(position) {
     var armL1 = getBody({
         position: [-31, 60],
         polygon: [[28, 3], [31, 13], [7, 28], [2, 21]],
-        image: 'arm-left-upper',
+        image: imagedir + 'arm-left-upper',
         mass: 4 * mass
     });
     join(chest, armL1, [2, 67], {
@@ -71,7 +44,7 @@ fpActors.MrFloppyPants = function(position) {
     var armR1 = getBody({
         position: [80, 60],
         polygon: [[28, 3], [31, 13], [7, 28], [2, 21]],
-        image: 'arm-left-upper',
+        image: imagedir + 'arm-left-upper',
         flip: true,
         mass: 4 * mass
     });
@@ -82,7 +55,7 @@ fpActors.MrFloppyPants = function(position) {
     var armL2 = getBody({
         position: [-55, 79],
         polygon: [[25, 3], [29, 10], [7, 27], [3, 22]],
-        image: 'arm-left-lower',
+        image: imagedir + 'arm-left-lower',
         mass: 3 * mass
     });
     join(armL1, armL2, [-24, 83], {
@@ -92,7 +65,7 @@ fpActors.MrFloppyPants = function(position) {
     var armR2 = getBody({
         position: [104, 79],
         polygon: [[25, 3], [29, 10], [7, 27], [3, 22]],
-        image: 'arm-left-lower',
+        image: imagedir + 'arm-left-lower',
         flip: true,
         mass: 3 * mass
     });
@@ -103,7 +76,7 @@ fpActors.MrFloppyPants = function(position) {
     var handL = getBody({
         position: [-70, 96],
         polygon: [[11, 3], [21, 14], [10, 25], [1, 15]],
-        image: 'hand-left',
+        image: imagedir + 'hand-left',
         mass: 3 * mass
     });
     join(armL2, handL, [-50, 105], {
@@ -113,7 +86,7 @@ fpActors.MrFloppyPants = function(position) {
     var handR = getBody({
         position: [119, 96],
         polygon: [[11, 3], [21, 14], [10, 25], [1, 15]],
-        image: 'hand-left',
+        image: imagedir + 'hand-left',
         flip: true,
         mass: 3 * mass
     });
@@ -124,7 +97,7 @@ fpActors.MrFloppyPants = function(position) {
     var seat = getBody({
         position: [0, 115],
         polygon: [[9, 2], [42, 2], [50, 29], [3, 29]],
-        image: 'pants-top',
+        image: imagedir + 'pants-top',
         mass: 10 * mass
     });
     join(chest, seat, [24, 114], {
@@ -134,7 +107,7 @@ fpActors.MrFloppyPants = function(position) {
     var legL1 = getBody({
         position: [-3, 140],
         polygon: [[6, 2], [21, 5], [16, 40], [2, 37]],
-        image: 'pants-left-upper',
+        image: imagedir + 'pants-left-upper',
         mass: 4 * mass
     });
     join(seat, legL1, [9, 145], {
@@ -144,7 +117,7 @@ fpActors.MrFloppyPants = function(position) {
     var legR1 = getBody({
         position: [56, 140],
         polygon: [[6, 2], [21, 5], [16, 40], [2, 37]],
-        image: 'pants-left-upper',
+        image: imagedir + 'pants-left-upper',
         flip: true,
         mass: 4 * mass
     });
@@ -155,7 +128,7 @@ fpActors.MrFloppyPants = function(position) {
     var legL2 = getBody({
         position: [-11, 176],
         polygon: [[10, 2], [24, 4], [24, 41], [8, 40]],
-        image: 'pants-left-lower',
+        image: imagedir + 'pants-left-lower',
         mass: 4 * mass
     });
     join(legL1, legL2, [5, 180], {
@@ -165,7 +138,7 @@ fpActors.MrFloppyPants = function(position) {
     var legR2 = getBody({
         position: [64, 176],
         polygon: [[10, 2], [24, 4], [24, 41], [8, 40]],
-        image: 'pants-left-lower',
+        image: imagedir + 'pants-left-lower',
         flip: true,
         mass: 4 * mass
     });
@@ -176,7 +149,7 @@ fpActors.MrFloppyPants = function(position) {
     var footL = getBody({
         position: [-20, 214],
         polygon: [[21, 3], [35, 4], [36, 15], [3, 15], [5, 10]],
-        image: 'shoe-left',
+        image: imagedir + 'shoe-left',
         mass: 1 * mass
     });
     join(legL2, footL, [2, 218], {
@@ -186,7 +159,7 @@ fpActors.MrFloppyPants = function(position) {
     var footR = getBody({
         position: [73, 214],
         polygon: [[21, 3], [35, 4], [36, 15], [3, 15], [5, 10]],
-        image: 'shoe-left',
+        image: imagedir + 'shoe-left',
         flip: true,
         mass: 1 * mass
     });
@@ -205,9 +178,9 @@ fpActors.MrFloppyPants = function(position) {
     fpUtil.addEventListener(actor, 'pain', function(pain) {
         if (pain > 900*900) {
             clearTimeout(painTimer);
-            head.images()[1] = 'head-ouch';
+            head.images()[1] = imagedir + 'head-ouch';
             painTimer = setTimeout(function() {
-                head.images()[1] = 'head';
+                head.images()[1] = imagedir + 'head';
             }, 1500);
         }
     });
@@ -215,4 +188,4 @@ fpActors.MrFloppyPants = function(position) {
     return actor;
 };
 
-module.exports = fpActors;
+module.exports = fpMrFloppypants;

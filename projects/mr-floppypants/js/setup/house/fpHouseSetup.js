@@ -1,19 +1,18 @@
-// Mr. Floppypants Home setup
-
-var fpWorld = require('../fpWorld');
-var fpView = require('../fpView');
-var fpBackdrop = require('../fpBackdrop');
-var fpThings = require('./fpThings');
-var fpActors = require('./fpActors');
+var fpWorld = require('../../fpWorld');
+var fpView = require('../../fpView');
+var fpBackdrop = require('../../fpBackdrop');
+var fpConfig = require('../../fpConfig');
+var fpHouseThings = require('./fpHouseThings');
+var fpMrFloppypants = require('../mr-floppypants/fpMrFloppypants');
 
 var context = fpView.context();
 
-function fpHomeSetup(position) {
+function fpHouseSetup(position) {
     var houseBg = context.createLinearGradient(position[0] + 500, position[1] - 1650, position[0] + 1900, position[1]);
     houseBg.addColorStop(0, '#e0f4ca');
     houseBg.addColorStop(1, '#a9cb84');
 
-    var homeBackdrop = new fpBackdrop({
+    var houseBackdrop = new fpBackdrop({
         polygon: [
             [position[0], position[1]],
             [position[0], position[1] - 1650],
@@ -22,7 +21,7 @@ function fpHomeSetup(position) {
         ],
         fill: houseBg
     });
-    fpWorld.addBackdrop(homeBackdrop);
+    fpWorld.addBackdrop(houseBackdrop);
 
     var atticPeak = [position[0] + 1200, position[1] - 1650 - 1300/2];
     var atticBg = context.createLinearGradient(atticPeak[0], atticPeak[1], atticPeak[0], position[1] - 1650);
@@ -44,11 +43,18 @@ function fpHomeSetup(position) {
     }
 
     function addThing(thing, blockOffset, flip, angle) {
-        return fpThings[thing](pos(blockOffset), flip, angle);
+        return fpHouseThings[thing](pos(blockOffset), flip, angle);
     }
 
-    function addActor(actor, blockOffset) {
-        return fpActors[actor](pos(blockOffset));
+    function addWindow(blockOffset) {
+        var at = pos(blockOffset);
+        houseBackdrop.addPolygon([
+            [at[0], at[1]],
+            [at[0], at[1] - 200],
+            [at[0] + 100, at[1] - 200],
+            [at[0] + 100, at[1]]
+        ]);
+        fpHouseThings['window'](at);
     }
 
     // underneath
@@ -90,6 +96,10 @@ function fpHomeSetup(position) {
     addThing('wall5',  [48, -21]);
     addThing('wall5',  [48, -16]);
 
+    addWindow([6, -14]);
+    addWindow([19, -14]);
+    addWindow([28, -14]);
+
     addThing('table',  [23, -11]);
     addThing('plate',  [23, -12.95]);
     addThing('glass',  [24, -12.95]);
@@ -114,6 +124,10 @@ function fpHomeSetup(position) {
     addThing('wall5',  [32, -32]);
     addThing('wall5',  [48, -32]);
     addThing('wall3',  [48, -25]);
+
+    addWindow([10, -25]);
+    addWindow([19, -25]);
+    addWindow([40, -25]);
 
     addThing('sink', [0.9, -22]);
     addThing('bathtub', [6, -22]);
@@ -149,7 +163,35 @@ function fpHomeSetup(position) {
         }
     }
 
-    fpWorld.currentActor(addActor('MrFloppyPants', [30, -37]));
+    // left yard
+
+    addThing('grass', [-40, 0.5]);
+    addThing('grass', [-30, 0.5]);
+    addThing('grass', [-20, 0.5]);
+    addThing('grass', [-10, 0.5]);
+
+    // right yard
+
+    addThing('grass', [49, 0.5]);
+    addThing('grass', [59, 0.5]);
+    addThing('grass', [69, 0.5]);
+    addThing('grass', [79, 0.5]);
+
+    var at = [25.5, -28];
+    if (fpConfig.start == 'house-attic')
+        at = [26, -37];
+    else if (fpConfig.start == 'house-kitchen')
+        at = [20.5, -15];
+    else if (fpConfig.start == 'house-roof')
+        at = [25, -50];
+    else if (fpConfig.start == 'house-left')
+        at = [-5, -3.5];
+    else if (fpConfig.start == 'house-right')
+        at = [54, -3.5];
+    var mrfp = fpMrFloppypants(pos(at));
+
+    if (fpConfig.start.startsWith('house-'))
+        fpWorld.currentActor(mrfp);
 }
 
-module.exports = fpHomeSetup;
+module.exports = fpHouseSetup;

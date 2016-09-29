@@ -1,10 +1,16 @@
 var fpWorld = require('./fpWorld');
 var fpView = require('./fpView');
 var fpContext = require('./fpContext');
+var fpConfig = require('./fpConfig');
 var p2 = require('p2');
 
-var SUN_POSITION = [1 / 4, 1 / 4];
+var SUN_POSITION = [0.25, 0.25];
 var SUN_IMAGE_OFFSET = [98, 108];
+var CLOUD1_SPEED = 300;
+var CLOUD1_POSITION = 0.15;
+var CLOUD2_SPEED = 500;
+var CLOUD2_POSITION = 0.35;
+var CLOUD_IMAGE_OFFSET = [250, 100];
 
 var context = fpView.context();
 
@@ -21,6 +27,16 @@ function fpWorldRender(time) {
     fpContext.image(context, 'sun', {
         position: fpView.screenToWorld([SUN_POSITION[0] * fpView.screenWidth() + fpView.offset()[0], SUN_POSITION[1] * fpView.screenHeight() + fpView.offset()[1]]),
         offset: SUN_IMAGE_OFFSET
+    });
+    var cloud1at = 1.5 * ((1000 + time/1000) % CLOUD1_SPEED) / CLOUD1_SPEED - 0.25;
+    fpContext.image(context, 'cloud1', {
+        position: fpView.screenToWorld([cloud1at * fpView.screenWidth() + fpView.offset()[0], CLOUD1_POSITION * fpView.screenHeight() + fpView.offset()[1]]),
+        offset: CLOUD_IMAGE_OFFSET
+    });
+    var cloud2at = 1.5 * ((1000 + time/1000) % CLOUD2_SPEED) / CLOUD2_SPEED - 0.25;
+    fpContext.image(context, 'cloud2', {
+        position: fpView.screenToWorld([cloud2at * fpView.screenWidth() + fpView.offset()[0], CLOUD2_POSITION * fpView.screenHeight() + fpView.offset()[1]]),
+        offset: CLOUD_IMAGE_OFFSET
     });
 
     fpWorld.backdrops().forEach(function(backdrop) {
@@ -41,7 +57,20 @@ function fpWorldRender(time) {
         });
     }
 
+    for (var layer = 0; layer <= 2; layer ++) {
+        fpWorld.bodies().forEach(function(body) {
+            renderBody(body, layer);
+        });
+        fpWorld.actors().forEach(function(actor) {
+            actor.bodies().forEach(function(body) {
+                renderBody(body, layer);
+            });
+        });
+    }
+
     function renderBodyFrame(body) {
+        if (!body.body())
+            return;
         context.beginPath();
         body.body().shapes.forEach(function(shape) {
             if (shape.vertices) {
@@ -65,29 +94,28 @@ function fpWorldRender(time) {
                 context.arc(wpos[0], wpos[1], shape.radius, body.body().interpolatedAngle, body.body().interpolatedAngle + Math.PI * 2);
             }
         });
-        context.strokeStyle = 'red';
-        context.lineWidth = 1;
         context.stroke();
     }
 
-    for (var layer = 0; layer <= 2; layer ++) {
+    if (fpConfig.wireframe) {
+        context.strokeStyle = 'red';
+        context.lineWidth = 1;
+        context.beginPath();
+        context.moveTo(fpWorld.LEFT, fpWorld.TOP);
+        context.lineTo(fpWorld.RIGHT, fpWorld.TOP);
+        context.lineTo(fpWorld.RIGHT, fpWorld.BOTTOM);
+        context.lineTo(fpWorld.LEFT, fpWorld.BOTTOM);
+        context.lineTo(fpWorld.LEFT, fpWorld.TOP);
+        context.stroke();
         fpWorld.bodies().forEach(function(body) {
-            renderBody(body, layer);
+            renderBodyFrame(body);
         });
         fpWorld.actors().forEach(function(actor) {
             actor.bodies().forEach(function(body) {
-                renderBody(body, layer);
+                renderBodyFrame(body);
             });
         });
     }
-    fpWorld.bodies().forEach(function(body) {
-        renderBodyFrame(body);
-    });
-    fpWorld.actors().forEach(function(actor) {
-        actor.bodies().forEach(function(body) {
-            renderBodyFrame(body);
-        });
-    });
 }
 
 module.exports = fpWorldRender;

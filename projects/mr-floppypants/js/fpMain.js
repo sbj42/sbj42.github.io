@@ -63,7 +63,7 @@ var lastTime;
 
 var context = fpView.context();
 
-require('./setup/fpWorldSetup');
+require('./setup/world/fpWorldSetup');
 
 //fpView.position([900, -2600]);
 
@@ -79,7 +79,7 @@ function animate(time) {
         fpView.moveToward(fpWorld.currentActor().head().body().position.slice());
     }
 
-    fpWorldRender();
+    fpWorldRender(time);
 
     fpContext.setTransform(context);
     var mouse = fpView.screenMousePosition();

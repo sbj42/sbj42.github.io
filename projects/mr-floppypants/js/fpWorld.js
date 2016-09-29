@@ -1,7 +1,6 @@
-// Mr. Floppypants World
-
 var p2 = require('p2');
 var fpUtil = require('./fpUtil');
+var fpConfig = require('./fpConfig');
 
 var fpWorld = {
 
@@ -9,7 +8,7 @@ var fpWorld = {
     RIGHT:   5000,
     GROUND:     0,
     TOP:    -4000,
-    BOTTOM:  5000,
+    BOTTOM:  3000,
 
     STANDARD_MATERIAL: new p2.Material(),
     BOUNCY_MATERIAL: new p2.Material(),
@@ -23,8 +22,7 @@ var fpWorld = {
 
 var GROUP_MAX = 2;
 
-var GRAVITY = 600;
-// GRAVITY =  3; // for testing in slow-mo
+var GRAVITY = fpConfig.slowMo ? 3 : 600;
 
 var world = new p2.World({
     gravity: [0, GRAVITY]
@@ -88,7 +86,8 @@ fpWorld.newCollisionGroup = function() {
 var bodies = [];
 
 fpWorld.addBody = function(body) {
-    this.world().addBody(body.body());
+    if (body.body())
+        this.world().addBody(body.body());
     bodies.push(body);
     return this;
 };
@@ -119,54 +118,5 @@ fpWorld.currentActor = function(actor) {
     else
         return currentActor;
 };
-
-// var dragBody = null;
-// var dragReleasing = false;
-// var dragConstraint = null;
-// var grabConstraint = null;
-//
-// var myBodies;
-//
-// function tryHit(position) {
-//     dragBody = fpWorld.simpleHitTest(position, myBodies);
-//     if (dragBody) {
-//         dragConstraint = new p2.RevoluteConstraint(fpWorld.NULL_BODY, dragBody, {
-//             worldPivot: position
-//         });
-//         dragConstraint.setStiffness(1000);
-//         fpWorld.world().addConstraint(dragConstraint);
-//     }
-// }
-//
-// function onMouseDown(event, position) {
-//     if (event.button == 0) {
-//         tryHit(position);
-//     }
-// }
-//
-// function onMouseMove(event, position) {
-//     if (dragConstraint) {
-//         // setDragSpring(position);
-//         // p2.vec2.copy(dragBody.position, position);
-//         p2.vec2.copy(dragConstraint.pivotA, position);
-//         dragConstraint.bodyA.wakeUp();
-//         dragConstraint.bodyB.wakeUp();
-//     } else if (event.buttons == 1) {
-//         tryHit(position);
-//     }
-// }
-//
-// function onMouseUp(event) {
-//     if (dragConstraint) {
-//         if (dragReleasing) {
-//             theWorld.removeConstraint(grabConstraint);
-//             grabConstraint = null;
-//             dragReleasing = false;
-//         }
-//         theWorld.removeConstraint(dragConstraint);
-//         dragConstraint = null;
-//         dragBody = null;
-//     }
-// }
 
 module.exports = fpWorld;

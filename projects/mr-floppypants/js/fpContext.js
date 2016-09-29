@@ -1,5 +1,3 @@
-// Mr. Floppypants Context
-
 var fpContext = {
 };
 

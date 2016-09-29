@@ -1,5 +1,5 @@
-// Mr. Floppypants View
 var fpUtil = require('./fpUtil');
+var fpConfig = require('./fpConfig');
 
 var fpView = {
 };
@@ -8,7 +8,7 @@ var SCREEN_CENTER = [0.5, 0.6];
 
 var position = [0, 0];
 var offset = [0, 0];
-var zoom = 1;
+var zoom = fpConfig.zoom ? 1/fpConfig.zoom : 1;
 var angle = 0;
 var flip = false;
 
