@@ -1,6 +1,6 @@
 module.exports = {
-    wireframe: true,
+    //wireframe: true,
     start: 'house-right',
-    zoom: 2,
+    zoom: 1,
     //slowMo: true
 };

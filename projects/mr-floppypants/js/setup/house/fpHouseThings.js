@@ -156,27 +156,5 @@ fpHouseThings.window = thingFunc({
     image: imagedir + 'window',
     offset: [10, 207]
 });
-fpHouseThings.grass = thingFunc({
-    polygon: [[0, 0], [0, 75], [500, 75], [500, 0]],
-    images: ['grass1', 'grass2'],
-    offset: [0, 25]
-});
-// createGrass: function(world, offx, offy, angle) {
-//     return [createThing(world, {
-//         position: [offx, offy],
-//         polygon: [[0, 75], [0, 0], [500, 0], [500, 75]],
-//         image: ['grass1', 'grass2'],
-//         offset: [250, 65],
-//         angle: angle
-//     })];
-// },
-// createRedBlock: function(world, offx, offy) {
-//     return [createThing(world, {
-//         position: [offx + 25, offy + 25],
-//         polygon: [[-25, -25], [25, -25], [25, 25], [-25, 25]],
-//         image: imagedir + 'redblock',
-//         offset: [25, 25]
-//     })];
-// }
 
 module.exports = fpHouseThings;
