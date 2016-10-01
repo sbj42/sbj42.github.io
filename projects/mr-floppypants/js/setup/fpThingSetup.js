@@ -1,5 +1,6 @@
 var fpWorld = require('../fpWorld');
 var fpBody = require('../fpBody');
+var p2 = require('p2');
 
 var fpThingSetup = {
 };
@@ -20,6 +21,12 @@ fpThingSetup.thingFunc = function(param) {
             body.body().sleep();
         return body;
     };
+};
+
+fpThingSetup.lock = function(body1, body2) {
+    var constraint = new p2.LockConstraint(body1.body(), body2.body());
+    fpWorld.world().addConstraint(constraint);
+    return constraint;
 };
 
 module.exports = fpThingSetup;

@@ -15,12 +15,13 @@ var fpWorld = {
 
     GROUP_GROUND: 1,
     GROUP_OTHER: 2,
+    GROUP_BACKGROUND: 4,
 
     NULL_BODY: new p2.Body()
 
 };
 
-var GROUP_MAX = 2;
+var GROUP_MAX = 4;
 
 var GRAVITY = fpConfig.slowMo ? 3 : 600;
 

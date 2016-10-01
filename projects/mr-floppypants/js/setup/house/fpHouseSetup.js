@@ -164,20 +164,12 @@ function fpHouseSetup(position) {
         }
     }
 
-    // left yard
+    // back yard
+
     fpThings.grass(pos([-40, 0.5]));
     fpThings.grass(pos([-30, 0.5]));
     fpThings.grass(pos([-20, 0.5]));
     fpThings.grass(pos([-10, 0.5]));
-
-    // right yard
-
-    fpThings.grass(pos([49, 0.5]));
-    fpThings.tree1(pos([62, 0.5]));
-    fpThings.tree1b(pos([62, 0.5]));
-    fpThings.grass(pos([59, 0.5]));
-    fpThings.grass(pos([69, 0.5]));
-    fpThings.grass(pos([79, 0.5]));
 
     var at = [25.5, -28];
     if (fpConfig.start == 'house-attic')

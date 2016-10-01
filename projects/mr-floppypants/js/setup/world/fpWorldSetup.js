@@ -4,8 +4,6 @@ var fpBody = require('../../fpBody');
 
 var fpBackdrop = require('../../fpBackdrop');
 
-var fpHouseSetup = require('../house/fpHouseSetup');
-
 var context = fpView.context();
 
 // ---
@@ -39,7 +37,8 @@ fpWorld.addBackdrop(new fpBackdrop({
 
 // ---
 
-fpHouseSetup([0, 0]);
+require('../house/fpHouseSetup')([0, 0]);
+require('../yard/fpFrontYardSetup')([2425, 0]);
 
 // ---
 

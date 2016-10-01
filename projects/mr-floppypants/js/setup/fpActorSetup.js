@@ -23,7 +23,7 @@ fpActorSetup.joinFunc = function(position0) {
         var constraint = new p2.RevoluteConstraint(body1.body(), body2.body(), {
             worldPivot: [position0[0] + position[0], position0[1] + position[1]]
         });
-        if (param.limits)
+        if (param && param.limits)
             constraint.setLimits(param.limits[0] * Math.PI / 180, param.limits[1] * Math.PI / 180);
         fpWorld.world().addConstraint(constraint);
         return constraint;

@@ -31,9 +31,11 @@ function fpBody(param) {
         var collisionGroup = param.collisionGroup || (mass == 0 ? fpWorld.GROUP_GROUND : fpWorld.GROUP_OTHER);
         var collisionMask;
         if (collisionGroup == fpWorld.GROUP_OTHER)
-            collisionMask = ~0;
+            collisionMask = ~fpWorld.GROUP_BACKGROUND;
+        else if (collisionGroup == fpWorld.GROUP_BACKGROUND)
+            collisionMask = 0;
         else
-            collisionMask = ~collisionGroup;
+            collisionMask = ~(collisionGroup | fpWorld.GROUP_BACKGROUND);
         this._body.shapes.forEach(function(s) {
             s.material = param.material || fpWorld.STANDARD_MATERIAL;
             s.collisionGroup = collisionGroup;
