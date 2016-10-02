@@ -1,6 +1,5 @@
 var p2 = require('p2');
 var fpUtil = require('./fpUtil');
-var fpConfig = require('./fpConfig');
 
 var fpWorld = {
 
@@ -23,12 +22,12 @@ var fpWorld = {
 
 var GROUP_MAX = 4;
 
-var GRAVITY = fpConfig.slowMo ? 3 : 600;
+var GRAVITY = 600;
 
 var world = new p2.World({
     gravity: [0, GRAVITY]
 });
-world.solver.iterations = 1000;
+world.solver.iterations = 60;
 
 world.addBody(fpWorld.NULL_BODY);
 

@@ -29,6 +29,7 @@ function fpActor(param) {
                 constraint: constraint
             };
             fpWorld.world().addConstraint(constraint);
+            fpUtil.fireEvent(otherBody, 'grab', [body.body()]);
         }.bind(this));
     }.bind(this));
 }
@@ -52,7 +53,9 @@ fpActor.prototype.startDrag = function (dragBody) {
 
 fpActor.prototype.endDrag = function () {
     if (this._releasing != null) {
-        fpWorld.world().removeConstraint(this._holding[this._releasing].constraint);
+        var constraint = this._holding[this._releasing].constraint;
+        fpUtil.fireEvent(constraint.bodyB, 'release', [constraint.bodyA]);
+        fpWorld.world().removeConstraint(constraint);
         this._holding[this._releasing] = null;
         this._releasing = null;
     }

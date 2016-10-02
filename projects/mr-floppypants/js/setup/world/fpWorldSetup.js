@@ -16,10 +16,13 @@ function addFence(polygon) {
     }));
 }
 
-addFence([[fpWorld.LEFT-100, fpWorld.TOP-100], [fpWorld.LEFT-100, fpWorld.TOP], [fpWorld.RIGHT+100, fpWorld.TOP], [fpWorld.RIGHT+100, fpWorld.TOP-100]]);
-addFence([[fpWorld.LEFT-100, fpWorld.BOTTOM+100], [fpWorld.LEFT-100, fpWorld.BOTTOM], [fpWorld.RIGHT+100, fpWorld.BOTTOM], [fpWorld.RIGHT+100, fpWorld.BOTTOM+100]]);
-addFence([[fpWorld.LEFT-100, fpWorld.TOP], [fpWorld.LEFT, fpWorld.TOP], [fpWorld.LEFT, fpWorld.BOTTOM], [fpWorld.LEFT-100, fpWorld.BOTTOM]]);
-addFence([[fpWorld.RIGHT+100, fpWorld.TOP], [fpWorld.RIGHT, fpWorld.TOP], [fpWorld.RIGHT, fpWorld.BOTTOM], [fpWorld.RIGHT+100, fpWorld.BOTTOM]]);
+fpWorld.RIGHT = 10000;
+
+var fenceSize = 1000;
+addFence([[fpWorld.LEFT-fenceSize, fpWorld.TOP-fenceSize], [fpWorld.LEFT-fenceSize, fpWorld.TOP], [fpWorld.RIGHT+fenceSize, fpWorld.TOP], [fpWorld.RIGHT+fenceSize, fpWorld.TOP-fenceSize]]);
+addFence([[fpWorld.LEFT-fenceSize, fpWorld.BOTTOM+fenceSize], [fpWorld.LEFT-fenceSize, fpWorld.BOTTOM], [fpWorld.RIGHT+fenceSize, fpWorld.BOTTOM], [fpWorld.RIGHT+fenceSize, fpWorld.BOTTOM+fenceSize]]);
+addFence([[fpWorld.LEFT-fenceSize, fpWorld.TOP], [fpWorld.LEFT, fpWorld.TOP], [fpWorld.LEFT, fpWorld.BOTTOM], [fpWorld.LEFT-fenceSize, fpWorld.BOTTOM]]);
+addFence([[fpWorld.RIGHT+fenceSize, fpWorld.TOP], [fpWorld.RIGHT, fpWorld.TOP], [fpWorld.RIGHT, fpWorld.BOTTOM], [fpWorld.RIGHT+fenceSize, fpWorld.BOTTOM]]);
 
 var groundBg = context.createLinearGradient(0, 0, 0, fpWorld.BOTTOM);
 groundBg.addColorStop(0, '#8a4425');

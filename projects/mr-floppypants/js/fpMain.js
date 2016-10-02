@@ -5,6 +5,7 @@ var fpView = require('./fpView');
 var fpContext = require('./fpContext');
 var fpWorldRender = require('./fpWorldRender');
 var fpUtil = require('./fpUtil');
+var fpConfig = require('./fpConfig');
 var p2 = require('p2');
 
 
@@ -73,6 +74,7 @@ function animate(time) {
     if (time - lastTime > 500)
         lastTime = time - 500;
     var deltaTime = lastTime ? (time - lastTime) / 1000 : 0;
+    deltaTime = deltaTime / (fpConfig.slowDown || 1);
     fpWorld.world().step(fixedTimeStep, deltaTime, maxSubSteps);
 
     if (!dragConstraint && fpWorld.currentActor()) {

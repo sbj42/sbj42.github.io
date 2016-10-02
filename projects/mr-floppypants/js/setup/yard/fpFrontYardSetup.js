@@ -1,5 +1,6 @@
 var fpWorld = require('../../fpWorld');
 var fpYardThings = require('./fpYardThings');
+var fpCar = require('../car/fpCar');
 var fpThings = require('../fpThings');
 var p2 = require('p2');
 
@@ -29,6 +30,9 @@ function fpFrontYardSetup(position) {
     fpThings.grass(pos([500, 0]));
     fpThings.grass(pos([1000, 0]));
     fpThings.grass(pos([1500, 0]));
+    fpThings.grass(pos([2000, 0]));
+    fpThings.grass(pos([2500, 0]));
+    fpThings.grass(pos([3000, 0]));
 
     var tree1 = fpThings.tree1(pos([650, 0]));
     var tire = addThing('tire', [850, -230]);
@@ -45,6 +49,8 @@ function fpFrontYardSetup(position) {
         limits: [-45, 45]
     });
     join(rope3, tree1[1], [850, -830]);
+
+    fpCar(pos([1000, 0]));
 
 }
 
