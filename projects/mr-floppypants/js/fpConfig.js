@@ -1,6 +1,6 @@
 module.exports = {
-    //wireframe: true,
-    start: 'house-right',
-    zoom: 1,
+    wireframe: true,
+    start: 'frontyard-hill',
+    //zoom: 4,
     //slowDown: 2
 };

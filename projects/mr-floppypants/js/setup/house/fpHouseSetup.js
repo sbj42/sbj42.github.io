@@ -1,10 +1,8 @@
 var fpWorld = require('../../fpWorld');
 var fpView = require('../../fpView');
 var fpBackdrop = require('../../fpBackdrop');
-var fpConfig = require('../../fpConfig');
 var fpHouseThings = require('./fpHouseThings');
 var fpThings = require('../fpThings');
-var fpMrFloppypants = require('../mr-floppypants/fpMrFloppypants');
 
 var context = fpView.context();
 
@@ -171,21 +169,15 @@ function fpHouseSetup(position) {
     fpThings.grass(pos([-20, 0.5]));
     fpThings.grass(pos([-10, 0.5]));
 
-    var at = [25.5, -28];
-    if (fpConfig.start == 'house-attic')
-        at = [26, -37];
-    else if (fpConfig.start == 'house-kitchen')
-        at = [20.5, -15];
-    else if (fpConfig.start == 'house-roof')
-        at = [25, -50];
-    else if (fpConfig.start == 'house-left')
-        at = [-5, -3.5];
-    else if (fpConfig.start == 'house-right')
-        at = [54, -3.5];
-    var mrfp = fpMrFloppypants(pos(at));
-
-    if (fpConfig.start.startsWith('house-'))
-        fpWorld.currentActor(mrfp);
+    var places = {
+        'house-bed': pos([25.5, -28]),
+        'house-attic': pos([26, -37]),
+        'house-kitchen': pos([20.5, -15]),
+        'house-roof': pos([25, -50])
+    };
+    for (var x in places) {
+        fpWorld.places[x] = places[x];
+    }
 }
 
 module.exports = fpHouseSetup;

@@ -119,4 +119,6 @@ fpWorld.currentActor = function(actor) {
         return currentActor;
 };
 
+fpWorld.places = {};
+
 module.exports = fpWorld;
