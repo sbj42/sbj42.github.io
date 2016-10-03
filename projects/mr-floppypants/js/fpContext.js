@@ -12,8 +12,6 @@ fpContext.transform = function(context, param) {
         context.rotate(param.angle * Math.PI / 180);
     if (param.scale)
         context.scale(param.scale, param.scale);
-    if (param.offset)
-        context.translate(-param.offset[0], -param.offset[1]);
     if (param.flip)
         context.scale(-1, 1);
 };
@@ -31,7 +29,8 @@ fpContext.image = function(context, image, param) {
     }
     context.save();
     fpContext.transform(context, param);
-    context.drawImage(img, 0, 0);
+    var offset = param.offset || [0, 0];
+    context.drawImage(img, -offset[0], -offset[1]);
     context.restore();
 };
 

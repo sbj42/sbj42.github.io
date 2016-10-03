@@ -9,17 +9,22 @@ function fpBody(param) {
     if (param.polygon || param.circle) {
         this._body = new p2.Body({
             mass: mass,
-            position: param.position.slice(),
-            angle: (param.flip ? -angle : angle) * Math.PI / 180
+            position: param.position.slice()
         });
         if (param.polygon) {
-            var polygon = param.polygon;
+            var polygon = param.polygon.map(function(coord) {
+                return [coord[0] - offset[0], coord[1] - offset[1]];
+            });
             if (flip)
                 polygon = polygon.map(function(coord) {
                     return [-coord[0], coord[1]];
                 });
             this._body.fromPolygon(polygon.slice());
-            offset[0] += this._body.position[0] - param.position[0];
+            if (flip) {
+                offset[0] -= this._body.position[0] - param.position[0];
+            } else {
+                offset[0] += this._body.position[0] - param.position[0];
+            }
             offset[1] += this._body.position[1] - param.position[1];
         } else if (param.circle) {
             this._body.position[0] += param.circle[0];
@@ -28,6 +33,10 @@ function fpBody(param) {
             offset[1] += param.circle[1];
             this._body.addShape(new p2.Circle({radius: param.circle[2]}));
         }
+        this._body.angle = angle * Math.PI / 180;
+        var diff = [this._body.position[0] - param.position[0], this._body.position[1] - param.position[1]];
+        p2.vec2.rotate(diff, diff, angle * Math.PI / 180);
+        this._body.position = [param.position[0] + diff[0], param.position[1] + diff[1]];
         var collisionGroup = param.collisionGroup || (mass == 0 ? fpWorld.GROUP_GROUND : fpWorld.GROUP_OTHER);
         var collisionMask;
         if (collisionGroup == fpWorld.GROUP_OTHER)

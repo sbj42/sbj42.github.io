@@ -56,10 +56,6 @@ function fpHouseSetup(position) {
         fpHouseThings['window'](at);
     }
 
-    // underneath
-
-    addThing('stairs',  [ 1, 11]);
-
     // first floor
 
     addThing('floor1',  [ 0, 0]);
@@ -71,7 +67,6 @@ function fpHouseSetup(position) {
     addThing('floor15', [33, 0]);
     addThing('floor1',  [48, 0]);
 
-    addThing('wall3',  [ 0, -5]);
     addThing('wall5',  [ 0, -10]);
     addThing('wall5',  [16, -10]);
     addThing('wall5',  [32, -10]);
@@ -89,7 +84,7 @@ function fpHouseSetup(position) {
     addThing('floor1',  [48, -11]);
 
     addThing('wall3',  [ 0, -14]);
-    addThing('wall5',  [ 0, -21]);
+    addThing('wall3',  [ 0, -21]);
     addThing('wall5',  [16, -21]);
     addThing('wall5',  [32, -21]);
     addThing('wall5',  [48, -21]);
@@ -118,10 +113,10 @@ function fpHouseSetup(position) {
     addThing('floor1',  [48, -22]);
 
     addThing('wall3',  [ 0, -25]);
-    addThing('wall5',  [ 0, -32]);
+    addThing('wall3',  [ 0, -32]);
     addThing('wall5',  [16, -32]);
     addThing('wall5',  [32, -32]);
-    addThing('wall5',  [48, -32]);
+    addThing('wall3',  [48, -32]);
     addThing('wall3',  [48, -25]);
 
     addWindow([10, -25]);

@@ -18,7 +18,7 @@ function addFence(polygon) {
     }));
 }
 
-fpWorld.RIGHT = 10000;
+fpWorld.RIGHT = 9750;
 
 var fenceSize = 1000;
 addFence([[fpWorld.LEFT-fenceSize, fpWorld.TOP-fenceSize], [fpWorld.LEFT-fenceSize, fpWorld.TOP], [fpWorld.RIGHT+fenceSize, fpWorld.TOP], [fpWorld.RIGHT+fenceSize, fpWorld.TOP-fenceSize]]);
@@ -46,6 +46,8 @@ fpWorld.addBackdrop(groundBackdrop);
 require('../house/fpHouseSetup')([0, 0]);
 
 require('../yard/fpFrontYardSetup')([2425, 0], groundBackdrop);
+
+require('../cave/fpCaveSetup')([0, 0]);
 
 // ---
 

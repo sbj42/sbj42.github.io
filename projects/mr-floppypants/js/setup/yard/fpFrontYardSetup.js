@@ -33,14 +33,14 @@ function fpFrontYardSetup(position, groundBackdrop) {
     fpThings.grass(pos([2000, 0]));
     fpThings.grass(pos([2500, 0]));
     fpThings.grass(pos([3000, 0]));
-    fpThings.grass(pos([3500, -50]), false, -11.5);
-    fpThings.grass(pos([3990, -150]), false, -11.5);
-    fpThings.grass(pos([4460, -150]), false, 11.5);
-    fpThings.grass(pos([4960, -150]), false, -11.5);
-    fpThings.grass(pos([5440, -300]), false, -23);
-    fpThings.grass(pos([5900, -390]));
-    fpThings.grass(pos([6360, -295]), false, 23);
-    fpThings.grass(pos([6820, -100]), false, 23);
+    fpThings.grass(pos([3500, 0]), false, -11.5);
+    fpThings.grass(pos([3990, -100]), false, -11.5);
+    fpThings.grass(pos([4460, -200]), false, 11.5);
+    fpThings.grass(pos([4960, -100]), false, -11.5);
+    fpThings.grass(pos([5440, -200]), false, -23);
+    fpThings.grass(pos([5900, -394]));
+    fpThings.grass(pos([6395, -394]), false, 23);
+    fpThings.grass(pos([6850, -200]), false, 23);
 
     groundBackdrop.addPolygon(
         [pos([3500, 0]), pos([4460, -200]), pos([4960, -100]), pos([5440, -200]), pos([5900, -390]), pos([6360, -390]), pos([7320, 0])]

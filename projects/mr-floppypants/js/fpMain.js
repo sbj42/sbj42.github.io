@@ -66,6 +66,22 @@ var context = fpView.context();
 
 require('./setup/world/fpWorldSetup');
 
+// //testing transforms:
+// {
+//     var fpThingSetup = require('./setup/fpThingSetup');
+//     var thingFunc = fpThingSetup.thingFunc;
+//     thingFunc({
+//         polygon: [[175, 0], [175, 100], [125, 100]],
+//         image: 'test',
+//         offset: [175, 125]
+//     })([0, 0], false, 0);
+//     thingFunc({
+//         polygon: [[175, 0], [175, 100], [125, 100]],
+//         image: 'test',
+//         offset: [175, 125]
+//     })([0, 0], true, 15);
+// }
+
 //fpView.position([900, -2600]);
 
 function animate(time) {
