@@ -47,6 +47,7 @@ var fpCar = function(position) {
     fpWorld.world().addConstraint(wheel2con);
     wheel2con.enableMotor();
     wheel2con.setMotorSpeed(0);
+    [wheel1, wheel2].forEach(function(r) { r.body().allowSleep = false; });
 
     var grabbed = false;
     fpUtil.addEventListener(fpView, 'mousemove', function(event) {

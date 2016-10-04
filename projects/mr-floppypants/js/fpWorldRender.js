@@ -71,6 +71,14 @@ function fpWorldRender(time) {
     function renderBodyFrame(body) {
         if (!body.body())
             return;
+        context.strokeStyle = 'red';
+        context.setLineDash([]);
+        if (body.body().sleepState == p2.Body.SLEEPY)
+            context.strokeStyle = 'yellow';
+        if (body.body().sleepState == p2.Body.SLEEPING) {
+            context.strokeStyle = 'blue';
+            context.setLineDash([4, 6]);
+        }
         context.beginPath();
         body.body().shapes.forEach(function(shape) {
             if (shape.vertices) {

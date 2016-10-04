@@ -137,4 +137,17 @@ fpCaveThings.cave = function(pos, nesw) {
         fpCaveThings['cave'+plan[0]](pos, plan[2] || false, plan[1] || 0);
 };
 
+fpCaveThings.rock1 = function(pos, flip, angle) {
+    pos = [pos[0] + 50, pos[1] + 50];
+    return thingFunc({
+        mass: 50,
+        polygon: [
+            [19, 12], [37, 6], [62, 11], [78, 25], [93, 29], [87, 67], [91, 85],
+            [85, 95], [38, 85], [18, 94], [7, 84], [10, 62], [6, 43], [16, 30]
+        ],
+        image: imagedir + 'rock1',
+        offset: [50, 50]
+    })(pos, flip, angle);
+};
+
 module.exports = fpCaveThings;

@@ -61,6 +61,7 @@ function fpFrontYardSetup(position, groundBackdrop) {
         limits: [-45, 45]
     });
     join(rope3, tree1[1], [850, -830]);
+    [rope1, rope2, rope3].forEach(function(r) { r.body().allowSleep = false; });
 
     fpCar(pos([1500, 0]));
 

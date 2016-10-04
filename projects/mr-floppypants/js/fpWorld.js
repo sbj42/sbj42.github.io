@@ -28,6 +28,7 @@ var world = new p2.World({
     gravity: [0, GRAVITY]
 });
 world.solver.iterations = 60;
+world.sleepMode = p2.World.BODY_SLEEPING;
 
 world.addBody(fpWorld.NULL_BODY);
 

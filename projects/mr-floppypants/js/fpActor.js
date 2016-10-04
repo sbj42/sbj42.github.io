@@ -15,6 +15,9 @@ function fpActor(param) {
             fpUtil.fireEvent(this, 'pain', [rx*rx + ry*ry]);
         }.bind(this));
     }.bind(this));
+    this._bodies.forEach(function(body) {
+        body.body().allowSleep = false;
+    });
     this._hands.forEach(function(body, handIndex) {
         fpUtil.addEventListener(body.body(), 'contact', function(otherBody) {
             if (!this._dragBody || body !== this._dragBody)

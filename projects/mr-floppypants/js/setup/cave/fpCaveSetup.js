@@ -37,8 +37,14 @@ function fpCaveSetup(position) {
                 if (x == e[0] && y == e[1])
                     place.north = true;
             });
+            if (!(place.north || place.east || place.south || place.west))
+                continue;
             fpCaveThings.cave(pos([x - LEFT_SHIFT, y + START_DEPTH]),
                 [place.north, place.east, place.south, place.west]);
+            if (Math.random() < 0.1) {
+                var rock = fpCaveThings.rock1(pos([x - LEFT_SHIFT, y + START_DEPTH], [300, 300]));
+                rock.body().wakeUp();
+            }
         }
 
     var places = {
