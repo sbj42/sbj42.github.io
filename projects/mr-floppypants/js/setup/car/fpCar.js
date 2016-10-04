@@ -1,4 +1,5 @@
 var fpWorld = require('../../fpWorld');
+var fpView = require('../../fpView');
 var fpUtil = require('../../fpUtil');
 var p2 = require('p2');
 var fpThingSetup = require('../fpThingSetup');
@@ -47,18 +48,21 @@ var fpCar = function(position) {
     wheel2con.enableMotor();
     wheel2con.setMotorSpeed(0);
 
+    var grabbed = false;
+    fpUtil.addEventListener(fpView, 'mousemove', function(event) {
+        if (!grabbed)
+            return;
+        var speed = (fpView.screenMousePosition()[0] * 2 / fpView.screenWidth() - 1) * 35;
+        wheel1con.setMotorSpeed(-speed);
+        wheel2con.setMotorSpeed(-speed);
+    });
+
     fpUtil.addEventListener(body.body(), 'grab', function(handBody) {
-        var where = [];
-        body.body().toLocalFrame(where, handBody.position);
-        if (where[0] < 0) {
-            wheel1con.setMotorSpeed(12);
-            wheel2con.setMotorSpeed(12);
-        } else {
-            wheel1con.setMotorSpeed(-20);
-            wheel2con.setMotorSpeed(-20);
-        }
+        // body.body().toLocalFrame(where, handBody.position);
+        grabbed = true;
     });
     fpUtil.addEventListener(body.body(), 'release', function(handBody) {
+        grabbed = false;
         wheel1con.setMotorSpeed(0);
         wheel2con.setMotorSpeed(0);
     });

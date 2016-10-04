@@ -171,7 +171,7 @@ document.addEventListener('mousemove', mouseMove, true);
 document.addEventListener('mouseup', mouseUp, true);
 document.addEventListener('mouseout', mouseOut);
 
-var MOVE_TOWARD_CONST = 30;
+var MOVE_TOWARD_CONST = 22;
 
 fpView.moveToward = function(target) {
     function step(from, to, limits) {

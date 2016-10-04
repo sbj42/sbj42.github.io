@@ -1,6 +1,6 @@
 module.exports = {
-    wireframe: true,
-    start: 'frontyard-hill',
-    //zoom: 2,
+    //wireframe: true,
+    start: 'cave-entrance',
+    //zoom: 12,
     //slowDown: 10
 };

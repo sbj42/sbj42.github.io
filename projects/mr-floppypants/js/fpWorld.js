@@ -7,7 +7,7 @@ var fpWorld = {
     RIGHT:   5000,
     GROUND:     0,
     TOP:    -4000,
-    BOTTOM:  3000,
+    BOTTOM:  3500,
 
     STANDARD_MATERIAL: new p2.Material(),
     BOUNCY_MATERIAL: new p2.Material(),

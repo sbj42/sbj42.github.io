@@ -43,11 +43,11 @@ fpWorld.addBackdrop(groundBackdrop);
 
 // ---
 
+require('../cave/fpCaveSetup')([0, 0]);
+
 require('../house/fpHouseSetup')([0, 0]);
 
 require('../yard/fpFrontYardSetup')([2425, 0], groundBackdrop);
-
-require('../cave/fpCaveSetup')([0, 0]);
 
 // ---
 
