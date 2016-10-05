@@ -1,3 +1,5 @@
+var fpWorld = require('../../fpWorld');
+var p2 = require('p2');
 var fpThingSetup = require('../fpThingSetup');
 
 var thingFunc = fpThingSetup.thingFunc;
@@ -141,6 +143,7 @@ fpCaveThings.rock1 = function(pos, flip, angle) {
     pos = [pos[0] + 50, pos[1] + 50];
     return thingFunc({
         mass: 50,
+        density: 3,
         polygon: [
             [19, 12], [37, 6], [62, 11], [78, 25], [93, 29], [87, 67], [91, 85],
             [85, 95], [38, 85], [18, 94], [7, 84], [10, 62], [6, 43], [16, 30]
@@ -148,6 +151,80 @@ fpCaveThings.rock1 = function(pos, flip, angle) {
         image: imagedir + 'rock1',
         offset: [50, 50]
     })(pos, flip, angle);
+};
+
+fpCaveThings.cavepool = function(pos) {
+    pos = [pos[0] + 300, pos[1] + 300];
+    var offset = [300, 300];
+    thingFunc({
+        images: [null, null, null, imagedir + 'cavepool'],
+        offset: offset
+    })(pos);
+
+    var waterAABB = new p2.AABB({
+        lowerBound: [pos[0] - 300, pos[1] - 300 + 80],
+        upperBound: [pos[0] + 300, pos[1] + 300]
+    });
+
+    var shapePosition = [0,0];
+    var centerOfBouyancy = [0,0];
+    var viscousForce = [0,0];
+    var shapeAngle = 0;
+    var c = 0.8; // viscosity
+    var v = [0,0];
+    var aabb = new p2.AABB();
+
+    fpWorld.world().on('postStep', function() {
+        fpWorld.world().bodies.forEach(function(body) {
+            if (body.type == p2.Body.STATIC)
+                return;
+            if (body.sleepState == p2.Body.SLEEPING)
+                return;
+            body.shapes.forEach(function(shape) {
+                // Get shape world transform
+                body.vectorToWorldFrame(shapePosition, shape.position);
+                p2.vec2.add(shapePosition, shapePosition, body.position);
+                shapeAngle = shape.angle + body.angle;
+
+                // Get shape AABB
+                shape.computeAABB(aabb, shapePosition, shapeAngle);
+                if (!aabb.overlaps(waterAABB))
+                    return;
+
+                // var areaUnderWater;
+                if(aabb.lowerBound[1] > waterAABB.lowerBound[1]){
+                    // Fully submerged
+                    p2.vec2.copy(centerOfBouyancy,shapePosition);
+                    // areaUnderWater = shape.area;
+                } else if(aabb.upperBound[1] > waterAABB.lowerBound[1]){
+                    // Partially submerged
+                    var width = aabb.upperBound[0] - aabb.lowerBound[0];
+                    var height = waterAABB.lowerBound[1] - aabb.upperBound[1];
+                    // areaUnderWater = width * height;
+                    p2.vec2.set(centerOfBouyancy, aabb.lowerBound[0] + width / 2, aabb.lowerBound[1] + height / 2);
+                } else {
+                    return;
+                }
+
+                // // Compute lift force
+                // p2.vec2.subtract(liftForce, waterAABB.lowerBound, centerOfBouyancy);
+                // p2.vec2.scale(liftForce, liftForce, areaUnderWater * k);
+                // liftForce[0] = 0;
+                var liftForce = [0, -fpWorld.GRAVITY * 1.15 * body.mass / body.shapes.length / (body.fpDensity || 1)];
+
+                // Make center of bouycancy relative to the body
+                p2.vec2.subtract(centerOfBouyancy, centerOfBouyancy, body.position);
+
+                // Viscous force
+                body.getVelocityAtPoint(v, centerOfBouyancy);
+                p2.vec2.scale(viscousForce, v, -c * body.mass / body.shapes.length);
+
+                // // Apply forces
+                body.applyForce(viscousForce, centerOfBouyancy);
+                body.applyForce(liftForce, centerOfBouyancy);
+            });
+        });
+    });
 };
 
 module.exports = fpCaveThings;

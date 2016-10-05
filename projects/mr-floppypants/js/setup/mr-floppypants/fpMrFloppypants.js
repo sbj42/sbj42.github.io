@@ -25,7 +25,8 @@ var fpMrFloppypants = function(position) {
         position: [-5, 59],
         polygon: [[8, 2], [53, 2], [53, 58], [8, 58]],
         image: imagedir + 'shirt-middle',
-        mass: 15 * mass
+        mass: 15 * mass,
+        density: 0.9
     });
     join(head, chest, [24, 55], {
         limits: [-30, 30]
@@ -129,7 +130,8 @@ var fpMrFloppypants = function(position) {
         position: [-11, 176],
         polygon: [[10, 2], [24, 4], [24, 41], [8, 40]],
         image: imagedir + 'pants-left-lower',
-        mass: 4 * mass
+        mass: 4 * mass,
+        density: 1.4
     });
     join(legL1, legL2, [5, 180], {
         limits: [-25, 25]
@@ -140,7 +142,8 @@ var fpMrFloppypants = function(position) {
         polygon: [[10, 2], [24, 4], [24, 41], [8, 40]],
         image: imagedir + 'pants-left-lower',
         flip: true,
-        mass: 4 * mass
+        mass: 4 * mass,
+        density: 1.4
     });
     join(legR1, legR2, [43, 180], {
         limits: [-25, 25]
@@ -150,7 +153,8 @@ var fpMrFloppypants = function(position) {
         position: [-20, 214],
         polygon: [[21, 3], [35, 4], [36, 15], [3, 15], [5, 10]],
         image: imagedir + 'shoe-left',
-        mass: 1 * mass
+        mass: 1 * mass,
+        density: 1.5
     });
     join(legL2, footL, [2, 218], {
         limits: [-25, 25]
@@ -161,7 +165,8 @@ var fpMrFloppypants = function(position) {
         polygon: [[21, 3], [35, 4], [36, 15], [3, 15], [5, 10]],
         image: imagedir + 'shoe-left',
         flip: true,
-        mass: 1 * mass
+        mass: 1 * mass,
+        density: 1.5
     });
     join(legR2, footR, [46, 218], {
         limits: [-25, 25]

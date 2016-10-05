@@ -26,9 +26,15 @@ function fpCaveSetup(position) {
     fpCaveThings.cave(pos([2, 0]), [0, 0, 1, 1]);
 
     var previsited = [];
-    for (var x = 0; x < WIDTH; x += 2)
+    for (var x = 1; x < WIDTH; x += 2)
         previsited.push([x, 1 + Math.floor(Math.random() * (HEIGHT-1))]);
     var maze = mazeGen(WIDTH, HEIGHT, previsited, true, 0);
+
+    // testing cavepool:
+    // maze[0][2 + LEFT_SHIFT] = {
+    //     north: true
+    // };
+    // fpCaveThings.rock1(pos([1, 0], [300, 460]));
 
     for (var x = 0; x < WIDTH; x ++)
         for (var y = 0; y < HEIGHT; y ++) {
@@ -41,14 +47,16 @@ function fpCaveSetup(position) {
                 continue;
             fpCaveThings.cave(pos([x - LEFT_SHIFT, y + START_DEPTH]),
                 [place.north, place.east, place.south, place.west]);
-            if (Math.random() < 0.1) {
-                var rock = fpCaveThings.rock1(pos([x - LEFT_SHIFT, y + START_DEPTH], [300, 300]));
-                rock.body().wakeUp();
+            if (!place.south && place.east && place.west && Math.random() < 0.2) {
+                fpCaveThings.rock1(pos([x - LEFT_SHIFT, y + START_DEPTH], [300, 460]));
+            }
+            if (place.north && !place.south && !place.west && !place.east) {
+                fpCaveThings.cavepool(pos([x - LEFT_SHIFT, y + START_DEPTH]));
             }
         }
 
     var places = {
-        'cave-entrance': pos([0, 0], [250, -200])
+        'cave-entrance': pos([0, 0], [250, 308])
     };
     for (var x in places) {
         fpWorld.places[x] = places[x];

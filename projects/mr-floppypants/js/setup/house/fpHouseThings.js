@@ -46,13 +46,15 @@ fpHouseThings.ball = thingFunc({
     circle: [25, -25, 24],
     image: 'ball',
     offset: [0, 50],
-    mass: 0.3,
+    mass: 0.5,
+    density: 0.25,
     material: fpWorld.BOUNCY_MATERIAL
 });
 fpHouseThings.bed = thingFunc({
     polygon: [[0,104],[0,-1],[13,-1],[13,28],[283,28],[283,25],[292,25],[292,104],[283,104],[283,73],[9,73],[9,104]],
     image: imagedir + 'bed',
     offset: [0, 104],
+    density: 3,
     mass: 120
 });
 fpHouseThings.pillow = thingFunc({
@@ -65,36 +67,42 @@ fpHouseThings.table = thingFunc({
     polygon: [[3,3],[197,3],[197,10],[153,10],[153,99],[144,99],[144,24],[55,24],[55,99],[46,99],[46,10],[3,10]],
     image: imagedir + 'table',
     offset: [0, 100],
+    density: 2,
     mass: 100
 });
 fpHouseThings.glass = thingFunc({
     polygon: [[2, 2], [11, 2], [11, 23], [2, 23]],
     image: imagedir + 'glass',
     offset: [0, 24],
+    density: 1.2,
     mass: 1
 });
 fpHouseThings.plate = thingFunc({
     polygon: [[3, 3], [44, 3], [29, 12], [17, 12]],
     image: imagedir + 'plate',
     offset: [0, 13],
+    density: 2,
     mass: 1
 });
 fpHouseThings.chair = thingFunc({
     polygon: [[2,137],[2,1],[9,1],[9,77],[53,77],[53,137],[46,137],[46,111],[9,111],[9,137]],
     image: imagedir + 'chair',
     offset: [1, 138],
+    density: 2,
     mass: 30
 });
 fpHouseThings.bathtub = thingFunc({
     polygon: [[6,5],[21,4],[46,72],[200,72],[238,11],[251,11],[206,100],[183,100],[183,88],[62,88],[62,100],[42,100],[1,18]],
     images: [imagedir + 'bathtub1', imagedir + 'bathtub2'],
     offset: [1, 102],
+    density: 3,
     mass: 300
 });
 fpHouseThings.sink = thingFunc({
     polygon: [[3,31],[11,3],[27,5],[18,30],[21,58],[60,58],[84,31],[92,33],[78,61],[51,70],[80,140],[1,140]],
     images: [imagedir + 'sink1', imagedir + 'sink2'],
     offset: [1, 142],
+    density: 3,
     mass: 250
 });
 fpHouseThings.hatch = thingFunc({

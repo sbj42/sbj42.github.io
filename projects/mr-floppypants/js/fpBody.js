@@ -50,6 +50,7 @@ function fpBody(param) {
             s.collisionGroup = collisionGroup;
             s.collisionMask = collisionMask;
         });
+        this._body.fpDensity = param.density;
     } else {
         this._position = param.position;
         this._angle = param.angle;
@@ -60,10 +61,8 @@ function fpBody(param) {
     else if (param.images && param.images.length == 2) {
         this._images[1] = param.images[0];
         this._images[2] = param.images[1];
-    } else if (param.images && param.images.length == 3) {
-        this._images[0] = param.images[0];
-        this._images[1] = param.images[1];
-        this._images[2] = param.images[2];
+    } else if (param.images) {
+        this._images = param.images;
     }
     this._offset = offset;
     this._flip = flip;

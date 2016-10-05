@@ -9,6 +9,8 @@ var fpWorld = {
     TOP:    -4000,
     BOTTOM:  3500,
 
+    GRAVITY: 600,
+
     STANDARD_MATERIAL: new p2.Material(),
     BOUNCY_MATERIAL: new p2.Material(),
 
@@ -22,10 +24,8 @@ var fpWorld = {
 
 var GROUP_MAX = 4;
 
-var GRAVITY = 600;
-
 var world = new p2.World({
-    gravity: [0, GRAVITY]
+    gravity: [0, fpWorld.GRAVITY]
 });
 world.solver.iterations = 60;
 world.sleepMode = p2.World.BODY_SLEEPING;
