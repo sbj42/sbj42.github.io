@@ -63,6 +63,7 @@ function top_go() {
     menu_item(Nonogram);
     menu_item(Shikaku);
     menu_item(FourColor);
+    menu_item(Maze);
 }
 
 function progress_start() {
