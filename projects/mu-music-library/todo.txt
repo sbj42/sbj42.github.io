@@ -1,4 +1,5 @@
-solfege
+split up files a little (e.g. 0d/1d/2d; selector/pitch/sequence)
+add 1d clef ui
 
 time signatures
 display - guitar/sheet-music/names
@@ -20,3 +21,6 @@ use in chordline
 support "aeolian sharp-7" aka "harmonic minor scale"?
 
 get rid of controller, try for a more general switchboard-like thing? 
+
+solfege - need to abstract naming
+

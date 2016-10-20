@@ -155,6 +155,7 @@
             this._node = document.getElementById(nodeName.substr(1));
             if (!this._node)
                 throw Error('node not found: ' + nodeName);
+            this._namespace = this._node.namespaceURI;
         } else {
             this._namespace = namespace || mu._html._defaultNamespace(nodeName);
             if (this._namespace)

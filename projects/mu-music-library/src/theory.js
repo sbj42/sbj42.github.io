@@ -280,6 +280,7 @@
                         mu.F, mu.F_SHARP, mu.G, mu.G_SHARP, mu.A,
                         mu.A_SHARP, mu.B];
     mu.PitchClass._LETTERS    = 'BC_D_EF_G_A_BC';
+    //mu.PitchClass._LETTERS    = ['Ti', 'Do', '_', 'Re', '_', 'Mi', 'Fa', '_', 'So', '_', 'La', '_', 'Ti', 'Do'];
     mu.PitchClass._IS_NATURAL = [true, false, true, false, true,
                                  true, false, true, false, true, false, true];
     /**
