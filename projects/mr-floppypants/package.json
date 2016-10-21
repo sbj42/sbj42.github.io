@@ -39,7 +39,8 @@
     }
   },
   "devDependencies": {
-    "eslint": "^3.5.0"
+    "eslint": "^3.5.0",
+    "webpack-dev-server": "^1.16.2"
   },
   "scripts": {
     "build": "webpack",

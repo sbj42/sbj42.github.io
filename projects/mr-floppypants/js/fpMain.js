@@ -30,12 +30,18 @@ function tryHit(position) {
 }
 
 fpUtil.addEventListener(fpView, 'mousedown', function(event) {
+    if (title) {
+        title--;
+        return;
+    }
     if (event.button == 0) {
         tryHit(fpView.mousePosition());
     }
 });
 
 fpUtil.addEventListener(fpView, 'mousemove', function(event) {
+    if (title)
+        return;
     if (dragConstraint) {
         // setDragSpring(position);
         // p2.vec2.copy(dragBody.position, position);
@@ -48,6 +54,8 @@ fpUtil.addEventListener(fpView, 'mousemove', function(event) {
 });
 
 fpUtil.addEventListener(fpView, 'mouseup', function(event) {
+    if (title)
+        return;
     if (dragConstraint) {
         fpWorld.world().removeConstraint(dragConstraint);
         dragConstraint = null;
@@ -84,8 +92,21 @@ require('./setup/world/fpWorldSetup');
 
 //fpView.position([900, -2600]);
 
+var title = 100;
+
+var title1 = new Image();
+title1.src = require('../png/title/title1.png');
+var title2 = new Image();
+title2.src = require('../png/title/title2.png');
+var title3 = new Image();
+title3.src = require('../png/title/title.png');
 function animate(time) {
     requestAnimationFrame(animate);
+
+    if (title > 0) {
+        fpView.zoom(Math.pow(2, title / 100));
+        fpConfig.slowDown = Math.pow(4, title / 100);
+    }
 
     if (time - lastTime > 500)
         lastTime = time - 500;
@@ -100,9 +121,46 @@ function animate(time) {
     fpWorldRender(time);
 
     fpContext.setTransform(context);
+
+    if (title > 0) {
+        context.fillStyle = 'rgba(255,255,255,' + (title * 0.3 / 100) + ')';
+        context.fillRect(0, 0, fpView.screenWidth(), fpView.screenHeight());
+        context.globalAlpha = title / 100;
+        var titleX = (fpView.screenWidth() - 572) / 2;
+        var titleY = title * 3 - 150;
+        context.drawImage(title1, titleX, titleY);
+        context.save();
+        context.translate(titleX + 180, titleY + 50);
+        context.rotate(Math.PI / 180 * 25 * Math.min(1, Math.pow(Math.max(0, time - 1000) / 2000, 6)));
+        context.translate(-(titleX + 180), -(titleY + 50));
+        context.drawImage(title2, titleX, titleY);
+        context.restore();
+        context.globalAlpha = 1;
+        context.textAlign = 'center';
+        context.fillStyle = 'black';
+        context.font = '35px Verdana';
+        context.fillText('Click to begin', fpView.screenWidth() / 2, fpView.screenHeight() - title * 2 + 100 - 15);
+        var border = title;
+        context.fillStyle = '#abd1f9';
+        context.fillRect(0, 0, fpView.screenWidth(), border);
+        context.fillRect(0, fpView.screenHeight() - border, fpView.screenWidth(), border);
+        context.strokeStyle  = 'black';
+        context.lineWidth = 6;
+        context.lineJoin = 'round';
+        context.strokeRect(-10, border, fpView.screenWidth() + 20, fpView.screenHeight() - 2 * border);
+        if (title < 100)
+            title --;
+        if (title <= 0) {
+            fpView.zoom(1);
+            fpConfig.slowDown = 1;
+        }
+    } else {
+        context.drawImage(title3, 0, 0);
+    }
+
     var mouse = fpView.screenMousePosition();
     if (mouse) {
-        fpContext.image(context, 'cursor-' + (fpView.mouseIsDown() ? 'grabbing' : 'grab'), {
+        fpContext.image(context, 'cursor-' + (title ? 'point' : fpView.mouseIsDown() ? 'grabbing' : 'grab'), {
             position: mouse,
             offset: [8, 10]
         });
