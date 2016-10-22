@@ -49,6 +49,8 @@ require('../house/fpHouseSetup')([0, 0]);
 
 require('../yard/fpFrontYardSetup')([2425, 0], groundBackdrop);
 
+require('../golf/fpGolfSetup')([-2025, 0]);
+
 // ---
 
 if (fpConfig.start in fpWorld.places) {

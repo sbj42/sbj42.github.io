@@ -1,6 +1,7 @@
 module.exports = {
-    //wireframe: true,
-    //start: 'cave-entrance',
-    //zoom: 8,
+    wireframe: true,
+    start: 'golf-start',
+    skipTitle: true,
+    //zoom: 4,
     //slowDown: 10
 };

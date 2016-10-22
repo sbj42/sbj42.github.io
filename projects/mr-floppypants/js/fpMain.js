@@ -92,7 +92,7 @@ require('./setup/world/fpWorldSetup');
 
 //fpView.position([900, -2600]);
 
-var title = 100;
+var title = fpConfig.skipTitle ? 0 : 100;
 
 var title1 = new Image();
 title1.src = require('../png/title/title1.png');
@@ -151,7 +151,7 @@ function animate(time) {
         if (title < 100)
             title --;
         if (title <= 0) {
-            fpView.zoom(1);
+            fpView.zoom(1 / (fpConfig.zoom || 1));
             fpConfig.slowDown = 1;
         }
     } else {
