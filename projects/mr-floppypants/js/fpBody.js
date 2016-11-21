@@ -39,7 +39,9 @@ function fpBody(param) {
         this._body.position = [param.position[0] + diff[0], param.position[1] + diff[1]];
         var collisionGroup = param.collisionGroup || (mass == 0 ? fpWorld.GROUP_GROUND : fpWorld.GROUP_OTHER);
         var collisionMask;
-        if (collisionGroup == fpWorld.GROUP_OTHER)
+        if (param.collisionMask)
+            collisionMask = param.collisionMask;
+        else if (collisionGroup == fpWorld.GROUP_OTHER)
             collisionMask = ~fpWorld.GROUP_BACKGROUND;
         else if (collisionGroup == fpWorld.GROUP_BACKGROUND)
             collisionMask = 0;
