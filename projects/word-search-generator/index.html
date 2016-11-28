@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="https://fonts.googleapis.com/css?family=Comfortaa|Source+Code+Pro" rel="stylesheet">
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <title>Word Search Generator</title>
+  <style type="text/css">
+    body {
+      background: #e6f5d8;
+      margin: 20px;
+      font-family: 'Comfortaa', sans;
+      font-size: 14px;
+      text-align: center;
+    }
+    #credit {
+      position: absolute;
+      right: 10px;
+      top: 0px;
+      font-size: 14px;
+    }
+    h1 {
+      font-weight: normal;
+      margin: 0px;
+    }
+    #words {
+      margin: 20px auto;
+      max-width: 450px;
+      line-height: 1.7;
+    }
+    #words div {
+      display: inline-block;
+      margin: 0px 10px;
+      font-family: 'Source Code Pro', monospace;
+      font-weight: bold;
+      font-size: 15px;
+    }
+    #ptable {
+      font-size: 14px;
+      background: white;
+      box-shadow: 1px 1px 5px #444;
+      padding: 5px;
+      margin: 5px auto;
+    }
+    #ptable td {
+      width: 0.8em;
+      text-align: center;
+      line-height: 1;
+      font-family: 'Source Code Pro', monospace;
+      font-size: 25px;
+    }
+  </style> 
+</head>
+<body>
+  <div id="credit"><a href="http://arbitraryclark.blogspot.com/">James Clark</a></div>
+  <h1>Word Search Generator</h1>
+  <div id="puzzle">
+    <table id="ptable">
+      <tbody id="pbody">
+      </tbody>
+    </table>
+  </div>
+  <div id="words">
+  </div>
+  Width: <input id="width" type="text" size="4" value="10" />
+  Height: <input id="height" type="text" size="4" value="10" />
+  <input id="again" type="button" value="Another" />
+  <script src="generator.js"></script>
+  <script src="words.js"></script>
+  <script>
+
+    function go() {
+      var data = generate({
+        width: +document.getElementById('width').value,
+        height: +document.getElementById('height').value,
+        words: words
+      });
+      var pbody = document.getElementById('pbody');
+      pbody.innerHTML = '';
+      for (var r = 0; r < data.height; r ++) {
+        var tr = document.createElement('tr');
+        for (var c = 0; c < data.width; c ++) {
+          var td = document.createElement('td');
+          td.innerHTML = data.get(c, r);
+          tr.appendChild(td);
+        }
+        pbody.appendChild(tr);
+      }
+      var wdiv = document.getElementById('words');
+      wdiv.innerHTML = '';
+      for (var i = 0; i < data.words.length; i ++) {
+        var w = document.createElement('div');
+        w.appendChild(document.createTextNode(data.words[i]));
+        wdiv.appendChild(w); 
+      }
+    }
+
+    go();
+    document.getElementById('again').onclick = go;
+  </script>
+</body>
+</html>
