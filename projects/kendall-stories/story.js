@@ -53,8 +53,6 @@ var images = {};
 
 function KImage(node) {
     this.node = node;
-    this.width = node.width;
-    this.height = node.height;
 }
 
 function load_images(ids, callback) {
@@ -81,12 +79,9 @@ function KSprite(imageId) {
     var image = images[imageId];
     this.image = new Image();
     this.image.src = image.node.src;
-    this.width = image.width;
-    this.height = image.height;
     this.div = document.createElement('div');
     this.div.className = 'sprite';
     this.div.appendChild(this.image);
-    TweenMax.set(this.image, {left: -this.width/2, top: -this.height/2});
 }
 
 function new_sprite(imageId) {
@@ -107,6 +102,9 @@ KSprite.prototype.place = function(x, y) {
         active_sprites.push(this);
     }
     TweenMax.set(this.div, {left: x, top: y});
+    this.width = this.image.clientWidth;
+    this.height = this.image.clientHeight;
+    TweenMax.set(this.image, {left: -this.width/2, top: -this.height/2});
     return this;
 };
 
