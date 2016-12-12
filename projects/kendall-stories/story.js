@@ -2,17 +2,12 @@ var sounds = {};
 
 function KSound(node) {
     this.node = node;
-    this.duration = node.duration;
+    this.duration = node.duration();
 }
 
 KSound.prototype.play = function(callback) {
-    var sound = this;
-    this.node.pause();
-    setTimeout(function() {
-        sound.node.currentTime = 0;
-        sound.node.play();
-        if (callback) setTimeout(callback, sound.duration * 1000);
-    }, 0);
+    this.node.play();
+    if (callback) setTimeout(callback, this.duration * 1000);
 };
 
 function play_sound(soundId, callback) {
@@ -29,23 +24,10 @@ function load_audio(ids, callback) {
         };
     }
     ids.forEach(function(id) {
-        var node = document.createElement('audio');
-        node.oncanplaythrough = onload(id,  node);
-        node.onerror = onload(id,  node);
-        node.preload = 'auto';
-        if (!node.canPlayType) {
-            onload(id,  node);
-            return;
-        }
-        var ogg = document.createElement('source');
-        ogg.src = id+'.ogg';
-        ogg.type = 'audio/ogg';
-        node.appendChild(ogg);
-        var m4a = document.createElement('source');
-        m4a.src = id+'.m4a';
-        m4a.type = 'audio/mp4';
-        node.appendChild(m4a);
-        document.body.appendChild(node);
+        var node = new Howl({
+            src: [id+'.ogg', id+'.m4a']
+        });
+        node.once('load', onload(id, node));
     });
 }
 
