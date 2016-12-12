@@ -1,0 +1,48 @@
+body {
+    background: #e0d884;
+}
+
+#title {
+    margin: 10px 0px;
+    text-align: center;
+    font-size: 35px;
+}
+
+#container {
+    width: 800px;
+    height: 600px;
+    margin: 10px auto;
+    background: white;
+    box-shadow: 2px 2px 12px #888;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+#stage {
+    position: relative;
+}
+
+#controls {
+    text-align: center;
+    margin: 20px auto;
+}
+
+#controls input {
+    border: 2px solid #6270c8;
+    background: #e5e7f6;
+    padding: 5px 15px;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+#start, #reset {
+    visibility: hidden;
+}
+
+.sprite {
+    position: absolute;
+}
+
+.sprite img {
+    position: absolute;
+}

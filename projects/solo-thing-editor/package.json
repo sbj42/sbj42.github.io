@@ -15,7 +15,6 @@
         "rules": {
             "indent": ["error",4],
             "no-tabs": "error",
-            "no-unused-vars": "warn",
             "no-redeclare": "off",
             "no-unused-vars": ["error", {
                 "args": "none"
