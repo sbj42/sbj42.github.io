@@ -284,12 +284,13 @@ function start() {
 
     function bye() {
         curtains.hide();
-        new_sprite('jail').place(0, 0).bottom().anchor(0, 0);
-        lala.hide();
-        new_sprite('lala-crawl').place(546, 562).anchor(0.5, 1);
-        play_sound('bye');
-        sing.talk('sing4', [0.05, 0.7]);
-        done();
+        new_sprite('jail').place(0, 0).bottom().anchor(0, 1).slide(0.5, 0, 600, function() {
+            lala.hide();
+            new_sprite('lala-crawl').place(546, 562).anchor(0.5, 1);
+            play_sound('bye');
+            sing.talk('sing4', [0.05, 0.7]);
+            done();
+        });
     }
 }
 

@@ -157,6 +157,18 @@ KSprite.prototype.slide = function(duration, x, y, callback) {
     return this;
 };
 
+KSprite.prototype.slideX = function(duration, x, callback) {
+    TweenMax.to(this.div, duration, {left: x, ease: Sine.easeInOut});
+    if (callback) setTimeout(callback, duration*1000);
+    return this;
+};
+
+KSprite.prototype.jumpY = function(duration, repeat, height, callback) {
+    TweenMax.to(this.div, duration/2, {top: '-='+height, ease: Sine.easeOut, repeat: repeat*2-1, yoyo: true});
+    if (callback) setTimeout(callback, duration*repeat*1000);
+    return this;
+};
+
 KSprite.prototype.bounce = function(duration, x, y, callback) {
     TweenMax.to(this.div, duration, {left: x, top: y, ease: Bounce.easeOut});
     if (callback) setTimeout(callback, duration*1000);
