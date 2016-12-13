@@ -64,6 +64,7 @@ function KSprite(imageId) {
     this.div = document.createElement('div');
     this.div.className = 'sprite';
     this.div.appendChild(this.image);
+    this.hasSize = false;
 }
 
 function new_sprite(imageId) {
@@ -84,9 +85,12 @@ KSprite.prototype.place = function(x, y) {
         active_sprites.push(this);
     }
     TweenMax.set(this.div, {left: x, top: y});
-    this.width = this.image.clientWidth;
-    this.height = this.image.clientHeight;
-    TweenMax.set(this.image, {left: -this.width/2, top: -this.height/2});
+    if (!this.hasSize) {
+        this.width = this.image.clientWidth;
+        this.height = this.image.clientHeight;
+        TweenMax.set(this.image, {left: -this.width/2, top: -this.height/2});
+        this.hasSize = true;
+    }
     return this;
 };
 
