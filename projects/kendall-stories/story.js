@@ -25,7 +25,7 @@ function load_audio(ids, callback) {
     }
     ids.forEach(function(id) {
         var node = new Howl({
-            src: [id+'.ogg', id+'.m4a']
+            src: ['sounds/'+id+'.ogg', 'sounds/'+id+'.m4a']
         });
         node.once('load', onload(id, node));
     });
@@ -51,7 +51,7 @@ function load_images(ids, callback) {
         node.onload = onload(id,  node);
         node.onerror = onload(id,  node);
         node.onabort = onload(id,  node);
-        node.src = id + '.svg';
+        node.src = 'images/' + id + '.svg';
     });
 };
 
