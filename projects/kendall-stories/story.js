@@ -145,6 +145,12 @@ KSprite.prototype.talk = function(openImage, openCloseTimes) {
     return this;
 };
 
+KSprite.prototype.scale = function(duration, scale, callback) {
+    TweenMax.to(this.image, duration, {scale: scale});
+    if (callback) setTimeout(callback, duration*1000);
+    return this;
+};
+
 KSprite.prototype.flip = function(duration, sx, callback) {
     TweenMax.to(this.image, duration, {scaleX: sx});
     if (callback) setTimeout(callback, duration*1000);
