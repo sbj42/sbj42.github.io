@@ -37,7 +37,10 @@ function intro() {
             'director2',
             'comet',
             'i-win',
-            'baby5'
+            'baby5',
+            'baby6',
+            'baby7',
+            'ball2'
         ], function() {
             load_audio([
                 'hi',
@@ -144,14 +147,31 @@ function start() {
                 ball.slide(0.3, 629, 255).rotate(0.3, 0);
                 bat.slide(0.6, 311, 484).rotate(0.6, 0, function() {
                     wait(0.5, function() {
-                        ball.slide(0.8, 599, 215, youarenotgonna);
+                        pitch();
                     })
                 });
             });
         });
     }
 
+    function pitch() {
+        clear();
+        new_sprite('baby7').place(0, 0).anchor(0, 0);
+        ball = new_sprite('ball2').place(200, 300);
+        wait(0.8, function() {
+            ball.slide(1, -50, 220, function() {
+                wait(0.5, youarenotgonna);
+            });
+        });
+    }
+
     function youarenotgonna() {
+        clear();
+        new_sprite('field').place(0, 0).anchor(0, 0);
+        baby = new_sprite('baby1').place(665, 328).anchor(0.5, 1);
+        ball = new_sprite('ball').place(599, 215);
+        dino = new_sprite('dino3').place(0, 0).anchor(0, 0);
+        bat = new_sprite('bat').place(311, 484).anchor(0, 1);
         play_sound('you-are-not-gonna', function() {
             wait(0.5, function() {
                 dino.setImage('dino5');
@@ -199,9 +219,10 @@ function start() {
     function iwin() {
         clear();
         new_sprite('i-win').place(0, 0).anchor(0, 0);
-        new_sprite('baby5').place(377, 376).anchor(0.471, 0.626).wiggle(0.6, 2);
+        baby = new_sprite('baby5').place(377, 376).anchor(0.471, 0.626).wiggle(0.6, 2);
         wait(0.8, function() {
             play_sound('i-win');
+            baby.talk('baby6', [0.08, 0.45, 0.68, 2])
             done();
         });
     }
