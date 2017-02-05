@@ -1,0 +1,23 @@
+html, body {
+    height: 100%;
+}
+
+body {
+    font-family: 'Inconsolata', monospace;
+    margin: 0px;
+    background: #333;
+    overflow: hidden;
+}
+
+#root {
+    transform-origin: top left;
+    overflow: hidden;
+}
+
+#view {
+    position: relative;
+    margin: auto;
+    background: #577696;
+    color: white;
+    overflow: hidden;
+}

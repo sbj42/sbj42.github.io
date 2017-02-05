@@ -1,0 +1,13 @@
+.text_extent {
+    position: absolute;
+    visibility: hidden;
+}
+.text_sprite {
+    height: auto;
+    width: auto;
+    white-space: nowrap;
+    background: #aaa;
+    color: #000;
+    border: 2px solid black;
+    border-radius: 10px;
+}
