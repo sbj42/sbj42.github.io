@@ -1,0 +1,19 @@
+
+.fruit_sprite {
+    height: auto;
+    width: auto;
+    white-space: nowrap;
+}
+.fruit_image {
+    position: absolute;
+}
+.fruit_text {
+    position: relative;
+    text-align: center;
+    color: white;
+    text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000; 
+}

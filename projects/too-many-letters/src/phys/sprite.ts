@@ -15,12 +15,13 @@ declare module 'p2' {
 }
 
 export interface BodyConfig {
+    fixedRotation?: boolean,
     position: Point;
-    shapes: Array<Shape>;
+    shapes: Shape[];
 }
 
 export function makeBody(config: BodyConfig) {
-    const shapes: Array<p2.Shape> = config.shapes.map(shape => {
+    const shapes: p2.Shape[] = config.shapes.map(shape => {
         if (shape instanceof Circle) {
             return new p2.Circle({
                 position: [shape.center.x, shape.center.y],
@@ -43,6 +44,7 @@ export function makeBody(config: BodyConfig) {
     const body = new p2.Body({
         mass: 1,
         position,
+        fixedRotation: config.fixedRotation
     });
     shapes.forEach(shape => body.addShape(shape, shape.position));
     body.setDensity(1);

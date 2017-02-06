@@ -3,7 +3,6 @@ html, body {
 }
 
 body {
-    font-family: 'Inconsolata', monospace;
     margin: 0px;
     background: #333;
     overflow: hidden;
@@ -20,4 +19,10 @@ body {
     background: #577696;
     color: white;
     overflow: hidden;
+}
+
+#bg {
+    position: absolute;
+    top: 0;
+    left: 0;
 }

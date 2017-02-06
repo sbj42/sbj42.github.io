@@ -1,4 +1,4 @@
-declare function require(path: string): void;
+declare function require(path: string): string;
 require('./world.css');
 
 import {Sprite, makeBody} from './sprite';
@@ -11,7 +11,7 @@ const GRAVITY = 400;
 export interface WorldConfig {
     width: number;
     height: number;
-    // fixedShapes: Array<Shape>;
+    fixedShapes?: Array<Shape>;
 }
 
 export class World {
@@ -20,9 +20,22 @@ export class World {
     height: number;
 
     world: p2.World;
-    sprites: Array<Sprite> = [];
+    material: p2.Material;
+    sprites: Sprite[] = [];
 
     lastTime: number;
+
+    private addPlane(position: number[], angle: number) {
+        const body = new p2.Body({
+            mass: 0,
+            position,
+            angle
+        });
+        const shape = new p2.Plane();
+        shape.material = this.material;
+        body.addShape(shape);
+        this.world.addBody(body);
+    }
 
     constructor(config: WorldConfig) {
         const {width, height} = config;
@@ -33,44 +46,40 @@ export class World {
         this.world = new p2.World({
             gravity: [0, GRAVITY]
         });
-        const bottomPlane = new p2.Body({
-            mass: 0,
-            position: [0, height],
-            angle: - Math.PI
-        });
-        bottomPlane.addShape(new p2.Plane());
-        this.world.addBody(bottomPlane);
-        const leftPlane = new p2.Body({
-            mass: 0,
-            position: [0, 0],
-            angle: - Math.PI / 2
-        });
-        leftPlane.addShape(new p2.Plane());
-        this.world.addBody(leftPlane);
-        const rightPlane = new p2.Body({
-            mass: 0,
-            position: [width, 0],
-            angle: Math.PI / 2
-        });
-        rightPlane.addShape(new p2.Plane());
-        this.world.addBody(rightPlane);
-        // const fixedBody = makeBody({
-        //     position: {x:0, y:0},
-        //     shapes: config.fixedShapes
-        // });
-        // fixedBody.mass = 0;
-        // this.world.addBody(fixedBody);
+        this.material = new p2.Material(1);
+        this.world.addContactMaterial(new p2.ContactMaterial(this.material, this.material, {
+            friction: 1,
+            stiffness: 100000000000,
+            restitution: 0.1,
+        } as p2.ContactMaterialOptions));
+        this.addPlane([0, height-1], - Math.PI);
+        this.addPlane([1, 0], - Math.PI / 2);
+        this.addPlane([width-1, 0], Math.PI / 2);
+        if (config.fixedShapes) {
+            const fixedBody = makeBody({
+                position: {x:0, y:0},
+                shapes: config.fixedShapes
+            });
+            fixedBody.type = p2.Body.STATIC;
+            fixedBody.updateMassProperties();
+            fixedBody.shapes.forEach(shape => shape.material = this.material);
+            this.world.addBody(fixedBody);
+        }
 
         requestAnimationFrame(this.step.bind(this));
     }
 
     addSprite(sprite: Sprite) {
         this.sprites.push(sprite);
+        sprite.body.shapes.forEach(shape => shape.material = this.material);
         this.world.addBody(sprite.body);
         this.element.appendChild(sprite.element);
     }
 
+    // private ticks: number = 0;
     step(time: number) {
+        // if (this.ticks++ > 100)
+        //     return;
         requestAnimationFrame(this.step.bind(this));
         if (this.lastTime) {
             const deltaTime = (time - this.lastTime) / 1000;

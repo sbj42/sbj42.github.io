@@ -22,11 +22,11 @@ export class Circle implements Shape {
 }
 
 export interface ConvexPolygonConfig {
-    points: Array<Point>;
+    points: Point[];
 }
 
 export class ConvexPolygon implements Shape {
-    points: Array<Point>;
+    points: Point[];
 
     constructor(config: ConvexPolygonConfig) {
         this.points = config.points;

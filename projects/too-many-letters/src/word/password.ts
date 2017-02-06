@@ -15,7 +15,7 @@
 // const NUMBERS = '0123456789';
 
 // export class PasswordGen extends BaseGen {
-//     private items: Array<string>;
+//     private items: string[];
 //     private minLength: number;
 //     private maxLength: number;
 

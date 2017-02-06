@@ -13,7 +13,7 @@ export abstract class BaseGen {
         this.engine.seed(seed);
     }
 
-    protected randomChoice<T>(arr: Array<T>): T {
+    protected randomChoice<T>(arr: T[]): T {
         return randomjs.pick(this.engine, arr);
     }
 
@@ -26,11 +26,11 @@ export abstract class BaseGen {
 
 export interface ListGenConfig extends BaseGenConfig {
     seed?: number;
-    items: Array<string>;
+    items: string[];
 }
 
 export class ListGen extends BaseGen {
-    protected items: Array<string>;
+    protected items: string[];
 
     protected constructor(config: ListGenConfig) {
         super(config);

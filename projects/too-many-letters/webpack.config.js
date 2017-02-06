@@ -21,6 +21,10 @@ module.exports = {
             {
                 test: /\.tsx?$/,
                 use: [ 'ts-loader' ]
+            },
+            {
+                 test: /\.svg$/,
+                loader: "url-loader?limit=50000&name=dist/png/[name].[ext]?[hash]"
             }
         ]
     }
