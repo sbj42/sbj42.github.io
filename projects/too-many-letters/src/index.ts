@@ -2,6 +2,7 @@ require('./tml.css');
 
 import * as SceneratorFactory from './scene/factory';
 import * as ThingeratorFactory from './thing/factory';
+import * as WorderatorFactory from './word/factory';
 import {WIDTH, HEIGHT} from './constants';
 
 const root = document.getElementById("root");
@@ -31,28 +32,29 @@ const scenerator = SceneratorFactory.getScenerator({
     type: SceneratorFactory.SCENERATOR_SOFA,
 });
 const thingerator = ThingeratorFactory.getThingerator({
+    //type: ThingeratorFactory.THINGERATOR_TEXT,
     type: ThingeratorFactory.THINGERATOR_FRUIT,
+    //fixedRotation: true,
 });
+const worderator = WorderatorFactory.getWorderator({
+    type: WorderatorFactory.WORDERATOR_LETTER,
+    //letters: '!@#$%^&*()',
+    //case: 'lower'
+} as any);
 
 const scene = scenerator.generate({});
 scene.activate();
 
-// var options = ['Hello', 'this', 'is', 'a', 'test'];
-var options = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];
 var i = 0;
 setInterval(() => {
     if (i < 26) {
-        var text = options[Math.floor(Math.random() * options.length)];
-        // if (Math.random() < 0.75)
-        //     text += options[Math.floor(Math.random() * options.length)];
-        // if (Math.random() < 0.66)
-        //     text += options[Math.floor(Math.random() * options.length)];
-        // if (Math.random() < 0.5)
-        //     text += options[Math.floor(Math.random() * options.length)];
-        scene.world.addSprite(thingerator.generate({
-            text: text.toUpperCase(),
-            position: [(WIDTH - 200) * Math.random(), -50],
-        }).sprite);
+        const word = worderator.generate({});
+        const position = [(WIDTH - 200) * Math.random(), -50]
+        const thing = thingerator.generate({
+            text: word.text,
+            position,
+        });
+        scene.world.addSprite(thing.sprite);
         i ++;
     }
 }, 500);

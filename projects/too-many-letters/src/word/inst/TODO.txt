@@ -1,0 +1,6 @@
+names
+wordlists (colors, animals, easy, hard, states)
+sequences (famous speeches)
+math formulas
+passwords
+chords?

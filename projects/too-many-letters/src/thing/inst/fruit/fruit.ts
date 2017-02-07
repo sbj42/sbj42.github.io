@@ -110,14 +110,14 @@ const FRUITS: FruitImageConfig[] = [
     },
 ];
 
-export interface FruitGeneratorConfig extends ThingeratorConfig {
+export interface FruitThingeratorConfig extends ThingeratorConfig {
     font?: string;
 }
 
-export class FruitGenerator extends ImageThingerator {
-    private readonly config: FruitGeneratorConfig;
+export class FruitThingerator extends ImageThingerator {
+    private readonly config: FruitThingeratorConfig;
 
-    constructor(config: FruitGeneratorConfig) {
+    constructor(config: FruitThingeratorConfig) {
         super({
             font: config.font || DEFAULT_FONT,
             ...config

@@ -1,0 +1,5 @@
+bed (bouncy)
+closet (upward)
+treehouse
+rug (sideways)
+piano? (musical)
