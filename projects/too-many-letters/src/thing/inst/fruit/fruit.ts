@@ -12,7 +12,7 @@ const DKBLUE = '#206';
 const DKGREEN = '#051';
 const DKRED = '#410';
 
-const svgContext = require.context('./images', false, /\.svg$/);
+const imageContext = require.context('./images', false, /\.svg$/);
 
 export interface FruitImageConfig {
     name: string;
@@ -128,7 +128,7 @@ export class FruitGenerator extends ImageThingerator {
     generate(thingConfig: ThingConfig): Thing {
         const fruitImageConfig = FRUITS[Math.floor(Math.random() * FRUITS.length)];
         const imageConfig = {
-            url: svgContext(`./${fruitImageConfig.name}.svg`),
+            url: imageContext(`./${fruitImageConfig.name}.svg`),
             ...fruitImageConfig,
         }
         return this.generateImage(imageConfig, thingConfig);

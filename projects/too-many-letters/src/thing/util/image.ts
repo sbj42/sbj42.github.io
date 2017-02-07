@@ -17,7 +17,7 @@ export interface ImageThingeratorConfig extends ThingeratorConfig {
 }
 
 export abstract class ImageThingerator implements Thingerator {
-    private readonly imageGenConfig: ImageThingeratorConfig;
+    protected readonly imageGenConfig: ImageThingeratorConfig;
 
     constructor(config: ImageThingeratorConfig) {
         this.imageGenConfig = config;

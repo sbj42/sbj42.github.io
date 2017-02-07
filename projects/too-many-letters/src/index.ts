@@ -1,20 +1,20 @@
 require('./tml.css');
 
-import {SofaScene} from './scene/sofa';
+import * as SceneratorFactory from './scene/factory';
 import * as ThingeratorFactory from './thing/factory';
 import {WIDTH, HEIGHT} from './constants';
 
 const root = document.getElementById("root");
 if (!root) throw new Error('no root');
 
-const view = document.createElement('div');
-view.id = 'view';
-view.style.width = `${WIDTH}px`;
-view.style.height = `${HEIGHT}px`;
-root.appendChild(view);
-const bg = document.createElement('img');
-bg.id = 'bg';
-view.appendChild(bg);
+const viewDiv = document.createElement('div');
+viewDiv.id = 'view';
+viewDiv.style.width = `${WIDTH}px`;
+viewDiv.style.height = `${HEIGHT}px`;
+root.appendChild(viewDiv);
+const sceneDiv = document.createElement('div');
+sceneDiv.id = 'scene';
+viewDiv.appendChild(sceneDiv);
 
 const scaleRoot = () => {
     const width = window.innerWidth;
@@ -27,10 +27,15 @@ const scaleRoot = () => {
 window.onresize = scaleRoot;
 scaleRoot();
 
-const scene = new SofaScene();
-const thingerator = ThingeratorFactory.getThingerator({
-    type: ThingeratorFactory.THINGERATOR_FRUIT
+const scenerator = SceneratorFactory.getScenerator({
+    type: SceneratorFactory.SCENERATOR_SOFA,
 });
+const thingerator = ThingeratorFactory.getThingerator({
+    type: ThingeratorFactory.THINGERATOR_FRUIT,
+});
+
+const scene = scenerator.generate({});
+scene.activate();
 
 // var options = ['Hello', 'this', 'is', 'a', 'test'];
 var options = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'];

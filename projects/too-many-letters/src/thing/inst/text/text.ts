@@ -1,9 +1,9 @@
 require('./text-sprite.css');
 
-import {Sprite} from '../../phys/sprite';
-import {Rectangle} from '../../phys/shape';
-import {ThingConfig, Thing, ThingeratorConfig, Thingerator} from '../gen';
-import {getTextExtent} from '../../util/text-extent';
+import {Sprite} from '../../../phys/sprite';
+import {Rectangle} from '../../../phys/shape';
+import {ThingConfig, Thing, ThingeratorConfig, Thingerator} from '../../gen';
+import {getTextExtent} from '../../../util/text-extent';
 
 const DEFAULT_FONT = "60px 'Paytone One', sans-serif";
 

@@ -1,0 +1,15 @@
+.sofa_bg, .sofa_image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.sofa_outside {
+    position: absolute;
+    top: 0;
+    left: 133px;
+    width: 416px;
+    height: 313px;
+}

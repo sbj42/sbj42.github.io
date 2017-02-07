@@ -24,6 +24,8 @@ export class World {
 
     lastTime: number;
 
+    paused: boolean;
+
     private addPlane(position: number[], angle: number) {
         const body = new p2.Body({
             mass: 0,
@@ -64,6 +66,7 @@ export class World {
             fixedBody.shapes.forEach(shape => shape.material = this.material);
             this.world.addBody(fixedBody);
         }
+        this.paused = false;
 
         requestAnimationFrame(this.step.bind(this));
     }
@@ -75,10 +78,9 @@ export class World {
         this.element.appendChild(sprite.element);
     }
 
-    // private ticks: number = 0;
     step(time: number) {
-        // if (this.ticks++ > 100)
-        //     return;
+        if (this.paused)
+            return;
         requestAnimationFrame(this.step.bind(this));
         if (this.lastTime) {
             const deltaTime = (time - this.lastTime) / 1000;
@@ -86,5 +88,17 @@ export class World {
             this.sprites.forEach(sprite => sprite.update());
         }
         this.lastTime = time;
+    }
+
+    pause() {
+        this.paused = true;
+    }
+
+    play() {
+        if (!this.paused)
+            return;
+        this.paused = false;
+        delete this.lastTime;
+        requestAnimationFrame(this.step.bind(this));
     }
 }
