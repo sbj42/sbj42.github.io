@@ -1,4 +1,3 @@
-declare function require(path: string): string;
 require('./world.css');
 
 import {Sprite, makeBody} from './sprite';
@@ -57,7 +56,7 @@ export class World {
         this.addPlane([width-1, 0], Math.PI / 2);
         if (config.fixedShapes) {
             const fixedBody = makeBody({
-                position: {x:0, y:0},
+                position: [0, 0],
                 shapes: config.fixedShapes
             });
             fixedBody.type = p2.Body.STATIC;

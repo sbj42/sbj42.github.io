@@ -24,12 +24,12 @@ export function makeBody(config: BodyConfig) {
     const shapes: p2.Shape[] = config.shapes.map(shape => {
         if (shape instanceof Circle) {
             return new p2.Circle({
-                position: [shape.center.x, shape.center.y],
+                position: shape.center,
                 radius: shape.radius,
             });
         } else if (shape instanceof ConvexPolygon) {
             const ret = new p2.Convex({
-                vertices: shape.points.map(point => [point.x, point.y]),
+                vertices: shape.points,
             });
             ret.vertices = ret.vertices.map(vertex => [vertex[0] - ret.centerOfMass[0], vertex[1] - ret.centerOfMass[1]]);
             ret.position = [ret.position[0] + ret.centerOfMass[0], ret.position[1] + ret.centerOfMass[1]];
@@ -39,7 +39,7 @@ export function makeBody(config: BodyConfig) {
             throw new Error('shape type');
         }
     });
-    const position = [config.position.x, config.position.y];
+    const {position} = config;
 
     const body = new p2.Body({
         mass: 1,
@@ -67,14 +67,14 @@ export class Sprite {
         
         this.element = element;
         this.body = makeBody(config);
-        this.offset = {x: this.body.position[0] - config.position.x, y: this.body.position[1] - config.position.y};
+        this.offset = [this.body.position[0] - config.position[0], this.body.position[1] - config.position[1]];
         this.update();
     }
 
     update() {
-        this.element.style.left = `${this.body.position[0] - this.offset.x}px`;
-        this.element.style.top = `${this.body.position[1] - this.offset.y}px`;
-        this.element.style.transformOrigin = `${this.offset.x}px ${this.offset.y}px`;
+        this.element.style.left = `${this.body.position[0] - this.offset[0]}px`;
+        this.element.style.top = `${this.body.position[1] - this.offset[1]}px`;
+        this.element.style.transformOrigin = `${this.offset[0]}px ${this.offset[1]}px`;
         this.element.style.transform = `rotate(${this.body.angle}rad)`;
     }
 }

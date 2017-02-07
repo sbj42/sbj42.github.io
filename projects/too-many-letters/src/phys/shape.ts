@@ -1,42 +1,24 @@
 export interface Shape {
 }
 
-export interface Point {
-    x: number;
-    y: number;
-}
-
-export interface CircleConfig {
-    center: Point;
-    radius: number;
-}
+export type Point = number[];
 
 export class Circle implements Shape {
     center: Point;
     radius: number;
 
-    constructor(config: CircleConfig) {
-        this.center = config.center;
-        this.radius = config.radius;
+    constructor(center: Point, radius: number) {
+        this.center = center;
+        this.radius = radius;
     }
-}
-
-export interface ConvexPolygonConfig {
-    points: Point[];
 }
 
 export class ConvexPolygon implements Shape {
     points: Point[];
 
-    constructor(config: ConvexPolygonConfig) {
-        this.points = config.points;
+    constructor(points: Point[]) {
+        this.points = points;
     }
-}
-
-export interface RectangleConfig {
-    topLeft: Point;
-    width: number;
-    height: number;
 }
 
 export class Rectangle extends ConvexPolygon {
@@ -44,20 +26,12 @@ export class Rectangle extends ConvexPolygon {
     width: number;
     height: number;
 
-    constructor(config: RectangleConfig) {
-        const {topLeft, width, height} = config;
-        const bottomRight = {
-            x: topLeft.x + width,
-            y: topLeft.y + height,
-        };
-        super({
-            points: [
-                topLeft,
-                {x: bottomRight.x, y: topLeft.y},
-                bottomRight,
-                {x: topLeft.x, y: bottomRight.y},
-            ]
-        });
+    constructor(topLeft: Point, width: number, height: number) {
+        const x1 = topLeft[0];
+        const y1 = topLeft[1];
+        const x2 = x1 + width;
+        const y2 = y1 + height;
+        super([[x1, y1], [x2, y1], [x2, y2], [x1, y2]]);
         this.topLeft = topLeft;
         this.width = width;
         this.height = height;
