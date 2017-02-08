@@ -40,7 +40,7 @@ const thingerator = ThingeratorFactory.getThingerator({
 const worderator = WorderatorFactory.getWorderator({
     //type: WorderatorFactory.WORDERATOR_RANDOM,
     type: WorderatorFactory.WORDERATOR_WORDLIST,
-    data: require('./word/inst/wordlist/data/colors-easy.txt'),
+    data: require('./word/inst/wordlist/data/colors.txt'),
     //minLength: 2,
     //maxLength: 3,
     //parts: ['foo', 'bar', 'baz'],
@@ -53,7 +53,7 @@ const level = new Level({
     thingerator,
     worderator,
     timeLimit: 10,
-    startWordCount: 2,
+    startWordCount: 5,
     extraWordTimes: 2,
     extraWordCount: 2,
 });

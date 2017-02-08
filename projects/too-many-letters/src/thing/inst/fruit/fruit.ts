@@ -134,13 +134,17 @@ export class FruitThingerator extends ImageThingerator {
     generate(thingConfig: ThingConfig): Thing {
         const {word} = thingConfig;
         const extent = getTextExtent(word.text, this.font);
-        const fruits = FRUITS.filter(fruitImageConfig => {
+        let fruits = FRUITS.filter(fruitImageConfig => {
             const ratio = fruitImageConfig.textRect.width / extent.width;
             return ratio > FIT_LIMIT;
         });
-        if (fruits.length == 0)
-        throw new Error(`word ${word.text} doesn't fit in a fruit`);
-        const fruitImageConfig = fruits[Math.floor(Math.random() * fruits.length)];
+        let fruitImageConfig;
+        if (fruits.length == 0) {
+            fruits = FRUITS.slice();
+            fruits.sort((a, b) => b.textRect.width - a.textRect.width);
+            fruitImageConfig = fruits[0];
+        } else 
+            fruitImageConfig = fruits[Math.floor(Math.random() * fruits.length)];
         const imageConfig = {
             url: imageContext(`./${fruitImageConfig.name}.svg`),
             deadUrl: imageContext(`./${fruitImageConfig.name}-chomp.svg`),
