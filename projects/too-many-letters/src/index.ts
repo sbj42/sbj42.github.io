@@ -38,12 +38,14 @@ const thingerator = ThingeratorFactory.getThingerator({
     //fixedRotation: true,
 });
 const worderator = WorderatorFactory.getWorderator({
-    type: WorderatorFactory.WORDERATOR_RANDOM,
+    //type: WorderatorFactory.WORDERATOR_RANDOM,
+    type: WorderatorFactory.WORDERATOR_WORDLIST,
+    data: require('./word/inst/wordlist/data/colors-easy.txt'),
     //minLength: 2,
     //maxLength: 3,
     //parts: ['foo', 'bar', 'baz'],
     //parts: '!@#$%^&*()'.split(''),
-    //case: 'upper',
+    case: 'upper',
     //case: 'lower'
 } as any);
 const level = new Level({

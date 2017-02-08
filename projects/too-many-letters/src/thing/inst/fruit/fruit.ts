@@ -5,6 +5,8 @@ import {ConvexPolygon, Circle, Rectangle, Shape} from '../../../phys/shape';
 import {ThingConfig, Thing, ThingeratorConfig, Thingerator} from '../../gen';
 import {getTextExtent} from '../../../util/text-extent';
 
+const FIT_LIMIT = 0.6;
+
 const DEFAULT_FONT = "40px 'Paytone One', sans-serif";
 const WHITE = '#fff';
 const BLACK = '#000';
@@ -134,7 +136,7 @@ export class FruitThingerator extends ImageThingerator {
         const extent = getTextExtent(word.text, this.font);
         const fruits = FRUITS.filter(fruitImageConfig => {
             const ratio = fruitImageConfig.textRect.width / extent.width;
-            return ratio > 0.6;
+            return ratio > FIT_LIMIT;
         });
         if (fruits.length == 0)
         throw new Error(`word ${word.text} doesn't fit in a fruit`);

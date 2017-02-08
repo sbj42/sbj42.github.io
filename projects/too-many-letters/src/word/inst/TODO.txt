@@ -1,5 +1,5 @@
 names
-wordlists (colors, animals, easy, hard, states)
+wordlists (colors, animals, easy, hard, states, actors)
 sequences (famous speeches)
 math formulas
 passwords

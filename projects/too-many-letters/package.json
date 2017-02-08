@@ -11,6 +11,8 @@
     "@types/p2": "^0.7.29",
     "@types/random-js": "^1.0.28",
     "css-loader": "^0.26.1",
+    "file-loader": "^0.10.0",
+    "raw-loader": "^0.5.1",
     "style-loader": "^0.13.1",
     "ts-loader": "^2.0.0",
     "typescript": "^2.1.5",

@@ -10,7 +10,7 @@ module.exports = {
         filename: "tml.js"
     },
     resolve: {
-        extensions: ['.js', '.ts', '.css']
+        extensions: ['.js', '.ts', '.css', '.txt']
     },
     module: {
         rules: [
@@ -24,7 +24,11 @@ module.exports = {
             },
             {
                  test: /\.(svg|jpg)$/,
-                loader: "url-loader?limit=50000&name=dist/img/[name].[ext]?[hash]"
+                 loader: "url-loader?limit=50000&name=dist/img/[name].[ext]?[hash]"
+            },
+            {
+                 test: /\.txt$/,
+                 loader: "raw-loader"
             }
         ]
     }
