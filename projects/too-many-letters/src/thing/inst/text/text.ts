@@ -11,6 +11,8 @@ export interface TextThingeratorConfig extends ThingeratorConfig {
     font?: string;
     textFillColor?: string;
     textStrokeColor?: string;
+    hitFillColor?: string;
+    hitStrokeColor?: string;
 }
 
 export class TextThingerator implements Thingerator {
@@ -22,19 +24,29 @@ export class TextThingerator implements Thingerator {
 
     generate(thingConfig: ThingConfig): Thing {
         const font = this.config.font || DEFAULT_FONT;
-        const extent = getTextExtent(thingConfig.text, font);
+        const extent = getTextExtent(thingConfig.word.text, font);
         
         const spriteElem = document.createElement('div');
-        spriteElem.appendChild(document.createTextNode(thingConfig.text));
         spriteElem.className = 'text_sprite';
         spriteElem.style.font = font;
-        spriteElem.style.color = this.config.textFillColor || '#fff';
+        spriteElem.style.width = `${extent.width}px`;
+        const hitSpan = document.createElement('span');
+        hitSpan.className = 'text_sprite_hit';
+        hitSpan.style.color = this.config.hitFillColor || '#f00';
+        const hitStrokeColor = this.config.hitStrokeColor || '#fff';
+        hitSpan.style.textShadow = `-2px -2px 0 ${hitStrokeColor}, -2px 2px 0 ${hitStrokeColor}, 2px -2px 0 ${hitStrokeColor}, 2px 2px 0 ${hitStrokeColor}`;
+        spriteElem.appendChild(hitSpan);
+        const textSpan = document.createElement('span');
+        textSpan.className = 'text_sprite_text';
+        textSpan.appendChild(document.createTextNode(thingConfig.word.text));
+        textSpan.style.color = this.config.textFillColor || '#fff';
         const textStrokeColor = this.config.textStrokeColor || '#000';
-        spriteElem.style.textShadow = `-2px -2px 0 ${textStrokeColor}, -2px 2px 0 ${textStrokeColor}, 2px -2px 0 ${textStrokeColor}, 2px 2px 0 ${textStrokeColor}`;
+        textSpan.style.textShadow = `-2px -2px 0 ${textStrokeColor}, -2px 2px 0 ${textStrokeColor}, 2px -2px 0 ${textStrokeColor}, 2px 2px 0 ${textStrokeColor}`;
+        spriteElem.appendChild(textSpan);
         
         const sprite = new Sprite({
             element: spriteElem,
-            position: thingConfig.position,
+            position: thingConfig.position || [0, 0],
             fixedRotation: this.config.fixedRotation,
             shapes: [
                 new Rectangle([0, extent.height*0.2], extent.width, extent.height*0.65),
@@ -42,7 +54,19 @@ export class TextThingerator implements Thingerator {
         })
 
         return {
-            sprite
+            sprite,
+            word: thingConfig.word,
+            die: () => {
+                hitSpan.innerHTML = '';
+                textSpan.innerHTML = '';
+                hitSpan.appendChild(document.createTextNode(thingConfig.word.text));
+            },
+            hit: count => {
+                hitSpan.innerHTML = '';
+                hitSpan.appendChild(document.createTextNode(thingConfig.word.text.substr(0, count)));
+                textSpan.innerHTML = '';
+                hitSpan.appendChild(document.createTextNode(thingConfig.word.text.substr(count)));
+            }
         };
     }
 }

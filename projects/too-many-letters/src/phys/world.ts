@@ -5,7 +5,7 @@ import {Shape} from './shape';
 
 import * as p2 from 'p2';
 
-const GRAVITY = 400;
+const GRAVITY = 800;
 
 export interface WorldConfig {
     width: number;
@@ -71,11 +71,30 @@ export class World {
         requestAnimationFrame(this.step.bind(this));
     }
 
+    checkOverlap(sprite: Sprite) {
+        sprite.body.aabbNeedsUpdate = true;
+        const aabb = sprite.body.getAABB();
+        if (aabb.lowerBound[0] < 0) return true;
+        if (aabb.upperBound[0] > this.width) return true;
+        //if (aabb.lowerBound[1] < 0) return true;
+        if (aabb.upperBound[1] > this.height) return true;
+        return this.world.bodies.some(body => {
+            if (body.shapes.some(shape => shape instanceof p2.Plane))
+                return false;
+            return aabb.overlaps(body.getAABB());
+        });
+    }
+
     addSprite(sprite: Sprite) {
         this.sprites.push(sprite);
         sprite.body.shapes.forEach(shape => shape.material = this.material);
         this.world.addBody(sprite.body);
         this.element.appendChild(sprite.element);
+    }
+
+    removeSprite(sprite: Sprite) {
+        sprite.remove();
+        this.world.removeBody(sprite.body);
     }
 
     step(time: number) {

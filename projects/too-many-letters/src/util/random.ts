@@ -17,6 +17,16 @@ export class Random {
         return randomjs.pick(this.engine, arr);
     }
 
+    integer(min: number | undefined, max: number | undefined): number {
+        if (!min)
+            min = 1;
+        if (!max)
+            max = min;
+        if (max < min)
+            throw new Error('minmax');
+        return Math.floor(Math.random()*(max + 1 - min) + min);
+    }
+
     percent(p: number) {
         return randomjs.bool(p)(this.engine);
     }

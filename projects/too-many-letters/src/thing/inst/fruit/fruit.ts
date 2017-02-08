@@ -3,6 +3,7 @@ require('./fruit.css');
 import {ImageThingerator, ImageConfig} from '../../util/image';
 import {ConvexPolygon, Circle, Rectangle, Shape} from '../../../phys/shape';
 import {ThingConfig, Thing, ThingeratorConfig, Thingerator} from '../../gen';
+import {getTextExtent} from '../../../util/text-extent';
 
 const DEFAULT_FONT = "40px 'Paytone One', sans-serif";
 const WHITE = '#fff';
@@ -27,7 +28,7 @@ const FRUITS: FruitImageConfig[] = [
         name: 'apple',
         textFillColor: WHITE,
         textStrokeColor: BLACK,
-        textRect: new Rectangle([11, 10], 40, 36),
+        textRect: new Rectangle([10, 10], 39, 36),
         shapes: [new ConvexPolygon([
             [2, 25], [15, 2], [49, 2], [60, 25], [45, 59], [15, 59],
         ])],
@@ -56,7 +57,7 @@ const FRUITS: FruitImageConfig[] = [
         name: 'strawberry',
         textFillColor: WHITE,
         textStrokeColor: BLACK,
-        textRect: new Rectangle([10, 12], 40, 36),
+        textRect: new Rectangle([8, 12], 38, 36),
         shapes: [new ConvexPolygon([
             [0, 17], [27, 3], [35, 3], [60, 17], [53, 46], [40, 59], [20, 59], [6, 46],
         ])],
@@ -65,7 +66,7 @@ const FRUITS: FruitImageConfig[] = [
         name: 'pear',
         textFillColor: DKBLUE,
         textStrokeColor: WHITE,
-        textRect: new Rectangle([10, 34], 40, 36),
+        textRect: new Rectangle([9, 34], 38, 36),
         shapes: [new ConvexPolygon([
             [0, 54], [27, 4], [31, 4], [60, 54], [57, 72], [40, 79], [22, 79], [3, 72],
         ])],
@@ -94,7 +95,7 @@ const FRUITS: FruitImageConfig[] = [
         name: 'peach',
         textFillColor: DKRED,
         textStrokeColor: WHITE,
-        textRect: new Rectangle([11, 10], 40, 36),
+        textRect: new Rectangle([9, 10], 39, 36),
         shapes: [new ConvexPolygon([
             [9, 7], [53, 7], [60, 31], [51, 53], [32, 58], [10, 52], [2, 28],
         ])],
@@ -103,7 +104,7 @@ const FRUITS: FruitImageConfig[] = [
         name: 'lemon',
         textFillColor: DKGREEN,
         textStrokeColor: WHITE,
-        textRect: new Rectangle([11, 10], 40, 36),
+        textRect: new Rectangle([10, 10], 38, 36),
         shapes: [new ConvexPolygon([
             [4, 26], [21, 6], [54, 3], [57, 37], [35, 57], [3, 57],
         ])],
@@ -116,19 +117,33 @@ export interface FruitThingeratorConfig extends ThingeratorConfig {
 
 export class FruitThingerator extends ImageThingerator {
     private readonly config: FruitThingeratorConfig;
+    private readonly font: string;
 
     constructor(config: FruitThingeratorConfig) {
+        const font = config.font || DEFAULT_FONT;
         super({
-            font: config.font || DEFAULT_FONT,
+            font,
             ...config
         });
         this.config = config;
+        this.font = font;
     }
 
     generate(thingConfig: ThingConfig): Thing {
-        const fruitImageConfig = FRUITS[Math.floor(Math.random() * FRUITS.length)];
+        const {word} = thingConfig;
+        const extent = getTextExtent(word.text, this.font);
+        const fruits = FRUITS.filter(fruitImageConfig => {
+            const ratio = fruitImageConfig.textRect.width / extent.width;
+            return ratio > 0.6;
+        });
+        if (fruits.length == 0)
+        throw new Error(`word ${word.text} doesn't fit in a fruit`);
+        const fruitImageConfig = fruits[Math.floor(Math.random() * fruits.length)];
         const imageConfig = {
             url: imageContext(`./${fruitImageConfig.name}.svg`),
+            deadUrl: imageContext(`./${fruitImageConfig.name}-chomp.svg`),
+            hitStrokeColor: '#fff',
+            hitFillColor: '#f00',
             ...fruitImageConfig,
         }
         return this.generateImage(imageConfig, thingConfig);

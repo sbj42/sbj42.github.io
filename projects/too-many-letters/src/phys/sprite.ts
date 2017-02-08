@@ -1,19 +1,6 @@
 import {Point, Shape, Circle, ConvexPolygon} from './shape';
 import * as p2 from 'p2';
 
-declare module 'p2' {
-    export interface ConvexOptions extends SharedShapeOptions {
-        // missing declaration in @types/p2:
-        vertices?: number[][];
-    }
-    export interface BodyOptions {
-        id?: number
-    }
-    export interface Convex {
-        updateTriangles: () => void;
-    }
-}
-
 export interface BodyConfig {
     fixedRotation?: boolean,
     position: Point;
@@ -71,10 +58,30 @@ export class Sprite {
         this.update();
     }
 
+    bounds() {
+        const aabb = this.body.getAABB();
+        return {
+            topLeft: aabb.lowerBound,
+            width: aabb.upperBound[0] - aabb.lowerBound[0],
+            height: aabb.upperBound[1] - aabb.lowerBound[1],
+        };
+    }
+
+    setTopLeft(topLeft: Point) {
+        const aabb = this.body.getAABB();
+        this.body.position = [this.body.position[0] - aabb.lowerBound[0] + topLeft[0], this.body.position[1] - aabb.lowerBound[1] + topLeft[1]];
+        this.body.aabbNeedsUpdate = true;
+    }
+
     update() {
         this.element.style.left = `${this.body.position[0] - this.offset[0]}px`;
         this.element.style.top = `${this.body.position[1] - this.offset[1]}px`;
         this.element.style.transformOrigin = `${this.offset[0]}px ${this.offset[1]}px`;
         this.element.style.transform = `rotate(${this.body.angle}rad)`;
+    }
+
+    remove() {
+        if (this.element.parentNode)
+            this.element.parentNode.removeChild(this.element);
     }
 }

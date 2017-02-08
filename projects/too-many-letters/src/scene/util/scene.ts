@@ -2,6 +2,7 @@ import {WIDTH, HEIGHT} from '../../constants';
 import {World} from '../../phys/world';
 import {Shape} from '../../phys/shape';
 import {Scene, SceneConfig} from '../gen';
+import {Thing} from '../../thing/gen';
 
 export interface SceneBaseConfig {
     bgElement: HTMLElement;
@@ -30,11 +31,19 @@ export class SceneBase implements Scene {
     }
 
     activate() {
-        const scene = document.getElementById('scene');
-        if (!scene) throw new Error('no scene');
+        const sceneDiv = document.getElementById('scene');
+        if (!sceneDiv) throw new Error('no scene');
 
-        scene.innerHTML = '';
-        scene.appendChild(this.baseConfig.bgElement);
-        scene.appendChild(this.world.element);
+        sceneDiv.innerHTML = '';
+        sceneDiv.appendChild(this.baseConfig.bgElement);
+        sceneDiv.appendChild(this.world.element);
+    }
+
+    addThing(thing: Thing) {
+        this.world.addSprite(thing.sprite);
+    }
+
+    removeThing(thing: Thing) {
+        this.world.removeSprite(thing.sprite);
     }
 }

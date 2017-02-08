@@ -1,4 +1,5 @@
 import {World} from '../phys/World';
+import {Thing} from '../thing/gen';
 
 export interface SceneConfig {
 }
@@ -7,6 +8,8 @@ export interface Scene {
     world: World;
 
     activate(): void;
+    addThing(thing: Thing): void;
+    removeThing(thing: Thing): void;
 }
 
 export interface SceneratorConfig {

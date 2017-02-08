@@ -3,6 +3,7 @@ require('./tml.css');
 import * as SceneratorFactory from './scene/factory';
 import * as ThingeratorFactory from './thing/factory';
 import * as WorderatorFactory from './word/factory';
+import {Level} from './game/level';
 import {WIDTH, HEIGHT} from './constants';
 
 const root = document.getElementById("root");
@@ -37,24 +38,28 @@ const thingerator = ThingeratorFactory.getThingerator({
     //fixedRotation: true,
 });
 const worderator = WorderatorFactory.getWorderator({
-    type: WorderatorFactory.WORDERATOR_LETTER,
-    //letters: '!@#$%^&*()',
+    type: WorderatorFactory.WORDERATOR_RANDOM,
+    //minLength: 2,
+    //maxLength: 3,
+    //parts: ['foo', 'bar', 'baz'],
+    //parts: '!@#$%^&*()'.split(''),
+    //case: 'upper',
     //case: 'lower'
 } as any);
+const level = new Level({
+    scenerator,
+    thingerator,
+    worderator,
+    timeLimit: 10,
+    startWordCount: 2,
+    extraWordTimes: 2,
+    extraWordCount: 2,
+});
+(window as any)['level'] = level;
 
-const scene = scenerator.generate({});
-scene.activate();
+window.onkeypress = event => {
+    level.onKey(event.key);
+};
 
-var i = 0;
-setInterval(() => {
-    if (i < 26) {
-        const word = worderator.generate({});
-        const position = [(WIDTH - 200) * Math.random(), -50]
-        const thing = thingerator.generate({
-            text: word.text,
-            position,
-        });
-        scene.world.addSprite(thing.sprite);
-        i ++;
-    }
-}, 500);
+level.start();
+level.activate();

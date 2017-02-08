@@ -1,13 +1,18 @@
 import {Sprite} from '../phys/sprite';
 import {Point} from '../phys/shape';
+import {Word} from '../word/gen';
 
 export interface ThingConfig {
-    position: Point;
-    text: string;
+    position?: Point;
+    word: Word;
 }
 
 export interface Thing {
+    word: Word;
     sprite: Sprite;
+
+    die(): void;
+    hit(count: number): void;
 }
 
 export interface ThingeratorConfig {
