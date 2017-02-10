@@ -1,0 +1,47 @@
+.stopwatch {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.stopwatch_warning {
+    stroke: none;
+    fill: #c66;
+}
+.stopwatch_outer_circle {
+    transition: 0.1s all;
+    stroke: #444;
+    stroke-width: 3px;
+    fill: #fff;
+}
+.stopwatch_urgent .stopwatch_outer_circle {
+    fill: #faa;
+}
+.stopwatch_lose .stopwatch_outer_circle {
+    fill: #ef2020;
+    stroke: #000;
+}
+.stopwatch_win .stopwatch_outer_circle {
+    fill: #40ff39;
+}
+.stopwatch_win .stopwatch_warning {
+    fill: none;
+}
+.stopwatch_inner_circle {
+    stroke: none;
+    fill: #000;
+}
+.stopwatch_ticks {
+    stroke: #666;
+    stroke-width: 1.5px;
+}
+.stopwatch_done .stopwatch_needle {
+    stroke: #500;
+    fill: #500;
+}
+.stopwatch_needle {
+    stroke: #a22;
+    stroke-width: 1px;
+    stroke-linecap: butt;
+    fill: #a22;
+}

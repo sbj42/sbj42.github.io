@@ -17,6 +17,9 @@ root.appendChild(viewDiv);
 const sceneDiv = document.createElement('div');
 sceneDiv.id = 'scene';
 viewDiv.appendChild(sceneDiv);
+const uiDiv = document.createElement('div');
+uiDiv.id = 'ui';
+viewDiv.appendChild(uiDiv);
 
 const scaleRoot = () => {
     const width = window.innerWidth;
@@ -38,9 +41,9 @@ const thingerator = ThingeratorFactory.getThingerator({
     //fixedRotation: true,
 });
 const worderator = WorderatorFactory.getWorderator({
-    //type: WorderatorFactory.WORDERATOR_RANDOM,
-    type: WorderatorFactory.WORDERATOR_WORDLIST,
-    data: require('./word/inst/wordlist/data/colors.txt'),
+    type: WorderatorFactory.WORDERATOR_RANDOM,
+    //type: WorderatorFactory.WORDERATOR_WORDLIST,
+    //data: require('./word/inst/wordlist/data/colors.txt'),
     //minLength: 2,
     //maxLength: 3,
     //parts: ['foo', 'bar', 'baz'],
@@ -52,10 +55,10 @@ const level = new Level({
     scenerator,
     thingerator,
     worderator,
-    timeLimit: 10,
+    timeLimit: 20,
     startWordCount: 5,
-    extraWordTimes: 2,
-    extraWordCount: 2,
+    extraWordTimes: 5,
+    extraWordCount: 1,
 });
 (window as any)['level'] = level;
 

@@ -1,0 +1,20 @@
+.roadmap {
+    position: absolute;
+    top: 130px;
+    right: 85px;
+}
+.roadmap_stop {
+    position: absolute;
+    transition: 0.2s all;
+    left: 0px;
+}
+.roadmap_stop_circle {
+    fill: #bfb;
+    stroke: #000;
+    stroke-width: 1px;
+}
+.roadmap_stop_path {
+    fill: #7a7;
+    stroke: #000;
+    stroke-width: 1px;
+}

@@ -1,5 +1,7 @@
 import {Scenerator, Scene} from '../scene/gen';
 import {Thingerator, Thing} from '../thing/gen';
+import {Stopwatch} from '../ui/stopwatch';
+import {Roadmap, RoadmapStop} from '../ui/roadmap';
 import {Worderator} from '../word/gen';
 import {WIDTH, HEIGHT} from '../constants';
 
@@ -27,14 +29,19 @@ export interface LevelConfig {
 export class Level {
     private config: LevelConfig;
 
-    private scene: Scene;
     private interval: any;
+
     private startTime: number;
     private mistakes: number;
-    private nextThings: Thing[];
     private extraCount: number;
     private extraTime: number;
+    
+    private scene: Scene;
+    private nextThings: Thing[];
     private things: Thing[];
+
+    private stopwatch: Stopwatch;
+    private roadmap: Roadmap;
 
     private keys: string;
     private score: number;
@@ -50,6 +57,19 @@ export class Level {
         }
         if (this.config.extraWordRate && this.config.extraWordTimes && this.config.extraWordRate * (this.config.extraWordTimes + 1) > this.config.timeLimit)
             throw new Error('impossible extra words');
+
+        this.stopwatch = new Stopwatch({
+            timeLimit: config.timeLimit
+        });
+        const stops: RoadmapStop[] = [];
+        for (let i = 0; i < this.config.extraWordTimes; i ++) {
+            stops.push({
+                time: this.config.extraWordRate || 1
+            });
+        }
+        this.roadmap = new Roadmap({
+            stops
+        });
     }
 
     private now() {
@@ -57,6 +77,13 @@ export class Level {
     }
 
     start() {
+        const uiDiv = document.getElementById('ui');
+        if (!uiDiv) throw new Error('no ui');
+        uiDiv.innerHTML = '';
+        uiDiv.appendChild(this.stopwatch.element);
+        this.stopwatch.reset();
+        uiDiv.appendChild(this.roadmap.element);
+        this.roadmap.reset();
         this.scene = this.config.scenerator.generate({});
         this.startTime = this.now();
         this.mistakes = 0;
@@ -107,10 +134,16 @@ export class Level {
 
     private tick() {
         const elapsed = this.now() - this.startTime;
-        if (this.extraCount && elapsed > this.extraTime) {
-            this.extraTime += this.config.extraWordRate;
-            this.extraCount --;
-            this.generate(this.config.extraWordCount || 1);
+        this.stopwatch.update(elapsed);
+        if (this.extraCount) {
+            this.roadmap.update(this.extraTime - elapsed);
+            if (elapsed > this.extraTime) {
+                this.extraTime += this.config.extraWordRate;
+                this.extraCount --;
+                this.generate(this.config.extraWordCount || 1);
+                this.roadmap.next();
+                this.roadmap.update(this.extraTime - elapsed);
+            }
         }
         if (elapsed > this.config.timeLimit) {
             this.lose();
@@ -159,7 +192,7 @@ export class Level {
         if (this.things.length == 0 && this.nextThings.length == 0) {
             if (this.extraCount) {
                 this.score += SCORE_BONUS;
-                this.extraTime = 0;
+                this.extraTime = this.now() - this.startTime;
             } else {
                 this.win();
             }
@@ -173,11 +206,13 @@ export class Level {
     }
 
     private win() {
+        this.stopwatch.win();
         clearInterval(this.interval);
         console.info('win: ' + this.score);
     }
 
     private lose() {
+        this.stopwatch.lose();
         clearInterval(this.interval);
         console.info('lose: ' + this.score);
     }
