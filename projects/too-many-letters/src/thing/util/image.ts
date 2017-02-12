@@ -97,4 +97,6 @@ export abstract class ImageThingerator implements Thingerator {
     }
 
     abstract generate(thingConfig: ThingConfig): Thing;
+
+    abstract signText(): [string, string];
 }

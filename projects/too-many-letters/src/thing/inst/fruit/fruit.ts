@@ -154,4 +154,8 @@ export class FruitThingerator extends ImageThingerator {
         }
         return this.generateImage(imageConfig, thingConfig);
     }
+
+    signText(): [string, string] {
+        return [`There is too much`, `fruit`];
+    }
 }

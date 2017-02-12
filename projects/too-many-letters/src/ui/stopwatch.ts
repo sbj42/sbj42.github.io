@@ -5,7 +5,7 @@ interface StopwatchConfig {
 }
 
 const CENTER = 60;
-const MAXRADIUS = 58;
+const MAXRADIUS = 55;
 const RADIUS = 50;
 const INNERRADIUS = 5;
 const TICKLENGTH = 5;
@@ -24,7 +24,7 @@ export class Stopwatch {
 
     constructor(config: StopwatchConfig) {
         this.config = config;
-        this.range = Math.ceil(this.config.timeLimit / 30) * 30;
+        this.range = Math.ceil(this.config.timeLimit / 60) * 60;
 
         this.element = document.createElementNS(svgns, 'svg');
         this.element.setAttribute('width', `${CENTER*2}px`);
@@ -58,9 +58,9 @@ export class Stopwatch {
         ticks.setAttribute('class', 'stopwatch_ticks');
         {
             const r2 = RADIUS - 2;
-            const r1 = r2 - TICKLENGTH;
             let ticksPath = '';
             for (let i = 0; i < this.range; i ++) {
+                const r1 = r2 - TICKLENGTH - ((i % 5 == 0) ? TICKLENGTH : 0);
                 const angle = i * 2 * Math.PI / this.range;
                 const s = Math.sin(angle);
                 const c = Math.cos(angle);

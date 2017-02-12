@@ -20,6 +20,9 @@ viewDiv.appendChild(sceneDiv);
 const uiDiv = document.createElement('div');
 uiDiv.id = 'ui';
 viewDiv.appendChild(uiDiv);
+const doorDiv = document.createElement('div');
+doorDiv.id = 'door';
+viewDiv.appendChild(doorDiv);
 
 const scaleRoot = () => {
     const width = window.innerWidth;
@@ -55,7 +58,7 @@ const level = new Level({
     scenerator,
     thingerator,
     worderator,
-    timeLimit: 20,
+    timeLimit: 10,
     startWordCount: 5,
     extraWordTimes: 5,
     extraWordCount: 1,

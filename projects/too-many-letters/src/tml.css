@@ -21,7 +21,7 @@ body {
     overflow: hidden;
 }
 
-#scene, #ui {
+#scene, #ui, #door {
     position: absolute;
     top: 0;
     left: 0;

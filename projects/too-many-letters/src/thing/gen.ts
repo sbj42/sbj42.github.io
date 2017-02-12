@@ -22,4 +22,5 @@ export interface ThingeratorConfig {
 
 export interface Thingerator {
     generate(config: ThingConfig): Thing;
+    signText(): [string, string];
 }

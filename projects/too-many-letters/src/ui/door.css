@@ -1,0 +1,43 @@
+.door_part {
+    position: absolute;
+    left: 0;
+    right: 0;
+}
+.door_light {
+    position: absolute;
+    width: 1100px;
+    height: 1100px;
+}
+.door_sign {
+    position: absolute;
+    left: 350px;
+    width: 500px;
+    height: 210px;
+}
+.door_sign_image, .door_sign_text {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+.door_sign_text {
+    font-size: 58px;
+    font-family: 'Freckle Face', cursive;
+    padding: 30px;
+    text-align: center;
+}
+.door_hint {
+    position: absolute;
+    width: 300px;
+    left: 450px;
+    height: 30px;
+    top: 700px;
+    text-align: center;
+    font-size: 22px;
+    font-family: 'Freckle Face', cursive;
+    background: #dda;
+    color: #004;
+    border: 2px solid #444;
+    border-radius: 5px;
+}

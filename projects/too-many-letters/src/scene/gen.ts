@@ -18,4 +18,6 @@ export interface SceneratorConfig {
 
 export interface Scenerator {
     generate(config: SceneConfig): Scene;
+
+    signText(): string;
 }

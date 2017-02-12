@@ -69,4 +69,8 @@ export class TextThingerator implements Thingerator {
             }
         };
     }
+
+    signText(): [string, string] {
+        return [`There are too many`, `letters`];
+    }
 }

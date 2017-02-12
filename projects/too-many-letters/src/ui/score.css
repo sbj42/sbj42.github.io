@@ -1,0 +1,15 @@
+.score {
+    position: absolute;
+    top: 5px;
+    right: 135px;
+    text-align: right;
+    font-size: 35px;
+    font-family: 'Rubik Mono One';
+    text-shadow: -2px -2px 0 #000, -2px 2px 0 #000, 2px -2px 0 #000, 2px 2px 0 #000;
+}
+.score_up {
+    color: #0f0;
+}
+.score_down {
+    color: #f00;
+}

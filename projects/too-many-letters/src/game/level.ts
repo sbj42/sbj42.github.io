@@ -2,6 +2,8 @@ import {Scenerator, Scene} from '../scene/gen';
 import {Thingerator, Thing} from '../thing/gen';
 import {Stopwatch} from '../ui/stopwatch';
 import {Roadmap, RoadmapStop} from '../ui/roadmap';
+import {Door} from '../ui/door';
+import {Score} from '../ui/score';
 import {Worderator} from '../word/gen';
 import {WIDTH, HEIGHT} from '../constants';
 
@@ -31,17 +33,21 @@ export class Level {
 
     private interval: any;
 
+    private signText: string;
+
     private startTime: number;
     private mistakes: number;
     private extraCount: number;
     private extraTime: number;
     
+    private door: Door;
     private scene: Scene;
     private nextThings: Thing[];
     private things: Thing[];
 
-    private stopwatch: Stopwatch;
-    private roadmap: Roadmap;
+    private stopwatchUI: Stopwatch;
+    private roadmapUI: Roadmap;
+    private scoreUI: Score;
 
     private keys: string;
     private score: number;
@@ -58,7 +64,7 @@ export class Level {
         if (this.config.extraWordRate && this.config.extraWordTimes && this.config.extraWordRate * (this.config.extraWordTimes + 1) > this.config.timeLimit)
             throw new Error('impossible extra words');
 
-        this.stopwatch = new Stopwatch({
+        this.stopwatchUI = new Stopwatch({
             timeLimit: config.timeLimit
         });
         const stops: RoadmapStop[] = [];
@@ -67,9 +73,14 @@ export class Level {
                 time: this.config.extraWordRate || 1
             });
         }
-        this.roadmap = new Roadmap({
+        this.roadmapUI = new Roadmap({
             stops
         });
+        this.scoreUI = new Score({
+        });
+        const thingSignText = this.config.thingerator.signText();
+        const sceneSignText = this.config.scenerator.signText();
+        this.signText = thingSignText[0] + ' ' + thingSignText[1] + ' ' + sceneSignText + '.';
     }
 
     private now() {
@@ -77,15 +88,19 @@ export class Level {
     }
 
     start() {
+        this.door = new Door({
+            signText: this.signText,
+        });
         const uiDiv = document.getElementById('ui');
         if (!uiDiv) throw new Error('no ui');
         uiDiv.innerHTML = '';
-        uiDiv.appendChild(this.stopwatch.element);
-        this.stopwatch.reset();
-        uiDiv.appendChild(this.roadmap.element);
-        this.roadmap.reset();
+        uiDiv.appendChild(this.stopwatchUI.element);
+        this.stopwatchUI.reset();
+        uiDiv.appendChild(this.roadmapUI.element);
+        this.roadmapUI.reset();
+        uiDiv.appendChild(this.scoreUI.element);
+        this.scoreUI.reset();
         this.scene = this.config.scenerator.generate({});
-        this.startTime = this.now();
         this.mistakes = 0;
         this.extraCount = this.config.extraWordTimes || 0;
         if (this.extraCount && this.config.extraWordRate) {
@@ -96,7 +111,11 @@ export class Level {
         this.keys = '';
         this.score = 0;
         this.generate(this.config.startWordCount);
+    }
+
+    start2() {
         clearInterval(this.interval);
+        this.startTime = this.now();
         this.interval = setInterval(() => this.tick(), INTERVAL * 1000);
     }
 
@@ -134,15 +153,15 @@ export class Level {
 
     private tick() {
         const elapsed = this.now() - this.startTime;
-        this.stopwatch.update(elapsed);
+        this.stopwatchUI.update(elapsed);
         if (this.extraCount) {
-            this.roadmap.update(this.extraTime - elapsed);
+            this.roadmapUI.update(this.extraTime - elapsed);
             if (elapsed > this.extraTime) {
                 this.extraTime += this.config.extraWordRate;
                 this.extraCount --;
                 this.generate(this.config.extraWordCount || 1);
-                this.roadmap.next();
-                this.roadmap.update(this.extraTime - elapsed);
+                this.roadmapUI.next();
+                this.roadmapUI.update(this.extraTime - elapsed);
             }
         }
         if (elapsed > this.config.timeLimit) {
@@ -152,6 +171,11 @@ export class Level {
     }
 
     onKey(key: string) {
+        if (this.door) {
+            this.door.open(() => this.start2());
+            delete this.door;
+            return;
+        }
         this.keys += key;
         const killed = this.things.find(thing => {
             if (this.config.caseSensitive)
@@ -184,6 +208,7 @@ export class Level {
 
     private kill(thing: Thing) {
         this.score += SCORE_KILL * thing.word.text.length;
+        this.scoreUI.update(this.score);
         thing.die();
         this.things = this.things.filter(t => t != thing);
         this.things.forEach(thing => thing.hit(0));
@@ -192,6 +217,7 @@ export class Level {
         if (this.things.length == 0 && this.nextThings.length == 0) {
             if (this.extraCount) {
                 this.score += SCORE_BONUS;
+                this.scoreUI.update(this.score);
                 this.extraTime = this.now() - this.startTime;
             } else {
                 this.win();
@@ -203,16 +229,17 @@ export class Level {
         this.keys = '';
         this.mistakes ++;
         this.score += SCORE_MISTAKE * this.generate(this.config.punishment || 1);
+        this.scoreUI.update(this.score);
     }
 
     private win() {
-        this.stopwatch.win();
+        this.stopwatchUI.win();
         clearInterval(this.interval);
         console.info('win: ' + this.score);
     }
 
     private lose() {
-        this.stopwatch.lose();
+        this.stopwatchUI.lose();
         clearInterval(this.interval);
         console.info('lose: ' + this.score);
     }

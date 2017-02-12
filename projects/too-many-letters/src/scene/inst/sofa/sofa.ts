@@ -49,4 +49,8 @@ export class SofaScenerator implements Scenerator {
             ]
         }, sceneConfig);
     }
+
+    signText(): string {
+        return `on my sofa`;
+    }
 }
