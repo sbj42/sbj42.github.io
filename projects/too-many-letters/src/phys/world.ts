@@ -10,13 +10,13 @@ const GRAVITY = 800;
 export interface WorldConfig {
     width: number;
     height: number;
+    bounciness?: number;
     fixedShapes?: Array<Shape>;
 }
 
 export class World {
+    config: WorldConfig;
     element: HTMLElement;
-    width: number;
-    height: number;
 
     world: p2.World;
     material: p2.Material;
@@ -39,11 +39,9 @@ export class World {
     }
 
     constructor(config: WorldConfig) {
-        const {width, height} = config;
+        this.config = config;
         this.element = document.createElement('div');
         this.element.className = 'world';
-        this.width = width;
-        this.height = height;
         this.world = new p2.World({
             gravity: [0, GRAVITY]
         });
@@ -51,11 +49,11 @@ export class World {
         this.world.addContactMaterial(new p2.ContactMaterial(this.material, this.material, {
             friction: 1,
             stiffness: 100000000000,
-            restitution: 0.1,
+            restitution: this.config.bounciness || 0.1,
         } as p2.ContactMaterialOptions));
-        this.addPlane([0, height-1], - Math.PI);
+        this.addPlane([0, this.config.height-1], - Math.PI);
         this.addPlane([1, 0], - Math.PI / 2);
-        this.addPlane([width-1, 0], Math.PI / 2);
+        this.addPlane([this.config.width-1, 0], Math.PI / 2);
         if (config.fixedShapes) {
             const fixedBody = makeBody({
                 position: [0, 0],
@@ -75,9 +73,9 @@ export class World {
         sprite.body.aabbNeedsUpdate = true;
         const aabb = sprite.body.getAABB();
         if (aabb.lowerBound[0] < 0) return true;
-        if (aabb.upperBound[0] > this.width) return true;
+        if (aabb.upperBound[0] > this.config.width) return true;
         //if (aabb.lowerBound[1] < 0) return true;
-        if (aabb.upperBound[1] > this.height) return true;
+        if (aabb.upperBound[1] > this.config.height) return true;
         return this.world.bodies.some(body => {
             if (body.shapes.some(shape => shape instanceof p2.Plane))
                 return false;

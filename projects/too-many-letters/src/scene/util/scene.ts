@@ -6,6 +6,7 @@ import {Thing} from '../../thing/gen';
 
 export interface SceneBaseConfig {
     bgElement: HTMLElement;
+    bounciness?: number;
     fixedShapes: Shape[];
 }
 
@@ -26,7 +27,8 @@ export class SceneBase implements Scene {
         this.world = new World({
             width: WIDTH,
             height: HEIGHT,
-            fixedShapes: this.baseConfig.fixedShapes
+            bounciness: this.baseConfig.bounciness,
+            fixedShapes: this.baseConfig.fixedShapes,
         });
     }
 

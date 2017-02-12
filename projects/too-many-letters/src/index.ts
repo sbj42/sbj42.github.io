@@ -36,7 +36,8 @@ window.onresize = scaleRoot;
 scaleRoot();
 
 const scenerator = SceneratorFactory.getScenerator({
-    type: SceneratorFactory.SCENERATOR_SOFA,
+    //type: SceneratorFactory.SCENERATOR_SOFA,
+    type: SceneratorFactory.SCENERATOR_BED,
 });
 const thingerator = ThingeratorFactory.getThingerator({
     //type: ThingeratorFactory.THINGERATOR_TEXT,
