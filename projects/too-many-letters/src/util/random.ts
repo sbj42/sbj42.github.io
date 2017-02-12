@@ -8,9 +8,11 @@ export class Random {
     protected engine: randomjs.MT19937;
 
     constructor(config: RandomConfig) {
-        const seed = typeof config.seed != 'undefined' ? config.seed : Math.random();
         this.engine = randomjs.engines.mt19937();
-        this.engine.seed(seed);
+        if (typeof config.seed != 'undefined')
+            this.engine.seed(config.seed);
+        else
+            this.engine.autoSeed();
     }
 
     choice<T>(arr: T[]): T {
@@ -24,7 +26,7 @@ export class Random {
             max = min;
         if (max < min)
             throw new Error('minmax');
-        return Math.floor(Math.random()*(max + 1 - min) + min);
+        return randomjs.integer(min, max)(this.engine);
     }
 
     percent(p: number) {

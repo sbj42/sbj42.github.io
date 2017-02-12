@@ -12,7 +12,7 @@ const KILL_DELAY = 0.8;
 
 const SCORE_KILL = 100;
 const SCORE_MISTAKE = -110;
-const SCORE_BONUS = 1000;
+const SCORE_BONUS = 100;
 
 export interface LevelConfig {
     scenerator: Scenerator;
@@ -20,9 +20,8 @@ export interface LevelConfig {
     worderator: Worderator;
 
     startWordCount: number;
-    extraWordCount?: number;
     extraWordRate?: number;
-    extraWordTimes?: number;
+    extraWords?: number[];
     timeLimit: number;
     caseSensitive?: boolean;
     punishment?: number;
@@ -37,6 +36,7 @@ export class Level {
 
     private startTime: number;
     private mistakes: number;
+    private extraWords: number[];
     private extraCount: number;
     private extraTime: number;
     
@@ -51,28 +51,26 @@ export class Level {
 
     private keys: string;
     private score: number;
+    private over: boolean;
 
     constructor(config: LevelConfig) {
         this.config = {
-            extraWordCount: 1,
             caseSensitive: false,
             ...config
         };
-        if (typeof this.config.extraWordRate == 'undefined' && this.config.extraWordTimes) {
-            this.config.extraWordRate = this.config.timeLimit * 0.5 / this.config.extraWordTimes;
+        this.extraWords = this.config.extraWords || [];
+        if (typeof this.config.extraWordRate == 'undefined' && this.extraWords.length) {
+            this.config.extraWordRate = this.config.timeLimit * 0.5 / this.extraWords.length;
         }
-        if (this.config.extraWordRate && this.config.extraWordTimes && this.config.extraWordRate * (this.config.extraWordTimes + 1) > this.config.timeLimit)
+        if (this.config.extraWordRate && this.extraWords.length && this.config.extraWordRate * (this.extraWords.length + 1) > this.config.timeLimit)
             throw new Error('impossible extra words');
 
         this.stopwatchUI = new Stopwatch({
             timeLimit: config.timeLimit
         });
-        const stops: RoadmapStop[] = [];
-        for (let i = 0; i < this.config.extraWordTimes; i ++) {
-            stops.push({
-                time: this.config.extraWordRate || 1
-            });
-        }
+        const stops = this.extraWords.map(() => ({
+            time: this.config.extraWordRate || 1
+        }));
         this.roadmapUI = new Roadmap({
             stops
         });
@@ -102,7 +100,7 @@ export class Level {
         this.scoreUI.reset();
         this.scene = this.config.scenerator.generate({});
         this.mistakes = 0;
-        this.extraCount = this.config.extraWordTimes || 0;
+        this.extraCount = this.extraWords.length;
         if (this.extraCount && this.config.extraWordRate) {
             this.extraTime = this.config.extraWordRate;
         }
@@ -110,6 +108,7 @@ export class Level {
         this.things = [];
         this.keys = '';
         this.score = 0;
+        this.over = false;
         this.generate(this.config.startWordCount);
     }
 
@@ -123,10 +122,21 @@ export class Level {
         this.scene.activate();
     }
 
+
     private generate(howMany: number): number {
         let total = 0;
+        const words: {[word: string]: boolean} = {};
+        this.things.forEach(t => words[t.word.text] = true);
+        this.nextThings.forEach(t => words[t.word.text] = true);
         while (howMany > 0) {
-            const word = this.config.worderator.generate({});
+            let word;
+            for (let i = 0; i < 8; i ++) {
+                word = this.config.worderator.generate({});
+                if (!words[word.text])
+                    break;
+            }
+            if (!word) throw new Error('no word');
+            words[word.text] = true;
             const thing = this.config.thingerator.generate({
                 word,
             });
@@ -140,6 +150,8 @@ export class Level {
     private place() {
         for (let i = 0; i < this.nextThings.length; i ++) {
             const thing = this.nextThings[i];
+            if (this.things.find(t => t.word.text == thing.word.text))
+            continue;
             const bounds = thing.sprite.bounds();
             thing.sprite.setTopLeft([Math.random() * (WIDTH - bounds.width), -bounds.height]);
             if (this.scene.world.checkOverlap(thing.sprite))
@@ -158,8 +170,8 @@ export class Level {
             this.roadmapUI.update(this.extraTime - elapsed);
             if (elapsed > this.extraTime) {
                 this.extraTime += this.config.extraWordRate;
+                this.generate(this.extraWords[this.extraWords.length - this.extraCount]);
                 this.extraCount --;
-                this.generate(this.config.extraWordCount || 1);
                 this.roadmapUI.next();
                 this.roadmapUI.update(this.extraTime - elapsed);
             }
@@ -171,6 +183,8 @@ export class Level {
     }
 
     onKey(key: string) {
+        if (this.over)
+            return;
         if (this.door) {
             this.door.open(() => this.start2());
             delete this.door;
@@ -233,12 +247,14 @@ export class Level {
     }
 
     private win() {
+        this.over = true;
         this.stopwatchUI.win();
         clearInterval(this.interval);
         console.info('win: ' + this.score);
     }
 
     private lose() {
+        this.over = true;
         this.stopwatchUI.lose();
         clearInterval(this.interval);
         console.info('lose: ' + this.score);
