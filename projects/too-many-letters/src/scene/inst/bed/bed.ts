@@ -20,21 +20,25 @@ export class BedScenerator implements Scenerator {
         const bgDiv = document.createElement('div');
         bgDiv.className = 'bed_bg';
         const wallImg = document.createElement('img');
-        wallImg.src = imageContext(`./wall${Math.floor(Math.random()*1+1)}.svg`);
+        wallImg.src = imageContext(`./wall${Math.floor(Math.random()*2+1)}.svg`);
         wallImg.className = 'bed_image';
         bgDiv.appendChild(wallImg);
         const shelfImg = document.createElement('img');
-        shelfImg.src = imageContext(`./shelf${Math.floor(Math.random()*1+1)}.svg`);
+        shelfImg.src = imageContext(`./shelf${Math.floor(Math.random()*2+1)}.svg`);
         shelfImg.className = 'bed_image';
         bgDiv.appendChild(shelfImg);
+        const artImg = document.createElement('img');
+        artImg.src = imageContext(`./art${Math.floor(Math.random()*3+1)}.svg`);
+        artImg.className = 'bed_image';
+        bgDiv.appendChild(artImg);
         const bedImg = document.createElement('img');
-        bedImg.src = imageContext(`./bed${Math.floor(Math.random()*1+1)}.svg`);
+        bedImg.src = imageContext(`./bed${Math.floor(Math.random()*3+1)}.svg`);
         bedImg.className = 'bed_image';
         bgDiv.appendChild(bedImg);
 
         return new SceneBase({
             bgElement: bgDiv,
-            bounciness: 0.7,
+            bounciness: 0.8,
             fixedShapes: [
                 new ConvexPolygon([
                     [0, 612], [1200, 612], [1200, 800], [0, 800],

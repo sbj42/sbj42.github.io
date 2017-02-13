@@ -60,8 +60,8 @@ const level = new Level({
     thingerator,
     worderator,
     timeLimit: 60,
-    startWordCount: 10,
-    extraWords: [5, 5, 10, 5, 5]
+    startWordCount: 4,
+    extraWords: [2, 2, 4, 2, 2]
 });
 (window as any)['level'] = level;
 

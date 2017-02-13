@@ -1,5 +1,6 @@
-bed (bouncy)
+bus
 closet (upward)
 treehouse
 rug (sideways)
+pizza (sideways)
 piano? (musical)
