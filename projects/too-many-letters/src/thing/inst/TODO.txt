@@ -1,4 +1,6 @@
 fish (twitchy)
 blocks
 balloons (upward)
+clouds (upward)
 bugs (sideways)
+frogs (sideways)

@@ -1,5 +1,7 @@
 bus
 closet (upward)
+forest (upward)
+head
 treehouse
 rug (sideways)
 pizza (sideways)

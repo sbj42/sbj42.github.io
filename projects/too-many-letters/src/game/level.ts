@@ -6,9 +6,11 @@ import {Door} from '../ui/door';
 import {Score} from '../ui/score';
 import {Worderator} from '../word/gen';
 import {WIDTH, HEIGHT} from '../constants';
+import * as audio from './audio';
 
 const INTERVAL = 0.1;
 const KILL_DELAY = 0.8;
+const MISTAKE_DELAY = 0.75;
 
 const SCORE_KILL = 100;
 const SCORE_MISTAKE = -110;
@@ -39,6 +41,7 @@ export class Level {
     private extraWords: number[];
     private extraCount: number;
     private extraTime: number;
+    private mistakeTime: number;
     
     private door: Door;
     private scene: Scene;
@@ -100,6 +103,7 @@ export class Level {
         this.scoreUI.reset();
         this.scene = this.config.scenerator.generate({});
         this.mistakes = 0;
+        this.mistakeTime = 0;
         this.extraCount = this.extraWords.length;
         if (this.extraCount && this.config.extraWordRate) {
             this.extraTime = this.config.extraWordRate;
@@ -198,6 +202,7 @@ export class Level {
                 return thing.word.text.toLowerCase() == this.keys.toLowerCase();
         });
         if (killed) {
+            this.mistakeTime = 0;
             this.kill(killed);
             return;
         }
@@ -217,10 +222,12 @@ export class Level {
         if (!hit.length) {
             this.mistake();
             return;
-        }
+        } else
+            this.mistakeTime = 0;
     }
 
     private kill(thing: Thing) {
+        audio.playDing();
         this.score += SCORE_KILL * thing.word.text.length;
         this.scoreUI.update(this.score);
         thing.die();
@@ -240,6 +247,15 @@ export class Level {
     }
 
     private mistake() {
+        const now = this.now();
+        if (this.mistakeTime > 0 && now < this.mistakeTime)
+            return;
+        const sceneDiv = document.getElementById('scene');
+        if (!sceneDiv) throw new Error('no scene');
+        sceneDiv.style.filter = 'grayscale(0.8)';
+        setTimeout(() => sceneDiv.style.filter = '', 1000 * MISTAKE_DELAY);
+        this.mistakeTime = now + MISTAKE_DELAY;
+        audio.playBuzz();
         this.keys = '';
         this.mistakes ++;
         this.score += SCORE_MISTAKE * this.generate(this.config.punishment || 1);

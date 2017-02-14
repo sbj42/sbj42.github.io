@@ -10,7 +10,7 @@ module.exports = {
         filename: "tml.js"
     },
     resolve: {
-        extensions: ['.js', '.ts', '.css', '.txt']
+        extensions: ['.js', '.ts', '.css', '.ogg', '.txt']
     },
     module: {
         rules: [
@@ -29,6 +29,10 @@ module.exports = {
             {
                  test: /\.txt$/,
                  loader: "raw-loader"
+            },
+            {
+                 test: /\.ogg$/,
+                 loader: "url-loader?limit=50000&name=dist/img/[name].[ext]?[hash]"
             }
         ]
     }
