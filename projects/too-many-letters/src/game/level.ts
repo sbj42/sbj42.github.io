@@ -14,7 +14,8 @@ const MISTAKE_DELAY = 0.75;
 
 const SCORE_KILL = 100;
 const SCORE_MISTAKE = -110;
-const SCORE_BONUS = 100;
+const SCORE_EMPTYBONUS = 100;
+const SCORE_TIMEBONUS = 50;
 
 export interface LevelConfig {
     scenerator: Scenerator;
@@ -42,6 +43,7 @@ export class Level {
     private extraCount: number;
     private extraTime: number;
     private mistakeTime: number;
+    private winTime: number;
     
     private door: Door;
     private scene: Scene;
@@ -237,7 +239,7 @@ export class Level {
         this.keys = '';
         if (this.things.length == 0 && this.nextThings.length == 0) {
             if (this.extraCount) {
-                this.score += SCORE_BONUS;
+                this.score += SCORE_EMPTYBONUS;
                 this.scoreUI.update(this.score);
                 this.extraTime = this.now() - this.startTime;
             } else {
@@ -263,10 +265,27 @@ export class Level {
     }
 
     private win() {
+        const elapsed = this.now() - this.startTime;
+        this.winTime = Math.floor(this.config.timeLimit - elapsed);
         this.over = true;
-        this.stopwatchUI.win();
+        this.stopwatchUI.win(elapsed);
         clearInterval(this.interval);
-        console.info('win: ' + this.score);
+        this.interval = setInterval(() => this.winning(), 100);
+    }
+
+    private winning() {
+        this.winTime --;
+        this.score += SCORE_TIMEBONUS;
+        this.scoreUI.update(this.score);
+        const elapsed = this.config.timeLimit - this.winTime;
+        this.stopwatchUI.win(elapsed);
+        if (this.winTime == 0) {
+            const uiDiv = document.getElementById('ui');
+            if (!uiDiv) throw new Error('no ui');
+            uiDiv.removeChild(this.stopwatchUI.element);
+            clearInterval(this.interval);
+            console.info('win: ' + this.score);
+        }
     }
 
     private lose() {

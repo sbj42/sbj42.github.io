@@ -114,7 +114,8 @@ export class Stopwatch {
         this.outer.setAttribute('transform', '');
     }
 
-    win() {
+    win(elapsed: number) {
+        this.update(elapsed);
         this.element.setAttribute('class', 'stopwatch stopwatch_win');
         this.outer.setAttribute('transform', '');
     }

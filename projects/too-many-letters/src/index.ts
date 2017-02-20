@@ -45,9 +45,9 @@ const thingerator = ThingeratorFactory.getThingerator({
     //fixedRotation: true,
 });
 const worderator = WorderatorFactory.getWorderator({
-    type: WorderatorFactory.WORDERATOR_RANDOM,
-    //type: WorderatorFactory.WORDERATOR_WORDLIST,
-    //data: require('./word/inst/wordlist/data/w3.txt'),
+    //type: WorderatorFactory.WORDERATOR_RANDOM,
+    type: WorderatorFactory.WORDERATOR_WORDLIST,
+    data: require('./word/inst/wordlist/data/w3.txt'),
     //minLength: 2,
     //maxLength: 3,
     //parts: ['foo', 'bar', 'baz'],

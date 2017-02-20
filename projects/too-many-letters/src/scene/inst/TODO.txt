@@ -6,3 +6,4 @@ treehouse
 rug (sideways)
 pizza (sideways)
 piano? (musical)
+stairs
