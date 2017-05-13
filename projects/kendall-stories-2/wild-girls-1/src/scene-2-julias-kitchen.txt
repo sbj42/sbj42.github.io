@@ -1,0 +1,28 @@
+background julia-kitchen
+
+speed 1
+
+// setup mom
+add mom julia-mom 384,304
+wait 0.5
+
+// julia enters
+add julia julia-fox-back 300,800
+move julia 300,450 2
+
+// hi mom
+{
+    play hi-mom-aaa
+}
+
+// scream
+wait 1.3
+set mom julia-mom-scream
+wait 1.5
+
+// what
+play what-you-get
+
+// runs away
+set julia julia-fox-front
+move julia 300,700 1

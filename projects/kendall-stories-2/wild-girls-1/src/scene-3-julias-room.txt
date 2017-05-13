@@ -1,0 +1,12 @@
+background julia-room
+
+speed 1
+
+wait 0.5
+add door julia-room-door-open 649,68 0,0
+add julia julia-fox-front 730,200
+move julia 730,250 0.5
+hide door
+
+wait 0.5
+play im-a-fox

@@ -1,0 +1,112 @@
+background julia-room
+
+speed 1
+
+add julia julia-front 300,350
+play this-is-julia
+
+// goto chest
+move julia 220,480 1
+wait 1
+
+// open chest
+add chest cupcake-chest-open 0,605 0,1
+top julia
+add cupcake cupcake-1 150,500
+wait 1
+
+// go closer
+move julia 200,480 0.5
+
+// pick up cupcake
+{
+    wait 0.2
+    set julia julia-front-eat
+}
+move cupcake 200,405 0.6
+wait 0.5
+
+// chomp
+set cupcake cupcake-2
+move cupcake 195,410
+{
+    play chomp-1
+}
+wait 1
+
+// chomp
+hide cupcake
+{
+    play chomp-2
+}
+wait 0.5
+set julia julia-front
+wait 0.6
+hide chest
+
+// go to bed
+set julia julia-right
+{
+    move julia 642,480 2
+}
+{
+    wait 0.5
+    play went-to-bed
+}
+set-alternate julia julia-right-walk julia-right 0.25 8
+
+// lay down
+wait 1
+set julia julia-sleep
+move julia 642,464
+
+// snore
+wait 2
+{
+    // lights out
+    wait 1
+    add lights-out lights-out 0,0 0,0
+}
+play snore
+
+// turn into fox
+wait 1
+set julia julia-fox-sleep
+move julia 642,482
+hide lights-out
+
+// walk left
+wait 1
+set julia julia-fox-left
+move julia 642,508
+{
+    move julia 300,508 2
+}
+set-alternate julia julia-fox-left-walk julia-fox-left 0.25 8
+
+// walk up
+wait 0.25
+set julia julia-fox-back
+move julia 300,350 1.5
+
+// walk to door
+wait 0.25
+set julia julia-fox-right
+{
+    move julia 730,250 2
+}
+set-alternate julia julia-fox-right-walk julia-fox-right 0.25 8
+wait 0.25
+set julia julia-fox-back
+
+// open door
+wait 0.75
+add door julia-room-door-open 649,68 0,0
+top julia
+wait 0.75
+move julia 730,200 1
+
+// close door
+hide julia
+hide door
+wait 1

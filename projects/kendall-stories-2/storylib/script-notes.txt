@@ -1,0 +1,5 @@
+background julia-room
+
+create x bar
+move x 100 100 2
+set x baz
