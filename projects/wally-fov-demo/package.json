@@ -1,0 +1,14 @@
+{
+  "name": "wally-fov-demo",
+  "version": "0.1.0",
+  "description": "Demo of WallyFOV",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "easystarjs": "^0.4.1",
+    "ts-loader": "^2.0.3",
+    "typescript": "^2.3.2",
+    "wally-fov": "file:../../../repos/wally-fov",
+    "webpack": "^2.5.1"
+  }
+}
