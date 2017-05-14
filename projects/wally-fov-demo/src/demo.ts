@@ -165,7 +165,8 @@ function start() {
 }
 
 function render() {
-    context.clearRect(0, 0, width * 32, height * 32);
+    context.fillStyle = '#ddc';
+    context.fillRect(0, 0, width * 32, height * 32);
     for (let y = 0; y < height; y ++) {
         for (let x = 0; x < width; x ++) {
             const images = tileImages[index(x, y)];
