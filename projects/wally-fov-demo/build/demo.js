@@ -1283,7 +1283,8 @@ function start() {
     var _a;
 }
 function render() {
-    context.clearRect(0, 0, width * 32, height * 32);
+    context.fillStyle = '#ddc';
+    context.fillRect(0, 0, width * 32, height * 32);
     var _loop_3 = function (y) {
         var _loop_4 = function (x) {
             var images = tileImages[index(x, y)];
@@ -1380,7 +1381,8 @@ var TileFlag;
 var WEDGE_LOW = 0;
 var WEDGE_HIGH = 1;
 var WEDGE_COUNT = 2;
-var EPSILON = 0.00001;
+var BODY_EPSILON = 0.00001;
+var WALL_EPSILON = BODY_EPSILON / 10;
 function cutWedge(wedges, wedgeIndex, low, high) {
     for (;;) {
         if (wedgeIndex === wedges.length) {
@@ -1556,7 +1558,7 @@ var FieldOfViewMap = (function () {
                     if (wallX && wallY) {
                         // this tile has both far walls
                         // so we can't see beyond it and the whole range should be cut out of the wedge(s)
-                        wedgeIndex = cutWedge(wedges, wedgeIndex, slopeY - EPSILON, slopeX + EPSILON);
+                        wedgeIndex = cutWedge(wedges, wedgeIndex, slopeY - WALL_EPSILON, slopeX + WALL_EPSILON);
                     }
                     else {
                         var body = (dx !== 0 || dy !== 0) && (this._tileFlags[mapIndex] & TileFlag.BODY) !== 0;
@@ -1575,22 +1577,22 @@ var FieldOfViewMap = (function () {
                             // |   | X | Y |
                             // +---+---+---+
                             if (wallX) {
-                                wedgeIndex = cutWedge(wedges, wedgeIndex, slopeY + EPSILON, slopeX + EPSILON);
+                                wedgeIndex = cutWedge(wedges, wedgeIndex, slopeY + BODY_EPSILON, slopeX + WALL_EPSILON);
                             }
                             else if (wallY) {
-                                wedgeIndex = cutWedge(wedges, wedgeIndex, slopeY - EPSILON, slopeX - EPSILON);
+                                wedgeIndex = cutWedge(wedges, wedgeIndex, slopeY - WALL_EPSILON, slopeX - BODY_EPSILON);
                             }
                             else {
-                                wedgeIndex = cutWedge(wedges, wedgeIndex, slopeY + EPSILON, slopeX - EPSILON);
+                                wedgeIndex = cutWedge(wedges, wedgeIndex, slopeY + BODY_EPSILON, slopeX - BODY_EPSILON);
                             }
                         }
                         else if (wallX) {
                             var slopeFar = slopeY + divYpos;
-                            wedgeIndex = cutWedge(wedges, wedgeIndex, slopeFar - EPSILON, slopeX + EPSILON);
+                            wedgeIndex = cutWedge(wedges, wedgeIndex, slopeFar - WALL_EPSILON, slopeX + WALL_EPSILON);
                         }
                         else if (wallY) {
                             var slopeFar = slopeY + divYpos;
-                            wedgeIndex = cutWedge(wedges, wedgeIndex, slopeY - EPSILON, slopeFar + EPSILON);
+                            wedgeIndex = cutWedge(wedges, wedgeIndex, slopeY - WALL_EPSILON, slopeFar + WALL_EPSILON);
                         }
                     }
                 }
