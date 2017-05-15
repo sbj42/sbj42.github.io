@@ -1252,7 +1252,7 @@ function start() {
             var walls = map.getWalls(x, y);
             var images = tileImages[index(x, y)] = [];
             if (Math.random() > 0.3) {
-                images.push('grass' + Math.floor(1 + Math.random() * 3));
+                images.push('floor' + Math.floor(1 + Math.random() * 6));
             }
             if ((walls & WallyFOV.DirectionFlags.NORTH) !== 0) {
                 images.push('north');
@@ -1267,7 +1267,7 @@ function start() {
                 images.push('west');
             }
             if (map.getBody(x, y)) {
-                images.push('box');
+                images.push('box' + Math.floor(1 + Math.random() * 3));
             }
             images.forEach(function (image) {
                 context.drawImage(tiles, imageOff[image] * 32, 0, 32, 32, x * 32, y * 32, 32, 32);
@@ -1312,16 +1312,21 @@ function render() {
     }
 }
 var imageOff = {
-    'grass1': 0,
-    'grass2': 1,
-    'grass3': 2,
-    'north': 3,
-    'east': 4,
-    'south': 5,
-    'west': 6,
-    'player': 7,
-    'box': 8,
-    'shadow': 9,
+    'floor1': 0,
+    'floor2': 1,
+    'floor3': 2,
+    'floor4': 3,
+    'floor5': 4,
+    'floor6': 5,
+    'north': 6,
+    'east': 7,
+    'south': 8,
+    'west': 9,
+    'player': 10,
+    'box1': 11,
+    'box2': 12,
+    'box3': 13,
+    'shadow': 14,
 };
 var tiles = new Image();
 tiles.src = './tiles.png';
