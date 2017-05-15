@@ -1283,7 +1283,7 @@ function start() {
     var _a;
 }
 function render() {
-    context.fillStyle = '#ddc';
+    context.fillStyle = '#fff';
     context.fillRect(0, 0, width * 32, height * 32);
     var _loop_3 = function (y) {
         var _loop_4 = function (x) {
