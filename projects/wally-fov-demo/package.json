@@ -8,6 +8,7 @@
     "build": "webpack"
   },
   "devDependencies": {
+    "babel-polyfill": "^6.23.0",
     "easystarjs": "^0.4.1",
     "ts-loader": "^2.0.3",
     "typescript": "^2.3.2",

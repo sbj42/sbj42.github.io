@@ -1,3 +1,4 @@
+import 'babel-polyfill';
 import * as WallyFOV from 'wally-fov';
 import * as EasyStar from 'easystarjs';
 
