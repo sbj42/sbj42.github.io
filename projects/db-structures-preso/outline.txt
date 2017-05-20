@@ -1,0 +1,33 @@
+Columnar vs. Relational Database Structures
+Columnar Databases: Pros and Cons
+
+- who am i - 15+ years programming BI software, wrote DivePort
+- first poultry conference, no chicken jokes
+- DI history, conversion from row-major MOLAP to column-major in-memory storage
+- data cubes, pre-summarized tables
+- didn't _just_ switch to column-major
+- business intelligence doesn't necessarily mean relational
+- relational doesn't necessarily mean row-major
+- tables are usually two-dimensional, need to be saved to one-dimensional medium
+- cache vs memory vs disk vs network...
+- cost of memory very low
+- row-major has advantagse:
+  - can add rows quickly 
+  - efficient access to many columns on few rows
+- column-major has advantages:
+  - can add/remove columns quickly
+  - efficient access to few columns on many rows
+- MOLAP has advantages:
+  - fast query time, especially on poor hardware
+- in memory has advantages:
+  - fast build time
+  - fast access time
+  - small footprint
+  - scales better by sharing data
+  - more flexibility of summarization
+  - fewer performance cliffs
+  - dive to the lowest level
+  - fewer limitations (e.g. dimensions)
+- but in memory has stricter requirements:
+  - more, faster processors
+  - more memory

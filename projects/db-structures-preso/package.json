@@ -1,0 +1,9 @@
+{
+  "name": "db-structures-preso",
+  "version": "0.1.0",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "reveal.js": "^3.5.0"
+  }
+}
