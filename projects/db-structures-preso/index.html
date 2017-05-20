@@ -1,7 +1,9 @@
 <html>
     <head>
+        <title>Columnar and Relational Database Structures</title>
+        <link rel="icon" type="image/png" href="favicon.png" />
         <link rel="stylesheet" href="lib/css/reveal.css">
-        <link rel="stylesheet" href="lib/css/theme/black.css">
+        <link rel="stylesheet" href="lib/css/theme/sky.css">
         <link href="https://fonts.googleapis.com/css?family=Montserrat:300" rel="stylesheet">
         <style type="text/css">
             .reveal {
@@ -9,6 +11,37 @@
             }
             .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
                 text-transform: none;
+            }
+            .highlight {
+                color: #070;
+            }
+            .dark, .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+                color: #eee;
+            }
+            .dark .highlight {
+                color: #ffa;
+            }
+            .reveal section img {
+                border: none;
+            }
+            .reveal section img.transimg {
+                background: transparent;
+                box-shadow: none;
+            }
+            .reveal section .cell1 {
+                background: rgba(255, 80, 255, 0.8);
+                padding: 0px 10px;
+                margin-right: 5px;
+            }
+            .reveal section .cell2 {
+                background: rgba(80, 255, 80, 0.8);
+                padding: 0px 10px;
+                margin-right: 5px;
+            }
+            .reveal section .cell3 {
+                background: rgba(255, 80, 80, 0.8);
+                padding: 0px 10px;
+                margin-right: 5px;
             }
         </style>
     </head>
@@ -18,7 +51,10 @@
                 <section>
                     <section>
                         <h2 style="text-align: left;">Columnar and Relational Database Structures</h2>
-                        <p style="margin-top: 280px; text-align: right;">
+                        <p style="text-align: left; font-size: 80%;">
+                            <span style="opacity: 0.2">v0.1.0</span>
+                        </p>
+                        <p style="margin-top: 220px; text-align: right;">
                             James Clark<br/>
                             Dimensional Insight
                         </p>
@@ -29,19 +65,18 @@
                             business analytics and<br/>
                             integrated business intelligence solutions
                         </p>
-                        <img src="img/di-logo.png" style="float: left; padding-right: 80px; border: none; background: transparent; box-shadow: none;">
+                        <img src="img/di-logo.png" class="transimg" style="float: left; padding-right: 80px;">
                         <p style="text-align: left;">
-                            Diver Platform<br/><br/>
+                            <span class="highlight">Diver Platform</span><br/><br/>
                             Supply Chain, Manufacturing,<br/>
                             Healthcare, Beverage Alcohol, ...<br/>
                         </p>
                     </section>
                     <section data-background="img/di-logo.svg">
-                        <h3>Dimensional Insight</h3>
-                        <img src="img/dashboard.png" style="border: none; background: transparent; box-shadow: none;" width="480">
+                        <img src="img/dashboard.png" width="480">
                         <div style="clear: both;"></div>
-                        <img src="img/etl.png" style="float: left; border: none; background: transparent; box-shadow: none;" width="440">
-                        <pre style="float: right; background: #000; width: 440px; margin: 15px 0px;"><code>> spectre dive basic.cbase \
+                        <img src="img/etl.png" style="float: left;" width="440">
+                        <pre style="float: right; background: #fff; color: #060; width: 440px; margin: 15px 0px;"><code>> spectre dive basic.cbase \
     -q -d Direction -c Value 
 Direction       Value
 East       2,937.7687
@@ -49,23 +84,231 @@ North      2,520.4438
 South      1,641.8041
 West       2,924.6749</code></pre>
                     </section>
-                    <section>
+                    <section class="dark" data-background="img/columns.jpg">
                         <h3>James Clark</h3>
                         <p style="text-align: left;">
                             15+ years building business intelligence tools<br/>
-                            author of DivePort<br/>
-                            Spectre team lead<br/>
+                            author of <span class="highlight">DivePort</span><br/>
+                            <span class="highlight">Spectre</span> team lead<br/>
                             first poultry industry conference<br/>
+                        </p>
+                        <p style="margin-top: 50px; text-align: right;">
+                            james.clark@dimins.com
                         </p>
                     </section>
                 </section>
-                <section>
-                    Slide 2
+                <section data-background="img/agenda.jpg" data-background-transition="slide">
+                    <h3>Agenda</h3>
+                    <p>
+                        ☑ Storage models:<br/>
+                        <span class="highlight">row-oriented</span> vs. <span class="highlight">column-oriented</span>
+                    </p>
+                    <p>
+                        ☑ Database types:<br/>
+                        <span class="highlight">MOLAP</span> vs. <span class="highlight">in-memory ROLAP</span>
+                    </p>
+                </section>
+                <section data-background-transition="slide" data-background="img/table.jpg">
+                    <section>
+                        <h3>Tables</h3>
+                        <p>
+                            (usually) <span class="highlight">two-dimensional<span><br/>
+                        </p>
+                        <p style="margin-bottom: 180px;">
+                            but must be stored on one-dimensional media<br/>
+                            so a decision must be made...
+                        </p>
+                    </section>
+                    <section>
+                        <h3>Row-oriented</h3>
+                        <table class="tbl">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Year</th>
+                                    <th>Gross</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="cell1">
+                                    <td>Alien 3</td>
+                                    <td>1992</td>
+                                    <td>$55.5M</td>
+                                </tr>
+                                <tr class="cell2">
+                                    <td>Iron Man 3</td>
+                                    <td>2013</td>
+                                    <td>$499M</td>
+                                </tr>
+                                <tr class="cell3">
+                                    <td>Toy Story 3</td>
+                                    <td>2010</td>
+                                    <td>$415M</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p style="margin-top: 50px;"> 
+                            <span class="cell1">Alien 3</span><span class="cell1">1992</span><span class="cell1">$55.5M</span><span class="cell2">Iron Man 3</span><span class="cell2">2013</span> ...
+                        </p>
+                    </section>
+                    <section>
+                        <h3>Column-oriented</h3>
+                        <table class="tbl">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Year</th>
+                                    <th>Gross</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="cell1">Alien 3</td>
+                                    <td class="cell2">1992</td>
+                                    <td class="cell3">$55.5M</td>
+                                </tr>
+                                <tr>
+                                    <td class="cell1">Iron Man 3</td>
+                                    <td class="cell2">2013</td>
+                                    <td class="cell3">$499M</td>
+                                </tr>
+                                <tr>
+                                    <td class="cell1">Toy Story 3</td>
+                                    <td class="cell2">2010</td>
+                                    <td class="cell3">$415M</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p style="margin-top: 50px;"> 
+                            <span class="cell1">Alien 3</span><span class="cell1">Iron Man 3</span><span class="cell1">Toy Story 3</span><span class="cell2">1992</span><span class="cell2">2013</span> ...
+                        </p>
+                    </section>
+                    <section>
+                        <h3>MOLAP</h3>
+                        <p>
+                            to answer a query: identify the right table, load it
+                        </p>
+                        <img class="transimg" src="img/molap-tables2.png">
+                    </section>
+                    <section>
+                        <h3>MOLAP</h3>
+                        <p>
+                            MOLAP is <span class="highlight">fast</span> at run-time<br/>
+                            but <span class="highlight">inflexible</span><br/>
+                            (cannot change summary functions at run-time<br/>
+                            and must limit dimensions and depth)
+                            and build times are long
+                        </p>
+                    </section>
+                </section>
+                <section data-background-transition="slide" data-background="img/cube.jpg">
+                    <section>
+                        <h3>MOLAP</h3>
+                        <p>
+                            <em><span class="highlight">Multidimensional<span> OLAP</em><br/>
+                        </p>
+                        <p style="margin-top: 50px; font-size: 80%">
+                            OLAP: <em>online analytical processing</em>
+                        </p>
+                    </section>
+                    <section>
+                        <h3>MOLAP</h3>
+                        <p> 
+                            <span class="highlight">pre-computed</span> query results
+                        </p>
+                        <img class="transimg" src="img/molap-tables.png">
+                    </section>
+                    <section>
+                        <h3>MOLAP</h3>
+                        <p>
+                            to answer a query: identify the right table, load it
+                        </p>
+                        <img class="transimg" src="img/molap-tables2.png">
+                    </section>
+                    <section>
+                        <h3>MOLAP</h3>
+                        <p>
+                            MOLAP is <span class="highlight">fast</span> at run-time<br/>
+                            but <span class="highlight">inflexible</span><br/>
+                            (cannot change summary functions at run-time<br/>
+                            and must limit dimensions and depth)
+                            and build times are long
+                        </p>
+                    </section>
+                </section>
+                <section data-background-transition="slide" data-background="img/engine.jpg">
+                    <section>
+                        <h3>ROLAP</h3>
+                        <p>
+                            <em><span class="highlight">Relational<span> OLAP</em><br/>
+                        </p>
+                        <p style="margin-top: 50px; font-size: 80%">
+                            OLAP: <em>online analytical processing</em>
+                        </p>
+                    </section>
+                    <section>
+                        <h3>ROLAP</h3>
+                        <img class="transimg" style="float: left;" src="img/rolap-table.png">
+                        <p style="margin-top: 100px;">
+                            no pre-computed results<br/>
+                            just the detail table
+                        </p>
+                    </section>
+                    <section>
+                        <h3>ROLAP</h3>
+                        <img class="transimg" style="float: left;" src="img/rolap-table2.png">
+                        <p style="margin-top: 100px;">
+                            queries are run <span class="highlight">directly</span> against detail table<br/>
+                        </p>
+                    </section>
+                    <section>
+                        <h3><span class="highlight">In-memory</span> ROLAP</h3>
+                        <p>
+                            ROLAP is very flexible,
+                            and <span class="highlight">was</span> considered slow at run-time<br/>
+                            but with modern hardware,<br/>
+                            and <span class="highlight">enough memory</span><br/>
+                            this is becoming a better option
+                        </p>
+                    </section>
+                </section>
+                <section data-background-transition="slide" data-background="img/horizon.jpg">
+                    <section>
+                        <h3>Database advantages</h3>
+                        <div style="width: 50%; float: left;">
+                            <p>
+                                MOLAP
+                                <ul>
+                                    <li>fast <span class="highlight">query</span> time
+                                    <li>especially on poor hardware
+                                </ul>
+                            </p>
+                        </div>
+                        <div style="width: 50%; float: right;">
+                            <p>
+                                in-memory ROLAP
+                                <ul>
+                                    <li>fast <span class="highlight">access</span> time
+                                    <li>fast build time
+                                    <li>scales better
+                                    <li>more flexible
+                                </ul>
+                            </p>
+                        </div>
+                        <div style="clear: both; margin-bottom: 70px;">
+                            &nbsp;
+                        </div>
+                    </section>
                 </section>
             </div>
         </div>
         <script src="lib/js/reveal.js"></script> 
         <script>
+            var link = document.createElement( 'link' );
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = window.location.search.match( /print-pdf/gi ) ? 'lib/css/print/pdf.css' : 'lib/css/print/paper.css';
+            document.getElementsByTagName( 'head' )[0].appendChild( link );
             Reveal.initialize();
         </script> 
     </body>
