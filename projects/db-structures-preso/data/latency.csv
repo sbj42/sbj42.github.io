@@ -1,0 +1,6 @@
+Short Source,Source,Delay (ns)
+L1 cache,L1 cache reference,0.5
+L2 cache,L2 cache reference,7
+Memory,Main memory reference,100
+SSD,Read 1 KB randomly from SSD,150000
+Disk,Disk seek,10000000

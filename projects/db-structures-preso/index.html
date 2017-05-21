@@ -1,9 +1,11 @@
 <html>
     <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>Columnar and Relational Database Structures</title>
         <link rel="icon" type="image/png" href="favicon.png" />
-        <link rel="stylesheet" href="lib/css/reveal.css">
-        <link rel="stylesheet" href="lib/css/theme/sky.css">
+        <link rel="stylesheet" href="lib/reveal.js/css/reveal.css">
+        <link rel="stylesheet" href="lib/reveal.js/css/theme/sky.css">
+        <link rel="stylesheet" href="lib/c3.js/c3.css">
         <link href="https://fonts.googleapis.com/css?family=Montserrat:300" rel="stylesheet">
         <style type="text/css">
             .reveal {
@@ -30,18 +32,24 @@
             }
             .reveal section .cell1 {
                 background: rgba(255, 80, 255, 0.8);
-                padding: 0px 10px;
-                margin-right: 5px;
             }
             .reveal section .cell2 {
                 background: rgba(80, 255, 80, 0.8);
-                padding: 0px 10px;
-                margin-right: 5px;
             }
             .reveal section .cell3 {
                 background: rgba(255, 80, 80, 0.8);
-                padding: 0px 10px;
-                margin-right: 5px;
+            }
+            .reveal section .block {
+                border-radius: 30px;
+                font-size: 80%;
+                padding: 0px 8px;
+                border: 2px solid black;
+            }
+            .c3 svg {
+                font-size: 20px;
+            }
+            .c3-legend-item {
+                font-size: 24px;
             }
         </style>
     </head>
@@ -60,7 +68,7 @@
                         </p>
                     </section>
                     <section data-background="img/di-logo.svg">
-                        <h3>Dimensional Insight</h3>
+                        <h3><a href="https://www.dimins.com">Dimensional Insight</a></h3>
                         <p>
                             business analytics and<br/>
                             integrated business intelligence solutions
@@ -84,7 +92,7 @@ North      2,520.4438
 South      1,641.8041
 West       2,924.6749</code></pre>
                     </section>
-                    <section class="dark" data-background="img/columns.jpg">
+                    <section>
                         <h3>James Clark</h3>
                         <p style="text-align: left;">
                             15+ years building business intelligence tools<br/>
@@ -100,27 +108,28 @@ West       2,924.6749</code></pre>
                 <section data-background="img/agenda.jpg" data-background-transition="slide">
                     <h3>Agenda</h3>
                     <p>
-                        ☑ Storage models:<br/>
+                        ☑ storage geometry:<br/>
                         <span class="highlight">row-oriented</span> vs. <span class="highlight">column-oriented</span>
                     </p>
                     <p>
-                        ☑ Database types:<br/>
+                        ☑ database types:<br/>
                         <span class="highlight">MOLAP</span> vs. <span class="highlight">in-memory ROLAP</span>
                     </p>
                 </section>
-                <section data-background-transition="slide" data-background="img/table.jpg">
-                    <section>
+                <section data-background-transition="slide">
+                    <section data-background="img/table.jpg">
                         <h3>Tables</h3>
                         <p>
                             (usually) <span class="highlight">two-dimensional<span><br/>
                         </p>
                         <p style="margin-bottom: 180px;">
-                            but must be stored on one-dimensional media<br/>
+                            but they must be stored<br/>
+                            on one-dimensional media<br/>
                             so a decision must be made...
                         </p>
                     </section>
                     <section>
-                        <h3>Row-oriented</h3>
+                        <p>row-oriented</p>
                         <table class="tbl">
                             <thead>
                                 <tr>
@@ -131,28 +140,36 @@ West       2,924.6749</code></pre>
                             </thead>
                             <tbody>
                                 <tr class="cell1">
-                                    <td>Alien 3</td>
-                                    <td>1992</td>
-                                    <td>$55.5M</td>
+                                    <td class="fragment" data-fragment-index="0">Bolt</td>
+                                    <td class="fragment" data-fragment-index="1">2008</td>
+                                    <td class="fragment" data-fragment-index="2">114M</td>
                                 </tr>
                                 <tr class="cell2">
-                                    <td>Iron Man 3</td>
-                                    <td>2013</td>
-                                    <td>$499M</td>
+                                    <td class="fragment" data-fragment-index="3">Juno</td>
+                                    <td class="fragment" data-fragment-index="4">2007</td>
+                                    <td class="fragment" data-fragment-index="5">143M</td>
                                 </tr>
                                 <tr class="cell3">
-                                    <td>Toy Story 3</td>
-                                    <td>2010</td>
-                                    <td>$415M</td>
+                                    <td class="fragment" data-fragment-index="6">Thor</td>
+                                    <td class="fragment" data-fragment-index="7">2011</td>
+                                    <td class="fragment" data-fragment-index="8">181M</td>
                                 </tr>
                             </tbody>
                         </table>
-                        <p style="margin-top: 50px;"> 
-                            <span class="cell1">Alien 3</span><span class="cell1">1992</span><span class="cell1">$55.5M</span><span class="cell2">Iron Man 3</span><span class="cell2">2013</span> ...
+                        <p style="margin-top: 60px;">
+                            <span class="block cell1 fragment" data-fragment-index="0">Bolt</span>
+                            <span class="block cell1 fragment" data-fragment-index="1">2008</span>
+                            <span class="block cell1 fragment" data-fragment-index="2">114M</span>
+                            <span class="block cell2 fragment" data-fragment-index="3">Juno</span>
+                            <span class="block cell2 fragment" data-fragment-index="4">2007</span>
+                            <span class="block cell2 fragment" data-fragment-index="5">143M</span>
+                            <span class="block cell3 fragment" data-fragment-index="6">Thor</span>
+                            <span class="block cell3 fragment" data-fragment-index="7">2011</span>
+                            <span class="block cell3 fragment" data-fragment-index="8">181M</span>
                         </p>
                     </section>
                     <section>
-                        <h3>Column-oriented</h3>
+                        <p>column-oriented</p>
                         <table class="tbl">
                             <thead>
                                 <tr>
@@ -163,46 +180,61 @@ West       2,924.6749</code></pre>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td class="cell1">Alien 3</td>
-                                    <td class="cell2">1992</td>
-                                    <td class="cell3">$55.5M</td>
+                                    <td data-fragment-index="0" class="fragment cell1">Bolt</td>
+                                    <td data-fragment-index="3" class="fragment cell2">2008</td>
+                                    <td data-fragment-index="6" class="fragment cell3">114M</td>
                                 </tr>
                                 <tr>
-                                    <td class="cell1">Iron Man 3</td>
-                                    <td class="cell2">2013</td>
-                                    <td class="cell3">$499M</td>
+                                    <td data-fragment-index="1" class="fragment cell1">Juno</td>
+                                    <td data-fragment-index="4" class="fragment cell2">2007</td>
+                                    <td data-fragment-index="7" class="fragment cell3">143M</td>
                                 </tr>
                                 <tr>
-                                    <td class="cell1">Toy Story 3</td>
-                                    <td class="cell2">2010</td>
-                                    <td class="cell3">$415M</td>
+                                    <td data-fragment-index="2" class="fragment cell1">Thor</td>
+                                    <td data-fragment-index="5" class="fragment cell2">2011</td>
+                                    <td data-fragment-index="8" class="fragment cell3">181M</td>
                                 </tr>
                             </tbody>
                         </table>
-                        <p style="margin-top: 50px;"> 
-                            <span class="cell1">Alien 3</span><span class="cell1">Iron Man 3</span><span class="cell1">Toy Story 3</span><span class="cell2">1992</span><span class="cell2">2013</span> ...
+                        <p style="margin-top: 50px;">
+                            <span class="block cell1 fragment" data-fragment-index="0">Bolt</span>
+                            <span class="block cell1 fragment" data-fragment-index="1">Juno</span>
+                            <span class="block cell1 fragment" data-fragment-index="2">Thor</span>
+                            <span class="block cell2 fragment" data-fragment-index="3">2008</span>
+                            <span class="block cell2 fragment" data-fragment-index="4">2007</span>
+                            <span class="block cell2 fragment" data-fragment-index="5">2011</span>
+                            <span class="block cell3 fragment" data-fragment-index="6">114M</span>
+                            <span class="block cell3 fragment" data-fragment-index="7">143M</span>
+                            <span class="block cell3 fragment" data-fragment-index="8">181M</span>
                         </p>
                     </section>
                     <section>
-                        <h3>MOLAP</h3>
-                        <p>
-                            to answer a query: identify the right table, load it
-                        </p>
-                        <img class="transimg" src="img/molap-tables2.png">
-                    </section>
-                    <section>
-                        <h3>MOLAP</h3>
-                        <p>
-                            MOLAP is <span class="highlight">fast</span> at run-time<br/>
-                            but <span class="highlight">inflexible</span><br/>
-                            (cannot change summary functions at run-time<br/>
-                            and must limit dimensions and depth)
-                            and build times are long
-                        </p>
+                        <div style="width: 48%; float: left;">
+                            <p>
+                                row-oriented
+                                <ul>
+                                    <li>add new rows quickly
+                                    <li>fast access to <span class="highlight">many columns</span> on <span class="highlight">few rows</span>
+                                </ul>
+                            </p>
+                        </div>
+                        <div style="width: 48%; float: right;">
+                            <p>
+                                column-oriented
+                                <ul>
+                                    <li>add/remove columns quickly
+                                    <li>fast access to <span class="highlight">many rows</span> on <span class="highlight">few columns</span>
+                                </ul>
+                            </p>
+                        </div>
+                        <div style="clear: both; margin-bottom: 70px; padding-top: 30px;">
+                            analytical tasks prefer column-oriented
+                            transactional tasks prefer row-oriented
+                        </div>
                     </section>
                 </section>
-                <section data-background-transition="slide" data-background="img/cube.jpg">
-                    <section>
+                <section data-background-transition="slide">
+                    <section data-background="img/cube.jpg">
                         <h3>MOLAP</h3>
                         <p>
                             <em><span class="highlight">Multidimensional<span> OLAP</em><br/>
@@ -226,7 +258,6 @@ West       2,924.6749</code></pre>
                         <img class="transimg" src="img/molap-tables2.png">
                     </section>
                     <section>
-                        <h3>MOLAP</h3>
                         <p>
                             MOLAP is <span class="highlight">fast</span> at run-time<br/>
                             but <span class="highlight">inflexible</span><br/>
@@ -236,8 +267,8 @@ West       2,924.6749</code></pre>
                         </p>
                     </section>
                 </section>
-                <section data-background-transition="slide" data-background="img/engine.jpg">
-                    <section>
+                <section data-background-transition="slide">
+                    <section data-background="img/engine.jpg">
                         <h3>ROLAP</h3>
                         <p>
                             <em><span class="highlight">Relational<span> OLAP</em><br/>
@@ -262,19 +293,17 @@ West       2,924.6749</code></pre>
                         </p>
                     </section>
                     <section>
-                        <h3><span class="highlight">In-memory</span> ROLAP</h3>
-                        <p>
-                            ROLAP is very flexible,
+                        <p style="margin-top: 50px;">
+                            ROLAP is very flexible,<br/>
                             and <span class="highlight">was</span> considered slow at run-time<br/>
-                            but with modern hardware,<br/>
-                            and <span class="highlight">enough memory</span><br/>
-                            this is becoming a better option
+                            but with modern hardware<br/>
+                            and enough memory<br/>
+                            <span class="highlight">in-memory</span> ROLAP is looking good
                         </p>
                     </section>
                 </section>
-                <section data-background-transition="slide" data-background="img/horizon.jpg">
-                    <section>
-                        <h3>Database advantages</h3>
+                <section data-background-transition="slide">
+                    <section data-background="img/horizon.jpg">
                         <div style="width: 50%; float: left;">
                             <p>
                                 MOLAP
@@ -299,17 +328,231 @@ West       2,924.6749</code></pre>
                             &nbsp;
                         </div>
                     </section>
+                    <section>
+                        <p>
+                            MOLAP "data cubes" and ROLAP data tables<br/>
+                            could be row- or column-oriented<br/>
+                        </p>
+                        <p style="margin-top: 50px;">
+                            for MOLAP it doesn't matter much
+                        </p>
+                        <p style="margin-top: 50px;">
+                            for ROLAP <span class="highlight">it matters</span> (among many other factors)
+                        </p>
+                    </section>
+                    <section>
+                        <p>
+                            transactional databases are usually row-oriented
+                        </p>
+                        <p style="margin-top: 100px;">
+                            <span class="highlight">"optimize"</span> the data by moving it<br/>
+                            to a column-oriented database
+                        </p>
+                    </section>
+                </section>
+                <section data-background-transition="slide">
+                    <section data-background="img/stairs.jpg">
+                        <h3>Changes</h3>
+                        <p style="margin-top: 50px;">
+                            Dimensional Insight started in 1989<br/>
+                            with row-major MOLAP<br/>
+                        </p>
+                        <p style="margin-top: 50px;">
+                            in 2014 we introduced <span class="highlight">Spectre</span>,<br/>
+                            column-oriented in-memory ROLAP<br/>
+                        </p>
+                        <p style="margin-top: 50px;">
+                            why?
+                        </p>
+                    </section>
+                    <section>
+                        <p>
+                            memory is very cheap
+                        </p>
+                        <div id="memorychart"></div>
+                        <p style="text-align: right; font-size: 50%;">
+                            data: <a href="https://hblok.net/blog/storage/">hblok.net</a>
+                        </p>
+                    </section>
+                    <section>
+                        <p>
+                            disk is very far away
+                        </p>
+                        <div id="latencychart"></div>
+                        <p style="text-align: right; font-size: 50%;">
+                            data: <a href="https://gist.github.com/jboner/2841832">Jonas Bonér</a>
+                        </p>
+                    </section>
+                    <section>
+                        <p>
+                            we've ridden Moore's law to a tipping point<br/>
+                            where cheap processors and abundant memory<br/>
+                            permit <span class="highlight">fast, dynamic, in-memory analysis</span><br/>
+                        </p>
+                    </section>
+                </section>
+                <section data-background-transition="slide">
+                    <section data-background-transition="slide" data-background="img/boat.jpg">
+                        <h3 style="text-align: right;">Conclusions</h3>
+                        <p style="text-align: left; margin-left: 150px;">
+                            things change<br/>
+                            buy lots of memory<br/>
+                            know how your data is stored<br/>
+                            modern hardware opens up possibilities<br/>
+                        </p>
+                    </section>
+                    <section class="dark" data-background-transition="slide" data-background="img/columns.jpg">
+                        <p style="text-align: left; margin-bottom: 600px; font-size: 75%;">
+                            columns under Gaudí's <span class="highlight">Parc Güell</span>, Barcelona
+                        </p>
+                    </section>
                 </section>
             </div>
         </div>
-        <script src="lib/js/reveal.js"></script> 
+        <script src="lib/reveal.js/js/reveal.js"></script>
+        <script src="lib/d3.js/d3.js"></script>
+        <script src="lib/c3.js/c3.js"></script>
         <script>
+            var printing = !!window.location.search.match( /print-pdf/gi );
             var link = document.createElement( 'link' );
             link.rel = 'stylesheet';
             link.type = 'text/css';
-            link.href = window.location.search.match( /print-pdf/gi ) ? 'lib/css/print/pdf.css' : 'lib/css/print/paper.css';
+            link.href = printing ? 'lib/reveal.js/css/print/pdf.css' : 'lib/reveal.js/css/print/paper.css';
             document.getElementsByTagName( 'head' )[0].appendChild( link );
             Reveal.initialize();
+            d3.text('data/memory.csv', function(text) {
+                var data = d3.dsv(";").parse(text).filter(function(row) {
+                    return row['date (X)'] >= 1989;
+                });
+                data.forEach(function(row) {
+                    row['log $/Mbyte (Y)'] = Math.log10(row['$/Mbyte (Y)']);
+                });
+                c3.generate({
+                    bindto: '#memorychart',
+                    data: {
+                        json: data,
+                        keys: {
+                            x: 'date (X)',
+                            value: ['log $/Mbyte (Y)']
+                        }
+                    },
+                    axis: {
+                        x: {
+                            min: 1988,
+                            max: 2017,
+                            tick: {
+                                fit: false
+                            }
+                        },
+                        y: {
+                            min: -3,
+                            max: 3.15,
+                            padding: {
+                                top: 0,
+                                bottom: 0
+                            },
+                            tick: {
+                                values: [-3, -2, -1, 0, 1, 2, 3],
+                                format: function(value) {
+                                    if (value >= 0)
+                                        return '$' + Math.pow(10, value);
+                                    return '$' + Math.pow(10, value).toFixed(3);
+                                }
+                            }
+                        }
+                    },
+                    tooltip: {
+                        format: {
+                            title: function(year) {
+                                return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][Math.floor(year * 12) % 12] + ' ' + Math.floor(year);
+                            },
+                            value: function(value) {
+                                if (value >= 1)
+                                    return '$' + Math.pow(10, value).toFixed(0);
+                                if (value >= -2)
+                                    return '$' + Math.pow(10, value).toFixed(2);
+                                return '$' + Math.pow(10, value).toFixed(3);
+                            }
+                        }
+                    },
+                    grid: {
+                        y: {
+                            show: true
+                        }
+                    },
+                    zoom: {
+                        enabled: true
+                    },
+                    legend: {
+                        show: false
+                    },
+                    size: {
+                        height: 450,
+                        width: printing ? 800 : undefined
+                    }
+                });
+            });
+            d3.text('data/latency.csv', function(text) {
+                var data = d3.dsv(",").parse(text);
+                data.forEach(function(row) {
+                    row['log delay'] = Math.log10(row['Delay (ns)']);
+                });
+                c3.generate({
+                    bindto: '#latencychart',
+                    data: {
+                        json: data,
+                        keys: {
+                            x: 'Short Source',
+                            value: ['log delay']
+                        }
+                    },
+                    axis: {
+                        rotated: true,
+                        x: {
+                            type: 'category'
+                        },
+                        y: {
+                            tick: {
+                                values: [0, 1, 2, 3, 4, 5, 6, 7],
+                                format: function(value) {
+                                    if (value >= 6)
+                                        return Math.pow(10, value - 6) + ' ms';
+                                    if (value >= 3)
+                                        return Math.pow(10, value - 3) + ' μs';
+                                    if (value >= 0)
+                                        return Math.pow(10, value) + ' ns';
+                                    return Math.pow(10, value).toFixed(1) + ' ns';
+                                }
+                            }
+                        }
+                    },
+                    tooltip: {
+                        format: {
+                            value: function(value) {
+                                if (value >= 6)
+                                    return Math.floor(Math.pow(10, value - 6)) + ' ms';
+                                if (value >= 3)
+                                    return Math.floor(Math.pow(10, value - 3)) + ' μs';
+                                if (value >= 0)
+                                    return Math.floor(Math.pow(10, value)) + ' ns';
+                                return Math.pow(10, value).toFixed(1) + ' ns';
+                            }
+                        }
+                    },
+                    grid: {
+                        y: {
+                            show: true
+                        }
+                    },
+                    legend: {
+                        show: false
+                    },
+                    size: {
+                        height: 450,
+                        width: printing ? 800 : undefined
+                    }
+                });
+            });
         </script> 
     </body>
 </html>

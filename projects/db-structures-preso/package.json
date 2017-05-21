@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
+    "c3": "^0.4.11",
     "reveal.js": "^3.5.0"
   }
 }

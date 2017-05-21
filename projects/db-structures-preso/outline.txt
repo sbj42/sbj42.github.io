@@ -11,7 +11,7 @@ Columnar Databases: Pros and Cons
 - tables are usually two-dimensional, need to be saved to one-dimensional medium
 - cache vs memory vs disk vs network...
 - cost of memory very low
-- row-major has advantagse:
+- row-major has advantages:
   - can add rows quickly 
   - efficient access to many columns on few rows
 - column-major has advantages:
