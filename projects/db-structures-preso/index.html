@@ -79,6 +79,13 @@
                             Supply Chain, Manufacturing,<br/>
                             Healthcare, Beverage Alcohol, ...<br/>
                         </p>
+                        <aside class="notes">
+                            DI had been producing business intelligence software
+                            for about 28 years.  We make Diver, and serve a variety
+                            of industries.  Our Diver Platform is an all-purpose
+                            business intelligence solution, but we also have
+                            industry-specific application packages.
+                        </aside>
                     </section>
                     <section data-background="img/di-logo.svg">
                         <img src="img/dashboard.png" width="480">
@@ -91,6 +98,12 @@ East       2,937.7687
 North      2,520.4438
 South      1,641.8041
 West       2,924.6749</code></pre>
+                        <aside class="notes">
+                            Our products handle the entire data pipeline,
+                            from interactive dashboards and paper reports
+                            to data transformation and integration,
+                            to low-level command-line analysis tools. 
+                        </aside>
                     </section>
                     <section>
                         <h3>James Clark</h3>
@@ -98,11 +111,18 @@ West       2,924.6749</code></pre>
                             15+ years building business intelligence tools<br/>
                             author of <span class="highlight">DivePort</span><br/>
                             <span class="highlight">Spectre</span> team lead<br/>
-                            first poultry industry conference<br/>
+                            first poultry and egg conference<br/>
                         </p>
                         <p style="margin-top: 50px; text-align: right;">
                             james.clark@dimins.com
                         </p>
+                        <aside class="notes">
+                            I've been working at DI for over 15 years.  I wrote
+                            and rewrote the DivePort web portal system, and I'm
+                            the team lead for our new Spectre data engine.
+
+                            This is my first poulty and egg industry conference.
+                        </aside>
                     </section>
                 </section>
                 <section data-background="img/agenda.jpg" data-background-transition="slide">
@@ -115,6 +135,14 @@ West       2,924.6749</code></pre>
                         ☑ database types:<br/>
                         <span class="highlight">MOLAP</span> vs. <span class="highlight">in-memory ROLAP</span>
                     </p>
+                    <aside class="notes">
+                        There are two general topics I want to talk about today.
+                        First we'll talk about "storage geometry": the way tables are stored
+                        on disk or in memory.  Then I want to talk about two general types of
+                        analytics database, MOLAP and in-memory ROLAP.  I'll explain these terms,
+                        and give you a foundation for understanding why different
+                        databases are designed the way they are.
+                    </aside>
                 </section>
                 <section data-background-transition="slide">
                     <section data-background="img/table.jpg">
@@ -127,6 +155,15 @@ West       2,924.6749</code></pre>
                             on one-dimensional media<br/>
                             so a decision must be made...
                         </p>
+                        <aside class="notes">
+                            So, tables.  Very important.
+                            Data tables are usually two-dimensional, but both memory and hard disks
+                            are one dimensional, so there's always some transformation between
+                            the conceptual representation of a table and the stored representation.
+                            There are lots of complex variations in how tables are stored, but I
+                            want to talk about the simplest one: whether we write one row at a time,
+                            or one column at a time.   
+                        </aside>
                     </section>
                     <section>
                         <p>row-oriented</p>
@@ -167,6 +204,12 @@ West       2,924.6749</code></pre>
                             <span class="block cell3 fragment" data-fragment-index="7">2011</span>
                             <span class="block cell3 fragment" data-fragment-index="8">181M</span>
                         </p>
+                        <aside class="notes">
+                            Here's a simple row-oriented example.  This is a table of movie titles
+                            with a couple of extra info columns.  Writing this in a row-oriented
+                            fashion, we'll write out the first row cell by cell, then the second
+                            row, then the third.
+                        </aside>
                     </section>
                     <section>
                         <p>column-oriented</p>
@@ -207,6 +250,90 @@ West       2,924.6749</code></pre>
                             <span class="block cell3 fragment" data-fragment-index="7">143M</span>
                             <span class="block cell3 fragment" data-fragment-index="8">181M</span>
                         </p>
+                        <aside class="notes">
+                            Now let's write the same table in a column-oriented or columnar fashion.
+                            Here we write out the entire first column, cell by cell, and then the
+                            second column, and then the third.
+                        </aside>
+                    </section>
+                    <section>
+                        <p>
+                            so what's the difference?
+                        </p>
+                        <aside class="notes">
+                            So, what's the difference?
+
+                            These two geometries are pretty simple, but the choice of
+                            row- or column-orientation makes a big difference for how
+                            a database performs, and it's frequently tied to what the
+                            database is for. 
+                        </aside>
+                    </section>
+                    <section>
+                        <p>
+                            locality of reference
+                        </p>
+                        <aside class="notes">
+                            The reason is locality of reference.  This refers to the idea
+                            that programs tend to look at values that are close together,
+                            or at least related to each other in some way.  Computers are
+                            optimized for this, by having layers of cache between the CPU
+                            and its storage systems.
+                        </aside>
+                    </section>
+                    <section>
+                        <p>
+                            disk is very far away
+                        </p>
+                        <div id="latencychart"></div>
+                        <p style="text-align: right; font-size: 50%;">
+                            data: <a href="https://gist.github.com/jboner/2841832">Jonas Bonér</a>
+                        </p>
+                        <aside class="notes">
+                            From the CPU's perspective, the hard disk is very far away.
+                            Luckily there are several layers in between that can hold the data.
+                            As you go from the CPU out, each layer gets slower and slower.
+                            They also get bigger and bigger.  We can't store the whole database
+                            in the L1 or L2 cache, but we can try to make the most of the data
+                            we do put there.
+                        </aside>
+                    </section>
+                    <section>
+                        <p>
+                            row-oriented
+                        </p>
+                        <p>
+                            <span class="block cell1 fragment" data-fragment-index="0">Bolt</span>
+                            <span class="block cell1 fragment" data-fragment-index="1">2008</span>
+                            <span class="block cell1 fragment" data-fragment-index="2">114M</span>
+                            <span class="block cell2 fragment" data-fragment-index="3">Juno</span>
+                            <span class="block cell2 fragment" data-fragment-index="4">2007</span>
+                            <span class="block cell2 fragment" data-fragment-index="5">143M</span>
+                            <span class="block cell3 fragment" data-fragment-index="6">Thor</span>
+                            <span class="block cell3 fragment" data-fragment-index="7">2011</span>
+                            <span class="block cell3 fragment" data-fragment-index="8">181M</span>
+                        </p>
+                        <p style="margin-top: 50px;">
+                            column-oriented
+                        </p>
+                        <p>
+                            <span class="block cell1 fragment" data-fragment-index="0">Bolt</span>
+                            <span class="block cell1 fragment" data-fragment-index="1">Juno</span>
+                            <span class="block cell1 fragment" data-fragment-index="2">Thor</span>
+                            <span class="block cell2 fragment" data-fragment-index="3">2008</span>
+                            <span class="block cell2 fragment" data-fragment-index="4">2007</span>
+                            <span class="block cell2 fragment" data-fragment-index="5">2011</span>
+                            <span class="block cell3 fragment" data-fragment-index="6">114M</span>
+                            <span class="block cell3 fragment" data-fragment-index="7">143M</span>
+                            <span class="block cell3 fragment" data-fragment-index="8">181M</span>
+                        </p>
+                        <aside class="notes">
+                            So the geometry we choose affects the performance of various tasks.
+                            If we were going to fetch detailed information about one movie,
+                            we'd look at a whole row, so we'd want the row-oriented geometry.
+                            But if we were searching for a particular movie title, we'd be
+                            searching through a single column, so we'd want column-oriented.
+                        </aside>
                     </section>
                     <section>
                         <div style="width: 48%; float: left;">
@@ -231,6 +358,15 @@ West       2,924.6749</code></pre>
                             analytical tasks prefer column-oriented
                             transactional tasks prefer row-oriented
                         </div>
+                        <aside class="notes">
+                            To sum up, row-oriented tables can add new rows quickly,
+                            and provide fast access to whole rows, while column-oriented
+                            tables can add or remove columns quickly, and provide fast
+                            access to whole columns.
+
+                            To generalize, we use row-oriented tables for transactional tasks,
+                            and column-oriented tables for analytical tasks. 
+                        </aside>
                     </section>
                 </section>
                 <section data-background-transition="slide">
@@ -395,15 +531,6 @@ West       2,924.6749</code></pre>
                     </section>
                     <section>
                         <p>
-                            disk is very far away
-                        </p>
-                        <div id="latencychart"></div>
-                        <p style="text-align: right; font-size: 50%;">
-                            data: <a href="https://gist.github.com/jboner/2841832">Jonas Bonér</a>
-                        </p>
-                    </section>
-                    <section>
-                        <p>
                             we've ridden Moore's law to a tipping point<br/>
                             where cheap processors and abundant memory<br/>
                             permit <span class="highlight">fast, dynamic, in-memory analysis</span><br/>
@@ -428,6 +555,7 @@ West       2,924.6749</code></pre>
                 </section>
             </div>
         </div>
+        <script src="lib/head.js/head.js"></script>
         <script src="lib/reveal.js/js/reveal.js"></script>
         <script src="lib/d3.js/d3.js"></script>
         <script src="lib/c3.js/c3.js"></script>
@@ -438,7 +566,11 @@ West       2,924.6749</code></pre>
             link.type = 'text/css';
             link.href = printing ? 'lib/reveal.js/css/print/pdf.css' : 'lib/reveal.js/css/print/paper.css';
             document.getElementsByTagName( 'head' )[0].appendChild( link );
-            Reveal.initialize();
+            Reveal.initialize({
+                dependencies: [
+                    { src: 'lib/reveal.js/plugin/notes/notes.js', async: true }
+                ]
+            });
             d3.text('data/memory.csv', function(text) {
                 var data = d3.dsv(";").parse(text).filter(function(row) {
                     return row['date (X)'] >= 1989;
