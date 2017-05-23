@@ -63,7 +63,7 @@
                             <span style="opacity: 0.2">v0.1.0</span>
                         </p>
                         <p style="margin-top: 220px; text-align: right;">
-                            James Clark<br/>
+                            Jamie Clark<br/>
                             Dimensional Insight
                         </p>
                     </section>
@@ -106,7 +106,7 @@ West       2,924.6749</code></pre>
                         </aside>
                     </section>
                     <section>
-                        <h3>James Clark</h3>
+                        <h3>Jamie Clark</h3>
                         <p style="text-align: left;">
                             15+ years building business intelligence tools<br/>
                             author of <span class="highlight">DivePort</span><br/>
@@ -375,6 +375,11 @@ West       2,924.6749</code></pre>
                         <p style="margin-top: 70px;">
                             (OLAP: <em><span class="highlight">online analytical processing<span></em>)
                         </p>
+                        <aside class="notes">
+                            Now let's talk about larger database structures.
+                            I'm going to focus on analytical databases, which
+                            we can generally lump under the name OLAP. 
+                        </aside>
                     </section>
                     <section>
                         <p>
@@ -386,12 +391,29 @@ West       2,924.6749</code></pre>
                             a <span class="highlight">business intelligence</span> solution<br/>
                             makes it easier and faster
                         </p>
+                        <aside class="notes">
+                            The task of an analytics solution is to answer questions
+                            about your business.  It's almost always a read-only
+                            operation, and it almost always involves looking at large
+                            numbers of records.
+
+                            You can use a transactional database to do this,
+                            but it's easier and faster with a database optimized for the task.
                     </section>
                     <section>
                         <p>
                             let's look at two structures<br/>
                             for busines analytics...
                         </p>
+                        <p>
+                            <span class="highlight">M</span>OLAP
+                            and 
+                            <span class="highlight">R</span>OLAP
+                        </p>
+                        <aside class="notes">
+                            As with table storage techniques, there are a lot of different ways
+                            to do this optimization.  I want to focus on two: MOLAP and ROLAP. 
+                        </aside>
                     </section>
                 </section>
                 <section data-background-transition="slide">
@@ -400,6 +422,21 @@ West       2,924.6749</code></pre>
                         <p>
                             <em><span class="highlight">multidimensional<span> OLAP</em>
                         </p>
+                        <aside class="notes">
+                            One of the biggest challenges in OLAP database design is
+                            performance, of course.  The MOLAP approach to getting
+                            fast results is to have all the answers to all the possible
+                            questions planned out ahead of time.
+
+                            The M stands for multidimensional, and it represents the
+                            way the query results are computed and stored.
+                        </aside>
+                    </section>
+                    <section>
+                        <p>8 x 7 = ?</p>
+                    </section>
+                    <section>
+                        <p>8 x 7 = 56</p>
                     </section>
                     <section>
                         <h3>MOLAP</h3>
@@ -407,6 +444,13 @@ West       2,924.6749</code></pre>
                             <span class="highlight">pre-computed</span> query results
                         </p>
                         <img class="transimg" src="img/molap-tables.png">
+                        <aside class="notes">
+                            This represents the way MOLAP prepares all the query results.
+                            The main table is divided into smaller tables, one for
+                            each dimension, and then those tables are divided further.
+                            Each level takes more and more storage, and usually you
+                            have to put some kind of limit on how far down you go.
+                        </aside>
                     </section>
                     <section>
                         <h3>MOLAP</h3>
@@ -414,14 +458,64 @@ West       2,924.6749</code></pre>
                             to answer a query: identify the right table, load it
                         </p>
                         <img class="transimg" src="img/molap-tables2.png">
+                        <aside class="notes">
+                            The idea is that, hopefully, the answer to every question
+                            you might ask is in one of those tables, so all you need
+                            to do when you ask a question is figure out which table
+                            has the answer.
+                        </aside>
+                    </section>
+                    <section>
+                        <p>
+                            this is very fast
+                        </p>
+                        <p>
+                            (when the answer was pre-computed)
+                        </p>
+                        <aside class="notes">
+                            Because we're just loading a pre-computed answer off the
+                            disk, this is generally very fast.  If your question wasn't
+                            one of the ones prepared in advance, then MOLAP has to
+                            attempt to answer it anyway, either completely from scratch
+                            or by putting it together from the tables it has prepared.
+                        </aside>
+                    </section>
+                    <section>
+                        <p>
+                            this works on weak hardware
+                        </p>
+                        <aside class="notes">
+                            When it works, all you need is a big enough disk.  MOLAP
+                            puts very little stress on any other computer resources,
+                            so MOLAP systems can get away with outdated and cheap
+                            hardware.
+                        </aside>
+                    </section>
+                    <section>
+                        <p>
+                            this takes time to prepare
+                        </p>
+                        <p>
+                            and cannot be in-memory
+                        </p>
+                        <aside class="notes">
+                            However, it takes a long time to compute all those tables,
+                            and they take a lot of space, so MOLAP cannot be in-memory
+                            which I'll take more about later.
+                        </aside>
+                    </section>
+                    <section>
+                        <p>
+                            cannot change summary functions at run time
+                        </p>
+                        <p>
+                            must limit number of dimensions
+                        </p> 
                     </section>
                     <section>
                         <p>
                             MOLAP is <span class="highlight">fast</span> at run-time<br/>
                             but <span class="highlight">inflexible</span><br/>
-                            (cannot change summary functions at run-time<br/>
-                            and must limit dimensions and depth)
-                            and build times are long
                         </p>
                     </section>
                 </section>
@@ -431,6 +525,12 @@ West       2,924.6749</code></pre>
                         <p>
                             <em><span class="highlight">relational<span> OLAP</em>
                         </p>
+                    </section>
+                    <section>
+                        <p>102 x 11 = ?</p>
+                    </section>
+                    <section>
+                        <p>102 x 11 = 1,122</p>
                     </section>
                     <section>
                         <h3>ROLAP</h3>
@@ -445,6 +545,41 @@ West       2,924.6749</code></pre>
                         <img class="transimg" style="float: left;" src="img/rolap-table2.png">
                         <p style="margin-top: 100px;">
                             queries are run <span class="highlight">directly</span> against detail table<br/>
+                        </p>
+                    </section>
+                    <section>
+                        <p>
+                            this is very flexible
+                        </p>
+                    </section>
+                    <section>
+                        <p>
+                            and takes much less space
+                        </p>
+                    </section>
+                    <section>
+                        <p>
+                            but it requires strong hardware
+                        </p>
+                        <p>
+                            even then, it can be slow
+                        </p>
+                    </section>
+                    <section>
+                        <p>
+                            there's a balance between speed and flexibility
+                        </p>
+                        <p>
+                            but it's complicated...<br/>
+                            <span style="font-size: 90%">if ROLAP fits in memory</span><br/>
+                            <span style="font-size: 80%">and we have multiple processors</span><br/>
+                            <span style="font-size: 70%">and the questions are complex</span><br/>
+                            <span style="font-size: 60%">and the data changes frequently</span><br/>
+                            <span style="font-size: 50%">and the engine can optimize the query</span><br/>
+                            <span style="font-size: 42%">and nobody is leaning against the server</span><br/>
+                            <span style="font-size: 35%">and the moon is waxing</span><br/>
+                            <span style="font-size: 28%">and your favorite show is on</span><br/>
+                            <span style="font-size: 80%">...</span>
                         </p>
                     </section>
                     <section>
@@ -485,6 +620,11 @@ West       2,924.6749</code></pre>
                     </section>
                     <section>
                         <p>
+                            let's bring it back to storage geometry
+                        </p>
+                    </section>
+                    <section>
+                        <p>
                             MOLAP "data cubes" and ROLAP data tables<br/>
                             could be row- or column-oriented<br/>
                         </p>
@@ -522,11 +662,33 @@ West       2,924.6749</code></pre>
                     </section>
                     <section>
                         <p>
+                            ROLAP has a lot of advantages
+                        </p>
+                        <p>
+                            and two disadvantages<br/>
+                            (performance and hardware requirements)
+                        </p>
+                    </section>
+                    <section>
+                        <p>
+                            the disadvantages were impossible to overcome
+                        </p>
+                        <p>
+                            but things change
+                        </p>
+                    </section>
+                    <section>
+                        <p>
                             memory is very cheap
                         </p>
                         <div id="memorychart"></div>
                         <p style="text-align: right; font-size: 50%;">
                             data: <a href="https://hblok.net/blog/storage/">hblok.net</a>
+                        </p>
+                    </section>
+                    <section>
+                        <p>
+                            CPU cores are becoming plentiful
                         </p>
                     </section>
                     <section>
