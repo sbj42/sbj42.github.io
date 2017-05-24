@@ -1,0 +1,18 @@
+{
+  "name": "warp-field-demo",
+  "version": "0.1.0",
+  "description": "Demo of WarpField",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "webpack"
+  },
+  "devDependencies": {
+    "babel-polyfill": "^6.23.0",
+    "easystarjs": "^0.4.1",
+    "ts-loader": "^2.0.3",
+    "typescript": "^2.3.2",
+    "warp-field": "file:../../../repos/warp-field",
+    "webpack": "^2.5.1"
+  }
+}
