@@ -9767,8 +9767,8 @@ function addWarp(map1, map2) {
     var l = 4;
     var dir = [WarpField.Direction.NORTH, WarpField.Direction.EAST, WarpField.Direction.SOUTH, WarpField.Direction.WEST][Math.floor(Math.random() * 4)];
     if (dir === WarpField.Direction.NORTH || dir === WarpField.Direction.SOUTH) {
-        var x = Math.floor(Math.random() * (width - 2 - l) + 1);
-        var y = Math.floor(Math.random() * (height - 2) + 1);
+        var x = Math.floor(Math.random() * (width - 4 - l) + 2);
+        var y = Math.floor(Math.random() * (height - 4) + 2);
         var y2 = (dir === WarpField.Direction.NORTH) ? y - 1 : y + 1;
         for (var i = 0; i < l; i++) {
             if (map1.getWarpFlags(x + i, y) || map2.getWarpFlags(x + i, y2)) {
@@ -9781,10 +9781,16 @@ function addWarp(map1, map2) {
         //map1.addWall(x, y2, WarpField.Direction.WEST);
         map2.addWall(x, y2, WarpField.Direction.WEST);
         for (var i = 0; i < l; i++) {
+            if (map1.id === '2') {
+                lava[y][x] = false;
+            }
             map1.removeBody(x, y);
             map1.removeWall(x, y, WarpField.Direction.NORTH);
             map1.removeWall(x, y, WarpField.Direction.EAST);
             map1.removeWall(x, y, WarpField.Direction.SOUTH);
+            if (map2.id === '2') {
+                lava[y2][x] = false;
+            }
             map2.removeBody(x, y2);
             map2.removeWall(x, y2, WarpField.Direction.NORTH);
             map2.removeWall(x, y2, WarpField.Direction.EAST);
@@ -9803,8 +9809,8 @@ function addWarp(map1, map2) {
         map2.addWall(x - 1, y2, WarpField.Direction.EAST);
     }
     else {
-        var x = Math.floor(Math.random() * (width - 2) + 1);
-        var y = Math.floor(Math.random() * (height - 2 - l) + 1);
+        var x = Math.floor(Math.random() * (width - 4) + 2);
+        var y = Math.floor(Math.random() * (height - 4 - l) + 2);
         var x2 = (dir === WarpField.Direction.WEST) ? x - 1 : x + 1;
         for (var i = 0; i < l; i++) {
             if (map1.getWarpFlags(x, y + i) || map2.getWarpFlags(x2, y + i)) {
@@ -9817,10 +9823,16 @@ function addWarp(map1, map2) {
         //map1.addWall(x2, y, WarpField.Direction.NORTH);
         map2.addWall(x2, y, WarpField.Direction.NORTH);
         for (var i = 0; i < l; i++) {
+            if (map1.id === '2') {
+                lava[y][x] = false;
+            }
             map1.removeBody(x, y);
             map1.removeWall(x, y, WarpField.Direction.EAST);
             map1.removeWall(x, y, WarpField.Direction.SOUTH);
             map1.removeWall(x, y, WarpField.Direction.WEST);
+            if (map2.id === '2') {
+                lava[y][x2] = false;
+            }
             map2.removeBody(x2, y);
             map2.removeWall(x2, y, WarpField.Direction.EAST);
             map2.removeWall(x2, y, WarpField.Direction.SOUTH);
@@ -9913,6 +9925,50 @@ function render() {
                 }
                 context.fillRect(x * 32, y * 32, 32, 32);
                 drawImage('floor' + Math.floor(1 + tileRand[index(x, y)] * 6), mapId, x, y);
+            }
+        }
+    }
+    for (var y = 0; y < height; y++) {
+        for (var x = 0; x < width; x++) {
+            if (!fov.getMask(x, y)) {
+            }
+            else {
+                var map = fov.getMap(x, y);
+                var mx = x, my = y;
+                if (!map) {
+                    map = maps[pmap];
+                }
+                else {
+                    var offset = fov.getOffset(x, y);
+                    mx = x + offset.x;
+                    my = y + offset.y;
+                }
+                var mapId = parseInt(map.id);
+                if (map.getBody(mx, my)) {
+                    drawImage('box' + Math.floor(1 + tileRand[index(x, y)] * 3), mapId, x, y);
+                }
+                if (mapId === 2 && lava[my][mx]) {
+                    drawImage('box' + Math.floor(1 + tileRand[index(x, y)] * 3), mapId, x, y);
+                }
+            }
+        }
+    }
+    for (var y = 0; y < height; y++) {
+        for (var x = 0; x < width; x++) {
+            if (!fov.getMask(x, y)) {
+            }
+            else {
+                var map = fov.getMap(x, y);
+                var mx = x, my = y;
+                if (!map) {
+                    map = maps[pmap];
+                }
+                else {
+                    var offset = fov.getOffset(x, y);
+                    mx = x + offset.x;
+                    my = y + offset.y;
+                }
+                var mapId = parseInt(map.id);
                 {
                     var walls = map.getWalls(mx, my);
                     if ((walls & WarpField.DirectionFlags.NORTH) !== 0) {
@@ -9928,12 +9984,25 @@ function render() {
                         drawImage('west', mapId, x, y);
                     }
                 }
-                if (map.getBody(mx, my)) {
-                    drawImage('box' + Math.floor(1 + tileRand[index(x, y)] * 3), mapId, x, y);
+            }
+        }
+    }
+    for (var y = 0; y < height; y++) {
+        for (var x = 0; x < width; x++) {
+            if (!fov.getMask(x, y)) {
+            }
+            else {
+                var map = fov.getMap(x, y);
+                var mx = x, my = y;
+                if (!map) {
+                    map = maps[pmap];
                 }
-                if (mapId === 2 && lava[my][mx]) {
-                    drawImage('box' + Math.floor(1 + tileRand[index(x, y)] * 3), mapId, x, y);
+                else {
+                    var offset = fov.getOffset(x, y);
+                    mx = x + offset.x;
+                    my = y + offset.y;
                 }
+                var mapId = parseInt(map.id);
                 {
                     var warps = map.getWarpFlags(mx, my);
                     if ((warps & WarpField.DirectionFlags.NORTH) !== 0) {
@@ -9981,6 +10050,7 @@ tiles.onload = function () {
     start();
     var working = false;
     var path = null;
+    var timeSinceMapChange = 0;
     function step() {
         var fov = render();
         if (path == null) {
@@ -9988,96 +10058,130 @@ tiles.onload = function () {
                 easystar.calculate();
             }
             else {
+                timeSinceMapChange++;
+                var options = new Array();
+                var curMapId = String(pmap);
                 var nextMapId = String((pmap + 1) % maps.length);
-                for (var i = 0; i < 100; i++) {
+                for (var i = 0; i < 100 && options.length < 20; i++) {
                     var _a = randomPlace(), nx = _a[1], ny = _a[2];
                     if (fov.getMask(nx, ny)) {
                         var nmap = fov.getMap(nx, ny);
                         if (!nmap)
                             nmap = maps[pmap];
-                        if (i < 10 && nmap.id !== nextMapId)
-                            continue;
                         if (nmap.getBody(nx, ny))
                             continue;
                         if (nmap.id === '2' && lava[ny][nx])
                             continue;
-                        easystar = new EasyStar.js();
-                        easystar.setAcceptableTiles([0]);
-                        var grid = new Array();
-                        for (var y = 0; y < height; y++) {
-                            var row = new Array();
-                            grid.push(row);
-                            for (var x = 0; x < width; x++) {
-                                if (fov.getMask(x, y)) {
-                                    var map = fov.getMap(x, y);
-                                    if (!map) {
-                                        map = maps[pmap];
-                                    }
-                                    if (map.getBody(x, y)) {
+                        var score = 0;
+                        if (timeSinceMapChange < 3) {
+                            if (nmap.id === curMapId) {
+                                score += 10;
+                            }
+                        }
+                        else {
+                            if (nmap.id === nextMapId) {
+                                score += 20;
+                                timeSinceMapChange = 0;
+                            }
+                            else if (nmap.id !== curMapId) {
+                                score += 10;
+                                timeSinceMapChange = 0;
+                            }
+                        }
+                        var dir = ((px - width / 2) * (ny - height / 2) - (nx - width / 2) * (py - height / 2));
+                        if (dir < 0) {
+                            score += 5;
+                        }
+                        score += Math.min(10, Math.max(Math.abs(px - nx), Math.abs(py - ny))) / 10;
+                        options.push({
+                            nx: nx,
+                            ny: ny,
+                            score: score,
+                        });
+                    }
+                }
+                if (options.length > 0) {
+                    options.sort(function (a, b) {
+                        return b.score - a.score;
+                    });
+                    var _b = options[0], nx = _b.nx, ny = _b.ny;
+                    easystar = new EasyStar.js();
+                    easystar.setAcceptableTiles([0]);
+                    var grid = new Array();
+                    for (var y = 0; y < height; y++) {
+                        var row = new Array();
+                        grid.push(row);
+                        for (var x = 0; x < width; x++) {
+                            if (fov.getMask(x, y)) {
+                                var map = fov.getMap(x, y);
+                                if (!map) {
+                                    map = maps[pmap];
+                                }
+                                if (map.getBody(x, y)) {
+                                    row.push(1);
+                                }
+                                else {
+                                    if (map.id === '2' && lava[y][x]) {
                                         row.push(1);
                                     }
                                     else {
-                                        if (map.id === '2' && lava[y][x]) {
-                                            row.push(1);
-                                        }
-                                        else {
-                                            row.push(0);
-                                        }
-                                    }
-                                }
-                                else {
-                                    row.push(1);
-                                }
-                            }
-                        }
-                        easystar.setGrid(grid);
-                        easystar.enableDiagonals();
-                        easystar.enableSync();
-                        for (var y = 0; y < height; y++) {
-                            for (var x = 0; x < width; x++) {
-                                if (fov.getMask(x, y)) {
-                                    var map = fov.getMap(x, y);
-                                    if (!map) {
-                                        map = maps[pmap];
-                                    }
-                                    var walls = map.getWalls(x, y);
-                                    if (walls !== 0) {
-                                        var ok = [];
-                                        if ((walls & WarpField.DirectionFlags.NORTH) === 0) {
-                                            ok.push(EasyStar.TOP);
-                                        }
-                                        if ((walls & WarpField.DirectionFlags.EAST) === 0) {
-                                            ok.push(EasyStar.RIGHT);
-                                        }
-                                        if ((walls & WarpField.DirectionFlags.SOUTH) === 0) {
-                                            ok.push(EasyStar.BOTTOM);
-                                        }
-                                        if ((walls & WarpField.DirectionFlags.WEST) === 0) {
-                                            ok.push(EasyStar.LEFT);
-                                        }
-                                        easystar.setDirectionalCondition(x, y, ok);
+                                        row.push(0);
                                     }
                                 }
                             }
+                            else {
+                                row.push(1);
+                            }
                         }
-                        working = true;
-                        easystar.findPath(px, py, nx, ny, function (p) {
-                            path = p;
-                            working = false;
-                            requestAnimationFrame(step);
-                        });
-                        easystar.calculate();
-                        return;
                     }
+                    easystar.setGrid(grid);
+                    easystar.enableDiagonals();
+                    easystar.enableSync();
+                    for (var y = 0; y < height; y++) {
+                        for (var x = 0; x < width; x++) {
+                            if (fov.getMask(x, y)) {
+                                var map = fov.getMap(x, y);
+                                if (!map) {
+                                    map = maps[pmap];
+                                }
+                                var walls = map.getWalls(x, y);
+                                if (walls !== 0) {
+                                    var ok = [];
+                                    if ((walls & WarpField.DirectionFlags.NORTH) === 0) {
+                                        ok.push(EasyStar.TOP);
+                                    }
+                                    if ((walls & WarpField.DirectionFlags.EAST) === 0) {
+                                        ok.push(EasyStar.RIGHT);
+                                    }
+                                    if ((walls & WarpField.DirectionFlags.SOUTH) === 0) {
+                                        ok.push(EasyStar.BOTTOM);
+                                    }
+                                    if ((walls & WarpField.DirectionFlags.WEST) === 0) {
+                                        ok.push(EasyStar.LEFT);
+                                    }
+                                    easystar.setDirectionalCondition(x, y, ok);
+                                }
+                            }
+                        }
+                    }
+                    working = true;
+                    easystar.findPath(px, py, nx, ny, function (p) {
+                        path = p;
+                        working = false;
+                        requestAnimationFrame(step);
+                    });
+                    easystar.calculate();
+                    return;
                 }
             }
         }
         else if (path.length > 0) {
-            var _b = path.shift(), x = _b.x, y = _b.y;
+            var _c = path.shift(), x = _c.x, y = _c.y;
             if (fov.getMask(x, y)) {
                 var map = fov.getMap(x, y);
                 if (map) {
                     pmap = parseInt(map.id);
+                    path = undefined;
                 }
                 px = x;
                 py = y;
