@@ -1462,6 +1462,10 @@ signal-exit@^3.0.0:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.2.tgz#b5fdc08f1287ea1178628e415e25132b73646c6d"
 
+simplex-noise@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/simplex-noise/-/simplex-noise-2.3.0.tgz#317e0db8f10ef34d058c6619e7b67657de131d26"
+
 sntp@1.x.x:
   version "1.0.9"
   resolved "https://registry.yarnpkg.com/sntp/-/sntp-1.0.9.tgz#6541184cc90aeea6c6e7b35e2659082443c66198"
@@ -1691,8 +1695,9 @@ vm-browserify@0.0.4:
   dependencies:
     indexof "0.0.1"
 
-"warp-field@file:../../../repos/warp-field":
+warp-field@^0.1.0:
   version "0.1.0"
+  resolved "https://registry.yarnpkg.com/warp-field/-/warp-field-0.1.0.tgz#153e61fabe456562cb286dbd8e991478f18ced52"
 
 watchpack@^1.3.1:
   version "1.3.1"

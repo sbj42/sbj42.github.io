@@ -10,9 +10,10 @@
   "devDependencies": {
     "babel-polyfill": "^6.23.0",
     "easystarjs": "^0.4.1",
+    "simplex-noise": "^2.3.0",
     "ts-loader": "^2.0.3",
     "typescript": "^2.3.2",
-    "warp-field": "file:../../../repos/warp-field",
+    "warp-field": "^0.1.0",
     "webpack": "^2.5.1"
   }
 }
