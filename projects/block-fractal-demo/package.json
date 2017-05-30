@@ -1,0 +1,19 @@
+{
+  "name": "block-fractal-demo",
+  "version": "0.1.0",
+  "description": "Demo of BlockFractal",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "webpack"
+  },
+  "devDependencies": {
+    "@types/seedrandom": "^2.4.27",
+    "babel-polyfill": "^6.23.0",
+    "block-fractal": "file:../../../repos/block-fractal",
+    "seedrandom": "^2.4.3",
+    "ts-loader": "^2.0.3",
+    "typescript": "^2.3.2",
+    "webpack": "^2.5.1"
+  }
+}

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="icon" type="image/png" href="favicon.png" />
+        <title>BlockFractal</title>
+        <link href="style.css" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css?family=Skranji|Nunito" rel="stylesheet">
+    </head>
+    <body>
+        <div id="top">
+            <div id="credit">
+                <a href="http://arbitraryclark.blogspot.com/">James Clark</a>
+            </div>
+            <h1 id="title">BlockFractal</h1>
+            <p id="subtitle">a blocky fractal-like shape generator</p>
+        </div>
+        <div id="controls">
+            seed: <input id="seed" type="text" value="artichoke">
+            <input id="newseed" type="button" value="random">
+            iterations: <input id="iterations" type="range" min="0" max="8" step="1" value="7" list="iterationmarks">
+            variation: <input id="variation" type="range" min="0" max="100" step="1" value="60" list="variationmarks">
+
+            <datalist id="iterationmarks">
+                <option value="0" label="0">
+                <option value="1">
+                <option value="2">
+                <option value="3">
+                <option value="4">
+                <option value="5">
+                <option value="6">
+                <option value="7">
+                <option value="8" label="8">
+            </datalist>
+            <datalist id="variationmarks">
+                <option value="0" label="0%">
+                <option value="50" label="50%">
+                <option value="100" label="100%">
+            </datalist>
+        </div>
+        <div id="demo">
+            <canvas id="canvas" width="1184" height="608" />
+        </div>
+        <div id="desc">
+            <div id="link">
+                <a href="https://github.com/sbj42/block-fractal">
+                    Check it out at github
+                </a>
+            </div>
+            <h2>BlockFractal</h2>
+            <p>
+                BlockFractal generates a fractal-like fully-connected shape on a tile-based grid.
+            </p>
+        </div>
+
+        <script src="../build/demo.js">
+        </script>
+    </body>
+</html>    

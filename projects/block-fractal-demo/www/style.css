@@ -1,0 +1,80 @@
+body {
+    font-family: 'Skranji', Verdana, sans-serif;
+    margin: 0px;
+    background: #ffe;
+}
+
+#top {
+    text-align: center;
+    background: #489032;
+    padding: 20px;
+    color: #ebf8ff;
+    box-shadow: 0px 2px 6px #888;
+}
+#credit {
+    position: absolute;
+    right: 10px;
+    top: 0px;
+    font-family: 'Nunito', Verdana, sans-serif;
+    font-size: 14px;
+}
+#credit a {
+    color: #ebf8ff;
+    opacity: 0.8;
+}
+
+#title {
+    font-size: 40px;
+    font-weight: normal;
+    margin: 0px;
+}
+
+#subtitle {
+    font-family: 'Nunito', Verdana, sans-serif;
+    font-size: 18px;
+    margin: 0px;
+}
+
+#controls {
+    padding-top: 20px;
+    font-family: 'Nunito', Verdana, sans-serif;
+    text-align: center;
+}
+#controls input {
+    font-family: 'Nunito', Verdana, sans-serif;
+}
+
+#demo {
+    padding-top: 10px;
+    text-align: center;
+}
+
+#canvas {
+    box-shadow: 3px 3px 8px rgba(0,0,0,0.8);
+}
+
+#desc {
+    font-family: 'Nunito', Verdana, sans-serif;
+    max-width: 1084px;
+    margin: 0px auto;
+    margin-bottom: 100px;
+}
+#desc h2 {
+    font-family: 'Skranji', Verdana, sans-serif;
+}
+#desc p {
+    max-width: 600px;
+}
+#link {
+    float: right;
+    background: #3498db;
+    margin-top: 30px;
+    box-shadow: 4px 4px 4px #888;
+}
+#link a {
+    font-size: 31px;
+    padding: 20px;
+    color: #fff;
+    text-decoration: none;
+    line-height: 2em;
+}
