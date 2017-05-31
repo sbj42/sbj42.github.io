@@ -46,11 +46,33 @@ body {
 
 #demo {
     padding-top: 10px;
-    text-align: center;
+}
+#demoinner {
+    width: 1158px;
+    height: 608px;
+    box-shadow: 3px 3px 8px rgba(0,0,0,0.8);
+    margin: 0px auto;
+    position: relative;
+    cursor: move;
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
 }
 
-#canvas {
-    box-shadow: 3px 3px 8px rgba(0,0,0,0.8);
+#zoomout {
+    opacity: 0.6;
+    position: absolute;
+    top: 16px;
+    left: 16px;
+}
+#zoomin {
+    opacity: 0.6;
+    position: absolute;
+    top: 48px;
+    left: 16px;
+}
+#zoomout:hover, #zoomin:hover {
+    opacity: 1;
 }
 
 #desc {

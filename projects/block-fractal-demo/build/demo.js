@@ -3430,6 +3430,8 @@ var geom_1 = __webpack_require__(32);
 exports.Direction = geom_1.Direction;
 exports.DirectionFlags = geom_1.DirectionFlags;
 exports.Offset = geom_1.Offset;
+exports.Path = geom_1.Path;
+exports.RasterMask = geom_1.RasterMask;
 //# sourceMappingURL=index.js.map
 
 /***/ }),
@@ -4114,7 +4116,7 @@ var Path = (function () {
             northY: bounds.northY,
             width: bounds.width - 1,
             height: bounds.height - 1,
-        }, lines);
+        }, lines.map(function (line) { return line.slice(); }));
     };
     return Path;
 }());
@@ -4203,7 +4205,22 @@ var RasterMask = (function () {
         enumerable: true,
         configurable: true
     });
+    RasterMask.prototype.get = function (x, y) {
+        if (y < this.northY || y > this.southY) {
+            return false;
+        }
+        var line = this._lines[y - this.northY];
+        for (var i = 0; i < line.length; i += 2) {
+            if (x >= line[i] && x < line[i + 1]) {
+                return true;
+            }
+        }
+        return false;
+    };
     RasterMask.prototype.bandsAt = function (y, callback) {
+        if (y < this.northY || y > this.southY) {
+            return;
+        }
         var line = this._lines[y - this.northY];
         for (var i = 0; i < line.length; i += 2) {
             callback(line[i], line[i + 1] - 1);
@@ -10222,6 +10239,69 @@ var seedrandom = __webpack_require__(120);
 var demo = document.getElementById('canvas');
 var width = demo.width, height = demo.height;
 var context = demo.getContext('2d');
+function getControl(id) {
+    return document.getElementById(id).value;
+}
+function getControlInteger(id, min, max, defaultValue) {
+    var str = getControl(id);
+    var int = parseInt(str, 10);
+    if (Number.isFinite(int))
+        return Math.max(min, Math.min(max, int));
+    return defaultValue;
+}
+// let path: BlockFractal.Path;
+var mask;
+var mult = 1;
+function generate() {
+    var iterations = getControlInteger('iterations', 0, 9, 7);
+    var seed = getControl('seed');
+    var variation = getControlInteger('variation', 0, 100, 60) / 100;
+    var path = BlockFractal.makeBlockFractal({
+        random: seedrandom.alea(seed),
+        iterations: iterations,
+        variation: variation
+    });
+    mask = path.rasterize();
+    //const maxSize = (Math.pow(2, iterations + 2) - 1) * zoom;
+    mult = Math.pow(2, 7 - iterations);
+}
+var zoom = 1;
+var centerX = 0;
+var centerY = 0;
+var target_zoom = 1;
+var target_centerX = 0;
+var target_centerY = 0;
+function reset() {
+    zoom = target_zoom = 1;
+    centerX = target_centerX = 0;
+    centerY = target_centerY = 0;
+}
+function render() {
+    var imageData = context.getImageData(0, 0, width, height);
+    var data = imageData.data;
+    var halfHeight = height >>> 1;
+    var halfWidth = width >>> 1;
+    var index = 0;
+    for (var sy = 0; sy < height; sy++) {
+        var my = Math.floor(centerY / mult + (sy - halfHeight) / zoom / mult);
+        for (var sx = 0; sx < width; sx++) {
+            var mx = Math.floor(centerX / mult + (sx - halfWidth) / zoom / mult);
+            if (mask.get(mx, my)) {
+                data[index++] = 0x40;
+                data[index++] = 0xfb;
+                data[index++] = 0x06;
+                data[index++] = 0xff;
+            }
+            else {
+                data[index++] = 0x15;
+                data[index++] = 0x57;
+                data[index++] = 0x86;
+                data[index++] = 0xff;
+            }
+        }
+    }
+    context.putImageData(imageData, 0, 0);
+}
 var ADJECTIVES = [
     'other', 'new', 'good', 'high',
     'old', 'great', 'big', 'American',
@@ -10276,66 +10356,129 @@ var NOUNS = [
     'research', 'girl', 'guy', 'moment',
     'air', 'teacher', 'force', 'education',
 ];
-function generate(seed, iterations, variation) {
-    return BlockFractal.makeBlockFractal({
-        random: seedrandom.alea(seed),
-        iterations: iterations,
-        variation: variation
-    });
-}
-function getControl(id) {
-    return document.getElementById(id).value;
-}
-function getControlInteger(id, min, max, defaultValue) {
-    var str = getControl(id);
-    var int = parseInt(str, 10);
-    if (Number.isFinite(int))
-        return Math.max(min, Math.min(max, int));
-    return defaultValue;
-}
-function render() {
-    var iterations = getControlInteger('iterations', 0, 8, 6);
-    var seed = getControl('seed');
-    var variation = getControlInteger('variation', 0, 100, 60) / 100;
-    var rast = generate(seed, iterations, variation).rasterize();
-    var zoom = Math.pow(2, 7 - iterations);
-    var maxSize = (Math.pow(2, iterations + 2) - 1) * zoom;
-    var northWestShift = maxSize >>> 1;
-    var centerX = width >>> 1;
-    var centerY = height >>> 1;
-    var westX = centerX - northWestShift;
-    var northY = centerY - northWestShift;
-    context.fillStyle = '#155786';
-    context.fillRect(0, 0, width, height);
-    context.fillStyle = '#40fb06';
-    var _loop_1 = function (y) {
-        rast.bandsAt(y, function (x1, x2) {
-            context.fillRect(westX + x1 * zoom + northWestShift, northY + y * zoom + northWestShift, (x2 - x1 + 1) * zoom, Math.max(1, zoom));
-        });
-    };
-    for (var y = rast.northY; y <= rast.southY; y++) {
-        _loop_1(y);
-    }
-}
 function newSeed() {
     var a = ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)];
     var n = NOUNS[Math.floor(Math.random() * NOUNS.length)];
     var seed = a + ' ' + n + ' ' + Math.floor(Math.random() * 20 + 1);
     document.getElementById('seed').value = seed;
-    render();
+    generate();
+    reset();
 }
 newSeed();
 var iterationsInput = document.getElementById('iterations');
-iterationsInput.onchange = render;
-iterationsInput.oninput = render;
+iterationsInput.onchange = generate;
+iterationsInput.oninput = generate;
 var variationInput = document.getElementById('variation');
-variationInput.onchange = render;
-variationInput.oninput = render;
+variationInput.onchange = generate;
+variationInput.oninput = generate;
 var seedInput = document.getElementById('seed');
-seedInput.onchange = render;
-seedInput.oninput = render;
+seedInput.onchange = generate;
+seedInput.oninput = generate;
 var newseedInput = document.getElementById('newseed');
 newseedInput.onclick = newSeed;
+var PAN_SPEED = 45;
+var ZOOM_SPEED = 1.15;
+document.getElementById('zoomin').onclick = function () {
+    target_zoom *= ZOOM_SPEED;
+};
+document.getElementById('zoomout').onclick = function () {
+    target_zoom /= ZOOM_SPEED;
+};
+var mousePressed = false;
+var mouseDragX;
+var mouseDragY;
+var mouseOver = false;
+document.getElementById('demoinner').onmouseleave = function () {
+    mouseOver = false;
+};
+document.getElementById('demoinner').onmousedown = function (event) {
+    mousePressed = true;
+    mouseDragX = target_centerX + event.clientX / zoom;
+    mouseDragY = target_centerY + event.clientY / zoom;
+};
+document.getElementById('demoinner').onmousemove = function (event) {
+    if (mousePressed == true) {
+        centerX = target_centerX = mouseDragX - event.clientX / zoom;
+        centerY = target_centerY = mouseDragY - event.clientY / zoom;
+    }
+    mouseOver = true;
+};
+document.onmouseup = function (event) {
+    mousePressed = false;
+};
+document.getElementById('demoinner').onmousewheel = function (event) {
+    if (mouseOver) {
+        var x = centerX + (event.offsetX - (width >>> 1)) / zoom;
+        var y = centerY + (event.offsetY - (height >>> 1)) / zoom;
+        target_zoom *= Math.pow(ZOOM_SPEED, event.wheelDelta / 120);
+        target_centerX = x - (event.offsetX - (width >>> 1)) / target_zoom;
+        target_centerY = y - (event.offsetY - (height >>> 1)) / target_zoom;
+        event.preventDefault();
+    }
+};
+document.onkeypress = function (event) {
+    switch (event.code) {
+        case 'Digit0':
+        case 'Numpad5':
+            reset();
+            break;
+        case 'KeyW':
+        case 'Numpad8':
+            target_centerY -= PAN_SPEED / zoom;
+            break;
+        case 'KeyS':
+        case 'Numpad2':
+            target_centerY += PAN_SPEED / zoom;
+            break;
+        case 'KeyA':
+        case 'Numpad4':
+            target_centerX -= PAN_SPEED / zoom;
+            break;
+        case 'KeyD':
+        case 'Numpad6':
+            target_centerX += PAN_SPEED / zoom;
+            break;
+        case 'Equal':
+        case 'NumpadAdd':
+            target_zoom *= ZOOM_SPEED;
+            break;
+        case 'Minus':
+        case 'NumpadSubtract':
+            target_zoom /= ZOOM_SPEED;
+            break;
+    }
+};
+document.onkeydown = function (event) {
+    console.info(event.code, mouseOver);
+    if (mouseOver) {
+        switch (event.code) {
+            case 'ArrowUp':
+                target_centerY -= PAN_SPEED / zoom;
+                event.preventDefault();
+                break;
+            case 'ArrowDown':
+                target_centerY += PAN_SPEED / zoom;
+                event.preventDefault();
+                break;
+            case 'ArrowLeft':
+                target_centerX -= PAN_SPEED / zoom;
+                event.preventDefault();
+                break;
+            case 'ArrowRight':
+                target_centerX += PAN_SPEED / zoom;
+                event.preventDefault();
+                break;
+        }
+    }
+};
+function animate() {
+    zoom = (zoom * 4 + target_zoom) / 5;
+    centerX = (centerX * 4 + target_centerX) / 5;
+    centerY = (centerY * 4 + target_centerY) / 5;
+    render();
+    requestAnimationFrame(animate);
+}
+requestAnimationFrame(animate);
 
 
 /***/ }),

@@ -17,7 +17,7 @@
         <div id="controls">
             seed: <input id="seed" type="text" value="artichoke">
             <input id="newseed" type="button" value="random">
-            iterations: <input id="iterations" type="range" min="0" max="8" step="1" value="7" list="iterationmarks">
+            iterations: <input id="iterations" type="range" min="0" max="9" step="1" value="7" list="iterationmarks">
             variation: <input id="variation" type="range" min="0" max="100" step="1" value="60" list="variationmarks">
 
             <datalist id="iterationmarks">
@@ -29,7 +29,8 @@
                 <option value="5">
                 <option value="6">
                 <option value="7">
-                <option value="8" label="8">
+                <option value="8">
+                <option value="9" label="9">
             </datalist>
             <datalist id="variationmarks">
                 <option value="0" label="0%">
@@ -38,7 +39,11 @@
             </datalist>
         </div>
         <div id="demo">
-            <canvas id="canvas" width="1184" height="608" />
+            <div id="demoinner">
+                <img id="zoomout" src="../img/zoomout.png" />
+                <img id="zoomin" src="../img/zoomin.png" />
+                <canvas id="canvas" width="1184" height="608" />
+            </div>
         </div>
         <div id="desc">
             <div id="link">

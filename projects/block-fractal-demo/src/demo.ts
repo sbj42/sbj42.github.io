@@ -6,6 +6,78 @@ const demo = document.getElementById('canvas') as HTMLCanvasElement;
 const {width, height} = demo;
 const context = demo.getContext('2d');
 
+function getControl(id: string) {
+    return (document.getElementById(id) as HTMLInputElement).value;
+}
+
+function getControlInteger(id: string, min: number, max: number, defaultValue: number) {
+    const str = getControl(id);
+    const int = parseInt(str, 10);
+    if (Number.isFinite(int))
+        return Math.max(min, Math.min(max, int));
+    return defaultValue;
+}
+
+// let path: BlockFractal.Path;
+let mask: BlockFractal.RasterMask;
+
+let mult = 1;
+
+function generate() {
+    const iterations = getControlInteger('iterations', 0, 9, 7);
+    const seed = getControl('seed');
+    const variation = getControlInteger('variation', 0, 100, 60) / 100;
+    const path = BlockFractal.makeBlockFractal({
+        random: seedrandom.alea(seed),
+        iterations,
+        variation
+    });
+	mask = path.rasterize();
+    //const maxSize = (Math.pow(2, iterations + 2) - 1) * zoom;
+	mult = Math.pow(2, 7 - iterations);
+}
+
+let zoom = 1;
+let centerX = 0;
+let centerY = 0;
+
+let target_zoom = 1;
+let target_centerX = 0;
+let target_centerY = 0;
+
+function reset() {
+	zoom = target_zoom = 1;
+	centerX = target_centerX = 0;
+	centerY = target_centerY = 0;
+}
+
+function render() {
+	const imageData = context.getImageData(0, 0, width, height);
+	const data = imageData.data;
+
+	const halfHeight = height >>> 1;
+	const halfWidth = width >>> 1;
+	let index = 0;
+    for (let sy = 0; sy < height; sy ++) {
+		const my = Math.floor(centerY / mult + (sy - halfHeight) / zoom / mult);
+		for (let sx = 0; sx < width; sx ++) {
+			const mx = Math.floor(centerX / mult + (sx - halfWidth) / zoom / mult);
+			if (mask.get(mx, my)) {
+				data[index++] = 0x40;
+				data[index++] = 0xfb;
+				data[index++] = 0x06;
+				data[index++] = 0xff;
+			} else {
+				data[index++] = 0x15;
+				data[index++] = 0x57;
+				data[index++] = 0x86;
+				data[index++] = 0xff;
+			}
+		}
+	}
+	context.putImageData(imageData, 0, 0);
+}
+
 const ADJECTIVES = [
 	'other', 'new', 'good', 'high',
 	'old', 'great', 'big', 'American',
@@ -62,70 +134,134 @@ const NOUNS = [
 	'air', 'teacher', 'force', 'education',
 ];
 
-function generate(seed: string, iterations: number, variation: number) {
-    return BlockFractal.makeBlockFractal({
-        random: seedrandom.alea(seed),
-        iterations,
-        variation
-    });
-}
-
-function getControl(id: string) {
-    return (document.getElementById(id) as HTMLInputElement).value;
-}
-
-function getControlInteger(id: string, min: number, max: number, defaultValue: number) {
-    const str = getControl(id);
-    const int = parseInt(str, 10);
-    if (Number.isFinite(int))
-        return Math.max(min, Math.min(max, int));
-    return defaultValue;
-}
-
-function render() {
-    const iterations = getControlInteger('iterations', 0, 8, 6);
-    const seed = getControl('seed');
-    const variation = getControlInteger('variation', 0, 100, 60) / 100;
-    const rast = generate(seed, iterations, variation).rasterize();
-
-    const zoom = Math.pow(2, 7 - iterations);
-    const maxSize = (Math.pow(2, iterations + 2) - 1) * zoom;
-    const northWestShift = maxSize >>> 1;
-
-    const centerX = width >>> 1;
-    const centerY = height >>> 1;
-    const westX = centerX - northWestShift;
-    const northY = centerY - northWestShift;
-
-    context.fillStyle = '#155786';
-    context.fillRect(0, 0, width, height);
-
-    context.fillStyle = '#40fb06';
-    for (let y = rast.northY; y <= rast.southY; y ++) {
-        rast.bandsAt(y, (x1, x2) => {
-            context.fillRect(westX + x1 * zoom + northWestShift, northY + y * zoom + northWestShift, (x2 - x1 + 1) * zoom, Math.max(1, zoom));
-        });
-    }
-}
-
 function newSeed() {
     const a = ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)];
     const n = NOUNS[Math.floor(Math.random() * NOUNS.length)];
     const seed = a + ' ' + n + ' ' + Math.floor(Math.random() * 20 + 1);
     (document.getElementById('seed') as HTMLInputElement).value = seed;
-    render();
+    generate();
+	reset();
 }
 
 newSeed();
 
 const iterationsInput = (document.getElementById('iterations') as HTMLInputElement);
-iterationsInput.onchange = render;
-iterationsInput.oninput = render;
+iterationsInput.onchange = generate;
+iterationsInput.oninput = generate;
 const variationInput = (document.getElementById('variation') as HTMLInputElement);
-variationInput.onchange = render;
-variationInput.oninput = render;
+variationInput.onchange = generate;
+variationInput.oninput = generate;
 const seedInput = (document.getElementById('seed') as HTMLInputElement);
-seedInput.onchange = render;
-seedInput.oninput = render;
+seedInput.onchange = generate;
+seedInput.oninput = generate;
 const newseedInput = (document.getElementById('newseed') as HTMLInputElement);
 newseedInput.onclick = newSeed;
+
+const PAN_SPEED = 45;
+const ZOOM_SPEED = 1.15;
+
+document.getElementById('zoomin').onclick = () => {
+	target_zoom *= ZOOM_SPEED;
+};
+document.getElementById('zoomout').onclick = () => {
+	target_zoom /= ZOOM_SPEED;
+};
+
+let mousePressed = false;
+let mouseDragX: number;
+let mouseDragY: number;
+let mouseOver = false;
+
+document.getElementById('demoinner').onmouseleave = () => {
+	mouseOver = false;
+};
+document.getElementById('demoinner').onmousedown = (event: MouseEvent) => {
+	mousePressed = true;
+	mouseDragX = target_centerX + event.clientX / zoom;
+	mouseDragY = target_centerY + event.clientY / zoom;
+};
+document.getElementById('demoinner').onmousemove = (event: MouseEvent) => {
+	if (mousePressed == true) {
+		centerX = target_centerX = mouseDragX - event.clientX / zoom;
+		centerY = target_centerY = mouseDragY - event.clientY / zoom;
+	}
+	mouseOver = true;
+};
+document.onmouseup = (event: MouseEvent) => {
+	mousePressed = false;
+};
+document.getElementById('demoinner').onmousewheel = (event: MouseWheelEvent) => {
+	if (mouseOver) {
+		const x = centerX + (event.offsetX - (width >>> 1)) / zoom;
+		const y = centerY + (event.offsetY - (height >>> 1)) / zoom;
+		target_zoom *= Math.pow(ZOOM_SPEED, event.wheelDelta / 120);
+		target_centerX = x - (event.offsetX - (width >>> 1)) / target_zoom;
+		target_centerY = y - (event.offsetY - (height >>> 1)) / target_zoom;
+		event.preventDefault();
+	}
+};
+document.onkeypress = (event: KeyboardEvent) => {
+	switch (event.code) {
+		case 'Digit0':
+		case 'Numpad5':
+			reset();
+			break;
+		case 'KeyW':
+		case 'Numpad8':
+			target_centerY -= PAN_SPEED / zoom;
+			break;
+		case 'KeyS':
+		case 'Numpad2':
+			target_centerY += PAN_SPEED / zoom;
+			break;
+		case 'KeyA':
+		case 'Numpad4':
+			target_centerX -= PAN_SPEED / zoom;
+			break;
+		case 'KeyD':
+		case 'Numpad6':
+			target_centerX += PAN_SPEED / zoom;
+			break;
+		case 'Equal':
+		case 'NumpadAdd':
+			target_zoom *= ZOOM_SPEED;
+			break;
+		case 'Minus':
+		case 'NumpadSubtract':
+			target_zoom /= ZOOM_SPEED;
+			break;
+	}
+};
+document.onkeydown = (event: KeyboardEvent) => {
+	console.info(event.code, mouseOver);
+	if (mouseOver) {
+		switch (event.code) {
+			case 'ArrowUp':
+				target_centerY -= PAN_SPEED / zoom;
+				event.preventDefault();
+				break;
+			case 'ArrowDown':
+				target_centerY += PAN_SPEED / zoom;
+				event.preventDefault();
+				break;
+			case 'ArrowLeft':
+				target_centerX -= PAN_SPEED / zoom;
+				event.preventDefault();
+				break;
+			case 'ArrowRight':
+				target_centerX += PAN_SPEED / zoom;
+				event.preventDefault();
+				break;
+		}
+	}
+};
+
+function animate() {
+	zoom = (zoom * 4 + target_zoom) / 5;
+	centerX = (centerX * 4 + target_centerX) / 5;
+	centerY = (centerY * 4 + target_centerY) / 5;
+	render();
+	requestAnimationFrame(animate);
+}
+
+requestAnimationFrame(animate);
