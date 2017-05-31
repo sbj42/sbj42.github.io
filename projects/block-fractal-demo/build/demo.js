@@ -10417,24 +10417,23 @@ document.getElementById('demoinner').onmousewheel = function (event) {
     }
 };
 document.onkeypress = function (event) {
+    if (document.getElementById('seed') == document.activeElement) {
+        return;
+    }
     switch (event.code) {
         case 'Digit0':
         case 'Numpad5':
             reset();
             break;
-        case 'KeyW':
         case 'Numpad8':
             target_centerY -= PAN_SPEED / zoom;
             break;
-        case 'KeyS':
         case 'Numpad2':
             target_centerY += PAN_SPEED / zoom;
             break;
-        case 'KeyA':
         case 'Numpad4':
             target_centerX -= PAN_SPEED / zoom;
             break;
-        case 'KeyD':
         case 'Numpad6':
             target_centerX += PAN_SPEED / zoom;
             break;
@@ -10449,7 +10448,9 @@ document.onkeypress = function (event) {
     }
 };
 document.onkeydown = function (event) {
-    console.info(event.code, mouseOver);
+    if (document.getElementById('seed') == document.activeElement) {
+        return;
+    }
     if (mouseOver) {
         switch (event.code) {
             case 'ArrowUp':
