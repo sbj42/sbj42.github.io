@@ -14,5 +14,8 @@
     "ts-loader": "^2.0.3",
     "typescript": "^2.3.2",
     "webpack": "^2.5.1"
+  },
+  "dependencies": {
+    "block-fractal": "^0.1.0"
   }
 }
