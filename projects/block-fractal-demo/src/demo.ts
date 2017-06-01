@@ -35,6 +35,7 @@ function generate() {
 	mask = path.rasterize();
     //const maxSize = (Math.pow(2, iterations + 2) - 1) * zoom;
 	mult = Math.pow(2, 7 - iterations);
+	document.getElementById('label').innerText = seed;
 }
 
 let zoom = 1;
@@ -46,13 +47,17 @@ let target_centerX = 0;
 let target_centerY = 0;
 
 function reset() {
-	zoom = target_zoom = 1;
+	zoom = 0.5;
+	target_zoom = 1;
 	centerX = target_centerX = 0;
 	centerY = target_centerY = 0;
 }
 
+const imageData = context.getImageData(0, 0, width, height);
 function render() {
-	const imageData = context.getImageData(0, 0, width, height);
+	if (document.hidden || typeof mask === 'undefined') {
+		return;
+	}
 	const data = imageData.data;
 
 	const halfHeight = height >>> 1;
@@ -78,67 +83,59 @@ function render() {
 	context.putImageData(imageData, 0, 0);
 }
 
-const ADJECTIVES = [
-	'other', 'new', 'good', 'high',
-	'old', 'great', 'big', 'American',
-	'small', 'large', 'national', 'young',
-	'different', 'black', 'long', 'little',
-	'important', 'political', 'bad', 'white',
-	'real', 'best', 'right', 'social',
-	'only', 'public', 'sure', 'low',
-	'early', 'able', 'human', 'local',
-	'late', 'hard', 'major', 'better',
-	'economic', 'strong', 'possible', 'whole',
-	'free', 'military', 'true', 'federal',
-	'international', 'full', 'special', 'easy',
-	'clear', 'recent', 'certain', 'personal',
-	'open', 'red', 'difficult', 'available',
-	'likely', 'short', 'single', 'medical',
-	'current', 'wrong', 'private', 'past',
-	'foreign', 'fine', 'common', 'poor',
-	'natural', 'significant', 'similar', 'hot',
-	'dead', 'central', 'happy', 'serious',
-	'ready', 'simple', 'left', 'physical',
-	'general', 'environmental', 'financial', 'blue',
-	'democratic', 'dark', 'various', 'entire',
-	'close', 'legal', 'religious', 'cold',
-	'final', 'main', 'green', 'nice',
-	'huge', 'popular', 'traditional', 'cultural',
-];
+const ADJECTIVES = ['North', 'East', 'South', 'West', 'Upper', 'Lower', 'Middle', 'Far', 'Near', 'Great', 'High', 'Low',
+	'Ancient', 'True', 'Superior', 'Greater', 'Lesser', 'Distant', 'Old', 'Ye Olde', 'New', 'Lost', 'Forgotten'];
 
-const NOUNS = [
-	'time', 'year', 'people', 'way',
-	'day', 'man', 'thing', 'woman',
-	'life', 'child', 'world', 'school',
-	'state', 'family', 'student', 'group',
-	'country', 'problem', 'hand', 'part',
-	'place', 'case', 'week', 'company',
-	'system', 'program', 'question', 'work',
-	'government', 'number', 'night', 'point',
-	'home', 'water', 'room', 'mother',
-	'area', 'money', 'story', 'fact',
-	'month', 'lot', 'right', 'study',
-	'book', 'eye', 'job', 'word',
-	'business', 'issue', 'side', 'kind',
-	'head', 'house', 'service', 'friend',
-	'father', 'power', 'hour', 'game',
-	'line', 'end', 'member', 'law',
-	'car', 'city', 'community', 'name',
-	'president', 'team', 'minute', 'idea',
-	'kid', 'body', 'information', 'back',
-	'parent', 'face', 'others', 'level',
-	'office', 'door', 'health', 'person',
-	'art', 'war', 'history', 'party',
-	'result', 'change', 'morning', 'reason',
-	'research', 'girl', 'guy', 'moment',
-	'air', 'teacher', 'force', 'education',
-];
+const CONSONANT = ['B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X', 'Y',
+    'Z', 'Br', 'Bl', 'By', 'Cr', 'Cl', 'Ch', 'Dr', 'Fr', 'Fl', 'Gr', 'Gl', 'Gh', 'G\'', 'Kr', 'Kl', 'Kh', 'Pr', 'Pl',
+	'Ph', 'Py', 'Q\'', 'St', 'Scr', 'Sch', 'Sh', 'Sm', 'Sn', 'Sp', 'Spr', 'Sv', 'Sw', 'Th', 'Thr', 'T\'', 'Tw', 'Vr',
+	'Wr'];
+
+const VOWEL = ['A', 'E', 'I', 'O', 'U', 'A', 'E', 'I', 'O', 'U', 'A', 'E', 'I', 'O', 'U', 'Ae', 'Aeo', 'Ai', 'Ao',
+    'Aou', 'Au', 'Ea', 'Ee', 'Ei', 'Eia', 'Eo', 'Eou', 'Ia', 'Iao', 'Ie', 'Io', 'Iou', 'Iu', 'Oa', 'Oau', 'Oe', 'Oi',
+	'Oiu', 'Oo', 'Ou'];
+
+const CSUFFIXES = ['shire', 'land', 'tis', 'fell', 'ness', 'sia', 'ria', 'delle', 'landia', 'dom', 'vania', 'ville',
+    'ton', 'berg', 'ham', 'pico', 'stead', 'dero', 'lato', ];
+
+const VSUFFIXES = ['ica', 'inor', 'eros', 'ilia', 'istan', 'edonia', 'uguay', 'onia', 'arnia', 'ing', 'onne', 'ine',
+    'ovo', 'ovka', 'ique'];
 
 function newSeed() {
-    const a = ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)];
-    const n = NOUNS[Math.floor(Math.random() * NOUNS.length)];
-    const seed = a + ' ' + n + ' ' + Math.floor(Math.random() * 20 + 1);
-    (document.getElementById('seed') as HTMLInputElement).value = seed;
+	let name = '';
+	if (Math.random() < 0.6) {
+		if (name) {
+			name += ' ';
+		}
+		name += ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)];
+	}
+	if (name) {
+		name += ' ';
+	}
+	let length = Math.floor(Math.random() * 3 + 1);
+	if (Math.random() < 0.25) {
+		length ++;
+	}
+	let consonant = Math.random() < 0.5;
+	for (let i = 0; i < length; i ++) {
+		let next: string;
+		if (consonant) {
+			next = CONSONANT[Math.floor(Math.random() * CONSONANT.length)];
+		} else {
+			next = VOWEL[Math.floor(Math.random() * VOWEL.length)];
+		}
+		if (i > 0) {
+			next = next.toLowerCase();
+		}
+		name += next;
+		consonant = !consonant;
+	}
+	if (consonant) {
+		name += CSUFFIXES[Math.floor(Math.random() * CSUFFIXES.length)];
+	} else {
+		name += VSUFFIXES[Math.floor(Math.random() * VSUFFIXES.length)];
+	}
+    (document.getElementById('seed') as HTMLInputElement).value = name;
     generate();
 	reset();
 }
@@ -266,3 +263,12 @@ function animate() {
 }
 
 requestAnimationFrame(animate);
+
+document.addEventListener('visibilitychange', () => {
+	console.info('hidden', document.hidden);
+	if (document.hidden) {
+		mask = undefined;
+	} else {
+		generate();
+	}
+})
