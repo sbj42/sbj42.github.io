@@ -10241,34 +10241,55 @@ __webpack_require__(118);
 var BlockFractal = __webpack_require__(119);
 var seedrandom = __webpack_require__(120);
 var demo = document.getElementById('canvas');
+var demoInner = document.getElementById('demoinner');
 var width = demo.width, height = demo.height;
 var context = demo.getContext('2d');
-function getControl(id) {
-    return document.getElementById(id).value;
-}
-function getControlInteger(id, min, max, defaultValue) {
-    var str = getControl(id);
+var iterationsInput = document.getElementById('iterations');
+var variationInput = document.getElementById('variation');
+var seedInput = document.getElementById('seed');
+var newseedInput = document.getElementById('newseed');
+function getControlInteger(elem, min, max, defaultValue) {
+    var str = elem.value;
     var int = parseInt(str, 10);
     if (Number.isFinite(int))
         return Math.max(min, Math.min(max, int));
     return defaultValue;
 }
+var DEFAULT_VARIATION = 60;
+var DEFAULT_ITERATIONS = 7;
+var MAX_VARIATION = 100;
+var MAX_ITERATIONS = 9;
+var iterations = DEFAULT_ITERATIONS;
+var variation = DEFAULT_VARIATION;
+var seed;
+var hashSeed;
 // let path: BlockFractal.Path;
 var mask;
 var mult = 1;
 function generate() {
-    var iterations = getControlInteger('iterations', 0, 9, 7);
-    var seed = getControl('seed');
-    var variation = getControlInteger('variation', 0, 100, 60) / 100;
+    iterations = getControlInteger(iterationsInput, 0, MAX_ITERATIONS, DEFAULT_ITERATIONS);
+    seed = seedInput.value;
+    variation = getControlInteger(variationInput, 0, MAX_VARIATION, DEFAULT_VARIATION);
     var path = BlockFractal.makeBlockFractal({
         random: seedrandom.alea(seed),
         iterations: iterations,
-        variation: variation
+        variation: variation / 100
     });
     mask = path.rasterize();
     //const maxSize = (Math.pow(2, iterations + 2) - 1) * zoom;
     mult = Math.pow(2, 7 - iterations);
     document.getElementById('label').innerText = seed;
+    var newHash = "#" + encodeURIComponent(seed);
+    if (variation != DEFAULT_VARIATION) {
+        newHash += "/v=" + variation;
+    }
+    if (hashSeed !== seed) {
+        window.location.hash = newHash;
+        hashSeed = seed;
+    }
+    else {
+        window.location.replace(newHash);
+    }
 }
 var zoom = 1;
 var centerX = 0;
@@ -10360,22 +10381,55 @@ function newSeed() {
     else {
         name += VSUFFIXES[Math.floor(Math.random() * VSUFFIXES.length)];
     }
-    document.getElementById('seed').value = name;
+    seedInput.value = name;
     generate();
     reset();
 }
-newSeed();
-var iterationsInput = document.getElementById('iterations');
+function hashChange() {
+    var hash = location.hash;
+    if (hash.length > 1) {
+        var firstSlash = hash.indexOf('/');
+        var newSeed_1 = decodeURIComponent(hash.substr(1, firstSlash < 0 ? hash.length : firstSlash - 1));
+        if (firstSlash >= 0) {
+            for (var _i = 0, _a = hash.substr(firstSlash + 1).split('/'); _i < _a.length; _i++) {
+                var arg = _a[_i];
+                if (arg.startsWith('v=')) {
+                    variation = parseInt(arg.substr(2));
+                    if (isNaN(variation) || variation < 0 || variation > MAX_VARIATION) {
+                        variation = DEFAULT_VARIATION;
+                    }
+                }
+                else if (arg.startsWith('i=')) {
+                    iterations = parseInt(arg.substr(2));
+                    if (isNaN(iterations) || iterations < 0 || iterations > MAX_ITERATIONS) {
+                        iterations = DEFAULT_ITERATIONS;
+                    }
+                }
+            }
+        }
+        if (newSeed_1 !== seed) {
+            hashSeed = newSeed_1;
+            seedInput.value = newSeed_1;
+            variationInput.value = String(variation);
+            iterationsInput.value = String(iterations);
+            generate();
+        }
+    }
+}
+if (location.hash.length > 1) {
+    hashChange();
+}
+else {
+    newSeed();
+}
 iterationsInput.onchange = generate;
 iterationsInput.oninput = generate;
-var variationInput = document.getElementById('variation');
 variationInput.onchange = generate;
 variationInput.oninput = generate;
-var seedInput = document.getElementById('seed');
 seedInput.onchange = generate;
 seedInput.oninput = generate;
-var newseedInput = document.getElementById('newseed');
 newseedInput.onclick = newSeed;
+window.onhashchange = hashChange;
 var PAN_SPEED = 45;
 var ZOOM_SPEED = 1.15;
 document.getElementById('zoomin').onclick = function () {
@@ -10388,15 +10442,15 @@ var mousePressed = false;
 var mouseDragX;
 var mouseDragY;
 var mouseOver = false;
-document.getElementById('demoinner').onmouseleave = function () {
+demoInner.onmouseleave = function () {
     mouseOver = false;
 };
-document.getElementById('demoinner').onmousedown = function (event) {
+demoInner.onmousedown = function (event) {
     mousePressed = true;
     mouseDragX = target_centerX + event.clientX / zoom;
     mouseDragY = target_centerY + event.clientY / zoom;
 };
-document.getElementById('demoinner').onmousemove = function (event) {
+demoInner.onmousemove = function (event) {
     if (mousePressed == true) {
         centerX = target_centerX = mouseDragX - event.clientX / zoom;
         centerY = target_centerY = mouseDragY - event.clientY / zoom;
@@ -10406,7 +10460,7 @@ document.getElementById('demoinner').onmousemove = function (event) {
 document.onmouseup = function (event) {
     mousePressed = false;
 };
-document.getElementById('demoinner').onmousewheel = function (event) {
+demoInner.onmousewheel = function (event) {
     if (mouseOver) {
         var x = centerX + (event.offsetX - (width >>> 1)) / zoom;
         var y = centerY + (event.offsetY - (height >>> 1)) / zoom;
