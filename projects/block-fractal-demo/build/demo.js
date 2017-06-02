@@ -10267,9 +10267,17 @@ var hashSeed;
 var mask;
 var mult = 1;
 function generate() {
-    iterations = getControlInteger(iterationsInput, 0, MAX_ITERATIONS, DEFAULT_ITERATIONS);
-    seed = seedInput.value;
-    variation = getControlInteger(variationInput, 0, MAX_VARIATION, DEFAULT_VARIATION);
+    var thisIterations = getControlInteger(iterationsInput, 0, MAX_ITERATIONS, DEFAULT_ITERATIONS);
+    var thisSeed = seedInput.value;
+    var thisVariation = getControlInteger(variationInput, 0, MAX_VARIATION, DEFAULT_VARIATION);
+    if (mask) {
+        if (iterations === thisIterations && seed === thisSeed && variation === thisVariation) {
+            return;
+        }
+    }
+    iterations = thisIterations;
+    seed = thisSeed;
+    variation = thisVariation;
     var path = BlockFractal.makeBlockFractal({
         random: seedrandom.alea(seed),
         iterations: iterations,
@@ -10390,19 +10398,21 @@ function hashChange() {
     if (hash.length > 1) {
         var firstSlash = hash.indexOf('/');
         var newSeed_1 = decodeURIComponent(hash.substr(1, firstSlash < 0 ? hash.length : firstSlash - 1));
+        var newVariation = DEFAULT_VARIATION;
+        var newIterations = DEFAULT_ITERATIONS;
         if (firstSlash >= 0) {
             for (var _i = 0, _a = hash.substr(firstSlash + 1).split('/'); _i < _a.length; _i++) {
                 var arg = _a[_i];
                 if (arg.startsWith('v=')) {
-                    variation = parseInt(arg.substr(2));
-                    if (isNaN(variation) || variation < 0 || variation > MAX_VARIATION) {
-                        variation = DEFAULT_VARIATION;
+                    newVariation = parseInt(arg.substr(2));
+                    if (isNaN(newVariation) || newVariation < 0 || newVariation > MAX_VARIATION) {
+                        newVariation = DEFAULT_VARIATION;
                     }
                 }
                 else if (arg.startsWith('i=')) {
-                    iterations = parseInt(arg.substr(2));
-                    if (isNaN(iterations) || iterations < 0 || iterations > MAX_ITERATIONS) {
-                        iterations = DEFAULT_ITERATIONS;
+                    newIterations = parseInt(arg.substr(2));
+                    if (isNaN(newIterations) || newIterations < 0 || newIterations > MAX_ITERATIONS) {
+                        newIterations = DEFAULT_ITERATIONS;
                     }
                 }
             }
@@ -10410,8 +10420,8 @@ function hashChange() {
         if (newSeed_1 !== seed) {
             hashSeed = newSeed_1;
             seedInput.value = newSeed_1;
-            variationInput.value = String(variation);
-            iterationsInput.value = String(iterations);
+            variationInput.value = String(newVariation);
+            iterationsInput.value = String(newIterations);
             generate();
         }
     }

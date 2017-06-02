@@ -35,9 +35,17 @@ let mask: BlockFractal.RasterMask;
 let mult = 1;
 
 function generate() {
-    iterations = getControlInteger(iterationsInput, 0, MAX_ITERATIONS, DEFAULT_ITERATIONS);
-    seed = seedInput.value;
-    variation = getControlInteger(variationInput, 0, MAX_VARIATION, DEFAULT_VARIATION);
+    const thisIterations = getControlInteger(iterationsInput, 0, MAX_ITERATIONS, DEFAULT_ITERATIONS);
+    const thisSeed = seedInput.value;
+    const thisVariation = getControlInteger(variationInput, 0, MAX_VARIATION, DEFAULT_VARIATION);
+	if (mask) {
+		if (iterations === thisIterations && seed === thisSeed && variation === thisVariation) {
+			return;
+		}
+	}
+    iterations = thisIterations;
+    seed = thisSeed;
+    variation = thisVariation;
     const path = BlockFractal.makeBlockFractal({
         random: seedrandom.alea(seed),
         iterations,
@@ -166,17 +174,19 @@ function hashChange() {
 	if (hash.length > 1) {
 		const firstSlash = hash.indexOf('/');
 		const newSeed = decodeURIComponent(hash.substr(1, firstSlash < 0 ? hash.length : firstSlash - 1));
+		let newVariation = DEFAULT_VARIATION;
+		let newIterations = DEFAULT_ITERATIONS;
 		if (firstSlash >= 0) {
 			for (const arg of hash.substr(firstSlash + 1).split('/')) {
 				if (arg.startsWith('v=')) {
-					variation = parseInt(arg.substr(2));
-					if (isNaN(variation) || variation < 0 || variation > MAX_VARIATION) {
-						variation = DEFAULT_VARIATION
+					newVariation = parseInt(arg.substr(2));
+					if (isNaN(newVariation) || newVariation < 0 || newVariation > MAX_VARIATION) {
+						newVariation = DEFAULT_VARIATION
 					}
 				} else if (arg.startsWith('i=')) {
-					iterations = parseInt(arg.substr(2));
-					if (isNaN(iterations) || iterations < 0 || iterations > MAX_ITERATIONS) {
-						iterations = DEFAULT_ITERATIONS
+					newIterations = parseInt(arg.substr(2));
+					if (isNaN(newIterations) || newIterations < 0 || newIterations > MAX_ITERATIONS) {
+						newIterations = DEFAULT_ITERATIONS
 					}
 				}
 			}
@@ -184,8 +194,8 @@ function hashChange() {
 		if (newSeed !== seed) {
 			hashSeed = newSeed;
 			seedInput.value = newSeed;
-			variationInput.value = String(variation);
-			iterationsInput.value = String(iterations);
+			variationInput.value = String(newVariation);
+			iterationsInput.value = String(newIterations);
 			generate();
 		}
 	}
