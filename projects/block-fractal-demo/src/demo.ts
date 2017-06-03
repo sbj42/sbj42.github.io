@@ -3,6 +3,8 @@ import * as BlockFractal from 'block-fractal';
 import * as seedrandom from 'seedrandom';
 
 const demo = document.getElementById('canvas') as HTMLCanvasElement;
+demo.width = Math.min(demo.width, window.innerWidth - 100);
+document.getElementById('demoinner').style.width = `${demo.width}px`;
 const demoInner = document.getElementById('demoinner');
 const {width, height} = demo;
 const context = demo.getContext('2d');
@@ -55,6 +57,7 @@ function generate() {
     //const maxSize = (Math.pow(2, iterations + 2) - 1) * zoom;
 	mult = Math.pow(2, 7 - iterations);
 	document.getElementById('label').innerText = seed;
+	document.title = `BlockFractal - ${seed}`;
 	let newHash = `#${encodeURIComponent(seed)}`;
 	if (variation != DEFAULT_VARIATION) {
 		newHash += `/v=${variation}`;
@@ -121,8 +124,7 @@ const CONSONANT = ['B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', '
 	'Wr'];
 
 const VOWEL = ['A', 'E', 'I', 'O', 'U', 'A', 'E', 'I', 'O', 'U', 'A', 'E', 'I', 'O', 'U', 'Ae', 'Aeo', 'Ai', 'Ao',
-    'Aou', 'Au', 'Ea', 'Ee', 'Ei', 'Eia', 'Eo', 'Eou', 'Ia', 'Iao', 'Ie', 'Io', 'Iou', 'Iu', 'Oa', 'Oau', 'Oe', 'Oi',
-	'Oiu', 'Oo', 'Ou'];
+    'Au', 'Ea', 'Ee', 'Ei', 'Eo', 'Ia', 'Ie', 'Io', 'Iou', 'Iu', 'Oa', 'Oe', 'Oi', 'Oo', 'Ou', 'Uio'];
 
 const CSUFFIXES = ['shire', 'land', 'tis', 'fell', 'ness', 'sia', 'ria', 'delle', 'landia', 'dom', 'vania', 'ville',
     'ton', 'berg', 'ham', 'pico', 'stead', 'dero', 'lato', ];
@@ -132,7 +134,7 @@ const VSUFFIXES = ['ica', 'inor', 'eros', 'ilia', 'istan', 'edonia', 'uguay', 'o
 
 function newSeed() {
 	let name = '';
-	if (Math.random() < 0.6) {
+	if (Math.random() < 0.5) {
 		if (name) {
 			name += ' ';
 		}
@@ -142,10 +144,10 @@ function newSeed() {
 		name += ' ';
 	}
 	let length = Math.floor(Math.random() * 3 + 1);
-	if (Math.random() < 0.25) {
+	if (Math.random() < 0.15) {
 		length ++;
 	}
-	let consonant = Math.random() < 0.5;
+	let consonant = Math.random() < 0.7;
 	for (let i = 0; i < length; i ++) {
 		let next: string;
 		if (consonant) {
@@ -328,7 +330,6 @@ function animate() {
 requestAnimationFrame(animate);
 
 document.addEventListener('visibilitychange', () => {
-	console.info('hidden', document.hidden);
 	if (document.hidden) {
 		mask = undefined;
 	} else {

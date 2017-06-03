@@ -10241,6 +10241,8 @@ __webpack_require__(118);
 var BlockFractal = __webpack_require__(119);
 var seedrandom = __webpack_require__(120);
 var demo = document.getElementById('canvas');
+demo.width = Math.min(demo.width, window.innerWidth - 100);
+document.getElementById('demoinner').style.width = demo.width + "px";
 var demoInner = document.getElementById('demoinner');
 var width = demo.width, height = demo.height;
 var context = demo.getContext('2d');
@@ -10287,6 +10289,7 @@ function generate() {
     //const maxSize = (Math.pow(2, iterations + 2) - 1) * zoom;
     mult = Math.pow(2, 7 - iterations);
     document.getElementById('label').innerText = seed;
+    document.title = "BlockFractal - " + seed;
     var newHash = "#" + encodeURIComponent(seed);
     if (variation != DEFAULT_VARIATION) {
         newHash += "/v=" + variation;
@@ -10347,15 +10350,14 @@ var CONSONANT = ['B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q'
     'Ph', 'Py', 'Q\'', 'St', 'Scr', 'Sch', 'Sh', 'Sm', 'Sn', 'Sp', 'Spr', 'Sv', 'Sw', 'Th', 'Thr', 'T\'', 'Tw', 'Vr',
     'Wr'];
 var VOWEL = ['A', 'E', 'I', 'O', 'U', 'A', 'E', 'I', 'O', 'U', 'A', 'E', 'I', 'O', 'U', 'Ae', 'Aeo', 'Ai', 'Ao',
-    'Aou', 'Au', 'Ea', 'Ee', 'Ei', 'Eia', 'Eo', 'Eou', 'Ia', 'Iao', 'Ie', 'Io', 'Iou', 'Iu', 'Oa', 'Oau', 'Oe', 'Oi',
-    'Oiu', 'Oo', 'Ou'];
+    'Au', 'Ea', 'Ee', 'Ei', 'Eo', 'Ia', 'Ie', 'Io', 'Iou', 'Iu', 'Oa', 'Oe', 'Oi', 'Oo', 'Ou', 'Uio'];
 var CSUFFIXES = ['shire', 'land', 'tis', 'fell', 'ness', 'sia', 'ria', 'delle', 'landia', 'dom', 'vania', 'ville',
     'ton', 'berg', 'ham', 'pico', 'stead', 'dero', 'lato',];
 var VSUFFIXES = ['ica', 'inor', 'eros', 'ilia', 'istan', 'edonia', 'uguay', 'onia', 'arnia', 'ing', 'onne', 'ine',
     'ovo', 'ovka', 'ique'];
 function newSeed() {
     var name = '';
-    if (Math.random() < 0.6) {
+    if (Math.random() < 0.5) {
         if (name) {
             name += ' ';
         }
@@ -10365,10 +10367,10 @@ function newSeed() {
         name += ' ';
     }
     var length = Math.floor(Math.random() * 3 + 1);
-    if (Math.random() < 0.25) {
+    if (Math.random() < 0.15) {
         length++;
     }
-    var consonant = Math.random() < 0.5;
+    var consonant = Math.random() < 0.7;
     for (var i = 0; i < length; i++) {
         var next = void 0;
         if (consonant) {
@@ -10545,7 +10547,6 @@ function animate() {
 }
 requestAnimationFrame(animate);
 document.addEventListener('visibilitychange', function () {
-    console.info('hidden', document.hidden);
     if (document.hidden) {
         mask = undefined;
     }
