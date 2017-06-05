@@ -25,7 +25,7 @@ function getControlInteger(elem: HTMLInputElement, min: number, max: number, def
 const DEFAULT_VARIATION = 60;
 const DEFAULT_ITERATIONS = 7;
 const MAX_VARIATION = 100;
-const MAX_ITERATIONS = 9;
+const MAX_ITERATIONS = 11;
 
 let iterations = DEFAULT_ITERATIONS;
 let variation = DEFAULT_VARIATION;

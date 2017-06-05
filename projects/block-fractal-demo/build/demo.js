@@ -3851,7 +3851,7 @@ var Mask = (function () {
         if (initialValue === void 0) { initialValue = false; }
         this._size = new geom.Size();
         this._size.copyFrom(size);
-        this._bits = new Array(this._size.area).fill(initialValue);
+        this._bits = new Array(Math.ceil(this._size.area / 32)).fill(initialValue ? 0xffffffff : 0);
     }
     // accessors
     Mask.prototype.toString = function () {
@@ -3884,14 +3884,27 @@ var Mask = (function () {
         return this._size.index(off);
     };
     Mask.prototype.getAt = function (index) {
-        return this._bits[index];
+        // tslint:disable:no-bitwise
+        var arrayIndex = index >>> 5;
+        var bitMask = 1 << (index & 31);
+        return (this._bits[arrayIndex] & bitMask) !== 0;
+        // tslint:enable:no-bitwise
     };
     Mask.prototype.get = function (off) {
         return this.getAt(this.index(off));
     };
     // mutators
     Mask.prototype.setAt = function (index, value) {
-        this._bits[index] = value;
+        // tslint:disable:no-bitwise
+        var arrayIndex = index >>> 5;
+        var bitMask = 1 << (index & 31);
+        if (value) {
+            this._bits[arrayIndex] |= bitMask;
+        }
+        else {
+            this._bits[arrayIndex] &= ~bitMask;
+        }
+        // tslint:enable:no-bitwise
         return this;
     };
     Mask.prototype.set = function (off, value) {
@@ -4092,6 +4105,23 @@ var Path = (function () {
             }
         }
         return new geom.Rectangle(westX, northY, eastX - westX + 1, southY - northY + 1);
+    };
+    Path.prototype.getArea = function () {
+        var total = 0;
+        LOCAL_OFF.copyFrom(this.start);
+        for (var _i = 0, _a = this.segments; _i < _a.length; _i++) {
+            var segment = _a[_i];
+            LOCAL_OFF.addDirection(segment);
+            switch (segment) {
+                case geom.Direction.NORTH:
+                    total -= LOCAL_OFF.x;
+                    break;
+                case geom.Direction.SOUTH:
+                    total += LOCAL_OFF.x;
+                    break;
+            }
+        }
+        return Math.abs(total);
     };
     Path.prototype.rasterize = function (bounds) {
         var lines = new Array();
@@ -10260,7 +10290,7 @@ function getControlInteger(elem, min, max, defaultValue) {
 var DEFAULT_VARIATION = 60;
 var DEFAULT_ITERATIONS = 7;
 var MAX_VARIATION = 100;
-var MAX_ITERATIONS = 9;
+var MAX_ITERATIONS = 11;
 var iterations = DEFAULT_ITERATIONS;
 var variation = DEFAULT_VARIATION;
 var seed;

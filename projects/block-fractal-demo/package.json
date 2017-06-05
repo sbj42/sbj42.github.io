@@ -16,6 +16,6 @@
     "webpack": "^2.5.1"
   },
   "dependencies": {
-    "block-fractal": "^0.1.0"
+    "block-fractal": "^0.1.2"
   }
 }
