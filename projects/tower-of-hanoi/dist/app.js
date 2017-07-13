@@ -273,6 +273,9 @@ function start() {
     }
 }
 document.getElementById('reset').onclick = start;
+document.getElementById('variation').onchange = start;
+document.getElementById('disks').onchange = start;
+document.getElementById('pegs').onchange = start;
 document.onkeypress = function (event) {
     if (!game)
         return;

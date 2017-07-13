@@ -281,6 +281,9 @@ function start() {
 }
 
 (document.getElementById('reset') as HTMLInputElement).onclick = start;
+(document.getElementById('variation') as HTMLInputElement).onchange = start;
+(document.getElementById('disks') as HTMLInputElement).onchange = start;
+(document.getElementById('pegs') as HTMLInputElement).onchange = start;
 document.onkeypress = (event) => {
     if (!game)
         return;
