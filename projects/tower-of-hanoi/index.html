@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="shortcut icon" type="image/png" href="favicon.png"/>
+        <title>Tower of Hanoi Variations</title>
+    </head>
+    <body>
+        <div class="bigtitle">
+            Tower of Hanoi Variations
+        </div>
+        <div class="subtitle">
+            <a href="http://arbitraryclark.blogspot.com/">James Clark</a>
+        </div>
+        <div class="controls">
+            <div class="title">Controls</div>
+            <div class="control">
+                Variation:
+                <select id="variation">
+                    <option value="standard" selected>Standard</option>
+                </select>
+            </div>
+            <div class="control">
+                Disks:
+                <select id="disks">
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5" selected>5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                </select>
+            </div>
+            <div class="control">
+                <input id="reset" type="button" value="Reset">
+            </div>
+        </div>
+        <div class="statebox">
+            <div class="control">
+                Current state: <span id="state"></span>
+            </div>
+            <div class="control">
+                Goal: <span id="goal"></span>
+            </div>
+            <div class="control">
+                Moves: <span id="moves"></span>
+            </div>
+            <div class="control">
+                <span id="winner"></span>
+            </div>
+        </div>
+        <div id="game">
+        </div>
+    </body>
+    <script type="text/javascript" src="./app.js"></script>
+</html>

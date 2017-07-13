@@ -1,0 +1,11 @@
+{
+  "name": "towers-of-hanoi",
+  "version": "0.1.0",
+  "main": "index.js",
+  "scripts": {},
+  "license": "MIT",
+  "dependencies": {
+    "fuse-box": "^2.2.0",
+    "typescript": "^2.4.1"
+  }
+}

@@ -1,0 +1,109 @@
+body {
+    background: #a9cdd8;
+}
+body, input {
+    font-family: sans-serif;
+}
+
+.bigtitle {
+    font-size: 20px;
+    text-align: center;
+}
+.subtitle {
+    font-size: 15px;
+    text-align: center;
+}
+
+.controls {
+    background: #edfbff;
+    border: 1px solid #666;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 20px;
+}
+
+.controls .title {
+    text-align: center;
+}
+
+.controls .control {
+    display: inline-block;
+    margin: 0 20px;
+}
+
+.statebox {
+    background: #edfbff;
+    border: 1px solid #666;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 20px;
+}
+.statebox .control {
+    display: inline-block;
+    margin: 0 20px;
+}
+
+.peg {
+    display: inline-block;
+    width: 200px;
+    height: 230px;
+    background: #edfbff;
+    border: 1px solid #666;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px;
+    position: relative;
+}
+.peg:hover {
+    border: 1px solid #cca;
+}
+
+.peg .spindle {
+    position: absolute;
+    top: 20px;
+    bottom: 30px;
+    left: 115px;
+    right: 115px;
+    background: #b3804c;
+    border-radius: 4px;
+}
+
+.peg .base {
+    position: absolute;
+    bottom: 30px;
+    height: 10px;
+    left: 20px;
+    right: 20px;
+    background: #000;
+    border-radius: 4px;
+}
+
+.peg > .label {
+    font-size: 20px;
+    position: absolute;
+    text-align: center;
+    left: 0;
+    right: 0;
+    bottom: 18px;
+    height: 10px;
+}
+
+.disk {
+    position: absolute;
+    height: 20px;
+    border: 1px solid #444;
+    border-radius: 6px;
+    box-shadow: 1px 1px 3px rgba(80, 80, 80, 0.5);
+}
+.disk.selected {
+    border: 2px solid #ffc;
+    z-index: 3;
+    box-shadow: 0px 0px 8px rgba(40, 40, 40, 1);
+}
+
+.disk > .label {
+    font-size: 17px;
+    font-weight: bold;
+    text-align: center;
+    color: #fff;
+}
