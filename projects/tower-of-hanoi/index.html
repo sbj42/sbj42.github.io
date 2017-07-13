@@ -17,6 +17,10 @@
                 Variation:
                 <select id="variation">
                     <option value="standard" selected>Standard</option>
+                    <option value="adjacent">Adjacent</option>
+                    <option value="cyclic">Cyclic</option>
+                    <option value="swapping">Swapping</option>
+                    <option value="special">Special-Peg</option>
                 </select>
             </div>
             <div class="control">
@@ -32,10 +36,19 @@
                 </select>
             </div>
             <div class="control">
+                Pegs:
+                <select id="pegs">
+                    <option value="3" selected>3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+            <div class="control">
                 <input id="reset" type="button" value="Reset">
             </div>
         </div>
         <div class="statebox">
+            <div id="rules"></div>
             <div class="control">
                 Current state: <span id="state"></span>
             </div>

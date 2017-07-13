@@ -23,7 +23,7 @@ body, input {
 }
 
 .controls .title {
-    text-align: center;
+    margin: 0 20px 10px;
 }
 
 .controls .control {
@@ -37,6 +37,9 @@ body, input {
     border-radius: 10px;
     padding: 10px;
     margin: 20px;
+}
+.statebox #rules {
+    margin: 0 20px 10px;
 }
 .statebox .control {
     display: inline-block;

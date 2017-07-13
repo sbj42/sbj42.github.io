@@ -3,25 +3,28 @@ FuseBox.pkg("default", {}, function(___scope___){
 ___scope___.file("index.js", function(exports, require, module, __filename, __dirname){
 
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 exports.__esModule = true;
 require("./style.css");
-function getLetter(num) {
-    return 'ASDFGHJKL'[num];
-}
-function getNumber(str) {
-    return 'ASDFGHJKL'.indexOf(str);
-}
 var Game = (function () {
-    function Game(pegs, disks) {
+    function Game(pegs, disks, rules) {
         var _this = this;
         this.selectedDisk = null;
         this.pegs = pegs;
         this.disks = disks;
-        this.diskPegs = new Array(this.disks).fill(pegs - 1);
-        this.goal = this.stateString();
         this.moves = 0;
-        document.getElementById('goal').innerHTML = this.goal;
+        this.setGoal();
         document.getElementById('moves').innerHTML = String(this.moves);
+        document.getElementById('rules').innerHTML = rules;
         this.diskPegs = new Array(this.disks).fill(0);
         var gameDiv = document.getElementById('game');
         gameDiv.innerHTML = '';
@@ -37,7 +40,7 @@ var Game = (function () {
             pegDiv.appendChild(base);
             var label = document.createElement('div');
             label.className = 'label';
-            label.innerHTML = getLetter(i);
+            label.innerHTML = this_1.getLetter(i);
             pegDiv.onclick = function (event) {
                 _this.selectPeg(i);
                 event.preventDefault();
@@ -47,6 +50,7 @@ var Game = (function () {
             pegDiv.appendChild(label);
             gameDiv.appendChild(pegDiv);
         };
+        var this_1 = this;
         for (var i = 0; i < this.pegs; i++) {
             _loop_1(i);
         }
@@ -76,6 +80,17 @@ var Game = (function () {
         document.getElementById('state').innerHTML = this.stateString();
         document.getElementById('winner').innerHTML = '';
     }
+    Game.prototype.setGoal = function () {
+        this.diskPegs = new Array(this.disks).fill(this.pegs - 1);
+        this.goal = this.stateString();
+        document.getElementById('goal').innerHTML = this.goal;
+    };
+    Game.prototype.getLetter = function (num) {
+        return 'ASDFGHJKL'[num];
+    };
+    Game.prototype.getNumber = function (str) {
+        return 'ASDFGHJKL'.indexOf(str);
+    };
     Game.prototype.moveTo = function (disk, peg) {
         var top = this.topDisk(peg);
         if (top != -1 && top < disk)
@@ -93,7 +108,6 @@ var Game = (function () {
         }
         var str = this.stateString();
         document.getElementById('state').innerHTML = str;
-        this.moves++;
         document.getElementById('moves').innerHTML = String(this.moves);
         if (str == this.goal) {
             document.getElementById('winner').innerHTML = 'Success!';
@@ -111,13 +125,16 @@ var Game = (function () {
     Game.prototype.selectPeg = function (peg) {
         if (this.selectedDisk !== null) {
             this.moveTo(this.selectedDisk, peg);
-            this.redraw();
-            peg = this.diskPegs[this.selectedDisk];
+            var npeg = this.diskPegs[this.selectedDisk];
             var diskDiv = document.getElementById("disk_" + this.selectedDisk);
             diskDiv.className = 'disk';
-            var pegDiv = document.getElementById("peg_" + peg);
-            pegDiv.appendChild(diskDiv);
             this.selectedDisk = null;
+            if (peg === npeg) {
+                this.moves++;
+                this.redraw();
+                var pegDiv = document.getElementById("peg_" + npeg);
+                pegDiv.appendChild(diskDiv);
+            }
         }
         else {
             var top = this.topDisk(peg);
@@ -128,7 +145,7 @@ var Game = (function () {
     Game.prototype.stateString = function () {
         var ret = [];
         for (var i = this.disks - 1; i >= 0; i--) {
-            ret.push(getLetter(this.diskPegs[i]));
+            ret.push(this.getLetter(this.diskPegs[i]));
         }
         return ret.join('');
     };
@@ -152,16 +169,114 @@ var Game = (function () {
     };
     return Game;
 }());
+var AdjacentGame = (function (_super) {
+    __extends(AdjacentGame, _super);
+    function AdjacentGame() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    AdjacentGame.prototype.moveTo = function (disk, peg) {
+        var cur = this.diskPegs[disk];
+        if (Math.abs(cur - peg) !== 1)
+            return;
+        var top = this.topDisk(peg);
+        if (top != -1 && top < disk)
+            return;
+        this.diskPegs[disk] = peg;
+    };
+    return AdjacentGame;
+}(Game));
+var CyclicGame = (function (_super) {
+    __extends(CyclicGame, _super);
+    function CyclicGame() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    CyclicGame.prototype.moveTo = function (disk, peg) {
+        var cur = this.diskPegs[disk];
+        if (((cur + 1) % this.pegs) !== peg)
+            return;
+        var top = this.topDisk(peg);
+        if (top != -1 && top < disk)
+            return;
+        this.diskPegs[disk] = peg;
+    };
+    return CyclicGame;
+}(Game));
+var SwappingGame = (function (_super) {
+    __extends(SwappingGame, _super);
+    function SwappingGame() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    SwappingGame.prototype.moveTo = function (disk, peg) {
+        if (disk === 0) {
+            this.diskPegs[disk] = peg;
+            return;
+        }
+        var cur = this.diskPegs[disk];
+        var top = this.topDisk(peg);
+        if (disk !== 0 && top !== disk - 1)
+            return;
+        this.diskPegs[top] = cur;
+        this.diskPegs[disk] = peg;
+    };
+    return SwappingGame;
+}(Game));
+var SpecialGame = (function (_super) {
+    __extends(SpecialGame, _super);
+    function SpecialGame(pegs, disks, rules) {
+        return _super.call(this, pegs + 1, disks, rules) || this;
+    }
+    SpecialGame.prototype.setGoal = function () {
+        this.diskPegs = new Array(this.disks).fill(this.pegs - 2);
+        this.goal = this.stateString();
+        document.getElementById('goal').innerHTML = this.goal;
+    };
+    SpecialGame.prototype.getLetter = function (num) {
+        if (num === this.pegs - 1)
+            return 'X';
+        return 'ASDFGHJKL'[num];
+    };
+    SpecialGame.prototype.getNumber = function (str) {
+        if (str === 'X')
+            return this.pegs - 1;
+        return 'ASDFGHJKL'.indexOf(str);
+    };
+    SpecialGame.prototype.moveTo = function (disk, peg) {
+        var cur = this.diskPegs[disk];
+        var top = this.topDisk(peg);
+        if (top !== -1 && top < disk)
+            return;
+        if (peg !== this.pegs - 1 && cur !== this.pegs - 1)
+            return;
+        this.diskPegs[disk] = peg;
+    };
+    return SpecialGame;
+}(Game));
 var game = null;
 function start() {
+    var variation = document.getElementById('variation').value;
     var disks = +document.getElementById('disks').value;
-    game = new Game(3, disks);
+    var pegs = +document.getElementById('pegs').value;
+    if (variation === 'standard') {
+        game = new Game(pegs, disks, "\n            <b>Standard Tower of Hanoi</b> <a href=\"https://en.wikipedia.org/wiki/Tower_of_Hanoi\">(see wikipedia)</a><br/>\n            You can only move the top disk from one of the stacks.<br/>\n            You can't put a disk on top of a smaller disk.\n        ");
+    }
+    else if (variation === 'adjacent') {
+        game = new AdjacentGame(pegs, disks, "\n            <b>Adjacent Tower of Hanoi</b> <a href=\"http://www.cs.wm.edu/~pkstoc/boca.pdf\">(see 'The Four-in-a-Row Puzzle' here)<br/>\n            You can only move the top disk from one of the stacks.<br/>\n            You can't put a disk on top of a smaller disk.<br/>\n            A disk can only move to an adjacent peg.\n        ");
+    }
+    else if (variation === 'cyclic') {
+        game = new CyclicGame(pegs, disks, "\n            <b>Cyclic Tower of Hanoi</b> <a href=\"https://en.wikipedia.org/wiki/Tower_of_Hanoi#Cyclic_Hanoi\">(see wikipedia)</a><br/>\n            You can only move the top disk from one of the stacks.<br/>\n            You can't put a disk on top of a smaller disk.<br/>\n            A disk can only move to the next peg on the right (or to the first peg from the last).\n        ");
+    }
+    else if (variation === 'swapping') {
+        game = new SwappingGame(pegs, disks, "\n            <b>Swapping Tower of Hanoi</b> <a href=\"http://www.cs.wm.edu/~pkstoc/gov.pdf\">(see this paper)</a><br/>\n            Disk 0 can move to any peg.<br/>\n            Other disks can only be swapped with the next smallest disk, if each is at the top of its stack.<br/>\n        ");
+    }
+    else if (variation === 'special') {
+        game = new SpecialGame(pegs, disks, "\n            <b>Special-Peg Tower of Hanoi</b> <a href=\"http://www.cs.wm.edu/~pkstoc/boca.pdf\">(see 'The Star Puzzle' here)</a><br/>\n            You can only move the top disk from one of the stacks.<br/>\n            You can't put a disk on top of a smaller disk.<br/>\n            Every move must involve peg X.\n        ");
+    }
 }
 document.getElementById('reset').onclick = start;
 document.onkeypress = function (event) {
     if (!game)
         return;
-    var num = getNumber(event.key.toUpperCase());
+    var num = game.getNumber(event.key.toUpperCase());
     if (num >= 0 && num < game.pegs)
         game.selectPeg(num);
 };
@@ -171,7 +286,7 @@ start();
 ___scope___.file("style.css", function(exports, require, module, __filename, __dirname){
 
 
-require("fuse-box-css")("style.css", "body {\r\n    background: #a9cdd8;\r\n}\r\nbody, input {\r\n    font-family: sans-serif;\r\n}\r\n\r\n.bigtitle {\r\n    font-size: 20px;\r\n    text-align: center;\r\n}\r\n.subtitle {\r\n    font-size: 15px;\r\n    text-align: center;\r\n}\r\n\r\n.controls {\r\n    background: #edfbff;\r\n    border: 1px solid #666;\r\n    border-radius: 10px;\r\n    padding: 10px;\r\n    margin: 20px;\r\n}\r\n\r\n.controls .title {\r\n    text-align: center;\r\n}\r\n\r\n.controls .control {\r\n    display: inline-block;\r\n    margin: 0 20px;\r\n}\r\n\r\n.statebox {\r\n    background: #edfbff;\r\n    border: 1px solid #666;\r\n    border-radius: 10px;\r\n    padding: 10px;\r\n    margin: 20px;\r\n}\r\n.statebox .control {\r\n    display: inline-block;\r\n    margin: 0 20px;\r\n}\r\n\r\n.peg {\r\n    display: inline-block;\r\n    width: 200px;\r\n    height: 230px;\r\n    background: #edfbff;\r\n    border: 1px solid #666;\r\n    border-radius: 10px;\r\n    padding: 20px;\r\n    margin: 20px;\r\n    position: relative;\r\n}\r\n.peg:hover {\r\n    border: 1px solid #cca;\r\n}\r\n\r\n.peg .spindle {\r\n    position: absolute;\r\n    top: 20px;\r\n    bottom: 30px;\r\n    left: 115px;\r\n    right: 115px;\r\n    background: #b3804c;\r\n    border-radius: 4px;\r\n}\r\n\r\n.peg .base {\r\n    position: absolute;\r\n    bottom: 30px;\r\n    height: 10px;\r\n    left: 20px;\r\n    right: 20px;\r\n    background: #000;\r\n    border-radius: 4px;\r\n}\r\n\r\n.peg > .label {\r\n    font-size: 20px;\r\n    position: absolute;\r\n    text-align: center;\r\n    left: 0;\r\n    right: 0;\r\n    bottom: 18px;\r\n    height: 10px;\r\n}\r\n\r\n.disk {\r\n    position: absolute;\r\n    height: 20px;\r\n    border: 1px solid #444;\r\n    border-radius: 6px;\r\n    box-shadow: 1px 1px 3px rgba(80, 80, 80, 0.5);\r\n}\r\n.disk.selected {\r\n    border: 2px solid #ffc;\r\n    z-index: 3;\r\n    box-shadow: 0px 0px 8px rgba(40, 40, 40, 1);\r\n}\r\n\r\n.disk > .label {\r\n    font-size: 17px;\r\n    font-weight: bold;\r\n    text-align: center;\r\n    color: #fff;\r\n}")
+require("fuse-box-css")("style.css", "body {\r\n    background: #a9cdd8;\r\n}\r\nbody, input {\r\n    font-family: sans-serif;\r\n}\r\n\r\n.bigtitle {\r\n    font-size: 20px;\r\n    text-align: center;\r\n}\r\n.subtitle {\r\n    font-size: 15px;\r\n    text-align: center;\r\n}\r\n\r\n.controls {\r\n    background: #edfbff;\r\n    border: 1px solid #666;\r\n    border-radius: 10px;\r\n    padding: 10px;\r\n    margin: 20px;\r\n}\r\n\r\n.controls .title {\r\n    margin: 0 20px 10px;\r\n}\r\n\r\n.controls .control {\r\n    display: inline-block;\r\n    margin: 0 20px;\r\n}\r\n\r\n.statebox {\r\n    background: #edfbff;\r\n    border: 1px solid #666;\r\n    border-radius: 10px;\r\n    padding: 10px;\r\n    margin: 20px;\r\n}\r\n.statebox #rules {\r\n    margin: 0 20px 10px;\r\n}\r\n.statebox .control {\r\n    display: inline-block;\r\n    margin: 0 20px;\r\n}\r\n\r\n.peg {\r\n    display: inline-block;\r\n    width: 200px;\r\n    height: 230px;\r\n    background: #edfbff;\r\n    border: 1px solid #666;\r\n    border-radius: 10px;\r\n    padding: 20px;\r\n    margin: 20px;\r\n    position: relative;\r\n}\r\n.peg:hover {\r\n    border: 1px solid #cca;\r\n}\r\n\r\n.peg .spindle {\r\n    position: absolute;\r\n    top: 20px;\r\n    bottom: 30px;\r\n    left: 115px;\r\n    right: 115px;\r\n    background: #b3804c;\r\n    border-radius: 4px;\r\n}\r\n\r\n.peg .base {\r\n    position: absolute;\r\n    bottom: 30px;\r\n    height: 10px;\r\n    left: 20px;\r\n    right: 20px;\r\n    background: #000;\r\n    border-radius: 4px;\r\n}\r\n\r\n.peg > .label {\r\n    font-size: 20px;\r\n    position: absolute;\r\n    text-align: center;\r\n    left: 0;\r\n    right: 0;\r\n    bottom: 18px;\r\n    height: 10px;\r\n}\r\n\r\n.disk {\r\n    position: absolute;\r\n    height: 20px;\r\n    border: 1px solid #444;\r\n    border-radius: 6px;\r\n    box-shadow: 1px 1px 3px rgba(80, 80, 80, 0.5);\r\n}\r\n.disk.selected {\r\n    border: 2px solid #ffc;\r\n    z-index: 3;\r\n    box-shadow: 0px 0px 8px rgba(40, 40, 40, 1);\r\n}\r\n\r\n.disk > .label {\r\n    font-size: 17px;\r\n    font-weight: bold;\r\n    text-align: center;\r\n    color: #fff;\r\n}")
 });
 });
 FuseBox.pkg("fusebox-hot-reload", {}, function(___scope___){
