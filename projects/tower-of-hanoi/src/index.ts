@@ -17,7 +17,10 @@ class Game {
         this.setGoal();
         document.getElementById('moves').innerHTML = String(this.moves);
         document.getElementById('rules').innerHTML = rules;
-        this.diskPegs = new Array(this.disks).fill(0);
+        this.diskPegs = new Array(this.disks);
+        for (let i = 0; i < this.diskPegs.length; i ++) {
+            this.diskPegs[i] = 0;
+        }
 
         const gameDiv = document.getElementById('game');
         gameDiv.innerHTML = '';
@@ -72,7 +75,10 @@ class Game {
     }
 
     setGoal() {
-        this.diskPegs = new Array(this.disks).fill(this.pegs - 1);
+        this.diskPegs = new Array(this.disks);
+        for (let i = 0; i < this.diskPegs.length; i ++) {
+            this.diskPegs[i] = this.pegs - 1;
+        }
         this.goal = this.stateString();
         document.getElementById('goal').innerHTML = this.goal;
     }
@@ -213,7 +219,10 @@ class SpecialGame extends Game {
         super(pegs + 1, disks, rules);
     }
     setGoal() {
-        this.diskPegs = new Array(this.disks).fill(this.pegs - 2);
+        this.diskPegs = new Array(this.disks);
+        for (let i = 0; i < this.diskPegs.length; i ++) {
+            this.diskPegs[i] = this.pegs - 2;
+        }
         this.goal = this.stateString();
         document.getElementById('goal').innerHTML = this.goal;
     }

@@ -25,7 +25,10 @@ var Game = (function () {
         this.setGoal();
         document.getElementById('moves').innerHTML = String(this.moves);
         document.getElementById('rules').innerHTML = rules;
-        this.diskPegs = new Array(this.disks).fill(0);
+        this.diskPegs = new Array(this.disks);
+        for (var i = 0; i < this.diskPegs.length; i++) {
+            this.diskPegs[i] = 0;
+        }
         var gameDiv = document.getElementById('game');
         gameDiv.innerHTML = '';
         var _loop_1 = function (i) {
@@ -81,7 +84,10 @@ var Game = (function () {
         document.getElementById('winner').innerHTML = '';
     }
     Game.prototype.setGoal = function () {
-        this.diskPegs = new Array(this.disks).fill(this.pegs - 1);
+        this.diskPegs = new Array(this.disks);
+        for (var i = 0; i < this.diskPegs.length; i++) {
+            this.diskPegs[i] = this.pegs - 1;
+        }
         this.goal = this.stateString();
         document.getElementById('goal').innerHTML = this.goal;
     };
@@ -226,7 +232,10 @@ var SpecialGame = (function (_super) {
         return _super.call(this, pegs + 1, disks, rules) || this;
     }
     SpecialGame.prototype.setGoal = function () {
-        this.diskPegs = new Array(this.disks).fill(this.pegs - 2);
+        this.diskPegs = new Array(this.disks);
+        for (var i = 0; i < this.diskPegs.length; i++) {
+            this.diskPegs[i] = this.pegs - 2;
+        }
         this.goal = this.stateString();
         document.getElementById('goal').innerHTML = this.goal;
     };
