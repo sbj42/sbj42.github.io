@@ -1,0 +1,18 @@
+{
+  "name": "the-field-demo",
+  "version": "0.1.0",
+  "description": "Demo of TheField",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "webpack"
+  },
+  "devDependencies": {
+    "babel-polyfill": "^6.23.0",
+    "easystarjs": "=0.4.0",
+    "ts-loader": "^2.0.3",
+    "typescript": "^2.3.2",
+    "the-field": "^0.1.1",
+    "webpack": "^2.5.1"
+  }
+}
