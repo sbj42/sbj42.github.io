@@ -151,7 +151,7 @@ FourColor.prototype._generateStep = function() {
 
 FourColor.prototype.generate = function(size, difficulty) {
     this._size = size;
-    this._maxDifficulty = difficulty;
+    this._maxDifficulty = difficulty * 9 / 10;
     this._maxChoices = Math.max(1000,Math.pow(3.4, difficulty+1));
     var maxChoices = Math.pow(3.4, difficulty + 1);
     var minChoices = Math.pow(3.4, difficulty);
@@ -395,7 +395,7 @@ FourColor.prototype.menu = function(menu, finish) {
     sizeDiv.append('span')
         .text('Size: ');
     var size = sizeDiv.append('select');
-    for (var i = 4; i <= 15; i ++) {
+    for (var i = 4; i <= 11; i ++) {
         var opt = size.append('option')
             .attr('value', String(i))
             .text(String(i));
