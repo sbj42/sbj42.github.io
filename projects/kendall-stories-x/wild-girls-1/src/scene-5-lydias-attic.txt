@@ -1,0 +1,86 @@
+background lydia-attic
+
+speed 1
+
+// setup
+add lydia lydia-right 565,345
+add rat rat-left 130,370
+add spider spider 670,330
+add cat cat 100,500
+wait 0.25
+
+// {
+//   move spider 630,330 1.7
+//   move spider 670,330 1.7
+//   move spider 630,360 1.7
+//   move spider 630,330 1.7
+//   move spider 670,330 1.7
+//   move spider 630,330 1.7
+//   move spider 670,330 1.7
+//   move spider 630,360 1.7
+//   move spider 630,330 1.7
+//   move spider 670,330 1.7
+//   move spider 630,330 1.7
+//   move spider 670,330 1.7
+// }
+// {
+//   move rat 69,370 0.6
+//   wait 1.2
+//   set rat rat-right
+//   move rat 130,370 0.6
+//   wait 1.2
+//   set rat rat-left
+//   move rat 69,370 0.6
+//   wait 1.2
+//   set rat rat-right
+//   move rat 130,370 0.6
+//   wait 1.2
+//   set rat rat-left
+//   move rat 69,370 0.6
+//   wait 1.2
+//   set rat rat-right
+//   move rat 130,370 0.6
+//   wait 1.2
+//   set rat rat-left
+//   move rat 69,370 0.6
+//   wait 1.2
+//   set rat rat-right
+//   move rat 130,370 0.6
+//   wait 1.2
+//   set rat rat-left
+//   move rat 69,370 0.6
+//   wait 1.2
+//   set rat rat-right
+//   move rat 130,370 0.6
+//   wait 1.2
+//   set rat rat-left
+//   move rat 69,370 0.6
+//   wait 1.2
+//   set rat rat-right
+//   move rat 130,370 0.6
+//   wait 1.2
+//   set rat rat-left
+// }
+//
+// play this-is-lydia
+// wait 1
+// play hello-mr-spider
+// move spider 970,330 1.5
+
+set lydia lydia-front
+move lydia 565,445 1
+set lydia lydia-left
+{
+    move lydia 205,394 2
+}
+set-alternate lydia lydia-left-walk lydia-left 0.25 8
+
+play hello-mr-rat
+set cat cat-scratch
+{
+  play cat-mad 
+}
+move rat -50,375 0.5
+add scratch scratch 220,390
+wait 1
+hide scratch

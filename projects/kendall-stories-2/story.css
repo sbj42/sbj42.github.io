@@ -1,0 +1,33 @@
+body {
+    background: #e0d884;
+}
+
+#title {
+    margin: 10px auto;
+    text-align: center;
+    font-size: 35px;
+    width: 800px;
+}
+
+.story {
+    background: #fff;
+    display: block;
+    margin: 15px auto;
+    padding: 0px 20px;
+    border-radius: 20px;
+    border: 2px solid grey;
+    box-shadow: 2px 2px 12px #888;
+    width: 600px;
+    height: 140px;
+    text-decoration: none;
+}
+.story:hover {
+    background: #ddf;
+}
+.story img {
+    float: left;
+}
+.story span {
+    display: block;
+    margin-top: 20px;
+}

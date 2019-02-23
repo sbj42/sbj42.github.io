@@ -1,0 +1,66 @@
+background luna-room
+
+speed 1
+
+// setup
+add bed luna-bed 600,520
+add luna luna-back 300,91
+wait 0.25
+
+// this is luna
+play this-is-luna
+
+// counting
+wait 0.25
+{
+    play 9-10-heehee
+}
+// setup friend
+add friend luna-friend 740,290
+add door luna-door 611,143 0,0
+wait 0.5
+
+// peek
+move friend 765,290 2.5
+set luna luna-front
+wait 1
+
+// hide
+move friend 740,290 1
+
+// seek
+set luna luna-right
+{
+    play i-can-find-you
+}
+move luna 410,91 1.5
+set luna luna-left
+move luna 150,311 2
+set luna luna-right
+move luna 410,311 2
+set luna luna-front
+move luna 460,491 2
+
+play come-on-time
+move friend 765,290 1
+play luna-i-have-to
+move friend 740,290 1
+set luna luna-mad
+play luna-was-mad
+
+top bed
+wait 1
+play noo-argh-ooo
+set luna luna-wolf-mad
+wait 0.2
+move luna 659,441 0.4
+move luna 439,421 0.4
+move luna 349,491 0.4
+move luna 529,451 0.4
+{
+    rotate bed 180 0.8
+}
+wait 0.2
+move luna 632,341 0.4
+move luna 212,312 0.4
+wait 0.5

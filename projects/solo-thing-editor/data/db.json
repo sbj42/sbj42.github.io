@@ -15000,7 +15000,7 @@
     "asdf": {
       "category": "",
       "height": 1,
-      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAABeUlEQVQYV2OMibn+nwEKlizRZNzq5XVRkINDXIiTUxwmDqIZQQofP9635t2725cuX54wadq8aV1mdmbWq2atmqPM5pho92Cp3orHyQyMFhYdc158OLrXxqZxmUXBsaunXp1i+M3wm4HhPsNZ/ueXWG9Y10e+D54fwQg1nt93nu8Sqe8C7/QZb6v9/fv/900Wqd9s6hLiqxY9W2JzwswYpPC/nZ2dM1cQQ06BBqfV588/3wsIcIj8Y2PhWrvjzZx9n958uTPvzkywQgd/h4iXvx6yTynRnsDGxsj/9++fb79+M/84//zP9Vd/o9RuH1tzGKxQ2UDZuijPtoGJ8T4HD8sfXnllUYNbT79fElOOYZi24xqz4rtXr2FuZLjW27r4qOFfw01vT790kXUROXfo3G4xSTGp5zuTInfsNJsLDh6Qh0BhCKIjIyMj379/fycpKSl9/fr1e589swm6erVaDUMhSHF1dXXFvXv3Hi5fvny5vf3U1Q4MWiEA60Wqzg0l6V0AAAAASUVORK5CYII=",
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAABeUlEQVQoU2OMibn+nwEKlizRZNzq5XVRkINDXIiTUxwmDqIZQQofP9635t2725cuX54wadq8aV1mdmbWq2atmqPM5pho92Cp3orHyQyMFhYdc158OLrXxqZxmUXBsaunXp1i+M3wm4HhPsNZ/ueXWG9Y10e+D54fwQg1nt93nu8Sqe8C7/QZb6v9/fv/900Wqd9s6hLiqxY9W2JzwswYpPC/nZ2dM1cQQ06BBqfV588/3wsIcIj8Y2PhWrvjzZx9n958uTPvzkywQgd/h4iXvx6yTynRnsDGxsj/9++fb79+M/84//zP9Vd/o9RuH1tzGKxQ2UDZuijPtoGJ8T4HD8sfXnllUYNbT79fElOOYZi24xqz4rtXr2FuZLjW27r4qOFfw01vT790kXUROXfo3G4xSTGp5zuTInfsNJsLDh6Qh0BhCKIjIyMj379/fycpKSl9/fr1e589swm6erVaDUMhSHF1dXXFvXv3Hi5fvny5vf3U1Q4MWiEA60WqzkDTVEwAAAAASUVORK5CYII=",
       "name": "asdf",
       "tags": [
         "one, two"
@@ -15022,7 +15022,7 @@
     "ballpark bench": {
       "category": "places",
       "height": 1,
-      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAU0lEQVQYV2NkIBIwEqmOgTHRV/c/TPGXL1+w6uPh4WFgrEtzxKkQpAAGGIuiTP+DBNBNQ1YEksNrIrI7wCaCBAiZiuIZkAaQNcjWwt1IdPAQqxAAwUghBxviLYsAAAAASUVORK5CYII=",
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAU0lEQVQoU2NkIBIwEqmOgTHRV/c/TPGXL1+w6uPh4WFgrEtzxKkQpAAGGIuiTP+DBNBNQ1YEksNrIrI7wCaCBAiZiuIZkAaQNcjWwt1IdPAQqxAAwUghByCAdD0AAAAASUVORK5CYII=",
       "name": "ballpark bench",
       "tags": [
         ""
@@ -15033,7 +15033,7 @@
     "ballpark bleachers": {
       "category": "places",
       "height": 1,
-      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAcElEQVQYV2N0crBpt7MyrTh07HQHAxZgpKdZce7S9Q7GhqrC/yD5L1++wJXx8PBgaIErhMnANCArBokxluSlgk1ENwXZBpA8I8iNMHdgcyPM/WCFZHsGZjKyc8CeQfYAuttgmjCCB2QKNsUEPQPzKAAmqU4LG9Jp3AAAAABJRU5ErkJggg==",
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAcElEQVQoU2N0crBpt7MyrTh07HQHAxZgpKdZce7S9Q7GhqrC/yD5L1++wJXx8PBgaIErhMnANCArBokxluSlgk1ENwXZBpA8I8iNMHdgcyPM/WCFZHsGZjKyc8CeQfYAuttgmjCCB2QKNsUEPQPzKAAmqU4LDGg2cAAAAABJRU5ErkJggg==",
       "name": "ballpark bleachers",
       "tags": [
         ""
@@ -15044,7 +15044,7 @@
     "ballpark foul line": {
       "category": "places",
       "height": 1,
-      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAJElEQVQYV2NkIBIwEqmOgQYK////34vL+levXsGlaGD1wPkaALlyBlOtaBGVAAAAAElFTkSuQmCC",
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAJElEQVQoU2NkIBIwEqmOgQYK////34vL+levXsGlaGD1wPkaALlyBlPdQOKSAAAAAElFTkSuQmCC",
       "name": "ballpark foul line",
       "tags": [
         ""
@@ -15066,7 +15066,7 @@
     "ballpark pitcher's mound": {
       "category": "places",
       "height": 1,
-      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAARklEQVQYV2NkIBIwEqmOgTKF/////w+yiZGREW4QhomfP38GKwIBXl5e7AphJqGbBuYjewak8MuXLygmweQp8wy2ICPaRAC+WxMLWab8zgAAAABJRU5ErkJggg==",
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAARklEQVQoU2NkIBIwEqmOgTKF/////w+yiZGREW4QhomfP38GKwIBXl5e7AphJqGbBuYjewak8MuXLygmweQp8wy2ICPaRAC+WxML2n24ZAAAAABJRU5ErkJggg==",
       "name": "ballpark pitcher's mound",
       "tags": [
         ""
@@ -15078,7 +15078,7 @@
       "blocksMovement": true,
       "category": "nature",
       "height": 1,
-      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAkklEQVQYV2NkwALkZKSOPXryzApZihFdnZetwX8zTVmGU9cfM2w7fAEuj6IwNNgv89vXb9MuX7kG1m9ubpK1eu2m6SA2ikKQlQwMDJZIthyHOQFd4X9dHS2GFy9eMbx+8was/tGTZ2A1GApFRUTgivAqBEkim4rTRJj7YIrPXriE1WriPAMyTU5G6j/MVJi1ID4ASKlGC2FOBLQAAAAASUVORK5CYII=",
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAkklEQVQoU2NkwALkZKSOPXryzApZihFdnZetwX8zTVmGU9cfM2w7fAEuj6IwNNgv89vXb9MuX7kG1m9ubpK1eu2m6SA2ikKQlQwMDJZIthyHOQFd4X9dHS2GFy9eMbx+8was/tGTZ2A1GApFRUTgivAqBEkim4rTRJj7YIrPXriE1WriPAMyTU5G6j/MVJi1ID4ASKlGC4WMr28AAAAASUVORK5CYII=",
       "name": "bear",
       "tags": [
         ""
@@ -15714,7 +15714,7 @@
       "blocksVision": true,
       "category": "buildings",
       "height": 1,
-      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAIklEQVQYV2PsMVY8zEAEYOwxVsggQh0DIzGKQGpGFeINKQB5twL10y1vMAAAAABJRU5ErkJggg==",
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAIklEQVQoU2PsMVY8zEAEYOwxVsggQh0DIzGKQGpGFeINKQB5twL1Zj0GGQAAAABJRU5ErkJggg==",
       "name": "wall",
       "tags": [
         ""
