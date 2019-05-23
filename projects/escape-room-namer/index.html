@@ -53,6 +53,7 @@
                 right: 0px;
                 top: 86px;
                 user-select: none;
+                z-index: 2;
             }
             #credit {
                 position: absolute;
@@ -68,8 +69,8 @@
         <div class="d e">
             Generates random escape room names using Markov chains based on 970 unique escape room names.
         </div>
-        <div class="d c" draggable="false" onclick="generate()">
-            <img class="i" src="right.svg">
+        <div class="d c" draggable="false">
+            <img class="i" width="100" height="100" src="right.svg" onclick="generate()">
             <div id="next" class="n"></div>
             <div id="list" class="l"></div>
         </div>
