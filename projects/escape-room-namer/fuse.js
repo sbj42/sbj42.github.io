@@ -5,6 +5,6 @@ const fuse = FuseBox.init({
   output: "dist/$name.js",
 });
 
-fuse.bundle("ern").instructions(`> ern.ts`);
+fuse.bundle("ern").instructions(`> ern.ts`).watch('src/**');
 
 fuse.run();

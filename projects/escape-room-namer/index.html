@@ -1,15 +1,71 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <link rel="shortcut icon" href="favicon.png" type="image/png">
+        <link href="https://fonts.googleapis.com/css?family=Special+Elite|Molengo&display=swap" rel="stylesheet">
         <title>Escape Room Namer</title>
+        <style>
+            body, input {
+                background: #cabfab;
+                color: #000;
+                font-family: 'Molengo', sans-serif;
+            }
+            .d {
+                margin: 20px auto;
+                text-align: center;
+                max-width: 800px;
+            }
+            .e {
+                max-width: 400px;
+            }
+            .t {
+                font-size: 40px;
+            }
+            .c {
+                font-family: 'Special Elite', sans-serif;
+                font-size: 23px;
+                border: 5px solid #52575d;
+                border-radius: 20px;
+                padding: 20px;
+                background: #dfd8c8;
+                color: #000;
+                box-shadow: 0px 0px 2px #fff;
+                line-height: 32px;
+                position: relative;
+                width: 800px;
+                height: 250px;
+                overflow: hidden;
+            }
+            .l {
+                position: absolute;
+                width: 800px;
+                transition: 0.2s all;
+                left: 0px;
+            }
+            .n {
+                position: absolute;
+                width: 800px;
+                transition: 0.2s all;
+                left: 800px;
+            }
+            .i {
+                position: absolute;
+                right: 0px;
+                top: 86px;
+                user-select: none;
+            }
+        </style>
     </head>
-    <body style="text-align: center;">
-        <div style="font-size: 30px; margin-top: 20px;">Escape Room Namer</div>
-        <div style="margin-top: 20px;">
+    <body>
+        <div class="d t">Escape Room Namer</div>
+        <div class="d e">
             Generates random escape room names using Markov chains based on 970 unique escape room names.
         </div>
-        <div id="list" style="font-size: 22px; margin-top: 20px;"></div>
-        <div style="margin-top: 20px;"><input type="button" value="More!" onclick="generate()"></div>
+        <div class="d c" draggable="false" onclick="generate()">
+            <img class="i" src="right.svg">
+            <div id="next" class="n"></div>
+            <div id="list" class="l"></div>
+        </div>
         <script src="./dist/ern.js"></script>
     </body>
 </html>

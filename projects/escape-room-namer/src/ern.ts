@@ -1210,29 +1210,55 @@ const namer4 =  make(4);
 const namer5 =  make(5);
 
 function generate() {
-    const list = document.getElementById('list');
-    if (list) {
-        list.innerHTML = '';
-        for (let i = 0; i < 4; i ++) {
-            const name = namer5.get();
-            const item = document.createElement('div');
-            item.textContent = item.innerText = name;
-            list.appendChild(item);
-        }
-        for (let i = 0; i < 1; i ++) {
-            const name = namer3.get();
-            const item = document.createElement('div');
-            item.textContent = item.innerText = name;
-            list.appendChild(item);
-        }
-        for (let i = 0; i < 3; i ++) {
-            const name = namer4.get();
-            const item = document.createElement('div');
-            item.textContent = item.innerText = name;
-            list.appendChild(item);
-        }
+    const list = document.createElement('div');
+    list.innerHTML = '';
+    for (let i = 0; i < 4; i ++) {
+        const name = namer5.get();
+        const item = document.createElement('div');
+        item.textContent = item.innerText = name;
+        list.appendChild(item);
     }
+    for (let i = 0; i < 1; i ++) {
+        const name = namer3.get();
+        const item = document.createElement('div');
+        item.textContent = item.innerText = name;
+        list.appendChild(item);
+    }
+    for (let i = 0; i < 3; i ++) {
+        const name = namer4.get();
+        const item = document.createElement('div');
+        item.textContent = item.innerText = name;
+        list.appendChild(item);
+    }
+    return list;
 }
-generate();
 
-(window as any).generate = generate;
+const list = document.getElementById('list');
+if (list) {
+    list.appendChild(generate());
+}
+
+const step = function() {
+    const list = document.getElementById('list');
+    const next = document.getElementById('next');
+    if (list && next) {
+        next.appendChild(generate());
+        list.style.left = '-800px';
+        next.style.left = '0px';
+        setTimeout(() => {
+            if (list.parentNode) {
+                list.parentNode.removeChild(list);
+            }
+            next.id = 'list';
+            next.className = 'l';
+            const newList = document.createElement('div');
+            newList.id = 'next';
+            newList.className = 'n';
+            if (next.parentNode) {
+                next.parentNode.insertBefore(newList, next);
+            }
+        }, 200);
+    }
+};
+
+(window as any).generate = step;

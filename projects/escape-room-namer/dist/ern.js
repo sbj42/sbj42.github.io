@@ -1186,31 +1186,55 @@ var namer3 = make(3);
 var namer4 = make(4);
 var namer5 = make(5);
 function generate() {
-    var list = document.getElementById('list');
-    if (list) {
-        list.innerHTML = '';
-        for (var i = 0; i < 4; i++) {
-            var name = namer5.get();
-            var item = document.createElement('div');
-            item.textContent = item.innerText = name;
-            list.appendChild(item);
-        }
-        for (var i = 0; i < 1; i++) {
-            var name = namer3.get();
-            var item = document.createElement('div');
-            item.textContent = item.innerText = name;
-            list.appendChild(item);
-        }
-        for (var i = 0; i < 3; i++) {
-            var name = namer4.get();
-            var item = document.createElement('div');
-            item.textContent = item.innerText = name;
-            list.appendChild(item);
-        }
+    var list = document.createElement('div');
+    list.innerHTML = '';
+    for (var i = 0; i < 4; i++) {
+        var name = namer5.get();
+        var item = document.createElement('div');
+        item.textContent = item.innerText = name;
+        list.appendChild(item);
     }
+    for (var i = 0; i < 1; i++) {
+        var name = namer3.get();
+        var item = document.createElement('div');
+        item.textContent = item.innerText = name;
+        list.appendChild(item);
+    }
+    for (var i = 0; i < 3; i++) {
+        var name = namer4.get();
+        var item = document.createElement('div');
+        item.textContent = item.innerText = name;
+        list.appendChild(item);
+    }
+    return list;
 }
-generate();
-window.generate = generate;
+var list = document.getElementById('list');
+if (list) {
+    list.appendChild(generate());
+}
+var step = function () {
+    var list = document.getElementById('list');
+    var next = document.getElementById('next');
+    if (list && next) {
+        next.appendChild(generate());
+        list.style.left = '-800px';
+        next.style.left = '0px';
+        setTimeout(function () {
+            if (list.parentNode) {
+                list.parentNode.removeChild(list);
+            }
+            next.id = 'list';
+            next.className = 'l';
+            var newList = document.createElement('div');
+            newList.id = 'next';
+            newList.className = 'n';
+            if (next.parentNode) {
+                next.parentNode.insertBefore(newList, next);
+            }
+        }, 200);
+    }
+};
+window.generate = step;
 
 });
 return ___scope___.entry = "ern.js";
