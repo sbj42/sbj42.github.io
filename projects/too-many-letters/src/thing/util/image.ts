@@ -1,4 +1,4 @@
-require('./image.css');
+import './image.css';
 
 import {Sprite} from '../../phys/sprite';
 import {Rectangle, Shape} from '../../phys/shape';

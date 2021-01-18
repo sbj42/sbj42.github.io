@@ -10,7 +10,8 @@ module.exports = {
         filename: "tml.js"
     },
     resolve: {
-        extensions: ['.js', '.ts', '.css', '.ogg', '.txt']
+        extensions: ['.js', '.ts', '.css', '.ogg', '.txt'],
+        fallback: { 'crypto': false }
     },
     module: {
         rules: [
@@ -23,16 +24,16 @@ module.exports = {
                 use: [ 'ts-loader' ]
             },
             {
-                 test: /\.(svg|jpg)$/,
-                 loader: "url-loader?limit=50000&name=dist/img/[name].[ext]?[hash]"
+                 test: /\.(svg|jpg|ogg)$/,
+                 loader: "url-loader",
+                 options: {
+                     limit: 100000,
+                     name: "dist/img/[name].[ext]?[hash]"
+                 }
             },
             {
                  test: /\.txt$/,
                  loader: "raw-loader"
-            },
-            {
-                 test: /\.ogg$/,
-                 loader: "url-loader?limit=50000&name=dist/img/[name].[ext]?[hash]"
             }
         ]
     }

@@ -1,4 +1,4 @@
-require('./score.css');
+import './score.css';
 
 interface ScoreConfig {
 }
@@ -11,7 +11,7 @@ export class Score {
     cur: number;
     from: number;
     to: number;
-    interval: number;
+    interval?: ReturnType<typeof setTimeout>;
     tickCount: number;
 
     constructor(config: ScoreConfig) {
@@ -31,8 +31,10 @@ export class Score {
             this.cur = this.to;
             this.element.className = 'score';
             this.element.style.transform = '';
-            clearInterval(this.interval);
-            this.interval = 0;
+            if (this.interval) {
+                clearInterval(this.interval);
+            }
+            this.interval = undefined;
         } else {
             this.cur = this.from + Math.floor((this.to - this.from) * this.tickCount / 10);
             const angle = [5, 0, -5, 0][this.tickCount & 3];
@@ -42,8 +44,10 @@ export class Score {
     }
 
     update(score: number) {
-        clearInterval(this.interval);
-        this.interval = 0;
+        if (this.interval) {
+            clearInterval(this.interval);
+        }
+        this.interval = undefined;
         this.to = score;
         this.from = this.cur;
         if (this.to > this.from) {

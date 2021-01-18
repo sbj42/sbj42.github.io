@@ -1,4 +1,4 @@
-require('./fruit.css');
+import './fruit.css';
 
 import {ImageThingerator, ImageConfig} from '../../util/image';
 import {ConvexPolygon, Circle, Rectangle, Shape} from '../../../phys/shape';
@@ -15,7 +15,37 @@ const DKBLUE = '#206';
 const DKGREEN = '#051';
 const DKRED = '#410';
 
-const imageContext = require.context('./images', false, /\.svg$/);
+import APPLE_WHOLE from './images/apple.svg';
+import BANANA_WHOLE from './images/banana.svg';
+import GRAPES_WHOLE from './images/grapes.svg';
+import LEMON_WHOLE from './images/lemon.svg';
+import ORANGE_WHOLE from './images/orange.svg';
+import PEACH_WHOLE from './images/peach.svg';
+import PEAR_WHOLE from './images/pear.svg';
+import PINEAPPLE_WHOLE from './images/pineapple.svg';
+import STRAWBERRY_WHOLE from './images/strawberry.svg';
+
+import APPLE_CHOMP from './images/apple-chomp.svg';
+import BANANA_CHOMP from './images/banana-chomp.svg';
+import GRAPES_CHOMP from './images/grapes-chomp.svg';
+import LEMON_CHOMP from './images/lemon-chomp.svg';
+import ORANGE_CHOMP from './images/orange-chomp.svg';
+import PEACH_CHOMP from './images/peach-chomp.svg';
+import PEAR_CHOMP from './images/pear-chomp.svg';
+import PINEAPPLE_CHOMP from './images/pineapple-chomp.svg';
+import STRAWBERRY_CHOMP from './images/strawberry-chomp.svg';
+
+const IMAGES: { [key: string]: [ string, string] } = {
+    'apple': [ APPLE_WHOLE, APPLE_CHOMP ],
+    'banana': [ BANANA_WHOLE, BANANA_CHOMP ],
+    'grapes': [ GRAPES_WHOLE, GRAPES_CHOMP ],
+    'lemon': [ LEMON_WHOLE, LEMON_CHOMP ],
+    'orange': [ ORANGE_WHOLE, ORANGE_CHOMP ],
+    'peach': [ PEACH_WHOLE, PEACH_CHOMP ],
+    'pear': [ PEAR_WHOLE, PEAR_CHOMP ],
+    'pineapple': [ PINEAPPLE_WHOLE, PINEAPPLE_CHOMP ],
+    'strawberry': [ STRAWBERRY_WHOLE, STRAWBERRY_CHOMP ],
+};
 
 export interface FruitImageConfig {
     name: string;
@@ -146,8 +176,8 @@ export class FruitThingerator extends ImageThingerator {
         } else 
             fruitImageConfig = fruits[Math.floor(Math.random() * fruits.length)];
         const imageConfig = {
-            url: imageContext(`./${fruitImageConfig.name}.svg`),
-            deadUrl: imageContext(`./${fruitImageConfig.name}-chomp.svg`),
+            url: IMAGES[fruitImageConfig.name][0],
+            deadUrl: IMAGES[fruitImageConfig.name][1],
             hitStrokeColor: '#fff',
             hitFillColor: '#f00',
             ...fruitImageConfig,

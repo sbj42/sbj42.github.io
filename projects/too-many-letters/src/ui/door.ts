@@ -1,6 +1,11 @@
 import {WIDTH, HEIGHT} from '../constants';
 
-require('./door.css');
+import './door.css';
+
+import DOOR1 from './door1.svg';
+import DOOR2 from './door2.svg';
+import DOOR_SIGN from './door-sign.svg';
+import DOOR_LIGHT from './door-light.svg';
 
 export interface DoorConfig {
     signText: string;
@@ -20,7 +25,7 @@ export class Door {
     lights: HTMLImageElement[];
     lightAngle: number[];
 
-    interval: number;
+    interval: ReturnType<typeof setTimeout>;
     tickCount: number;
 
     openAmount: number;
@@ -37,13 +42,13 @@ export class Door {
         this.door1.className = 'door_part';
         this.door1.style.height = `${HEIGHT}px`;
         this.door1.style.top = '0px';
-        this.door1.src = require('./door1.svg');
+        this.door1.src = DOOR1;
         doorDiv.appendChild(this.door1);
         this.door2 = document.createElement('img');
         this.door2.className = 'door_part';
         this.door2.style.height = `${HEIGHT}px`;
         this.door2.style.top = '0px';
-        this.door2.src = require('./door2.svg');
+        this.door2.src = DOOR2;
         doorDiv.appendChild(this.door2);
 
         this.sign = document.createElement('div');
@@ -51,7 +56,7 @@ export class Door {
         this.sign.style.top = `20px`;
         const signImage = document.createElement('img');
         signImage.className = 'door_sign_image';
-        signImage.src = require('./door-sign.svg');
+        signImage.src = DOOR_SIGN;
         this.sign.appendChild(signImage);
         const signText = document.createElement('div');
         signText.className = 'door_sign_text';
@@ -69,7 +74,7 @@ export class Door {
         this.lightAngle = [];
         const makeLight = (x: number, y: number, angle: number) => {
             const light = document.createElement('img');
-            light.src = require('./door-light.svg');
+            light.src = DOOR_LIGHT;
             light.className = 'door_light';
             light.style.top = `${y}px`;
             light.style.left = `${x}px`;

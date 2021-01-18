@@ -2,9 +2,23 @@ import {SceneConfig, Scene, SceneratorConfig, Scenerator} from '../../gen';
 import {ConvexPolygon} from '../../../phys/shape';
 import {SceneBase} from '../../util/scene';
 
-require('./bed.css');
+import './bed.css';
 
-const imageContext = require.context('./images', false, /\.(svg|jpg)$/);
+import ART_1 from './images/art1.svg';
+import ART_2 from './images/art2.svg';
+import ART_3 from './images/art3.svg';
+import BED_1 from './images/bed1.svg';
+import BED_2 from './images/bed2.svg';
+import BED_3 from './images/bed3.svg';
+import SHELF_1 from './images/shelf1.svg';
+import SHELF_2 from './images/shelf2.svg';
+import WALL_1 from './images/wall1.svg';
+import WALL_2 from './images/wall2.svg';
+import WALL_3 from './images/wall3.svg';
+
+function pick(arr: string[]) {
+    return arr[Math.floor(Math.random()*arr.length)];
+}
 
 export interface BedSceneratorConfig extends SceneratorConfig {
 }
@@ -20,19 +34,19 @@ export class BedScenerator implements Scenerator {
         const bgDiv = document.createElement('div');
         bgDiv.className = 'bed_bg';
         const wallImg = document.createElement('img');
-        wallImg.src = imageContext(`./wall${Math.floor(Math.random()*2+1)}.svg`);
+        wallImg.src = pick([WALL_1, WALL_2, WALL_3]);
         wallImg.className = 'bed_image';
         bgDiv.appendChild(wallImg);
         const shelfImg = document.createElement('img');
-        shelfImg.src = imageContext(`./shelf${Math.floor(Math.random()*2+1)}.svg`);
+        shelfImg.src = pick([SHELF_1, SHELF_2]);
         shelfImg.className = 'bed_image';
         bgDiv.appendChild(shelfImg);
         const artImg = document.createElement('img');
-        artImg.src = imageContext(`./art${Math.floor(Math.random()*3+1)}.svg`);
+        artImg.src = pick([ART_1, ART_2, ART_3]);
         artImg.className = 'bed_image';
         bgDiv.appendChild(artImg);
         const bedImg = document.createElement('img');
-        bedImg.src = imageContext(`./bed${Math.floor(Math.random()*3+1)}.svg`);
+        bedImg.src = pick([BED_1, BED_2, BED_3]);
         bedImg.className = 'bed_image';
         bgDiv.appendChild(bedImg);
 

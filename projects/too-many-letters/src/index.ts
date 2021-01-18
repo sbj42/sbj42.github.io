@@ -1,10 +1,12 @@
-require('./tml.css');
+import './tml.css';
 
 import * as SceneratorFactory from './scene/factory';
 import * as ThingeratorFactory from './thing/factory';
 import * as WorderatorFactory from './word/factory';
 import {Level} from './game/level';
 import {WIDTH, HEIGHT} from './constants';
+
+import WORDLIST from './word/inst/wordlist/data/wc.txt';
 
 const root = document.getElementById("root");
 if (!root) throw new Error('no root');
@@ -36,8 +38,8 @@ window.onresize = scaleRoot;
 scaleRoot();
 
 const scenerator = SceneratorFactory.getScenerator({
-    //type: SceneratorFactory.SCENERATOR_SOFA,
-    type: SceneratorFactory.SCENERATOR_BED,
+    type: SceneratorFactory.SCENERATOR_SOFA,
+    // type: SceneratorFactory.SCENERATOR_BED,
 });
 const thingerator = ThingeratorFactory.getThingerator({
     //type: ThingeratorFactory.THINGERATOR_TEXT,
@@ -47,7 +49,7 @@ const thingerator = ThingeratorFactory.getThingerator({
 const worderator = WorderatorFactory.getWorderator({
     //type: WorderatorFactory.WORDERATOR_RANDOM,
     type: WorderatorFactory.WORDERATOR_WORDLIST,
-    data: require('./word/inst/wordlist/data/wc.txt'),
+    data: WORDLIST,
     //minLength: 2,
     //maxLength: 3,
     //parts: ['foo', 'bar', 'baz'],
@@ -65,7 +67,7 @@ const level = new Level({
 });
 (window as any)['level'] = level;
 
-window.onkeypress = event => {
+window.onkeypress = (event: KeyboardEvent) => {
     level.onKey(event.key);
 };
 

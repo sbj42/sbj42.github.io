@@ -45,7 +45,7 @@ export class Level {
     private mistakeTime: number;
     private winTime: number;
     
-    private door: Door;
+    private door?: Door;
     private scene: Scene;
     private nextThings: Thing[];
     private things: Thing[];
@@ -175,7 +175,9 @@ export class Level {
         if (this.extraCount) {
             this.roadmapUI.update(this.extraTime - elapsed);
             if (elapsed > this.extraTime) {
-                this.extraTime += this.config.extraWordRate;
+                if (typeof this.config.extraWordRate !== 'undefined') {
+                    this.extraTime += this.config.extraWordRate;
+                }
                 this.generate(this.extraWords[this.extraWords.length - this.extraCount]);
                 this.extraCount --;
                 this.roadmapUI.next();
