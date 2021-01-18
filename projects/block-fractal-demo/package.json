@@ -1,6 +1,7 @@
 {
   "name": "block-fractal-demo",
   "version": "0.1.0",
+  "private": "true",
   "description": "Demo of BlockFractal",
   "main": "index.js",
   "license": "MIT",
