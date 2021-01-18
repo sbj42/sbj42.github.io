@@ -1,12 +1,13 @@
 {
   "name": "escape-room-namer",
   "version": "0.1.0",
+  "private": "true",
   "main": "ern.ts",
   "scripts": {
-    "build": "tsc ern.ts"
+    "build": "tsc src/ern.ts --outDir dist"
   },
   "dependencies": {
-    "fuse-box": "^3.7.1",
-    "typescript": "^3.4.5"
+    "fuse-box": "^4.0.0",
+    "typescript": "^4.1.3"
   }
 }

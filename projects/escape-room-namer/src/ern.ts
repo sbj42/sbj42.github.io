@@ -1261,4 +1261,4 @@ const step = function() {
     }
 };
 
-(window as any).generate = step;
+(window as any).doGenerate = step;
