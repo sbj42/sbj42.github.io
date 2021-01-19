@@ -1,6 +1,7 @@
 {
   "name": "mr-floppypants",
   "version": "0.0.0",
+  "private": true,
   "description": "",
   "author": "James Clark <jameswclark@gmail.com>",
   "license": "ISC",
