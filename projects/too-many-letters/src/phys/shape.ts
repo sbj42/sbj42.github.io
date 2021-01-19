@@ -1,7 +1,7 @@
 export interface Shape {
 }
 
-export type Point = number[];
+export type Point = [number, number];
 
 export class Circle implements Shape {
     center: Point;

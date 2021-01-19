@@ -1,4 +1,4 @@
-require('./stopwatch.css');
+import './stopwatch.css';
 
 interface StopwatchConfig {
     timeLimit: number;

@@ -1,4 +1,4 @@
-require('./world.css');
+import './world.css';
 
 import {Sprite, makeBody} from './sprite';
 import {Shape} from './shape';
@@ -22,11 +22,11 @@ export class World {
     material: p2.Material;
     sprites: Sprite[] = [];
 
-    lastTime: number;
+    lastTime?: number;
 
     paused: boolean;
 
-    private addPlane(position: number[], angle: number) {
+    private addPlane(position: [number, number], angle: number) {
         const body = new p2.Body({
             mass: 0,
             position,

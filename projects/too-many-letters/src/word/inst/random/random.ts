@@ -4,6 +4,7 @@ import {WordConfig, Word, WorderatorConfig, Worderator} from '../../gen';
 export type CaseOption = 'upper' | 'lower' | 'both';
 
 export interface RandomWorderatorConfig extends WorderatorConfig {
+    seed?: number;
     case?: CaseOption;
     parts?: string[];
     minLength?: number;

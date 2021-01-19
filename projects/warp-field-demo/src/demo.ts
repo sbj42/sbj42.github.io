@@ -267,8 +267,8 @@ function render() {
                 } else {
                     context.fillStyle = '#faa';
                 }
-                context.fillRect(x * 32, y * 32, 32, 32);
-                drawImage('floor' + Math.floor(1 + tileRand[index(x, y)] * 6), mapId, x, y);
+                context.fillRect(mx * 32, my * 32, 32, 32);
+                drawImage('floor' + Math.floor(1 + tileRand[index(mx, my)] * 6), mapId, mx, my);
             }
         }
     }

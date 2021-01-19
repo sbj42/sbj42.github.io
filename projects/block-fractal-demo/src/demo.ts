@@ -252,11 +252,11 @@ demoInner.onmousemove = (event: MouseEvent) => {
 document.onmouseup = (event: MouseEvent) => {
 	mousePressed = false;
 };
-demoInner.onmousewheel = (event: MouseWheelEvent) => {
+demoInner.onwheel = (event: WheelEvent) => {
 	if (mouseOver) {
 		const x = centerX + (event.offsetX - (width >>> 1)) / zoom;
 		const y = centerY + (event.offsetY - (height >>> 1)) / zoom;
-		target_zoom *= Math.pow(ZOOM_SPEED, event.wheelDelta / 120);
+		target_zoom *= Math.pow(ZOOM_SPEED, event.deltaY / 120);
 		target_centerX = x - (event.offsetX - (width >>> 1)) / target_zoom;
 		target_centerY = y - (event.offsetY - (height >>> 1)) / target_zoom;
 		event.preventDefault();

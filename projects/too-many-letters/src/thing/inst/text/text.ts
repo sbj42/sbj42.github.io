@@ -1,4 +1,4 @@
-require('./text.css');
+import './text.css';
 
 import {Sprite} from '../../../phys/sprite';
 import {Rectangle} from '../../../phys/shape';

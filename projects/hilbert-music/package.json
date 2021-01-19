@@ -1,16 +1,16 @@
 {
   "name": "hilbert-music",
   "version": "1.0.0",
+  "private": "true",
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node fuse"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "fuse-box": "^2.1.0",
-    "typescript": "^2.3.4"
+    "fuse-box": "^4.0.0",
+    "typescript": "^4.1.3"
   }
 }

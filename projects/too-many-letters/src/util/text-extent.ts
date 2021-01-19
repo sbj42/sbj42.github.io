@@ -1,4 +1,4 @@
-require('./text-extent.css');
+import './text-extent.css';
 
 const extentDiv = document.createElement('div');
 extentDiv.className = 'text_extent';

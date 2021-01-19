@@ -5,14 +5,10 @@ export interface RandomConfig {
 }
 
 export class Random {
-    protected engine: randomjs.MT19937;
+    protected engine: randomjs.MersenneTwister19937;
 
     constructor(config: RandomConfig) {
-        this.engine = randomjs.engines.mt19937();
-        if (typeof config.seed != 'undefined')
-            this.engine.seed(config.seed);
-        else
-            this.engine.autoSeed();
+        this.engine = typeof config.seed === 'undefined' ? randomjs.MersenneTwister19937.autoSeed() : randomjs.MersenneTwister19937.seed(config.seed);
     }
 
     choice<T>(arr: T[]): T {

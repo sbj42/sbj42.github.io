@@ -1,4 +1,4 @@
-require('./roadmap.css');
+import './roadmap.css';
 
 export interface RoadmapStop {
     time: number;
