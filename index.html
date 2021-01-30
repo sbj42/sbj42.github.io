@@ -3,10 +3,18 @@
   <head>
     <link rel="icon" type="image/png" href="favicon.png" />
     <meta name="google-site-verification" content="-reLoLFqzulvc29lIk7RE6wgUaD_hAR5lgh19ggTFS0" />
-    <title>Internet Nook #91a1e243</title>
+    <title>Internet Nook #...</title>
   </head>
   <body>
-    <h2>Internet Nook #91a1e243</h2>
+    <h2>Internet Nook #<span id="number">...</span></h2>
+    <script>
+      var hex = Math.floor(Math.random()*256*256*256*256).toString(16);
+      while (hex.length < 8) {
+        hex = '0' + hex;
+      }
+      document.title = 'Internet Nook #' + hex;
+      document.getElementById('number').innerHTML = hex;
+    </script>
     <h3>Projects</h3>
     <ul>
       <li><img src="favicon.png" /> <a href="https://github.com/sbj42/secret-hitler-pants">Secret Hitler Pants</a> [implementation of Secret Hitler game] (2020-04-27)</li>
