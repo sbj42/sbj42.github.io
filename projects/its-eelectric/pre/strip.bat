@@ -1,1 +1,0 @@
-"c:\Program Files\Python33\Scripts\scour.exe" -i svg\%1 -o svg2\%1 --remove-metadata --enable-viewboxing --enable-id-stripping --enable-comment-stripping --shorten-ids --indent=none
