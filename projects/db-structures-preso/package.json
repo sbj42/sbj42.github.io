@@ -6,6 +6,6 @@
   "devDependencies": {
     "c3": "^0.4.11",
     "headjs": "^1.0.3",
-    "reveal.js": "^3.5.0"
+    "reveal.js": "^3.9.2"
   }
 }
